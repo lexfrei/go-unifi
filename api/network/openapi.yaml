@@ -1,11 +1,12 @@
 openapi: 3.0.3
 info:
-  title: UniFi Network Integration API
+  title: UniFi Network API
   version: 1.0.0
   description: |
-    UniFi Network Integration API provides programmatic access to UniFi network devices, clients, and configurations.
+    UniFi Network API provides programmatic access to UniFi network devices, clients, and configurations
+    running on local UniFi controllers.
 
-    This API is accessed locally through the UniFi controller at `/proxy/network/integration/v1/`.
+    This is the Local Application API, accessed through the UniFi controller at `/proxy/network/integration/v1/`.
 
     ## Authentication
     All requests require an API key passed via the X-API-KEY header.

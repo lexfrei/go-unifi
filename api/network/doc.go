@@ -1,7 +1,8 @@
-// Package network provides a Go client for the UniFi Network Integration API.
+// Package network provides a Go client for the UniFi Network API.
 //
-// The Network Integration API allows programmatic access to UniFi network infrastructure
-// running on local controllers. It provides endpoints for managing sites, devices, and clients.
+// The UniFi Network API (Local Application API) allows programmatic access to UniFi network
+// infrastructure running on local controllers. It provides endpoints for managing sites,
+// devices, and clients.
 //
 // # API Access
 //

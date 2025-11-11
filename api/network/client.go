@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	// DefaultRateLimit is the default rate limit for the Network Integration API (requests per minute).
+	// DefaultRateLimit is the default rate limit for the Network API (requests per minute).
 	DefaultRateLimit = 1000
 
 	// DefaultMaxRetries is the default number of retries for failed requests.
@@ -36,7 +36,7 @@ type APIClient struct {
 	retryWait   time.Duration
 }
 
-// ClientConfig holds configuration for the Network Integration API client.
+// ClientConfig holds configuration for the Network API client.
 type ClientConfig struct {
 	// ControllerURL is the base URL of the UniFi controller (e.g., "https://192.168.1.1")
 	ControllerURL string
@@ -63,7 +63,7 @@ type ClientConfig struct {
 	Timeout time.Duration
 }
 
-// New creates a new Network Integration API client with default settings.
+// New creates a new UniFi Network API client with default settings.
 // This is the recommended way to create a client for most use cases.
 //
 // The client automatically handles rate limiting (1000 requests/minute by default)
@@ -89,7 +89,7 @@ func New(controllerURL, apiKey string) (*APIClient, error) {
 	})
 }
 
-// NewWithConfig creates a new Network Integration API client with custom configuration.
+// NewWithConfig creates a new UniFi Network API client with custom configuration.
 // Use this when you need to customize rate limits, timeouts, or other settings.
 //
 // Example:

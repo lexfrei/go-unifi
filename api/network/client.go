@@ -159,8 +159,8 @@ func NewWithConfig(cfg *ClientConfig) (*APIClient, error) {
 		return nil
 	}
 
-	// Build full base URL
-	baseURL := cfg.ControllerURL + "/proxy/network/integration/v1"
+	// Build base URL (paths like /integration/v1/sites are added by generated client)
+	baseURL := cfg.ControllerURL + "/proxy/network"
 
 	// Create generated client
 	generatedClient, err := NewClientWithResponses(

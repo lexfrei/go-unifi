@@ -41,7 +41,9 @@ info:
     - Device inventory and monitoring
     - Client tracking and access control
     - Static DNS record management
-    - Real-time status information
+    - Firewall policy management
+    - Traffic rule configuration
+    - Real-time status information and analytics
 
   contact:
     name: Aleksei Sviridkin
@@ -70,6 +72,12 @@ tags:
     description: Client device tracking and access control
   - name: DNS
     description: Static DNS record management
+  - name: Firewall
+    description: Firewall policy management and configuration
+  - name: Traffic
+    description: Traffic rule and routing management
+  - name: Analytics
+    description: Dashboard statistics and monitoring data
 
 paths:
   /integration/v1/sites:
@@ -335,6 +343,170 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # Firewall API (v2)
+  /v2/api/site/{site}/firewall-policies:
+    get:
+      summary: List firewall policies
+      description: |
+        Retrieves all firewall policies configured for the specified site.
+
+        Includes both predefined and custom policies.
+      operationId: listFirewallPolicies
+      tags:
+        - Firewall
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with list of firewall policies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FirewallPolicy'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/firewall-policies/{policyId}:
+    put:
+      summary: Update firewall policy
+      description: |
+        Updates an existing firewall policy.
+
+        Note: You cannot update predefined policies - only custom ones you created.
+      operationId: updateFirewallPolicy
+      tags:
+        - Firewall
+      parameters:
+        - $ref: '#/components/parameters/Site'
+        - $ref: '#/components/parameters/PolicyId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FirewallPolicyInput'
+      responses:
+        '200':
+          description: Successfully updated firewall policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirewallPolicy'
+        '400':
+          description: Invalid input or cannot update predefined policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Traffic Rules API (v2)
+  /v2/api/site/{site}/trafficrules:
+    get:
+      summary: List traffic rules
+      description: |
+        Retrieves all traffic rules configured for the specified site.
+
+        Traffic rules control bandwidth, blocking, and routing for specific applications or devices.
+      operationId: listTrafficRules
+      tags:
+        - Traffic
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with list of traffic rules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrafficRule'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/trafficrules/{ruleId}:
+    put:
+      summary: Update traffic rule
+      description: Updates an existing traffic rule configuration
+      operationId: updateTrafficRule
+      tags:
+        - Traffic
+      parameters:
+        - $ref: '#/components/parameters/Site'
+        - $ref: '#/components/parameters/RuleId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrafficRuleInput'
+      responses:
+        '200':
+          description: Successfully updated traffic rule
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrafficRule'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Analytics API (v2)
+  /v2/api/site/{site}/aggregated-dashboard:
+    get:
+      summary: Get aggregated dashboard statistics
+      description: |
+        Retrieves comprehensive dashboard statistics including:
+        - Most active clients
+        - WiFi channel usage
+        - WiFi technology distribution
+        - Most active access points
+        - WAN activity
+        - Internet health history
+
+        This is a read-only analytics endpoint.
+      operationId: getAggregatedDashboard
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+        - name: historySeconds
+          in: query
+          description: Number of seconds of history to include (default 86400 = 24 hours)
+          required: false
+          schema:
+            type: integer
+            default: 86400
+            example: 86400
+      responses:
+        '200':
+          description: Successful response with dashboard statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AggregatedDashboard'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -422,6 +594,24 @@ components:
       schema:
         type: string
       example: 68e04e991056cd46ea9edcd4
+
+    PolicyId:
+      name: policyId
+      in: path
+      required: true
+      description: The unique identifier of the firewall policy
+      schema:
+        type: string
+      example: 68a496708e604379be63f81368a496708e604379be63f8132147483647
+
+    RuleId:
+      name: ruleId
+      in: path
+      required: true
+      description: The unique identifier of the traffic rule
+      schema:
+        type: string
+      example: 507f1f77bcf86cd799439011
 
   responses:
     Unauthorized:
@@ -1013,3 +1203,303 @@ components:
           type: integer
           description: Port number for SRV records
           example: 443
+
+    # Firewall Policies
+    FirewallPolicy:
+      type: object
+      required:
+        - _id
+        - action
+        - enabled
+        - name
+      properties:
+        _id:
+          type: string
+          description: Unique identifier for the firewall policy
+          example: 68a496708e604379be63f81368a496708e604379be63f8132147483647
+        action:
+          type: string
+          description: Action to take when traffic matches this policy
+          enum:
+            - ALLOW
+            - DROP
+            - REJECT
+          example: ALLOW
+        enabled:
+          type: boolean
+          description: Whether the policy is enabled
+          example: true
+        name:
+          type: string
+          description: Name of the firewall policy
+          example: Allow All Traffic
+        predefined:
+          type: boolean
+          description: Whether this is a predefined system policy (cannot be modified)
+          example: true
+        index:
+          type: integer
+          description: Priority index of the policy
+          example: 2147483647
+        protocol:
+          type: string
+          description: Protocol to match
+          example: all
+        logging:
+          type: boolean
+          description: Whether to log matching traffic
+          example: false
+        ip_version:
+          type: string
+          description: IP version to match
+          enum:
+            - IPV4
+            - IPV6
+            - BOTH
+          example: BOTH
+        source:
+          type: object
+          description: Source matching configuration
+          additionalProperties: true
+        destination:
+          type: object
+          description: Destination matching configuration
+          additionalProperties: true
+        schedule:
+          type: object
+          description: Schedule configuration
+          additionalProperties: true
+
+    FirewallPolicyInput:
+      type: object
+      required:
+        - action
+        - enabled
+        - name
+      properties:
+        action:
+          type: string
+          description: Action to take when traffic matches this policy
+          enum:
+            - ALLOW
+            - DROP
+            - REJECT
+          example: ALLOW
+        enabled:
+          type: boolean
+          description: Whether the policy is enabled
+          example: true
+        name:
+          type: string
+          description: Name of the firewall policy
+          example: My Custom Policy
+        protocol:
+          type: string
+          description: Protocol to match
+          example: all
+        logging:
+          type: boolean
+          description: Whether to log matching traffic
+          default: false
+          example: false
+        ip_version:
+          type: string
+          description: IP version to match
+          enum:
+            - IPV4
+            - IPV6
+            - BOTH
+          default: BOTH
+          example: BOTH
+
+    # Traffic Rules
+    TrafficRule:
+      type: object
+      required:
+        - _id
+        - enabled
+        - matching_target
+      properties:
+        _id:
+          type: string
+          description: Unique identifier for the traffic rule
+          example: 507f1f77bcf86cd799439011
+        enabled:
+          type: boolean
+          description: Whether the traffic rule is enabled
+          example: true
+        description:
+          type: string
+          description: User-provided description of the rule
+          example: Limit streaming bandwidth
+        action:
+          type: string
+          description: Action to apply (e.g., bandwidth limit, block)
+          example: BLOCK
+        matching_target:
+          type: string
+          description: What this rule matches against
+          enum:
+            - CLIENT
+            - NETWORK
+            - INTERNET
+            - REGION
+          example: INTERNET
+        app_category_ids:
+          type: array
+          description: List of application category IDs to match
+          items:
+            type: string
+        app_ids:
+          type: array
+          description: List of application IDs to match
+          items:
+            type: string
+        domains:
+          type: array
+          description: List of domains to match
+          items:
+            type: string
+        target_devices:
+          type: array
+          description: Devices affected by this rule
+          items:
+            type: object
+            additionalProperties: true
+        bandwidth_limit:
+          type: object
+          description: Bandwidth limiting configuration
+          additionalProperties: true
+        schedule:
+          type: object
+          description: Schedule configuration
+          additionalProperties: true
+
+    TrafficRuleInput:
+      type: object
+      required:
+        - enabled
+        - matching_target
+      properties:
+        enabled:
+          type: boolean
+          description: Whether the traffic rule is enabled
+          example: true
+        description:
+          type: string
+          description: User-provided description of the rule
+          example: Limit streaming bandwidth
+        action:
+          type: string
+          description: Action to apply
+          example: BANDWIDTH_LIMIT
+        matching_target:
+          type: string
+          description: What this rule matches against
+          enum:
+            - CLIENT
+            - NETWORK
+            - INTERNET
+            - REGION
+          example: INTERNET
+
+    # Analytics / Dashboard
+    AggregatedDashboard:
+      type: object
+      description: Aggregated dashboard statistics and analytics
+      properties:
+        dashboard_meta:
+          type: object
+          description: Metadata about the dashboard view
+          properties:
+            start_timestamp:
+              type: integer
+              description: Start of time range (Unix timestamp ms)
+              example: 1762797600000
+            end_timestamp:
+              type: integer
+              description: End of time range (Unix timestamp ms)
+              example: 1762881470751
+            layout:
+              type: string
+              description: Dashboard layout type
+              example: gateway
+            widgets:
+              type: array
+              description: List of enabled widgets
+              items:
+                type: string
+              example:
+                - traffic_identification
+                - wifi_technology
+                - most_active_clients
+        most_active_clients:
+          type: object
+          description: Most active clients statistics
+          properties:
+            total_bytes:
+              type: integer
+              description: Total bytes across all clients
+              example: 1070333306
+            usage_by_client:
+              type: array
+              description: Per-client usage statistics
+              items:
+                type: object
+                additionalProperties: true
+        wifi_channels:
+          type: object
+          description: WiFi channel usage information
+          properties:
+            radio_channels:
+              type: array
+              description: Channel information per radio
+              items:
+                type: object
+                additionalProperties: true
+        wifi_technology:
+          type: object
+          description: WiFi technology distribution (WiFi 4/5/6/6E)
+          properties:
+            summary:
+              type: array
+              description: Technology usage summary
+              items:
+                type: object
+                additionalProperties: true
+        most_active_aps:
+          type: object
+          description: Most active access points
+          properties:
+            total_bytes:
+              type: integer
+              description: Total bytes across all APs
+              example: 78641476726
+            usage_by_ap:
+              type: array
+              description: Per-AP usage statistics
+              items:
+                type: object
+                additionalProperties: true
+        internet:
+          type: object
+          description: Internet connectivity health
+          properties:
+            health_history:
+              type: array
+              description: Historical health data points
+              items:
+                type: object
+                properties:
+                  timestamp:
+                    type: integer
+                    description: Unix timestamp (ms)
+                  wan_downtime:
+                    type: boolean
+                    description: Whether WAN was down
+                  high_latency:
+                    type: boolean
+                    description: Whether latency was high
+                  packet_loss:
+                    type: boolean
+                    description: Whether packet loss occurred

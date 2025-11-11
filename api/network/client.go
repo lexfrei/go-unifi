@@ -432,3 +432,93 @@ func (c *APIClient) DeleteDNSRecord(ctx context.Context, site Site, recordID Rec
 
 	return nil
 }
+
+// ListFirewallPolicies lists all firewall policies for a site.
+func (c *APIClient) ListFirewallPolicies(ctx context.Context, site Site) ([]FirewallPolicy, error) {
+	resp, err := c.client.ListFirewallPoliciesWithResponse(ctx, site)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to list firewall policies for site %s", site)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return *resp.JSON200, nil
+}
+
+// UpdateFirewallPolicy updates an existing firewall policy.
+func (c *APIClient) UpdateFirewallPolicy(ctx context.Context, site Site, policyID PolicyId, policy *FirewallPolicyInput) (*FirewallPolicy, error) {
+	resp, err := c.client.UpdateFirewallPolicyWithResponse(ctx, site, policyID, *policy)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to update firewall policy %s in site %s", policyID, site)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return resp.JSON200, nil
+}
+
+// ListTrafficRules lists all traffic rules for a site.
+func (c *APIClient) ListTrafficRules(ctx context.Context, site Site) ([]TrafficRule, error) {
+	resp, err := c.client.ListTrafficRulesWithResponse(ctx, site)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to list traffic rules for site %s", site)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return *resp.JSON200, nil
+}
+
+// UpdateTrafficRule updates an existing traffic rule.
+func (c *APIClient) UpdateTrafficRule(ctx context.Context, site Site, ruleID RuleId, rule *TrafficRuleInput) (*TrafficRule, error) {
+	resp, err := c.client.UpdateTrafficRuleWithResponse(ctx, site, ruleID, *rule)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to update traffic rule %s in site %s", ruleID, site)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return resp.JSON200, nil
+}
+
+// GetAggregatedDashboard retrieves aggregated dashboard statistics.
+func (c *APIClient) GetAggregatedDashboard(ctx context.Context, site Site, params *GetAggregatedDashboardParams) (*AggregatedDashboard, error) {
+	resp, err := c.client.GetAggregatedDashboardWithResponse(ctx, site, params)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to get aggregated dashboard for site %s", site)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return resp.JSON200, nil
+}

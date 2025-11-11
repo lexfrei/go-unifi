@@ -239,6 +239,7 @@ func (c *rateLimitedHTTPClient) Do(req *http.Request) (*http.Response, error) {
 			if attempt < c.maxRetries {
 				continue
 			}
+			//nolint:wrapcheck // Creating new error for rate limit exhaustion, no source error to wrap
 			return nil, errors.Newf("rate limited after %d attempts", attempt+1)
 
 		case resp.StatusCode >= 500:
@@ -247,6 +248,7 @@ func (c *rateLimitedHTTPClient) Do(req *http.Request) (*http.Response, error) {
 			if attempt < c.maxRetries {
 				continue
 			}
+			//nolint:wrapcheck // Creating new error for server error exhaustion, no source error to wrap
 			return nil, errors.Newf("server error %d after %d attempts", resp.StatusCode, attempt+1)
 
 		default:
@@ -266,6 +268,7 @@ func (c *APIClient) ListSites(ctx context.Context, params *ListSitesParams) (*Si
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -284,6 +287,7 @@ func (c *APIClient) ListSiteDevices(ctx context.Context, siteID SiteId, params *
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -302,6 +306,7 @@ func (c *APIClient) GetDeviceByID(ctx context.Context, siteID SiteId, deviceID D
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -320,6 +325,7 @@ func (c *APIClient) ListSiteClients(ctx context.Context, siteID SiteId, params *
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -338,6 +344,7 @@ func (c *APIClient) GetClientByID(ctx context.Context, siteID SiteId, clientID C
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -356,6 +363,7 @@ func (c *APIClient) ListHotspotVouchers(ctx context.Context, siteID SiteId, para
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -374,6 +382,7 @@ func (c *APIClient) CreateHotspotVouchers(ctx context.Context, siteID SiteId, re
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -392,6 +401,7 @@ func (c *APIClient) GetHotspotVoucher(ctx context.Context, siteID SiteId, vouche
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -410,6 +420,7 @@ func (c *APIClient) DeleteHotspotVoucher(ctx context.Context, siteID SiteId, vou
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -424,6 +435,7 @@ func (c *APIClient) ListDNSRecords(ctx context.Context, site Site) ([]DNSRecord,
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -442,6 +454,7 @@ func (c *APIClient) CreateDNSRecord(ctx context.Context, site Site, record *DNSR
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -460,6 +473,7 @@ func (c *APIClient) GetDNSRecordByID(ctx context.Context, site Site, recordID Re
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -478,6 +492,7 @@ func (c *APIClient) UpdateDNSRecord(ctx context.Context, site Site, recordID Rec
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -496,6 +511,7 @@ func (c *APIClient) DeleteDNSRecord(ctx context.Context, site Site, recordID Rec
 	}
 
 	if resp.StatusCode() != http.StatusNoContent {
+		//nolint:wrapcheck // Creating new error for non-NoContent status, no source error to wrap
 		return errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -510,6 +526,7 @@ func (c *APIClient) ListFirewallPolicies(ctx context.Context, site Site) ([]Fire
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -528,6 +545,7 @@ func (c *APIClient) UpdateFirewallPolicy(ctx context.Context, site Site, policyI
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -546,6 +564,7 @@ func (c *APIClient) CreateFirewallPolicy(ctx context.Context, site Site, policy 
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -564,6 +583,7 @@ func (c *APIClient) DeleteFirewallPolicy(ctx context.Context, site Site, policyI
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -578,6 +598,7 @@ func (c *APIClient) ListTrafficRules(ctx context.Context, site Site) ([]TrafficR
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -596,6 +617,7 @@ func (c *APIClient) UpdateTrafficRule(ctx context.Context, site Site, ruleID Rul
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -614,6 +636,7 @@ func (c *APIClient) CreateTrafficRule(ctx context.Context, site Site, rule *Traf
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -632,6 +655,7 @@ func (c *APIClient) DeleteTrafficRule(ctx context.Context, site Site, ruleID Rul
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -646,6 +670,7 @@ func (c *APIClient) GetAggregatedDashboard(ctx context.Context, site Site, param
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 

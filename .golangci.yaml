@@ -10,10 +10,8 @@ linters:
     - wsl
     - wsl_v5
     - testpackage
-    - paralleltest # TODO: enable back and add t.Parallel() to all tests
     - lll
     - funcorder # Helper functions placement is a stylistic choice
-    - wrapcheck # Too strict for this project
     - nlreturn # Stylistic preference
     - godoclint # False positive with doc.go pattern
   settings:

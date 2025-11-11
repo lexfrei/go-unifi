@@ -348,6 +348,8 @@ const (
 )
 
 func TestNew(t *testing.T) {
+	t.Parallel()
+
 	client, err := New("test-api-key")
 	if err != nil {
 		t.Fatalf("New() failed: %v", err)
@@ -384,6 +386,8 @@ func TestNew(t *testing.T) {
 }
 
 func TestNewWithConfig(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name        string
 		config      *ClientConfig
@@ -462,6 +466,8 @@ func TestNewWithConfig(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			client, err := NewWithConfig(tt.config)
 
 			if tt.wantErr {
@@ -487,6 +493,8 @@ func TestNewWithConfig(t *testing.T) {
 }
 
 func TestListHosts(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name           string
 		mockResponse   string
@@ -565,6 +573,8 @@ func TestListHosts(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				// Verify request
 				if r.URL.Path != "/v1/hosts" {
@@ -610,6 +620,8 @@ func TestListHosts(t *testing.T) {
 }
 
 func TestGetHostByID(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name           string
 		hostID         string
@@ -672,6 +684,8 @@ func TestGetHostByID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				// Verify request
 				expectedPath := "/v1/hosts/" + tt.hostID
@@ -718,6 +732,8 @@ func TestGetHostByID(t *testing.T) {
 }
 
 func TestRetryLogic(t *testing.T) {
+	t.Parallel()
+
 	attempts := 0
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		attempts++
@@ -756,6 +772,8 @@ func TestRetryLogic(t *testing.T) {
 }
 
 func TestContextCancellation(t *testing.T) {
+	t.Parallel()
+
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Delay to allow context cancellation
 		time.Sleep(100 * time.Millisecond)
@@ -782,6 +800,8 @@ func TestContextCancellation(t *testing.T) {
 }
 
 func TestPaginationParams(t *testing.T) {
+	t.Parallel()
+
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Verify query parameters
 		pageSize := r.URL.Query().Get("pageSize")
@@ -822,6 +842,8 @@ func TestPaginationParams(t *testing.T) {
 }
 
 func TestListSites(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name           string
 		mockResponse   string
@@ -883,6 +905,8 @@ func TestListSites(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				// Verify request
 				if r.URL.Path != "/v1/sites" {
@@ -928,6 +952,8 @@ func TestListSites(t *testing.T) {
 }
 
 func TestListDevices(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name           string
 		mockResponse   string
@@ -1008,6 +1034,8 @@ func TestListDevices(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				// Verify request
 				if r.URL.Path != "/v1/devices" {
@@ -1053,6 +1081,8 @@ func TestListDevices(t *testing.T) {
 }
 
 func TestGetISPMetrics(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name           string
 		metricType     GetISPMetricsParamsType
@@ -1119,6 +1149,8 @@ func TestGetISPMetrics(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				// Verify request - EA endpoint
 				if !strings.HasPrefix(r.URL.Path, "/ea/isp-metrics/") {

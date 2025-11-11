@@ -15,6 +15,27 @@ info:
     - **Integration API (v1)**: `/proxy/network/integration/v1` - Sites, Devices, Clients
     - **DNS API (v2)**: `/proxy/network/v2/api/site/{site}/static-dns` - Static DNS records
 
+    ## Important: Site Identifiers
+    Different API versions use different site identifiers:
+
+    - **Integration API v1** uses `siteId` (UUID format):
+      - Example: `88f7af54-98f8-306a-a1c7-c9349722b1f6`
+      - This is the `id` field from the site object
+
+    - **DNS API v2** uses `site` (internal reference string):
+      - Example: `default`
+      - This is the `internalReference` field from the site object
+      - **Does NOT accept UUIDs** - using UUID will return "Site does not exist"
+
+    To get both identifiers, call `GET /integration/v1/sites` which returns:
+    ```json
+    {
+      "id": "88f7af54-98f8-306a-a1c7-c9349722b1f6",
+      "internalReference": "default",
+      "name": "Default"
+    }
+    ```
+
     ## Features
     - Site management and listing
     - Device inventory and monitoring
@@ -327,7 +348,10 @@ components:
       name: siteId
       in: path
       required: true
-      description: The unique identifier of the site (UUID format)
+      description: |
+        The unique identifier of the site in UUID format (Integration API v1).
+        This is the `id` field from the site object.
+        Use `GET /integration/v1/sites` to get site UUIDs.
       schema:
         type: string
         format: uuid
@@ -380,7 +404,12 @@ components:
       name: site
       in: path
       required: true
-      description: The site name (internal reference)
+      description: |
+        The site internal reference string (DNS API v2).
+        This is the `internalReference` field from the site object.
+        **Important**: DNS API does NOT accept UUIDs - use internal reference only.
+        Common value: `default`
+        Use `GET /integration/v1/sites` to get site internal references.
       schema:
         type: string
       example: default

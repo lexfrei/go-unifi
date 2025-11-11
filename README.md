@@ -5,7 +5,7 @@ Pure Go client library for UniFi Site Manager API v1.
 ## Features
 
 - ✅ **Type-safe client** generated from OpenAPI specification
-- ✅ **Rate limiting** (10,000 req/min for v1, 100 req/min for EA)
+- ✅ **Dual rate limiting** (automatic: 10,000 req/min for v1, 100 req/min for EA)
 - ✅ **Automatic retries** with exponential backoff for 5xx and 429 errors
 - ✅ **Error handling** using `github.com/cockroachdb/errors`
 - ✅ **Context support** for all operations
@@ -69,16 +69,18 @@ client, err := sitemanager.New("your-api-key")
 ### Custom Configuration
 
 ```go
-// For advanced use cases (custom timeouts, EA endpoints, etc.)
-client, err := sitemanager.NewWithConfig(sitemanager.ClientConfig{
+// For advanced use cases (custom timeouts, rate limits, etc.)
+client, err := sitemanager.NewWithConfig(&sitemanager.ClientConfig{
     // Required: Your API key from sitemanager.ui.com
     APIKey: "your-api-key",
 
     // Optional: Custom base URL (defaults to https://api.ui.com)
     BaseURL: "https://api.ui.com",
 
-    // Optional: Rate limit per minute (defaults to 10000 for v1)
-    RateLimitPerMinute: sitemanager.V1RateLimit,  // or EARateLimit for EA endpoints
+    // Optional: Rate limits (defaults: v1=10000, EA=100 requests/minute)
+    // The client automatically selects the appropriate limiter based on endpoint
+    V1RateLimitPerMinute: 5000,  // Custom v1 rate limit
+    EARateLimitPerMinute: 50,    // Custom EA rate limit
 
     // Optional: Maximum number of retries (defaults to 3)
     MaxRetries: 3,
@@ -175,11 +177,16 @@ if err != nil {
 
 ## Rate Limiting
 
-The client automatically handles rate limiting:
+The client automatically manages separate rate limiters for different endpoint types:
 
-- **Client-side rate limiter** prevents exceeding API limits
+- **v1 endpoints**: 10,000 requests/minute (automatic)
+- **Early Access endpoints** (/api/ea/*): 100 requests/minute (automatic)
+- **Automatic rate limiter selection** based on request URL
+- **Client-side rate limiting** prevents exceeding API limits
 - **Automatic retries** for 429 (Too Many Requests) responses
 - **Respects Retry-After header** from server
+
+No manual configuration needed - the client handles rate limiting transparently.
 
 ## Retry Logic
 

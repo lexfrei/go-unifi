@@ -103,6 +103,9 @@ linters:
           - gocyclo
         source: "func \\(c \\*rateLimitedHTTPClient\\) Do"
       - linters:
+          - funlen
+        text: "NewWithConfig"
+      - linters:
           - forbidigo
           - gocyclo
           - cyclop

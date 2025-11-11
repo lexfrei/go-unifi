@@ -5,6 +5,7 @@ package sitemanager
 import (
 	"context"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/cockroachdb/errors"
@@ -32,12 +33,14 @@ const (
 )
 
 // UnifiClient wraps the generated API client with rate limiting and retry logic.
+// It uses separate rate limiters for v1 and Early Access endpoints.
 type UnifiClient struct {
-	client      *ClientWithResponses
-	httpClient  *http.Client
-	rateLimiter *rate.Limiter
-	maxRetries  int
-	retryWait   time.Duration
+	client        *ClientWithResponses
+	httpClient    *http.Client
+	v1RateLimiter *rate.Limiter
+	eaRateLimiter *rate.Limiter
+	maxRetries    int
+	retryWait     time.Duration
 }
 
 // ClientConfig holds configuration for the Unifi API client.
@@ -51,8 +54,11 @@ type ClientConfig struct {
 	// HTTPClient is the HTTP client to use (optional)
 	HTTPClient *http.Client
 
-	// RateLimitPerMinute sets the rate limit (defaults to 10000 for v1)
-	RateLimitPerMinute int
+	// V1RateLimitPerMinute sets the rate limit for v1 endpoints (defaults to 10000)
+	V1RateLimitPerMinute int
+
+	// EARateLimitPerMinute sets the rate limit for Early Access endpoints (defaults to 100)
+	EARateLimitPerMinute int
 
 	// MaxRetries sets maximum number of retries for failed requests
 	MaxRetries int
@@ -67,8 +73,11 @@ type ClientConfig struct {
 // New creates a new Unifi API client with default settings.
 // This is the recommended way to create a client for most use cases.
 //
-// Default settings:
-//   - Rate limit: 10,000 requests/minute (v1 endpoints)
+// The client automatically handles rate limiting for both v1 and Early Access endpoints:
+//   - v1 endpoints: 10,000 requests/minute
+//   - Early Access endpoints: 100 requests/minute
+//
+// Other default settings:
 //   - Base URL: https://api.ui.com
 //   - Max retries: 3
 //   - Retry wait time: 1 second
@@ -80,7 +89,7 @@ type ClientConfig struct {
 //
 //	client, err := sitemanager.New("your-api-key")
 func New(apiKey string) (*UnifiClient, error) {
-	return NewWithConfig(ClientConfig{
+	return NewWithConfig(&ClientConfig{
 		APIKey: apiKey,
 	})
 }
@@ -88,15 +97,20 @@ func New(apiKey string) (*UnifiClient, error) {
 // NewWithConfig creates a new Unifi API client with custom configuration.
 // Use this when you need to customize rate limits, timeouts, or other settings.
 //
-// For Early Access endpoints, set RateLimitPerMinute to EARateLimit (100 req/min).
+// The client uses separate rate limiters for v1 and Early Access endpoints,
+// automatically selecting the appropriate limiter based on the request URL.
 //
 // Example:
 //
-//	client, err := sitemanager.NewWithConfig(sitemanager.ClientConfig{
-//	    APIKey:             "your-api-key",
-//	    RateLimitPerMinute: sitemanager.EARateLimit,
+//	client, err := sitemanager.NewWithConfig(&sitemanager.ClientConfig{
+//	    APIKey:               "your-api-key",
+//	    V1RateLimitPerMinute: 5000,  // Custom v1 rate limit
+//	    EARateLimitPerMinute: 50,    // Custom EA rate limit
 //	})
-func NewWithConfig(cfg ClientConfig) (*UnifiClient, error) {
+func NewWithConfig(cfg *ClientConfig) (*UnifiClient, error) {
+	if cfg == nil {
+		return nil, errors.New("config is required")
+	}
 	if cfg.APIKey == "" {
 		return nil, errors.New("API key is required")
 	}
@@ -105,8 +119,11 @@ func NewWithConfig(cfg ClientConfig) (*UnifiClient, error) {
 	if cfg.BaseURL == "" {
 		cfg.BaseURL = DefaultBaseURL
 	}
-	if cfg.RateLimitPerMinute == 0 {
-		cfg.RateLimitPerMinute = V1RateLimit
+	if cfg.V1RateLimitPerMinute == 0 {
+		cfg.V1RateLimitPerMinute = V1RateLimit
+	}
+	if cfg.EARateLimitPerMinute == 0 {
+		cfg.EARateLimitPerMinute = EARateLimit
 	}
 	if cfg.MaxRetries == 0 {
 		cfg.MaxRetries = DefaultMaxRetries
@@ -126,12 +143,17 @@ func NewWithConfig(cfg ClientConfig) (*UnifiClient, error) {
 		}
 	}
 
-	// Wrap HTTP client with rate limiter and retry logic
+	// Create separate rate limiters for v1 and EA endpoints
+	v1RateLimiter := ratelimit.NewRateLimiter(cfg.V1RateLimitPerMinute)
+	eaRateLimiter := ratelimit.NewRateLimiter(cfg.EARateLimitPerMinute)
+
+	// Wrap HTTP client with rate limiters and retry logic
 	rateLimitedClient := &rateLimitedHTTPClient{
-		client:      httpClient,
-		rateLimiter: ratelimit.NewRateLimiter(cfg.RateLimitPerMinute),
-		maxRetries:  cfg.MaxRetries,
-		retryWait:   cfg.RetryWaitTime,
+		client:        httpClient,
+		v1RateLimiter: v1RateLimiter,
+		eaRateLimiter: eaRateLimiter,
+		maxRetries:    cfg.MaxRetries,
+		retryWait:     cfg.RetryWaitTime,
 	}
 
 	// Create request editor to add API key header
@@ -153,11 +175,12 @@ func NewWithConfig(cfg ClientConfig) (*UnifiClient, error) {
 	}
 
 	return &UnifiClient{
-		client:      generatedClient,
-		httpClient:  httpClient,
-		rateLimiter: rateLimitedClient.rateLimiter,
-		maxRetries:  cfg.MaxRetries,
-		retryWait:   cfg.RetryWaitTime,
+		client:        generatedClient,
+		httpClient:    httpClient,
+		v1RateLimiter: v1RateLimiter,
+		eaRateLimiter: eaRateLimiter,
+		maxRetries:    cfg.MaxRetries,
+		retryWait:     cfg.RetryWaitTime,
 	}, nil
 }
 
@@ -165,16 +188,24 @@ func NewWithConfig(cfg ClientConfig) (*UnifiClient, error) {
 //
 // Deprecated: Use New for simple use cases or NewWithConfig for custom configuration.
 // This function is kept for backward compatibility.
-func NewUnifiClient(cfg ClientConfig) (*UnifiClient, error) {
+func NewUnifiClient(cfg *ClientConfig) (*UnifiClient, error) {
 	return NewWithConfig(cfg)
 }
 
 // rateLimitedHTTPClient wraps http.Client with rate limiting and retry logic.
+// It uses separate rate limiters for v1 and Early Access endpoints.
 type rateLimitedHTTPClient struct {
-	client      *http.Client
-	rateLimiter *rate.Limiter
-	maxRetries  int
-	retryWait   time.Duration
+	client        *http.Client
+	v1RateLimiter *rate.Limiter
+	eaRateLimiter *rate.Limiter
+	maxRetries    int
+	retryWait     time.Duration
+}
+
+// isEAEndpoint checks if the request URL is an Early Access endpoint.
+func (c *rateLimitedHTTPClient) isEAEndpoint(req *http.Request) bool {
+	path := req.URL.Path
+	return strings.HasPrefix(path, "/api/ea/")
 }
 
 // Do executes HTTP request with rate limiting and retry logic.
@@ -184,8 +215,14 @@ func (c *rateLimitedHTTPClient) Do(req *http.Request) (*http.Response, error) {
 	var resp *http.Response
 	var err error
 
+	// Select appropriate rate limiter based on endpoint
+	rateLimiter := c.v1RateLimiter
+	if c.isEAEndpoint(req) {
+		rateLimiter = c.eaRateLimiter
+	}
+
 	// Apply rate limiting
-	err = c.rateLimiter.Wait(ctx)
+	err = rateLimiter.Wait(ctx)
 	if err != nil {
 		return nil, errors.Wrap(err, "rate limiter wait failed")
 	}

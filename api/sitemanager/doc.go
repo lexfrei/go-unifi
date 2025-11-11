@@ -5,9 +5,11 @@
 //
 // # Rate Limiting
 //
-// The client implements token bucket rate limiting:
-//   - v1 endpoints: 10,000 requests per minute (V1RateLimit constant)
-//   - Early Access endpoints: 100 requests per minute (EARateLimit constant)
+// The client automatically manages separate rate limiters for different endpoint types:
+//   - v1 endpoints: 10,000 requests per minute
+//   - Early Access endpoints (paths starting with /api/ea/): 100 requests per minute
+//
+// Rate limiter selection is automatic based on request URL - no manual configuration needed.
 //
 // # Retry Logic
 //
@@ -34,10 +36,11 @@
 //
 // # Custom Configuration
 //
-// For Early Access endpoints or custom settings:
+// For custom rate limits or other settings:
 //
-//	client, err := sitemanager.NewWithConfig(sitemanager.ClientConfig{
-//	    APIKey:             "your-api-key",
-//	    RateLimitPerMinute: sitemanager.EARateLimit,  // 100 req/min for EA
+//	client, err := sitemanager.NewWithConfig(&sitemanager.ClientConfig{
+//	    APIKey:               "your-api-key",
+//	    V1RateLimitPerMinute: 5000,  // Custom v1 rate limit
+//	    EARateLimitPerMinute: 50,    // Custom EA rate limit
 //	})
 package sitemanager

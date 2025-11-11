@@ -19,10 +19,11 @@ func ExampleNew() {
 }
 
 func ExampleNewWithConfig() {
-	// For custom configuration (e.g., Early Access endpoints with 100 req/min limit)
-	client, err := sitemanager.NewWithConfig(sitemanager.ClientConfig{
-		APIKey:             os.Getenv("UNIFI_API_KEY"),
-		RateLimitPerMinute: sitemanager.EARateLimit,
+	// For custom configuration (e.g., custom rate limits)
+	client, err := sitemanager.NewWithConfig(&sitemanager.ClientConfig{
+		APIKey:               os.Getenv("UNIFI_API_KEY"),
+		V1RateLimitPerMinute: 5000, // Custom v1 limit
+		EARateLimitPerMinute: 50,   // Custom EA limit
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -79,11 +80,8 @@ func ExampleUnifiClient_ListDevices() {
 }
 
 func ExampleUnifiClient_GetISPMetrics() {
-	// Early Access endpoint requires lower rate limit
-	client, _ := sitemanager.NewWithConfig(sitemanager.ClientConfig{
-		APIKey:             os.Getenv("UNIFI_API_KEY"),
-		RateLimitPerMinute: sitemanager.EARateLimit,
-	})
+	// Early Access endpoint - client automatically uses EA rate limiter
+	client, _ := sitemanager.New(os.Getenv("UNIFI_API_KEY"))
 
 	ctx := context.Background()
 	duration := sitemanager.GetISPMetricsParamsDuration("24h")
@@ -98,11 +96,8 @@ func ExampleUnifiClient_GetISPMetrics() {
 }
 
 func ExampleUnifiClient_ListSDWANConfigs() {
-	// Early Access endpoint requires lower rate limit
-	client, _ := sitemanager.NewWithConfig(sitemanager.ClientConfig{
-		APIKey:             os.Getenv("UNIFI_API_KEY"),
-		RateLimitPerMinute: sitemanager.EARateLimit,
-	})
+	// Early Access endpoint - client automatically uses EA rate limiter
+	client, _ := sitemanager.New(os.Getenv("UNIFI_API_KEY"))
 
 	ctx := context.Background()
 	_, err := client.ListSDWANConfigs(ctx)

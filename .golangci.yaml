@@ -96,6 +96,7 @@ linters:
           - gocognit
           - gocyclo
           - cyclop
+          - errcheck
         path: _test\.go
       - linters:
           - cyclop

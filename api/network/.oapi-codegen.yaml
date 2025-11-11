@@ -1,0 +1,8 @@
+package: network
+generate:
+  client: true
+  models: true
+  embedded-spec: true
+output: generated.go
+output-options:
+  skip-prune: true

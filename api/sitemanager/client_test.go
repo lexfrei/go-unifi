@@ -9,9 +9,9 @@ import (
 	"time"
 )
 
-// Mock responses based on actual UniFi API responses
+// Mock responses based on actual UniFi API responses.
 const (
-	// Original examples from user (ucore)
+	// Original examples from user (ucore).
 	listHostsSuccess = `{
   "data": [
     {
@@ -58,7 +58,7 @@ const (
   "nextToken": "ba8e384e-3308-4236-b344-7357657351ca"
 }`
 
-	// Example from test-reality (console type)
+	// Example from test-reality (console type).
 	listHostsSuccessConsole = `{
   "data": [
     {

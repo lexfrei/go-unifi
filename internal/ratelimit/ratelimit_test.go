@@ -4,14 +4,16 @@ import (
 	"context"
 	"testing"
 	"time"
+
+	"github.com/cockroachdb/errors"
 )
 
 func TestNewRateLimiter(t *testing.T) {
 	tests := []struct {
-		name               string
-		requestsPerMinute  int
-		wantRate           float64
-		wantBurst          int
+		name              string
+		requestsPerMinute int
+		wantRate          float64
+		wantBurst         int
 	}{
 		{
 			name:              "1000 requests per minute",
@@ -122,7 +124,7 @@ func TestRateLimiterContextCancellation(t *testing.T) {
 	// Next request should fail with context cancellation
 	if err := limiter.Wait(ctx); err == nil {
 		t.Error("Expected error from cancelled context, got nil")
-	} else if err != context.Canceled {
+	} else if !errors.Is(err, context.Canceled) {
 		t.Errorf("Expected context.Canceled error, got %v", err)
 	}
 }

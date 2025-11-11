@@ -923,6 +923,9 @@ type GetAggregatedDashboardParams struct {
 // CreateHotspotVouchersJSONRequestBody defines body for CreateHotspotVouchers for application/json ContentType.
 type CreateHotspotVouchersJSONRequestBody = CreateVouchersRequest
 
+// CreateFirewallPolicyJSONRequestBody defines body for CreateFirewallPolicy for application/json ContentType.
+type CreateFirewallPolicyJSONRequestBody = FirewallPolicyInput
+
 // UpdateFirewallPolicyJSONRequestBody defines body for UpdateFirewallPolicy for application/json ContentType.
 type UpdateFirewallPolicyJSONRequestBody = FirewallPolicyInput
 
@@ -931,6 +934,9 @@ type CreateDNSRecordJSONRequestBody = DNSRecordInput
 
 // UpdateDNSRecordJSONRequestBody defines body for UpdateDNSRecord for application/json ContentType.
 type UpdateDNSRecordJSONRequestBody = DNSRecordInput
+
+// CreateTrafficRuleJSONRequestBody defines body for CreateTrafficRule for application/json ContentType.
+type CreateTrafficRuleJSONRequestBody = TrafficRuleInput
 
 // UpdateTrafficRuleJSONRequestBody defines body for UpdateTrafficRule for application/json ContentType.
 type UpdateTrafficRuleJSONRequestBody = TrafficRuleInput
@@ -1043,6 +1049,14 @@ type ClientInterface interface {
 	// ListFirewallPolicies request
 	ListFirewallPolicies(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// CreateFirewallPolicyWithBody request with any body
+	CreateFirewallPolicyWithBody(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateFirewallPolicy(ctx context.Context, site Site, body CreateFirewallPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteFirewallPolicy request
+	DeleteFirewallPolicy(ctx context.Context, site Site, policyId PolicyId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// UpdateFirewallPolicyWithBody request with any body
 	UpdateFirewallPolicyWithBody(ctx context.Context, site Site, policyId PolicyId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -1069,6 +1083,14 @@ type ClientInterface interface {
 
 	// ListTrafficRules request
 	ListTrafficRules(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateTrafficRuleWithBody request with any body
+	CreateTrafficRuleWithBody(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateTrafficRule(ctx context.Context, site Site, body CreateTrafficRuleJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteTrafficRule request
+	DeleteTrafficRule(ctx context.Context, site Site, ruleId RuleId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// UpdateTrafficRuleWithBody request with any body
 	UpdateTrafficRuleWithBody(ctx context.Context, site Site, ruleId RuleId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1220,6 +1242,42 @@ func (c *Client) ListFirewallPolicies(ctx context.Context, site Site, reqEditors
 	return c.Client.Do(req)
 }
 
+func (c *Client) CreateFirewallPolicyWithBody(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateFirewallPolicyRequestWithBody(c.Server, site, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateFirewallPolicy(ctx context.Context, site Site, body CreateFirewallPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateFirewallPolicyRequest(c.Server, site, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteFirewallPolicy(ctx context.Context, site Site, policyId PolicyId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteFirewallPolicyRequest(c.Server, site, policyId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) UpdateFirewallPolicyWithBody(ctx context.Context, site Site, policyId PolicyId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateFirewallPolicyRequestWithBody(c.Server, site, policyId, contentType, body)
 	if err != nil {
@@ -1330,6 +1388,42 @@ func (c *Client) UpdateDNSRecord(ctx context.Context, site Site, recordId Record
 
 func (c *Client) ListTrafficRules(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListTrafficRulesRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateTrafficRuleWithBody(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateTrafficRuleRequestWithBody(c.Server, site, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateTrafficRule(ctx context.Context, site Site, body CreateTrafficRuleJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateTrafficRuleRequest(c.Server, site, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteTrafficRule(ctx context.Context, site Site, ruleId RuleId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteTrafficRuleRequest(c.Server, site, ruleId)
 	if err != nil {
 		return nil, err
 	}
@@ -1946,6 +2040,94 @@ func NewListFirewallPoliciesRequest(server string, site Site) (*http.Request, er
 	return req, nil
 }
 
+// NewCreateFirewallPolicyRequest calls the generic CreateFirewallPolicy builder with application/json body
+func NewCreateFirewallPolicyRequest(server string, site Site, body CreateFirewallPolicyJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateFirewallPolicyRequestWithBody(server, site, "application/json", bodyReader)
+}
+
+// NewCreateFirewallPolicyRequestWithBody generates requests for CreateFirewallPolicy with any type of body
+func NewCreateFirewallPolicyRequestWithBody(server string, site Site, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/firewall-policies", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteFirewallPolicyRequest generates requests for DeleteFirewallPolicy
+func NewDeleteFirewallPolicyRequest(server string, site Site, policyId PolicyId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "policyId", runtime.ParamLocationPath, policyId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/firewall-policies/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewUpdateFirewallPolicyRequest calls the generic UpdateFirewallPolicy builder with application/json body
 func NewUpdateFirewallPolicyRequest(server string, site Site, policyId PolicyId, body UpdateFirewallPolicyJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -2251,6 +2433,94 @@ func NewListTrafficRulesRequest(server string, site Site) (*http.Request, error)
 	return req, nil
 }
 
+// NewCreateTrafficRuleRequest calls the generic CreateTrafficRule builder with application/json body
+func NewCreateTrafficRuleRequest(server string, site Site, body CreateTrafficRuleJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateTrafficRuleRequestWithBody(server, site, "application/json", bodyReader)
+}
+
+// NewCreateTrafficRuleRequestWithBody generates requests for CreateTrafficRule with any type of body
+func NewCreateTrafficRuleRequestWithBody(server string, site Site, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/trafficrules", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteTrafficRuleRequest generates requests for DeleteTrafficRule
+func NewDeleteTrafficRuleRequest(server string, site Site, ruleId RuleId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "ruleId", runtime.ParamLocationPath, ruleId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/trafficrules/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewUpdateTrafficRuleRequest calls the generic UpdateTrafficRule builder with application/json body
 func NewUpdateTrafficRuleRequest(server string, site Site, ruleId RuleId, body UpdateTrafficRuleJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -2383,6 +2653,14 @@ type ClientWithResponsesInterface interface {
 	// ListFirewallPoliciesWithResponse request
 	ListFirewallPoliciesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListFirewallPoliciesResponse, error)
 
+	// CreateFirewallPolicyWithBodyWithResponse request with any body
+	CreateFirewallPolicyWithBodyWithResponse(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateFirewallPolicyResponse, error)
+
+	CreateFirewallPolicyWithResponse(ctx context.Context, site Site, body CreateFirewallPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateFirewallPolicyResponse, error)
+
+	// DeleteFirewallPolicyWithResponse request
+	DeleteFirewallPolicyWithResponse(ctx context.Context, site Site, policyId PolicyId, reqEditors ...RequestEditorFn) (*DeleteFirewallPolicyResponse, error)
+
 	// UpdateFirewallPolicyWithBodyWithResponse request with any body
 	UpdateFirewallPolicyWithBodyWithResponse(ctx context.Context, site Site, policyId PolicyId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateFirewallPolicyResponse, error)
 
@@ -2409,6 +2687,14 @@ type ClientWithResponsesInterface interface {
 
 	// ListTrafficRulesWithResponse request
 	ListTrafficRulesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListTrafficRulesResponse, error)
+
+	// CreateTrafficRuleWithBodyWithResponse request with any body
+	CreateTrafficRuleWithBodyWithResponse(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTrafficRuleResponse, error)
+
+	CreateTrafficRuleWithResponse(ctx context.Context, site Site, body CreateTrafficRuleJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTrafficRuleResponse, error)
+
+	// DeleteTrafficRuleWithResponse request
+	DeleteTrafficRuleWithResponse(ctx context.Context, site Site, ruleId RuleId, reqEditors ...RequestEditorFn) (*DeleteTrafficRuleResponse, error)
 
 	// UpdateTrafficRuleWithBodyWithResponse request with any body
 	UpdateTrafficRuleWithBodyWithResponse(ctx context.Context, site Site, ruleId RuleId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateTrafficRuleResponse, error)
@@ -2680,6 +2966,55 @@ func (r ListFirewallPoliciesResponse) StatusCode() int {
 	return 0
 }
 
+type CreateFirewallPolicyResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *FirewallPolicy
+	JSON400      *BadRequest
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateFirewallPolicyResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateFirewallPolicyResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteFirewallPolicyResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON400      *ErrorResponse
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteFirewallPolicyResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteFirewallPolicyResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type UpdateFirewallPolicyResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -2849,6 +3184,54 @@ func (r ListTrafficRulesResponse) StatusCode() int {
 	return 0
 }
 
+type CreateTrafficRuleResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TrafficRule
+	JSON400      *BadRequest
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateTrafficRuleResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateTrafficRuleResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteTrafficRuleResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteTrafficRuleResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteTrafficRuleResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type UpdateTrafficRuleResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -2981,6 +3364,32 @@ func (c *ClientWithResponses) ListFirewallPoliciesWithResponse(ctx context.Conte
 	return ParseListFirewallPoliciesResponse(rsp)
 }
 
+// CreateFirewallPolicyWithBodyWithResponse request with arbitrary body returning *CreateFirewallPolicyResponse
+func (c *ClientWithResponses) CreateFirewallPolicyWithBodyWithResponse(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateFirewallPolicyResponse, error) {
+	rsp, err := c.CreateFirewallPolicyWithBody(ctx, site, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateFirewallPolicyResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateFirewallPolicyWithResponse(ctx context.Context, site Site, body CreateFirewallPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateFirewallPolicyResponse, error) {
+	rsp, err := c.CreateFirewallPolicy(ctx, site, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateFirewallPolicyResponse(rsp)
+}
+
+// DeleteFirewallPolicyWithResponse request returning *DeleteFirewallPolicyResponse
+func (c *ClientWithResponses) DeleteFirewallPolicyWithResponse(ctx context.Context, site Site, policyId PolicyId, reqEditors ...RequestEditorFn) (*DeleteFirewallPolicyResponse, error) {
+	rsp, err := c.DeleteFirewallPolicy(ctx, site, policyId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteFirewallPolicyResponse(rsp)
+}
+
 // UpdateFirewallPolicyWithBodyWithResponse request with arbitrary body returning *UpdateFirewallPolicyResponse
 func (c *ClientWithResponses) UpdateFirewallPolicyWithBodyWithResponse(ctx context.Context, site Site, policyId PolicyId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateFirewallPolicyResponse, error) {
 	rsp, err := c.UpdateFirewallPolicyWithBody(ctx, site, policyId, contentType, body, reqEditors...)
@@ -3066,6 +3475,32 @@ func (c *ClientWithResponses) ListTrafficRulesWithResponse(ctx context.Context, 
 		return nil, err
 	}
 	return ParseListTrafficRulesResponse(rsp)
+}
+
+// CreateTrafficRuleWithBodyWithResponse request with arbitrary body returning *CreateTrafficRuleResponse
+func (c *ClientWithResponses) CreateTrafficRuleWithBodyWithResponse(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTrafficRuleResponse, error) {
+	rsp, err := c.CreateTrafficRuleWithBody(ctx, site, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateTrafficRuleResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateTrafficRuleWithResponse(ctx context.Context, site Site, body CreateTrafficRuleJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTrafficRuleResponse, error) {
+	rsp, err := c.CreateTrafficRule(ctx, site, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateTrafficRuleResponse(rsp)
+}
+
+// DeleteTrafficRuleWithResponse request returning *DeleteTrafficRuleResponse
+func (c *ClientWithResponses) DeleteTrafficRuleWithResponse(ctx context.Context, site Site, ruleId RuleId, reqEditors ...RequestEditorFn) (*DeleteTrafficRuleResponse, error) {
+	rsp, err := c.DeleteTrafficRule(ctx, site, ruleId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteTrafficRuleResponse(rsp)
 }
 
 // UpdateTrafficRuleWithBodyWithResponse request with arbitrary body returning *UpdateTrafficRuleResponse
@@ -3525,6 +3960,93 @@ func ParseListFirewallPoliciesResponse(rsp *http.Response) (*ListFirewallPolicie
 	return response, nil
 }
 
+// ParseCreateFirewallPolicyResponse parses an HTTP response from a CreateFirewallPolicyWithResponse call
+func ParseCreateFirewallPolicyResponse(rsp *http.Response) (*CreateFirewallPolicyResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateFirewallPolicyResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest FirewallPolicy
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteFirewallPolicyResponse parses an HTTP response from a DeleteFirewallPolicyWithResponse call
+func ParseDeleteFirewallPolicyResponse(rsp *http.Response) (*DeleteFirewallPolicyResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteFirewallPolicyResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseUpdateFirewallPolicyResponse parses an HTTP response from a UpdateFirewallPolicyWithResponse call
 func ParseUpdateFirewallPolicyResponse(rsp *http.Response) (*UpdateFirewallPolicyResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -3812,6 +4334,86 @@ func ParseListTrafficRulesResponse(rsp *http.Response) (*ListTrafficRulesRespons
 	return response, nil
 }
 
+// ParseCreateTrafficRuleResponse parses an HTTP response from a CreateTrafficRuleWithResponse call
+func ParseCreateTrafficRuleResponse(rsp *http.Response) (*CreateTrafficRuleResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateTrafficRuleResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TrafficRule
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteTrafficRuleResponse parses an HTTP response from a DeleteTrafficRuleWithResponse call
+func ParseDeleteTrafficRuleResponse(rsp *http.Response) (*DeleteTrafficRuleResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteTrafficRuleResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseUpdateTrafficRuleResponse parses an HTTP response from a UpdateTrafficRuleWithResponse call
 func ParseUpdateTrafficRuleResponse(rsp *http.Response) (*UpdateTrafficRuleResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -3862,132 +4464,134 @@ func ParseUpdateTrafficRuleResponse(rsp *http.Response) (*UpdateTrafficRuleRespo
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"H4sIAAAAAAAC/+x9e1MbOfboV1H13qpLUm27jc3LVVt1HSCJd4jhYpPM7pACuVu2tWlLPZIa4qX47r/S",
-	"o99qPyCE/Gp2/pgArcfR0TlH56WjB8eni4gSRAR3eg9OBBlcIIGY+u04xIiIQSB/DhD3GY4EpsTpOeM5",
-	"AjHBf8YI4AARgacYMUCnQMwR8FU3sHN1NTgBU8oWULxxXAd9h4soRE7PmR7tQQ9Nuo0gmB41OtNuu3HU",
-	"3fUb7YOjDvQ7XtD1jxzXwXKmCIq54zoELmRPP4HIdRj6M8YMBU5PsBi5DvfnaAElqHpKp+fEMZYtxTKS",
-	"fblgmMycx0fXOUF32EdbLyxQ3VYs7KDtT3b3urAx8fYPG52j6VHjqN05bHjTyfRwitptH/r2hQUJRM9b",
-	"2BleYFFd1Sf4HS/iBSDxYqKXgwVacCAoYEjEjIAIMRDBGcovZ3fPgPpnjNgygzVUk+QBC9AUxqHQXRZ6",
-	"MqfX9jzXWWBifkvhxUSgGWIK4PPplCMLxMMqpPwbjsAETSlDgAvIBCaz3AoY4nEoONiZUrUUTKAcq7BB",
-	"nn1BVANhXVF+CZ51CRc0xP5ya2KaYobuYRiCSPUv0NH+Iewe7R94h2jf63YOjiZovzM9bHfq/r7b7h50",
-	"Dzv73QM7dUUJiKuoq0pNl8inLNh6ZSfDEWCqa2lRyOuio6O2t7fvB919BI9Q4AddO8gsmXtLkONwe74W",
-	"DE6n2AcsDgsM4Ox5B9P29OBg4k8P9/3g4Oio2zny2u0akPXc2wE8wgLZweVYICAJjREYAoamiCHiS9qX",
-	"ncGORHP/YgDudt80r8l4jjnAXK3nNul1mXS6BVOMwgBMGV2oJmpwOvk38kXzmrx9O1hElAlIxNu3PZCM",
-	"HFDEwfB8DKDvo0gAKfc4aICYWwGjJFw2r8kxXSwoAXcwjFEP3BpOur0mVxyB2w+nY9BS7MMUf7bu2i0J",
-	"DL+VvDxDom7dvHlNCpuTsKh1L+QgT9iJrUnHAAtyRwLYGWTL0zvUru5QsGZLtkGW2pcyeg4Ppwdwutdt",
-	"HB1ODxsdbx82YNs/aPhHne7Rwe7upD3dr8fdM0+iR9mZR5RwpDSJdzC4RH/GiCtR71MiEFE/wigKsa8X",
-	"928u8f2QreHBWSDO5anUcwbkDoY4AEwP0wM+jYkAi5gLMEFggsQ9QgS0ASQBaHueZ+BHXFzI1fUcKyJb",
-	"m6CpNaeCR1S07mjsz6Vy5DpcQBHzYxogp9eVB53+w1Cj8F3/5Oby9P9fnY7GEjt4gbiAi8jpObve7l6j",
-	"3W602+P2fs/zep73L+cxj9v/w9DU6Tl/a2WqWUt/5a1Txii7NJjVeC4S6zsYAINp0AAJ0igDCxjKTUMp",
-	"BkEABZQzD6l4T2MSPHVnhhQgEkQUEwFqCbaFNSgNHGy4MYUORWx3S9geno9v3p9fDU9+Lq6HVACFOdAA",
-	"l4jTmEkhyDJsKPlJqADoO+ZCznxFYCzmlOH/oOC5nCAlyze03AydFRy2Szi8Gvavxh/PLwf/Ov3JaMzj",
-	"pESzmHN51CUrfUwnVUKlP5sxNIMCBSeQzycUMov0zhqBIGkl1UeBucA+V+ICEhgu5W+O60SMRogJrOVW",
-	"2uVmgQS0KNZIQMlHAE5oLLSRkM5yh9F9ZUREgpsccssDnpJAHS14gQCDZCatDYK/g7QLWPCCSts+2N89",
-	"PGx3D7yDPYuK7TohXNLYomGnOAO6BVBd8yeIxNo9XFbFuyIdJlatYyQbbL+Sg6ODfU/+Z1vJPQ5mSNup",
-	"xcnOMFdzIQInIQpA0jA3+B+OUfJukjNcs5ojh53iG4H8OaEhncnlLigXN9AX+A7daIuTO19dR1kiFt0h",
-	"hRUyBjWVmj/o01y20PqMzdIZmC/Ap4QgOSkWSzBHMFRncpF69J9v5pgLypbVwT6qD9iHoRlBSXmgxJHE",
-	"R7qE0rB4Nr8JoUDEtwz6ZY7EHDFgGoB7yIHskRHGhNIQQSIXGkH/GxI3IeW8fiTdCMhGgPp+zKSSYRtt",
-	"BYWViGlHU5OFaiC5Ceg9kU3rIfrSH6p1yZYWSGxbun7T83QEIws+PlEugG6gdGzOs60q7pCgAoY3k6VA",
-	"lmHG8iNQHwH0mcSqNCz7FwUWODjc77a7B/sHu/s2PMXyeLmZLG+gBdkXiDX6F0C1yUnPPEXBIMCyNQwv",
-	"cpBrxfGZuEt4cCX+TKMidM9HYjJ3XlB5B16n0+l4q/Goe9pxaVxkPxGfSsr5c0gICm2cid9jYD4bsDDR",
-	"Wr6WkkVMMhhgumK4YzNSbgzlYlL9XnqVOVluX2fWAARYSvFJrCDcUV+7rb3Wfmv/9E1l1TxeLKBN7I6z",
-	"Ac2WmpYvtVLb2rW3tq/ESFXE6+YV7UgLHamGMhqmKgCJF/LIPDl93786kxbM5elofDk4Hivd8N3Z+fFv",
-	"pyfySMyUhaxt1bLO7Mg/9NevteDLo3wg0KK6AJgubJW2WUDCo+uYQxUFfQsnjtPT436OSOK3TruAncv3",
-	"x51O58jq69VasddoH43bXs876nXa/3LczDIOoEANdehY9CccWA+0ko9hSlnOof4UF/oaO911cNQPAoZs",
-	"h/XgAkD9DUDO8YygAAhaB1D7YLfZ3m+2vWb7yDbRAvq1M33qH6dTFWIIRYeG14PTng97MOh5e71D63q0",
-	"C6Oi62IehXAJ5FdpWMwpF/rn2tkkYxLIQe1MdoY6NkocJWVm+jK4VNwj/z07HY2K7JN8rUwTRyEm3+oD",
-	"FoOTUnRCzDFPSBnzHDUL+pRYxfqYQ4W7FXmbrShyYJ7eCiRRWaeb8Hu9qOCpUSmlQxieT53eH6ulw4UO",
-	"C6Ags0fdh4rJpw29VHCvFzep0NpAcn+V8DMEBfpsnEk5x1gRkpWKitLr/4ypgAAT8Okd2PHA30FMVHAG",
-	"BUXLytvtrg5jyG2Kyco4TOL7kjLAVwsoTlEM/KyJ/LiOUrSrjErvSUhhACaQBPc4EHOgFiTX+Nsk4mAn",
-	"RDPoL13lg/6T8hsGBbpZwO9Kxy+tugiGddlBrB0lVVA+wxAH0hSLEMM0kBAsMImlerhjXM/g76Dd7Xou",
-	"qEd993AtCITaIgDnkVYWgPysTgKljSrEByDniMw4+piSxBU/Ux4+qc7YZIrEG71D7J5Zgw+JTSQogFEU",
-	"LoEfc0EX5T0pTF7QY3IGXGWL6oOTQbL3PEIoyHZ8FV1vsMMFCOKofv442m72vU0mlwy6YkqOuNKLzX4W",
-	"KGsVWbXXTWxb6FX0RNaKoy0XXjoVtGyxSfKT4UgHGavS72Y7HWn7oGOFLYz7aAVDFOaRp2vSZQNO+IYs",
-	"hkNuNKWP7GSaCQMBXUBclGnO2+acLlAzRN+bIbQtIqLMZnNSJpLov8TY6PKzmZeX4uNVUooYpgwLC/QX",
-	"5osa8tPvype6zci63Y1dk8qhpqRJ9R3X6ff78p/jYf/TqeM6n353XGc4clxndPnZcZ3x7+OiftW3qnAi",
-	"LMf6qwaCFIMhvlNRPo58SgIjFUy3N2uXqSKhKxeoWoCdTON2gYBshkSqqboACb/5xq5ye83dPc+2wHuE",
-	"Z3MLOXxRf9+SEkpMfaOUvIwBklBEtqXJylcy/oBEsUX3KfCi2R7NWRuxJp/TOAzABP18DoURbprfmj5d",
-	"/HAe7XY7L8al7f+y6Quw6ZFk08NmW3Lqj+XSvbVcuiVXKvOryo0+JVM8M6qyzQo9jhkzvpOsYe6YLiDE",
-	"323vTlC74+0d7iF01LHhZIqgiBla4Tl7qIJfhOm9HqLBI+TjKfZLwEk28GEEJzjEakQ3H27V1ucFxcoo",
-	"enQdfo+FP5fQ9R6s7rcpZot7yNBVJE2zSbhCsU6agli2RVKRgHcQh6pXDowpDLlVUiUDfEaMW42XZD/S",
-	"me5My/w+dJud5tHzvVPa7/ACvgUTNZtCH601xI3jIGu/sW+r4D0pevjaB82Dw2b7UPJv+wc4tSxzHHV7",
-	"u7C3P+35qLe739vbtU5DAxRaJJN2+Kivdbx2dXJ58FQ/WS3QZ+j7e4bw/+VAKqPWE47ROywJbiPHq/Fc",
-	"3UMOch03cb+2G15nvNvudds9r7u5+5ULaDN8E66RQgYa81s3zU618+HZYCjPsvP3781PVxcfLvsng+EH",
-	"x3UuLs8/D0aD86H8tXC0pR2r0MSR1AhWWx6YJ2jCkp6m2McwDJcg67xWwykdDXknnaawPCgl91zeb5eg",
-	"pCyFbDKwTApu5SzJyfoCw9efT4OCVCj5q5C4p+wbyAbKRCugpEjRxUNOLtwy4sV8yVVAXe0EQQLohu5m",
-	"HkKp1VX9gq6OoFkDcQyFUmaoBrl1bDrhpQqxbRQt0+isD7nkD2F7xkXSIiNDMFnmqbWYg5Edom7hhM0n",
-	"VySMVtfWdRiNhf57kqHy1V2Xk/HLHmolwbiMkDouyAo6LuI0oUZDUDZUlpqonIjNcPbfE/S1TtBf6Yja",
-	"4OBYf1hsKeR/hehOST5uGN0pJjxWhGqayFnJ3YoXkDQYgoE6rJAcBiSt89v0hITbCnkVUkZtGe9JlnAE",
-	"xRyIORTAhzFHgaJoBVsBpqfAkE9IrSBjPL4AugHwZYu8B8Tr2uz3fDrrquEM5ebwmU8frojE+gy0khab",
-	"IiZNadtMgy2k1W6mwZYYMofIAhpcJyOfbB3Fzbdx4HtzNUnfbHq2a/7FbjpVNgv69lhe30TkKRDwGzLb",
-	"ZS79LKDw54hrpSWDMHFinZ2df3Fc5+Ty/ELlwfzj9LjsszJNKtAEiAtzC21dAlD5WEo7avAwmRW9F45l",
-	"1zYKX+gFbhm6wCRA31c4FtX35LSrbnK2Zza2xdHNXZ0bY3CROC7k3ilU5PZmcPG567jyn33Hdd6djz8W",
-	"N0b9xbIvIZ3NtCOnPvAZ0lmGekMqG7lm7GrBMKcOrGKHfhjSe9APQzBO57QY1yhAU0zWGoyYAwiy1oAv",
-	"uUCLhAZ2fEgIVbdnFjSQLFuMMdZRQ8SooD4NbQShvxQ2K3OMh6H1FPDnKIiN121jFhmZXuvZQt/L2HJ0",
-	"fZdjU96zRkaMLMqHSBRtrBe4NSGRX0u4vaC0KQkE4/VP2PmnSwgzv+H4X01ifFqCY52ecZF8tHnjfhzH",
-	"loh9GzL/qK/RmcSnZ+sVJmli03j/WsPct2qi42wmpYlqZVgl2HCVKiFokrsvgTKGezECtNvp7jX2Dw6P",
-	"rPEfndRzY7+gULrmoLg7Aece8iQjqHiRxjva3+t2vR+Y8bQmw+lpWU2Ugdznlfv6IU1oUs38LNWJUboA",
-	"/WekOdVkNwHIkMp/wpuJrZ+R6fTTs5u2zmjKKkwoms3vJ/AhkcqGsiJ3VuY2WYw7LJBVPKQ35dURl0w1",
-	"QSElM17Oed3wTvRaSaFtrHrvjLE0jfjO0bM5lz73zwYnN+fK16J//nR1Nh44rnM1UmnAp79fqITgwmmV",
-	"71XNE+a2w3i4YjvmkIMJQkRtyFNyP4xdnhdf66X+r+DXKZ1DG/p1TGjhOL3Wsxn05RRhOVR1RZaQ+5p8",
-	"XF0XBRPgG6JLLtyv5aVwuyIxdaVhqgPTDYu58G84itbSnKvvax3bEaGzoMuwWn3k7bX0nBaASUrbaOwX",
-	"IHA1jdko/IKe2tJ57iVkd4iB0yRyVM1AMJLEXZX+ZDu0LuhpTq3WkS2l4jOxyWHFBSSB9b60HDj5Wgwu",
-	"Gtl16O02O3DquOYnkfw0EUVxlTXc1rltYCg4ta+khXJy/mUo/xmM+u/OyuJRtdjwmoacQX4xBLQdtaTI",
-	"c5005SnRfTXYdiJhwppZQ5AvKFsReEzblDOsLv/R3XNcZ/T+4uLsaqR/KuLEtLBkeHyvSUDTvhzDVzvt",
-	"xgTyTc7nBfw+kqrFp4n1nqsRLVmUMNVDVIeCZLHrHRFF60Otp4q46uFICIygGRUYrgSkXaMAraFdub4V",
-	"xLuWYiuxlu+5IEpGLSWM51dtIz4dFK5Sn76mueY6aJVHrBdfTfMvUof+9PE/9ZdCtZYtUf7xPxmSdj23",
-	"67mHntve9/JY2rXuwlT5sIm//GCb6VxHx8gMpO3kfB8K8zW77p67X5iq2c0pf9OQKuFmJjdYeHSd+xCS",
-	"Ua0AVahbK0HbbWjkZrs9SX+apT+R9CcVVDY/fs/6oKqwVX9dR1AF4Et4rO5h+hcrVY2wWJE9sJ0xbwo2",
-	"/XhdvVILq64EQ6GWlYrfKksFE3BFFDvoS7IhYuDq8ozX1KJ6Rpy4goKTulFtAdnqOld4YuTO/QqaeIGC",
-	"NtTDjWf80viMn+VCekrltydEnfQ1qh3UnDXdsqPBBZOQ+t+KsUF1xdo6VxTd+FCgGWXLGxysSM3J1RMC",
-	"SQ8wOOF5V9+mFU30vBtP9+RZUtTcpDbK5k77d0W8bhQzK4xQIRuOWEOlrwUoKHiqDMNWqEaV3wRcMAQX",
-	"cv50PdbwoLo8sAKlpsHTULmRfz5P/lt66RNX943OgLfNA4U2StToSSQCzuSaRO44PD4bnA7HjusMT8df",
-	"zi8l2Q+G49PL4amuPPBhcF7Sm3Kff3o4SS/3Ruf08LqUIg7gdKqvXSf5cIZYflA9iFU3ccpbYzsAckL0",
-	"yeEmJdWKYqs/PPkyOBl/vDkbfBqMa4Lir8Zxf02eKFHLNnQi+Qn5McNiKTlkoSmjH+Hf0LIf21KHTKk2",
-	"MENEquDI1LesaFA7IySkiObgOva8DgLHpgTJRQgJSv6YK6SpqjupYpVzBANljphylb83+heDxm+n/8yW",
-	"DhWEutgcJlOalNqDvtoUtIA4lBr+/0vvUZqx+iH6xhEGozvMcPANE8dSrk4uJckzlus1BKuS12cMLhZQ",
-	"YD+NCVGz+CSj00gON6ks5IKT4cjV11HywodfExYTIomaEhBSH4YVNPLmNSkWFj1T7fq5w7h/MXANMCp7",
-	"i9F4NldtK5sCBbhtRYx+X7YMtK1bNcPf/gbkdkv1SY96TfphmOSIcWDoC0CS1OoDEVTz3WGo5ko3Cejt",
-	"S4e9GACTP86vSQO8fVsunrpz137z9m2vAlkx4ewWNIBSal1wkiDYlInQwyY1bXfudq3D3e22YIRV3lrr",
-	"Qf7/saXqMvmNgHA1uvotd8mQmyWkpXN7CgIwSNVMfk1O8FSp40IXgjUrVXHDIP2ki8hm3XpyZBsu7tpv",
-	"3+pL47e6SOttsRh575oA0ACnWir0wO0mRtSt7rRFedoEvKwCcQGsW7BTW7a4CmJWH7gKxTZljHX/t29P",
-	"bEWL375VZYslMyl83WNFvqpw+LWyhkrFOq8dxVm6yO6Einl+f1zgwzBcWZ73fo79uZlB7uft7e2/ueSb",
-	"BwnntYODa6cHrjeycq8d13Qq40OPYTCYNpOyTH85Sb5ck0cFgyFZczVOsYZa/AISOEMLSYxSEIWYS+Es",
-	"P5sUaUzuEBHShJDfF5RgQZlpovlMHpz+N4lhVVKzUFhKttIRXFNJNw1CZRMrWMo8Vvr+vpgIUfo6zp/c",
-	"BVkqv14iGKp0yiQ6l69NVqgCqgoph9hHxjY2Z8O70Umj0zgOYaxiLDGTR8hciIj3Wi0aIaIzjZqUzVqm",
-	"N28VOql0UqFdf+VTxHGdNOvFaTe9pqciKhEiMMJOz+k0vWbHcVWpZnUK28u89h4cq+ZxiQTD6A6pjLDE",
-	"ilf7rIy3MDlb1Cgp8pLIAsqdEkpyn0J/rpmPoYghrirvQRDSmfJYzxiNI3VyTcvnnj7otGTWJavTVPZB",
-	"YIyfkalYm3+NosYzkTVpmacEHt21LfUrCY9fS0Wqdz1vg5q8m1W9LTpYLFVvR7HikGkcpoE7cI+V8ar3",
-	"RO/no+t0vXbdbCn4rUJhYdWpu75TWvlZKXpJcTttf0qSSCoHCziTO6C9Rs5X2dqe7/2gT6XHVq5i4xPJ",
-	"0VSwSqhmRy4gFkr4RnNK5Pk+oOPk+5trYsKg4RJQJqWH/jlf/kqfGPo2MArU6lZR4HFa+XE7OjR15Deg",
-	"w1+KYstFtZ5Cs8m2vxrVJkVAVb2kxKGakG+yoVsQcOsheXHmcQNaDpCAOFQ+49zRoipDQ5BdQ89Ttgsw",
-	"8cM4wGTWU2dpsX4c2LmXdlvr3twKfCPbJKeGuRsluWNw4YJP/WP1+UpVUktvi2agyI+lgo/cWGHlqZN8",
-	"M27hjw9IaEy+0y+KvBR3pK8PvSjZF7M6tiH6dB/lpr8OzX9AogzG08g95856orwuH/M7jBpxrS9ySoFd",
-	"KHH85ppAzqmvw7AKo9vJZ2Pn/VXkc/la3FPkc7LNryafE+qwyudkQ7cg2NZD8nDWj5PPRUouC+iPkAWq",
-	"okbSXjtrjFkUoNDYKYWyG+qrKfahrY+8HM/d8d1RV3VdfflbS/vz8k3PNG9I14w2ojuXV2REgV10ayS/",
-	"sOhOy3j+BI7YihHMofjaMrsExtNYoPIozdOFd2KV67KRaaXPNDZflsnX5GPRjueJExQItIgog2yZ8lHm",
-	"CDVJ83InJM9pr6GK0zGkvCswrLUJS1mkfxWpX5c8+xTpnxLKq4n/kvcnT/lmoc5XlevFLWSsq+ZyQIm6",
-	"ObCgDK0k3BpCVOSb4DPJSdd3ANQLNFpOGFlaidZz7anXVd4Z4oJhpTJb6VZD/KMo92t6cfcdDZY/zu6z",
-	"FiN+LIaNBIvR4y9O5pXauIpivfUUm3uc7DU4Q2/AZryx/anQejA/GRUpQCGy5S9eILaARDtNdBt5XJSA",
-	"cgFDd1Q5eTXHGZaqUP6JGqGUZ/8Mkb0un6d400KeNWad1gfuUow86427GrFfulNlIOIp1ab4DV6F2vTO",
-	"lDe2RhA/RZ82qn2iTZcmatp00teik1egjheQllsJyYRDXlsDLseBJkswOKkVeZbgLEzfdWsE+dff1pCs",
-	"hJOhOSIc3yH7i3BFe8/yxJD8c/W9nPSvNa/LlAcrOENU5/5Qf8NiKX9PHwYzL3mZR7/yEX8IGIJBg5Jw",
-	"mYWv0uIwTbsFaHs27yksZ2G47KJPUoKVThO4pVDWqEVZmfPD/a7ngb+D3S6Y05hlSR6lF5rNGCM9qv2l",
-	"ZjVWLiXG/F65zPGSnGnD7Vb2qYUgX41H4eqnE3Pc2k8fUKzl1+QOe0OFbvFmvsYwLN19x8Xg5AoDdaBJ",
-	"jevgfa4Ihoo/6iu/yZB1NmehLAN+oqvx+fbhRpnUpZo91ZzB7e3FCupfz3CsgpIRX7LyLWiv9ZC8iK50",
-	"4sj2PqaqYani1TojRN0mKeYfKEIbUoF64J80BqaeivHz5UguJd2GeiM7IT9KEAdL2VFbLjYy1FCUNvfJ",
-	"0npNu/Ql+5eyNW11Tn6ypVnmk1V8ES7NZgaVEhyZbflDoFr7SG7yKi6WOAOUrSG25auwqiZWS7mSzVk1",
-	"y7nb8HzglbS8DQ+Ikb6ZlY6i72uVytnzHui7oN/v912giti74NPvLhiOXDC6/OyC8e/jusMjfeHglz42",
-	"sgdYfsSJkduF1zsr8kDkPOvD0Qa+RQgIuq/S1Co6el8sz++mnvDkRQYX6AL/2nOo7oeqLMYVLsNsV55B",
-	"Oj9efJce7fjJkjtHqmuEduIJzL0J9Kry+om8YPMSFp45KtL2WonaetA913gCT1LvX54B8hm3Ne6+51Lt",
-	"egXFUJ81rti1PEJucbpViOJ1/G8r9nFDt5uyrXOOtsKI1bBvsjdPjvw+d39+uiAonVE5Yn5t51cOlLLf",
-	"Kz2mNjVJVmy7bv7TufKve+4kxsL/8nPnhxgB2x9U5uIdi8ONnUP5u3qb6v3jch+VCJmGec11bExmWl8z",
-	"jw2oEVNZm9tArqvYqbSNOlMgd9nylzYG8jfrf4Q5UNie1zMIimBk1JiU2N2IIlsP8p9tHUai9kpKjbTO",
-	"b8GLyWu1kBeT1pWrxT9ZXheoeEOJXagD8ZeV2aVqGBY+yV0IVhSZvwr8x1dJURyxu4ReS2UNrFdYKzep",
-	"HrJvj8U7murpOobhJExrZyWDFAoFxwRPcVPdmK3UC/6Ye72x+ITJksbMck9Z1+zIDemC3IN+b+R+fk1R",
-	"VTFA6u/WZS948CzMNTJ3fupeNTJ5g6URs9t42UgnaaZvxdWRv36w6tJeNthxeq2jPNi6S33ZGElAtzrG",
-	"qkt/uQUNR5a+9RcCqxeqs7FSN2R1wMIdwvz5b4MpYYzqMCe2wHJxr9QL7rmb52kI7fHr4/8EAAD//9RW",
-	"lyqXmQAA",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

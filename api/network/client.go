@@ -538,6 +538,38 @@ func (c *APIClient) UpdateFirewallPolicy(ctx context.Context, site Site, policyI
 	return resp.JSON200, nil
 }
 
+// CreateFirewallPolicy creates a new firewall policy.
+func (c *APIClient) CreateFirewallPolicy(ctx context.Context, site Site, policy *FirewallPolicyInput) (*FirewallPolicy, error) {
+	resp, err := c.client.CreateFirewallPolicyWithResponse(ctx, site, *policy)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to create firewall policy in site %s", site)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return resp.JSON200, nil
+}
+
+// DeleteFirewallPolicy permanently deletes a firewall policy.
+func (c *APIClient) DeleteFirewallPolicy(ctx context.Context, site Site, policyID PolicyId) error {
+	resp, err := c.client.DeleteFirewallPolicyWithResponse(ctx, site, policyID)
+	if err != nil {
+		return errors.Wrapf(err, "failed to delete firewall policy %s in site %s", policyID, site)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	return nil
+}
+
 // ListTrafficRules lists all traffic rules for a site.
 func (c *APIClient) ListTrafficRules(ctx context.Context, site Site) ([]TrafficRule, error) {
 	resp, err := c.client.ListTrafficRulesWithResponse(ctx, site)
@@ -572,6 +604,38 @@ func (c *APIClient) UpdateTrafficRule(ctx context.Context, site Site, ruleID Rul
 	}
 
 	return resp.JSON200, nil
+}
+
+// CreateTrafficRule creates a new traffic rule.
+func (c *APIClient) CreateTrafficRule(ctx context.Context, site Site, rule *TrafficRuleInput) (*TrafficRule, error) {
+	resp, err := c.client.CreateTrafficRuleWithResponse(ctx, site, *rule)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to create traffic rule in site %s", site)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return resp.JSON200, nil
+}
+
+// DeleteTrafficRule permanently deletes a traffic rule.
+func (c *APIClient) DeleteTrafficRule(ctx context.Context, site Site, ruleID RuleId) error {
+	resp, err := c.client.DeleteTrafficRuleWithResponse(ctx, site, ruleID)
+	if err != nil {
+		return errors.Wrapf(err, "failed to delete traffic rule %s in site %s", ruleID, site)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	return nil
 }
 
 // GetAggregatedDashboard retrieves aggregated dashboard statistics.

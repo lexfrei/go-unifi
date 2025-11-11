@@ -478,6 +478,36 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+    post:
+      summary: Create firewall policy
+      description: |
+        Creates a new firewall policy for the specified site.
+
+        Requires source, destination, schedule, and IP version configuration.
+      operationId: createFirewallPolicy
+      tags:
+        - Firewall
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FirewallPolicyInput'
+      responses:
+        '200':
+          description: Successfully created firewall policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirewallPolicy'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   /v2/api/site/{site}/firewall-policies/{policyId}:
     put:
@@ -515,6 +545,31 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Delete firewall policy
+      description: |
+        Permanently deletes a firewall policy.
+
+        Note: You cannot delete predefined policies - only custom ones you created.
+      operationId: deleteFirewallPolicy
+      tags:
+        - Firewall
+      parameters:
+        - $ref: '#/components/parameters/Site'
+        - $ref: '#/components/parameters/PolicyId'
+      responses:
+        '200':
+          description: Successfully deleted firewall policy
+        '400':
+          description: Cannot delete predefined policy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 
   # Traffic Rules API (v2)
   /v2/api/site/{site}/trafficrules:
@@ -538,6 +593,36 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TrafficRule'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      summary: Create traffic rule
+      description: |
+        Creates a new traffic rule for the specified site.
+
+        Requires matching target, action, and target devices configuration.
+      operationId: createTrafficRule
+      tags:
+        - Traffic
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrafficRuleInput'
+      responses:
+        '200':
+          description: Successfully created traffic rule
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrafficRule'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -572,6 +657,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Delete traffic rule
+      description: Permanently deletes a traffic rule
+      operationId: deleteTrafficRule
+      tags:
+        - Traffic
+      parameters:
+        - $ref: '#/components/parameters/Site'
+        - $ref: '#/components/parameters/RuleId'
+      responses:
+        '200':
+          description: Successfully deleted traffic rule
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':

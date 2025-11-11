@@ -346,6 +346,146 @@ const (
   "nextToken": "ba8e384e-3308-4236-b344-7357657351ca"
 }`
 
+	getSDWANConfigStatusSuccess = `{
+  "data": {
+    "id": "",
+    "fingerprint": "85d521a1b3c8992f",
+    "updatedAt": 1739454923342,
+    "hubs": [
+      {
+        "id": "9C05D6B1DA7100000000080A820B000000000877B4A4000000006634E113:779231894_670d14b2b4e979611b761866",
+        "hostId": "9C05D6B1DA7100000000080A820B000000000877B4A4000000006634E113:779231894",
+        "siteId": "670d14b2b4e979611b761866",
+        "name": "Marlind's UDM SE",
+        "primaryWanStatus": {
+          "ip": "194.22.30.166",
+          "latency": 1,
+          "internetIssues": [],
+          "wanId": "WAN"
+        },
+        "secondaryWanStatus": {
+          "ip": "",
+          "latency": null,
+          "internetIssues": null,
+          "wanId": ""
+        },
+        "errors": [],
+        "warnings": [],
+        "numberOfTunnelsUsedByOtherFeatures": 0,
+        "networks": [
+          {
+            "networkId": "670d14deb4e979611b761880",
+            "name": "Default",
+            "errors": [],
+            "warnings": []
+          }
+        ],
+        "routes": [],
+        "applyStatus": "OK"
+      }
+    ],
+    "spokes": [
+      {
+        "id": "28704E43D00C0000000008339D3C0000000008A2F4D300000000669FE9E7:1731456649_670d153bf6db0d4204f8d150",
+        "hostId": "28704E43D00C0000000008339D3C0000000008A2F4D300000000669FE9E7:1731456649",
+        "siteId": "670d153bf6db0d4204f8d150",
+        "name": "Marlind's UDR",
+        "primaryWanStatus": {
+          "ip": "10.0.1.142",
+          "latency": 1,
+          "internetIssues": [],
+          "wanId": "WAN"
+        },
+        "secondaryWanStatus": {
+          "ip": "",
+          "latency": null,
+          "internetIssues": null,
+          "wanId": ""
+        },
+        "errors": [],
+        "warnings": [],
+        "numberOfTunnelsUsedByOtherFeatures": 0,
+        "networks": [],
+        "routes": [
+          {
+            "routeValue": "172.16.1.0/24",
+            "errors": [],
+            "warnings": []
+          }
+        ],
+        "connections": [
+          {
+            "hubId": "9C05D6B1DA7100000000080A820B000000000877B4A4000000006634E113:779231894_670d14b2b4e979611b761866",
+            "tunnels": [
+              {
+                "spokeWanId": "WAN",
+                "hubWanId": "WAN",
+                "status": "connected"
+              }
+            ]
+          }
+        ],
+        "applyStatus": "OK"
+      },
+      {
+        "id": "F4E2C61FA6000000000007D5831A00000000083CEEC600000000655DA309:763649230_66b5f02af5521234f6f28a23",
+        "hostId": "F4E2C61FA6000000000007D5831A00000000083CEEC600000000655DA309:763649230",
+        "siteId": "66b5f02af5521234f6f28a23",
+        "name": "AG UCG Ultra STG",
+        "primaryWanStatus": {
+          "ip": "10.35.87.53",
+          "latency": 2,
+          "internetIssues": [],
+          "wanId": "WAN"
+        },
+        "secondaryWanStatus": {
+          "ip": "",
+          "latency": null,
+          "internetIssues": null,
+          "wanId": ""
+        },
+        "errors": [],
+        "warnings": [],
+        "numberOfTunnelsUsedByOtherFeatures": 0,
+        "networks": [],
+        "routes": [
+          {
+            "routeValue": "172.16.2.0/24",
+            "errors": [],
+            "warnings": []
+          }
+        ],
+        "connections": [
+          {
+            "hubId": "9C05D6B1DA7100000000080A820B000000000877B4A4000000006634E113:779231894_670d14b2b4e979611b761866",
+            "tunnels": [
+              {
+                "spokeWanId": "WAN",
+                "hubWanId": "WAN",
+                "status": "connected"
+              }
+            ]
+          }
+        ],
+        "applyStatus": "OK"
+      }
+    ],
+    "lastGeneratedAt": 1739454923342,
+    "generateStatus": "OK",
+    "errors": [],
+    "warnings": []
+  },
+  "httpStatusCode": 200,
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d"
+}`
+
+	sdwanConfigStatusNotFound = `{
+  "code": "not_found",
+  "httpStatusCode": 404,
+  "message": "config not found",
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d"
+}`
+
 	// Test constants.
 	testAPIKey    = "test-api-key"
 	testToken     = "test-token"
@@ -1206,6 +1346,118 @@ func TestGetISPMetrics(t *testing.T) {
 
 			if err != nil {
 				t.Errorf("GetISPMetrics() unexpected error: %v", err)
+				return
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
+			}
+		})
+	}
+}
+
+func TestGetSDWANConfigStatus(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name           string
+		configID       string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+		checkResponse  func(t *testing.T, resp *SDWANConfigStatusResponse)
+	}{
+		{
+			name:           "success",
+			configID:       "test-config-id",
+			mockResponse:   getSDWANConfigStatusSuccess,
+			mockStatusCode: http.StatusOK,
+			wantErr:        false,
+			checkResponse: func(t *testing.T, resp *SDWANConfigStatusResponse) {
+				t.Helper()
+				if resp == nil {
+					t.Fatal("response is nil")
+				}
+				if resp.Data.Fingerprint == nil || *resp.Data.Fingerprint != "85d521a1b3c8992f" {
+					t.Error("Fingerprint not set correctly")
+				}
+				if resp.Data.Hubs == nil || len(*resp.Data.Hubs) != 1 {
+					t.Errorf("len(Hubs) = %d, want 1", len(*resp.Data.Hubs))
+				}
+				if resp.Data.Spokes == nil || len(*resp.Data.Spokes) != 2 {
+					t.Errorf("len(Spokes) = %d, want 2", len(*resp.Data.Spokes))
+				}
+			},
+		},
+		{
+			name:           "not found",
+			configID:       "non-existent-id",
+			mockResponse:   sdwanConfigStatusNotFound,
+			mockStatusCode: http.StatusNotFound,
+			wantErr:        true,
+		},
+		{
+			name:           "unauthorized",
+			configID:       "test-config-id",
+			mockResponse:   unauthorizedError,
+			mockStatusCode: http.StatusUnauthorized,
+			wantErr:        true,
+		},
+		{
+			name:           "rate limit",
+			configID:       "test-config-id",
+			mockResponse:   rateLimitError,
+			mockStatusCode: http.StatusTooManyRequests,
+			wantErr:        true,
+		},
+		{
+			name:           "server error",
+			configID:       "test-config-id",
+			mockResponse:   serverError,
+			mockStatusCode: http.StatusInternalServerError,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				// Verify request - EA endpoint
+				expectedPath := "/ea/sd-wan-configs/" + tt.configID + "/status"
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+				if r.Header.Get("X-Api-Key") != testAPIKey {
+					t.Error("X-Api-Key header not set")
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := NewWithConfig(&ClientConfig{
+				APIKey:  testAPIKey,
+				BaseURL: server.URL,
+			})
+			if err != nil {
+				t.Fatalf("NewWithConfig failed: %v", err)
+			}
+
+			resp, err := client.GetSDWANConfigStatus(context.Background(), tt.configID)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
 				return
 			}
 

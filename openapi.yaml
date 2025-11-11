@@ -904,34 +904,34 @@ components:
       description: Spoke standard settings values
       additionalProperties: true
 
-    SDWANSetLogs:
+    SDWANSettings:
       type: object
-      description: Advanced SD-WAN settings
+      description: SD-WAN configuration settings
       properties:
         hubsInterconnect:
           type: boolean
+          nullable: true
           description: Enable hubs interconnect
-        spokefulltunneltoHub:
+        spokeToHubTunnelsMode:
           type: string
-          enum: [healthiness, reliability, stability]
-          description: Spoke full tunnel to hub mode
-        spokeAutocalculateBandwithUse:
+          description: Spoke to hub tunnels mode (scalable, etc.)
+        spokesAutoScaleAndNatEnabled:
           type: boolean
-          description: Auto-calculate bandwidth usage for spokes
-        spokeAutocalculateRange:
+          description: Enable auto-scale and NAT for spokes
+        spokesAutoScaleAndNatRange:
           type: string
-          description: Auto-calculate range configuration
-        spokeisolate:
+          description: Auto-scale and NAT IP range in CIDR format
+        spokesIsolate:
           type: boolean
           description: Spoke isolation setting
-        spokeStandardsettingsEnabled:
+        spokeStandardSettingsEnabled:
           type: boolean
           description: Enable spoke standard settings
-        spokeStandardsettingsvalues:
+        spokeStandardSettingsValues:
           $ref: '#/components/schemas/SDWANSpokeSettings'
-        spokefintuning:
+        spokeToHubRouting:
           type: string
-          description: Spoke fine tuning configuration
+          description: Spoke to hub routing mode (geo, etc.)
 
     SDWANEndpoint:
       type: object
@@ -959,32 +959,15 @@ components:
         primaryWan:
           type: string
           description: Primary WAN interface
-        backupWan:
-          type: string
-          description: Backup WAN interface
         wanFailover:
           type: boolean
           description: Enable WAN failover
-
-    SDWANConfigData:
-      type: object
-      description: SD-WAN configuration data
-      properties:
-        version:
-          type: string
-          description: Version of SD-WAN configuration
-        setLogs:
-          $ref: '#/components/schemas/SDWANSetLogs'
-        hubs:
+        hubsPriority:
           type: array
           items:
-            $ref: '#/components/schemas/SDWANEndpoint'
-          description: Array of hub configurations
-        spokes:
-          type: array
-          items:
-            $ref: '#/components/schemas/SDWANEndpoint'
-          description: Array of spoke configurations
+            type: string
+          nullable: true
+          description: Priority order of hubs (for spokes only)
 
     SDWANConfig:
       type: object
@@ -999,8 +982,21 @@ components:
           type: string
           enum: [sdwan-hbsp]
           description: Type of SD-WAN config - Currently only supports sdwan-hbsp
-        config:
-          $ref: '#/components/schemas/SDWANConfigData'
+        variant:
+          type: string
+          description: SD-WAN variant (single, multi, etc.)
+        settings:
+          $ref: '#/components/schemas/SDWANSettings'
+        hubs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SDWANEndpoint'
+          description: Array of hub configurations
+        spokes:
+          type: array
+          items:
+            $ref: '#/components/schemas/SDWANEndpoint'
+          description: Array of spoke configurations
 
     SDWANConfigsResponse:
       allOf:

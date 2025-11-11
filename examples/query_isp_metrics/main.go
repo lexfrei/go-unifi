@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/lexfrei/go-unifi"
+	"github.com/lexfrei/go-unifi/api/sitemanager"
 )
 
 func main() {
@@ -19,9 +19,9 @@ func main() {
 	}
 
 	// Create client with EA rate limit (100 req/min for Early Access endpoints)
-	client, err := unifi.NewUnifiClient(unifi.ClientConfig{
+	client, err := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
 		APIKey:             apiKey,
-		RateLimitPerMinute: unifi.EARateLimit,
+		RateLimitPerMinute: sitemanager.EARateLimit,
 	})
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
@@ -45,7 +45,7 @@ func main() {
 	endTime := time.Now()
 	beginTime := endTime.Add(-2 * time.Hour)
 
-	querySites := []unifi.ISPMetricsQuerySiteItem{
+	querySites := []sitemanager.ISPMetricsQuerySiteItem{
 		{
 			HostId:         *sites.Data[0].HostId,
 			SiteId:         *sites.Data[0].SiteId,
@@ -54,7 +54,7 @@ func main() {
 		},
 	}
 
-	query := unifi.ISPMetricsQuery{
+	query := sitemanager.ISPMetricsQuery{
 		Sites: &querySites,
 	}
 

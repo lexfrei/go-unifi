@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/lexfrei/go-unifi"
+	"github.com/lexfrei/go-unifi/api/sitemanager"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 	}
 
 	// Create client with default configuration
-	client, err := unifi.NewUnifiClient(unifi.ClientConfig{
+	client, err := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
 		APIKey: apiKey,
 	})
 	if err != nil {
@@ -29,7 +29,7 @@ func main() {
 
 	// List all hosts
 	fmt.Println("Fetching hosts...")
-	hosts, err := client.ListHosts(ctx, &unifi.ListHostsParams{})
+	hosts, err := client.ListHosts(ctx, &sitemanager.ListHostsParams{})
 	if err != nil {
 		log.Fatalf("Failed to list hosts: %v", err)
 	}

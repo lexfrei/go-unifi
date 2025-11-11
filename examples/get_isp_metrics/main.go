@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/lexfrei/go-unifi"
+	"github.com/lexfrei/go-unifi/api/sitemanager"
 )
 
 func main() {
@@ -18,9 +18,9 @@ func main() {
 	}
 
 	// Create client with EA rate limit (100 req/min for Early Access endpoints)
-	client, err := unifi.NewUnifiClient(unifi.ClientConfig{
+	client, err := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
 		APIKey:             apiKey,
-		RateLimitPerMinute: unifi.EARateLimit,
+		RateLimitPerMinute: sitemanager.EARateLimit,
 	})
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
@@ -30,8 +30,8 @@ func main() {
 
 	// Get ISP metrics with 24h duration (5-minute intervals)
 	fmt.Println("Fetching ISP metrics (5m intervals, last 24h)...")
-	duration := unifi.GetISPMetricsParamsDuration("24h")
-	metrics, err := client.GetISPMetrics(ctx, "5m", &unifi.GetISPMetricsParams{
+	duration := sitemanager.GetISPMetricsParamsDuration("24h")
+	metrics, err := client.GetISPMetrics(ctx, "5m", &sitemanager.GetISPMetricsParams{
 		Duration: &duration,
 	})
 	if err != nil {

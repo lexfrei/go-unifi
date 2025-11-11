@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/lexfrei/go-unifi"
+	"github.com/lexfrei/go-unifi/api/sitemanager"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 	}
 
 	// Create client with default configuration
-	client, err := unifi.NewUnifiClient(unifi.ClientConfig{
+	client, err := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
 		APIKey: apiKey,
 	})
 	if err != nil {

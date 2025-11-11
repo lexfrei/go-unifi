@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/lexfrei/go-unifi"
+	"github.com/lexfrei/go-unifi/api/sitemanager"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 	}
 
 	// Create client with default configuration
-	client, err := unifi.NewUnifiClient(unifi.ClientConfig{
+	client, err := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
 		APIKey: apiKey,
 	})
 	if err != nil {
@@ -29,7 +29,7 @@ func main() {
 
 	// List all devices
 	fmt.Println("Fetching devices...")
-	devices, err := client.ListDevices(ctx, &unifi.ListDevicesParams{})
+	devices, err := client.ListDevices(ctx, &sitemanager.ListDevicesParams{})
 	if err != nil {
 		log.Fatalf("Failed to list devices: %v", err)
 	}

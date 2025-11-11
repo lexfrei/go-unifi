@@ -585,8 +585,8 @@ func TestListHosts(t *testing.T) {
 				if r.URL.Path != "/v1/hosts" {
 					t.Errorf("Request path = %s, want /v1/hosts", r.URL.Path)
 				}
-				if r.Header.Get("X-API-KEY") != testAPIKey {
-					t.Error("X-API-KEY header not set")
+				if r.Header.Get("X-Api-Key") != testAPIKey {
+					t.Error("X-Api-Key header not set")
 				}
 
 				w.Header().Set("Content-Type", "application/json")
@@ -697,8 +697,8 @@ func TestGetHostByID(t *testing.T) {
 				if r.URL.Path != expectedPath {
 					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
 				}
-				if r.Header.Get("X-API-KEY") != testAPIKey {
-					t.Error("X-API-KEY header not set")
+				if r.Header.Get("X-Api-Key") != testAPIKey {
+					t.Error("X-Api-Key header not set")
 				}
 
 				w.Header().Set("Content-Type", "application/json")
@@ -917,8 +917,8 @@ func TestListSites(t *testing.T) {
 				if r.URL.Path != "/v1/sites" {
 					t.Errorf("Request path = %s, want /v1/sites", r.URL.Path)
 				}
-				if r.Header.Get("X-API-KEY") != testAPIKey {
-					t.Error("X-API-KEY header not set")
+				if r.Header.Get("X-Api-Key") != testAPIKey {
+					t.Error("X-Api-Key header not set")
 				}
 
 				w.Header().Set("Content-Type", "application/json")
@@ -1046,8 +1046,8 @@ func TestListDevices(t *testing.T) {
 				if r.URL.Path != "/v1/devices" {
 					t.Errorf("Request path = %s, want /v1/devices", r.URL.Path)
 				}
-				if r.Header.Get("X-API-KEY") != testAPIKey {
-					t.Error("X-API-KEY header not set")
+				if r.Header.Get("X-Api-Key") != testAPIKey {
+					t.Error("X-Api-Key header not set")
 				}
 
 				w.Header().Set("Content-Type", "application/json")
@@ -1161,8 +1161,8 @@ func TestGetISPMetrics(t *testing.T) {
 				if !strings.HasPrefix(r.URL.Path, "/ea/isp-metrics/") {
 					t.Errorf("Request path = %s, want /ea/isp-metrics/*", r.URL.Path)
 				}
-				if r.Header.Get("X-API-KEY") != testAPIKey {
-					t.Error("X-API-KEY header not set")
+				if r.Header.Get("X-Api-Key") != testAPIKey {
+					t.Error("X-Api-Key header not set")
 				}
 
 				w.Header().Set("Content-Type", "application/json")

@@ -48,3 +48,7 @@ coverage.out
 # Temporary files
 *.tmp
 *.log
+
+# Documentation downloads
+*.html
+docs/

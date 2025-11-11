@@ -158,8 +158,7 @@ func NewWithConfig(cfg *ClientConfig) (*UnifiClient, error) {
 
 	// Create request editor to add API key header
 	requestEditor := func(_ context.Context, req *http.Request) error {
-		//nolint:canonicalheader // X-API-Key is the correct header name per UniFi API spec
-		req.Header.Set("X-API-Key", cfg.APIKey)
+		req.Header.Set("X-Api-Key", cfg.APIKey)
 		req.Header.Set("Accept", "application/json")
 		return nil
 	}

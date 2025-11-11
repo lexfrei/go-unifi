@@ -6,6 +6,12 @@
 *.test
 *.out
 
+# Example binaries (files without extension in examples/)
+examples/*/[!.]*
+!examples/*/*.go
+!examples/*/*.mod
+!examples/*/*.sum
+
 # Build artifacts
 /bin/
 /dist/

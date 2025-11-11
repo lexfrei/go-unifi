@@ -345,12 +345,17 @@ const (
   "traceId": "a7dc15e0eb4527142d7823515b15f87d",
   "nextToken": "ba8e384e-3308-4236-b344-7357657351ca"
 }`
+
+	// Test constants.
+	testAPIKey    = "test-api-key"
+	testToken     = "test-token"
+	testNextToken = "ba8e384e-3308-4236-b344-7357657351ca"
 )
 
 func TestNew(t *testing.T) {
 	t.Parallel()
 
-	client, err := New("test-api-key")
+	client, err := New(testAPIKey)
 	if err != nil {
 		t.Fatalf("New() failed: %v", err)
 	}
@@ -517,7 +522,7 @@ func TestListHosts(t *testing.T) {
 				if resp.Data[0].Type != HostType("ucore") {
 					t.Errorf("Host type = %v, want ucore", resp.Data[0].Type)
 				}
-				if resp.NextToken == nil || *resp.NextToken != "ba8e384e-3308-4236-b344-7357657351ca" {
+				if resp.NextToken == nil || *resp.NextToken != testNextToken {
 					t.Error("NextToken not set correctly")
 				}
 			},
@@ -580,7 +585,7 @@ func TestListHosts(t *testing.T) {
 				if r.URL.Path != "/v1/hosts" {
 					t.Errorf("Request path = %s, want /v1/hosts", r.URL.Path)
 				}
-				if r.Header.Get("X-API-KEY") != "test-api-key" {
+				if r.Header.Get("X-API-KEY") != testAPIKey {
 					t.Error("X-API-KEY header not set")
 				}
 
@@ -591,7 +596,7 @@ func TestListHosts(t *testing.T) {
 			defer server.Close()
 
 			client, err := NewWithConfig(&ClientConfig{
-				APIKey:  "test-api-key",
+				APIKey:  testAPIKey,
 				BaseURL: server.URL,
 			})
 			if err != nil {
@@ -692,7 +697,7 @@ func TestGetHostByID(t *testing.T) {
 				if r.URL.Path != expectedPath {
 					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
 				}
-				if r.Header.Get("X-API-KEY") != "test-api-key" {
+				if r.Header.Get("X-API-KEY") != testAPIKey {
 					t.Error("X-API-KEY header not set")
 				}
 
@@ -703,7 +708,7 @@ func TestGetHostByID(t *testing.T) {
 			defer server.Close()
 
 			client, err := NewWithConfig(&ClientConfig{
-				APIKey:  "test-api-key",
+				APIKey:  testAPIKey,
 				BaseURL: server.URL,
 			})
 			if err != nil {
@@ -752,7 +757,7 @@ func TestRetryLogic(t *testing.T) {
 	defer server.Close()
 
 	client, err := NewWithConfig(&ClientConfig{
-		APIKey:        "test-api-key",
+		APIKey:        testAPIKey,
 		BaseURL:       server.URL,
 		MaxRetries:    3,
 		RetryWaitTime: 10 * time.Millisecond, // Short wait for tests
@@ -783,7 +788,7 @@ func TestContextCancellation(t *testing.T) {
 	defer server.Close()
 
 	client, err := NewWithConfig(&ClientConfig{
-		APIKey:  "test-api-key",
+		APIKey:  testAPIKey,
 		BaseURL: server.URL,
 	})
 	if err != nil {
@@ -810,8 +815,8 @@ func TestPaginationParams(t *testing.T) {
 		if pageSize != "10" {
 			t.Errorf("pageSize = %s, want 10", pageSize)
 		}
-		if nextToken != "test-token" {
-			t.Errorf("nextToken = %s, want test-token", nextToken)
+		if nextToken != testToken {
+			t.Errorf("nextToken = %s, want %s", nextToken, testToken)
 		}
 
 		w.Header().Set("Content-Type", "application/json")
@@ -821,7 +826,7 @@ func TestPaginationParams(t *testing.T) {
 	defer server.Close()
 
 	client, err := NewWithConfig(&ClientConfig{
-		APIKey:  "test-api-key",
+		APIKey:  testAPIKey,
 		BaseURL: server.URL,
 	})
 	if err != nil {
@@ -829,7 +834,7 @@ func TestPaginationParams(t *testing.T) {
 	}
 
 	pageSize := "10"
-	nextToken := "test-token"
+	nextToken := testToken
 	params := &ListHostsParams{
 		PageSize:  &pageSize,
 		NextToken: &nextToken,
@@ -872,7 +877,7 @@ func TestListSites(t *testing.T) {
 				if resp.Data[0].Statistics == nil {
 					t.Error("Statistics is nil")
 				}
-				if resp.NextToken == nil || *resp.NextToken != "ba8e384e-3308-4236-b344-7357657351ca" {
+				if resp.NextToken == nil || *resp.NextToken != testNextToken {
 					t.Error("NextToken not set correctly")
 				}
 			},
@@ -912,7 +917,7 @@ func TestListSites(t *testing.T) {
 				if r.URL.Path != "/v1/sites" {
 					t.Errorf("Request path = %s, want /v1/sites", r.URL.Path)
 				}
-				if r.Header.Get("X-API-KEY") != "test-api-key" {
+				if r.Header.Get("X-API-KEY") != testAPIKey {
 					t.Error("X-API-KEY header not set")
 				}
 
@@ -923,7 +928,7 @@ func TestListSites(t *testing.T) {
 			defer server.Close()
 
 			client, err := NewWithConfig(&ClientConfig{
-				APIKey:  "test-api-key",
+				APIKey:  testAPIKey,
 				BaseURL: server.URL,
 			})
 			if err != nil {
@@ -995,7 +1000,7 @@ func TestListDevices(t *testing.T) {
 				if device2.IsConsole == nil || !*device2.IsConsole {
 					t.Error("Second device should be console")
 				}
-				if resp.NextToken == nil || *resp.NextToken != "ba8e384e-3308-4236-b344-7357657351ca" {
+				if resp.NextToken == nil || *resp.NextToken != testNextToken {
 					t.Error("NextToken not set correctly")
 				}
 			},
@@ -1041,7 +1046,7 @@ func TestListDevices(t *testing.T) {
 				if r.URL.Path != "/v1/devices" {
 					t.Errorf("Request path = %s, want /v1/devices", r.URL.Path)
 				}
-				if r.Header.Get("X-API-KEY") != "test-api-key" {
+				if r.Header.Get("X-API-KEY") != testAPIKey {
 					t.Error("X-API-KEY header not set")
 				}
 
@@ -1052,7 +1057,7 @@ func TestListDevices(t *testing.T) {
 			defer server.Close()
 
 			client, err := NewWithConfig(&ClientConfig{
-				APIKey:  "test-api-key",
+				APIKey:  testAPIKey,
 				BaseURL: server.URL,
 			})
 			if err != nil {
@@ -1156,7 +1161,7 @@ func TestGetISPMetrics(t *testing.T) {
 				if !strings.HasPrefix(r.URL.Path, "/ea/isp-metrics/") {
 					t.Errorf("Request path = %s, want /ea/isp-metrics/*", r.URL.Path)
 				}
-				if r.Header.Get("X-API-KEY") != "test-api-key" {
+				if r.Header.Get("X-API-KEY") != testAPIKey {
 					t.Error("X-API-KEY header not set")
 				}
 
@@ -1167,7 +1172,7 @@ func TestGetISPMetrics(t *testing.T) {
 			defer server.Close()
 
 			client, err := NewWithConfig(&ClientConfig{
-				APIKey:  "test-api-key",
+				APIKey:  testAPIKey,
 				BaseURL: server.URL,
 			})
 			if err != nil {

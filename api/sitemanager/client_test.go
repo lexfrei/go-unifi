@@ -406,6 +406,7 @@ func TestNewWithConfig(t *testing.T) {
 			},
 			wantErr: false,
 			checkFields: func(t *testing.T, client *UnifiClient) {
+				t.Helper()
 				if client.maxRetries != DefaultMaxRetries {
 					t.Errorf("maxRetries = %d, want %d", client.maxRetries, DefaultMaxRetries)
 				}
@@ -420,6 +421,7 @@ func TestNewWithConfig(t *testing.T) {
 			},
 			wantErr: false,
 			checkFields: func(t *testing.T, client *UnifiClient) {
+				t.Helper()
 				// Rate limiters are created, just check they exist
 				if client.v1RateLimiter == nil {
 					t.Error("v1RateLimiter is nil")
@@ -438,6 +440,7 @@ func TestNewWithConfig(t *testing.T) {
 			},
 			wantErr: false,
 			checkFields: func(t *testing.T, client *UnifiClient) {
+				t.Helper()
 				if client.maxRetries != 5 {
 					t.Errorf("maxRetries = %d, want 5", client.maxRetries)
 				}
@@ -740,7 +743,7 @@ func TestRetryLogic(t *testing.T) {
 	t.Parallel()
 
 	attempts := 0
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		attempts++
 		if attempts < 3 {
 			// Fail first 2 attempts
@@ -779,7 +782,7 @@ func TestRetryLogic(t *testing.T) {
 func TestContextCancellation(t *testing.T) {
 	t.Parallel()
 
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		// Delay to allow context cancellation
 		time.Sleep(100 * time.Millisecond)
 		w.WriteHeader(http.StatusOK)

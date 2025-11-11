@@ -41,6 +41,7 @@ linters:
       ignored-numbers:
         - "10"
         - "100"
+        - "1000"
         - "2"
         - "60"
         - "60.0"
@@ -105,6 +106,7 @@ linters:
           - gocognit
           - nestif
           - gocritic
+          - maintidx
         path: examples/
 formatters:
   enable:

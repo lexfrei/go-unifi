@@ -1,0 +1,917 @@
+openapi: 3.0.3
+info:
+  title: UniFi Site Manager API
+  version: 1.0.0
+  description: |
+    UniFi Site Manager API provides programmatic access to UniFi network infrastructure.
+
+    ## Authentication
+    All requests require an API key passed via the X-API-Key header.
+
+    ## Rate Limiting
+    - v1 endpoints: 10,000 requests per minute
+    - Early Access endpoints: 100 requests per minute
+
+    ## Versioning
+    - `/v1/*` - Stable, production-ready endpoints with long-term support
+    - `/ea/*` - Early Access endpoints, subject to change
+
+  contact:
+    name: Aleksei Sviridkin
+    email: f@lex.la
+  license:
+    name: MIT
+
+servers:
+  - url: https://api.ui.com
+    description: Production API server
+
+security:
+  - ApiKeyAuth: []
+
+tags:
+  - name: Hosts
+    description: Host management operations
+  - name: Sites
+    description: Site management operations
+  - name: Devices
+    description: Device management operations
+  - name: ISP Metrics
+    description: ISP metrics and monitoring (Early Access)
+  - name: SD-WAN
+    description: SD-WAN configuration management (Early Access)
+
+paths:
+  /v1/hosts:
+    get:
+      summary: List all hosts
+      description: |
+        Retrieves a list of all hosts associated with the UI account making the API call.
+
+        **Note**: The structure of `userData` and `reportedState` fields may vary depending on the UniFi OS or Network Server version.
+      operationId: listHosts
+      tags:
+        - Hosts
+      parameters:
+        - name: pageSize
+          in: query
+          description: Number of items to return per page
+          required: false
+          schema:
+            type: string
+          example: "10"
+        - name: nextToken
+          in: query
+          description: Token for pagination to retrieve the next set of results
+          required: false
+          schema:
+            type: string
+          example: "602232A8702500000000006C91AFFD0000000007D08D800000000006369FDXA2:1467082514"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HostsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+  /v1/hosts/{id}:
+    get:
+      summary: Get host by ID
+      description: Retrieves detailed information about a specific host by ID
+      operationId: getHostById
+      tags:
+        - Hosts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique identifier of the host
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HostResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+  /v1/sites:
+    get:
+      summary: List all sites
+      description: Retrieves a list of all sites (from hosts running the UniFi Network application) associated with the UI account
+      operationId: listSites
+      tags:
+        - Sites
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SitesResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+  /v1/devices:
+    get:
+      summary: List all devices
+      description: Retrieves a list of UniFi devices managed by hosts where the UI account making the API call is the owner or a super admin
+      operationId: listDevices
+      tags:
+        - Devices
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DevicesResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+  /ea/isp-metrics/{type}:
+    get:
+      summary: Get ISP metrics
+      description: |
+        Retrieves ISP metrics across all sites linked to the UI account's API key.
+        Metrics availability:
+        - 5-minute interval metrics: available for at least 24 hours
+        - 1-hour interval metrics: available for at least 30 days
+      operationId: getISPMetrics
+      tags:
+        - ISP Metrics
+      parameters:
+        - name: type
+          in: path
+          required: true
+          description: The metric type to retrieve
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ISPMetricsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+  /ea/isp-metrics/{type}/query:
+    post:
+      summary: Query ISP metrics
+      description: |
+        Retrieves ISP metrics data based on specific query parameters.
+        Returns partialSuccess if the account lacks access to all requested sites.
+      operationId: queryISPMetrics
+      tags:
+        - ISP Metrics
+      parameters:
+        - name: type
+          in: path
+          required: true
+          description: The metric type to query
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ISPMetricsQuery'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ISPMetricsQueryResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+  /ea/sd-wan-configs:
+    get:
+      summary: List SD-WAN configurations
+      description: Retrieves a list of all SD-WAN configurations associated with the UI account making the API call
+      operationId: listSDWANConfigs
+      tags:
+        - SD-WAN
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SDWANConfigsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+  /ea/sd-wan-configs/{id}:
+    get:
+      summary: Get SD-WAN configuration by ID
+      description: Retrieves detailed information about a specific SD-WAN configuration by ID
+      operationId: getSDWANConfigById
+      tags:
+        - SD-WAN
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The identifier of the SD-WAN configuration
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SDWANConfigResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+  /ea/sd-wan-configs/{id}/status:
+    get:
+      summary: Get SD-WAN configuration status
+      description: Retrieves the status of a specific SD-WAN configuration, including deployment progress, errors, and associated hubs
+      operationId: getSDWANConfigStatus
+      tags:
+        - SD-WAN
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The identifier of the SD-WAN configuration
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SDWANConfigStatusResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '429':
+          $ref: '#/components/responses/RateLimited'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+        '502':
+          $ref: '#/components/responses/BadGateway'
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: API key for authentication. Obtain from unifi.ui.com API section.
+
+  schemas:
+    # Common response envelope
+    SuccessResponse:
+      type: object
+      required:
+        - data
+        - httpStatusCode
+        - traceId
+      properties:
+        data:
+          type: object
+          description: The actual response payload
+        httpStatusCode:
+          type: integer
+          description: HTTP status code
+          example: 200
+        traceId:
+          type: string
+          description: Unique identifier for debugging purposes
+          example: "abc123-def456-ghi789"
+
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - httpStatusCode
+        - message
+        - traceId
+      properties:
+        code:
+          type: string
+          description: Machine-readable error code
+          example: "UNAUTHORIZED"
+        httpStatusCode:
+          type: integer
+          description: HTTP status code
+          example: 401
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Invalid API key"
+        traceId:
+          type: string
+          description: Unique identifier for debugging purposes
+          example: "abc123-def456-ghi789"
+
+    # Host schemas
+    Host:
+      type: object
+      required:
+        - id
+        - hardwareId
+        - type
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the host device
+        hardwareId:
+          type: string
+          description: Hardware identifier of the device
+        type:
+          type: string
+          description: Type of the device (console, network-server)
+          enum:
+            - console
+            - network-server
+        ipAddress:
+          type: string
+          description: Current IP address of the device
+        owner:
+          type: boolean
+          description: Indicates if the current user is the owner of this device
+        isBlocked:
+          type: boolean
+          description: Indicates if the device is blocked from cloud access
+        registrationTime:
+          type: string
+          format: date-time
+          description: Time in RFC3339 format when the device was registered to the cloud
+        lastConnectionStateChange:
+          type: string
+          format: date-time
+          description: Time in RFC3339 format when the connection state last changed
+        latestBackupTime:
+          type: string
+          format: date-time
+          description: Time in RFC3339 format of the latest device backup
+        userData:
+          type: object
+          description: User-specific data associated with the device including permissions and role information
+          properties:
+            apps:
+              type: array
+              items:
+                type: string
+              description: List of installed applications
+            consoleGroupMembers:
+              type: array
+              items:
+                type: object
+                additionalProperties: true
+              description: Console group members information
+            controllers:
+              type: array
+              items:
+                type: string
+              description: List of available controllers
+            email:
+              type: string
+              format: email
+              description: User email address
+            features:
+              type: object
+              additionalProperties: true
+              description: Available features for the user
+            fullName:
+              type: string
+              description: User's full name
+            localId:
+              type: string
+              format: uuid
+              description: Local user identifier
+            permissions:
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  type: string
+              description: User permissions per application
+            role:
+              type: string
+              description: User role
+            roleId:
+              type: string
+              format: uuid
+              description: Role identifier
+            status:
+              type: string
+              description: User status
+          additionalProperties: true
+        reportedState:
+          type: object
+          description: Device's reported state information
+          properties:
+            anonid:
+              type: string
+              format: uuid
+              description: Anonymous device identifier
+            apps:
+              type: array
+              items:
+                type: object
+                additionalProperties: true
+              description: Installed applications with their status and features
+            autoUpdate:
+              type: object
+              additionalProperties: true
+              description: Auto-update configuration
+            availableChannels:
+              type: array
+              items:
+                type: string
+              description: Available release channels
+            consolesOnSameLocalNetwork:
+              type: array
+              items:
+                type: object
+              description: Other consoles on the same local network
+            controller_uuid:
+              type: string
+              description: Controller UUID
+            controllers:
+              type: array
+              items:
+                type: object
+                additionalProperties: true
+              description: Installed controllers with their configuration and status
+            country:
+              type: integer
+              description: Country code
+            deviceErrorCode:
+              type: string
+              nullable: true
+              description: Device error code if any
+            deviceState:
+              type: string
+              description: Current device state
+            deviceStateLastChanged:
+              type: integer
+              description: Unix timestamp when device state last changed
+            directConnectDomain:
+              type: string
+              description: Direct connect domain for remote access
+            features:
+              type: object
+              additionalProperties: true
+              description: Device features and capabilities
+            firmwareUpdate:
+              type: object
+              additionalProperties: true
+              description: Firmware update information
+            hardware:
+              type: object
+              additionalProperties: true
+              description: Hardware information including CPU, MAC, serial number, etc.
+            host_type:
+              type: integer
+              description: Host type identifier
+            hostname:
+              type: string
+              description: Device hostname
+            internetIssues5min:
+              type: object
+              additionalProperties: true
+              description: Internet connectivity issues in 5-minute periods
+            ip:
+              type: string
+              description: Public IP address
+            ipAddrs:
+              type: array
+              items:
+                type: string
+              description: List of all IP addresses assigned to the device
+            isStacked:
+              type: boolean
+              description: Indicates if device is part of a stack
+            location:
+              type: object
+              properties:
+                lat:
+                  type: number
+                  description: Latitude
+                long:
+                  type: number
+                  description: Longitude
+                radius:
+                  type: number
+                  description: Location radius in meters
+                text:
+                  type: string
+                  description: Location description
+              description: Physical location of the device
+            mac:
+              type: string
+              description: MAC address
+            mgmt_port:
+              type: integer
+              description: Management port number
+            name:
+              type: string
+              description: Device name
+            releaseChannel:
+              type: string
+              description: Current release channel
+            state:
+              type: string
+              description: Connection state
+            timezone:
+              type: string
+              description: Device timezone
+            uidb:
+              type: object
+              additionalProperties: true
+              description: Device database information including images
+            unadoptedUnifiOSDevices:
+              type: array
+              items:
+                type: object
+              description: List of unadopted UniFi OS devices
+            version:
+              type: string
+              description: UniFi OS version
+            wans:
+              type: array
+              items:
+                type: object
+                properties:
+                  associatedInterface:
+                    type: string
+                  enabled:
+                    type: boolean
+                  interface:
+                    type: string
+                  ipv4:
+                    type: string
+                  mac:
+                    type: string
+                  plugged:
+                    type: boolean
+                  port:
+                    type: integer
+                  type:
+                    type: string
+                additionalProperties: true
+              description: WAN interfaces configuration
+          additionalProperties: true
+
+    HostsResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Host'
+            nextToken:
+              type: string
+              description: Pagination token for fetching the next set of results
+              example: "602232A8702500000000006C91AFFD0000000007D08D800000000006369FDXA2:1467082514"
+
+    HostResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Host'
+
+    # Site schemas
+    Site:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique site identifier
+        name:
+          type: string
+          description: Site name
+        meta:
+          type: object
+          description: Site metadata (structure varies by UniFi Network version)
+          additionalProperties: true
+        statistics:
+          type: object
+          description: Site statistics (structure varies by UniFi Network version)
+          additionalProperties: true
+
+    SitesResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Site'
+
+    # Device schemas
+    Device:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique device identifier
+        uidb:
+          type: object
+          description: Device database information (structure varies by UniFi OS version)
+          additionalProperties: true
+
+    DevicesResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Device'
+
+    # ISP Metrics schemas
+    ISPMetric:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: Metric timestamp
+        value:
+          type: number
+          description: Metric value
+        type:
+          type: string
+          description: Metric type
+      additionalProperties: true
+
+    ISPMetricsResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/ISPMetric'
+
+    ISPMetricsQuery:
+      type: object
+      properties:
+        sites:
+          type: array
+          items:
+            type: string
+          description: List of site IDs to query
+        startTime:
+          type: string
+          format: date-time
+          description: Query start time
+        endTime:
+          type: string
+          format: date-time
+          description: Query end time
+        interval:
+          type: string
+          enum: [5m, 1h]
+          description: Metric interval (5-minute or 1-hour)
+
+    ISPMetricsQueryResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [success, partialSuccess]
+                  description: Query status (partialSuccess if some sites are inaccessible)
+                metrics:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ISPMetric'
+
+    # SD-WAN schemas
+    SDWANConfig:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique SD-WAN configuration identifier
+        name:
+          type: string
+          description: Configuration name
+        config:
+          type: object
+          description: SD-WAN configuration data
+          additionalProperties: true
+
+    SDWANConfigsResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/SDWANConfig'
+
+    SDWANConfigResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/SDWANConfig'
+
+    SDWANConfigStatus:
+      type: object
+      properties:
+        id:
+          type: string
+          description: SD-WAN configuration identifier
+        deploymentProgress:
+          type: number
+          minimum: 0
+          maximum: 100
+          description: Deployment progress percentage
+        errors:
+          type: array
+          items:
+            type: string
+          description: List of deployment errors
+        hubs:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              status:
+                type: string
+            additionalProperties: true
+          description: Associated hub statuses
+
+    SDWANConfigStatusResponse:
+      allOf:
+        - $ref: '#/components/schemas/SuccessResponse'
+        - type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/SDWANConfigStatus'
+
+  responses:
+    BadRequest:
+      description: Bad request - malformed request syntax
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: "BAD_REQUEST"
+            httpStatusCode: 400
+            message: "Invalid request parameters"
+            traceId: "abc123"
+
+    Unauthorized:
+      description: Unauthorized - invalid or missing API key
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: "UNAUTHORIZED"
+            httpStatusCode: 401
+            message: "Invalid API key"
+            traceId: "abc123"
+
+    NotFound:
+      description: Not found - requested resource does not exist
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: "NOT_FOUND"
+            httpStatusCode: 404
+            message: "Resource not found"
+            traceId: "abc123"
+
+    RateLimited:
+      description: Too many requests - rate limit exceeded
+      headers:
+        Retry-After:
+          description: Number of seconds to wait before retrying
+          schema:
+            type: integer
+          example: 5
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: "RATE_LIMIT"
+            httpStatusCode: 429
+            message: "Rate limit exceeded"
+            traceId: "abc123"
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: "INTERNAL_ERROR"
+            httpStatusCode: 500
+            message: "Internal server error"
+            traceId: "abc123"
+
+    BadGateway:
+      description: Bad gateway - upstream service error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            code: "BAD_GATEWAY"
+            httpStatusCode: 502
+            message: "Upstream service unavailable"
+            traceId: "abc123"

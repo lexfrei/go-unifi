@@ -898,19 +898,26 @@ components:
                   description: Array of ISP metrics for queried sites
 
     # SD-WAN schemas
+    SDWANConfigData:
+      type: object
+      description: SD-WAN configuration data (structure varies by config type)
+      additionalProperties: true
+
     SDWANConfig:
       type: object
       properties:
         id:
           type: string
-          description: Unique SD-WAN configuration identifier
+          description: Unique identifier of the SD-WAN config
         name:
           type: string
-          description: Configuration name
+          description: Name of the SD-WAN config
+        type:
+          type: string
+          enum: [sdwan-hbsp]
+          description: Type of SD-WAN config - Currently only supports sdwan-hbsp
         config:
-          type: object
-          description: SD-WAN configuration data
-          additionalProperties: true
+          $ref: '#/components/schemas/SDWANConfigData'
 
     SDWANConfigsResponse:
       allOf:

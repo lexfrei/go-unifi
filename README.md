@@ -1,6 +1,6 @@
 # go-unifi
 
-Pure Go client library for UniFi Site Manager API v1.
+Almost pure Go client library for UniFi Site Manager API v1.
 
 ## Features
 
@@ -221,10 +221,15 @@ cd api/sitemanager && go generate
 Validate types against real API responses to find `any` usage and type mismatches:
 
 ```bash
-go run ./cmd/test-reality -api-key your-key
+# Run directly
+go run github.com/lexfrei/go-unifi/cmd/test-reality@latest -api-key your-key
+
+# Or install globally
+go install github.com/lexfrei/go-unifi/cmd/test-reality@latest
+test-reality -api-key your-key
 
 # Verbose mode with full JSON samples
-go run ./cmd/test-reality -api-key your-key -verbose
+test-reality -api-key your-key -verbose
 ```
 
 See [cmd/test-reality/README.md](./cmd/test-reality/README.md) for details.
@@ -269,12 +274,6 @@ This structure follows [golang-standards/project-layout](https://github.com/gola
 - ✅ Hosts, Sites, Devices management
 - ✅ ISP Metrics (GET and POST query)
 - ✅ SD-WAN configuration and status
-
-### Coming Soon
-
-- UniFi Protect API
-- UniFi Access API
-- UniFi Talk API
 
 ## API Documentation
 

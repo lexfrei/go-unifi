@@ -1,6 +1,6 @@
 # go-unifi
 
-Pure Go client libraries for UniFi APIs with type-safe code generation from OpenAPI specifications.
+Almost pure Go client libraries for UniFi APIs with type-safe code generation from OpenAPI specifications.
 
 ## 📦 Available APIs
 

@@ -183,14 +183,6 @@ func NewWithConfig(cfg *ClientConfig) (*UnifiClient, error) {
 	}, nil
 }
 
-// NewUnifiClient creates a new Unifi API client with custom configuration.
-//
-// Deprecated: Use New for simple use cases or NewWithConfig for custom configuration.
-// This function is kept for backward compatibility.
-func NewUnifiClient(cfg *ClientConfig) (*UnifiClient, error) {
-	return NewWithConfig(cfg)
-}
-
 // rateLimitedHTTPClient wraps http.Client with rate limiting and retry logic.
 // It uses separate rate limiters for v1 and Early Access endpoints.
 type rateLimitedHTTPClient struct {

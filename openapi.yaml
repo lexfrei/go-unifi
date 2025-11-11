@@ -97,6 +97,7 @@ paths:
           description: The unique identifier of the host
           schema:
             type: string
+            example: "942A6FCE26520000000008A62C8000000000091C92E70000000067801E31:392959371"
       responses:
         '200':
           description: Successful response

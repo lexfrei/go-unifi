@@ -269,8 +269,8 @@ func (c *UnifiClient) ListSites(ctx context.Context) (*SitesResponse, error) {
 }
 
 // ListDevices retrieves a list of UniFi devices.
-func (c *UnifiClient) ListDevices(ctx context.Context) (*DevicesResponse, error) {
-	resp, err := c.client.ListDevicesWithResponse(ctx)
+func (c *UnifiClient) ListDevices(ctx context.Context, params *ListDevicesParams) (*DevicesResponse, error) {
+	resp, err := c.client.ListDevicesWithResponse(ctx, params)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to list devices")
 	}

@@ -1,5 +1,10 @@
 # UniFi Site Manager API Client
 
+[![Go Reference](https://pkg.go.dev/badge/github.com/lexfrei/go-unifi/api/sitemanager.svg)](https://pkg.go.dev/github.com/lexfrei/go-unifi/api/sitemanager)
+[![Go Report Card](https://goreportcard.com/badge/github.com/lexfrei/go-unifi)](https://goreportcard.com/report/github.com/lexfrei/go-unifi)
+[![License](https://img.shields.io/github/license/lexfrei/go-unifi)](https://github.com/lexfrei/go-unifi/blob/main/LICENSE)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/lexfrei/go-unifi)](https://github.com/lexfrei/go-unifi/blob/main/go.mod)
+
 Pure Go client library for UniFi Site Manager API v1.
 
 ## Features

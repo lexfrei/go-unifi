@@ -34,12 +34,12 @@ import (
     "fmt"
     "log"
 
-    "github.com/lexfrei/go-unifi"
+    "github.com/lexfrei/go-unifi/api/sitemanager"
 )
 
 func main() {
     // Create client
-    client, err := unifi.NewUnifiClient(unifi.ClientConfig{
+    client, err := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
         APIKey: "your-api-key-here",
     })
     if err != nil {
@@ -47,7 +47,7 @@ func main() {
     }
 
     // List all hosts
-    hosts, err := client.ListHosts(context.Background(), &unifi.ListHostsParams{})
+    hosts, err := client.ListHosts(context.Background(), &sitemanager.ListHostsParams{})
     if err != nil {
         log.Fatal(err)
     }
@@ -62,8 +62,8 @@ func main() {
 ## Configuration
 
 ```go
-client, err := unifi.NewUnifiClient(unifi.ClientConfig{
-    // Required: Your API key from unifi.ui.com
+client, err := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
+    // Required: Your API key from sitemanager.ui.com
     APIKey: "your-api-key",
 
     // Optional: Custom base URL (defaults to https://api.ui.com)
@@ -124,9 +124,9 @@ See the [examples/](./examples/) directory for complete working examples:
 ### List Hosts with Pagination
 
 ```go
-params := &unifi.ListHostsParams{
-    PageSize:  unifi.PtrString("10"),
-    NextToken: unifi.PtrString("token-from-previous-response"),
+params := &sitemanager.ListHostsParams{
+    PageSize:  sitemanager.PtrString("10"),
+    NextToken: sitemanager.PtrString("token-from-previous-response"),
 }
 
 hosts, err := client.ListHosts(ctx, params)
@@ -191,37 +191,72 @@ Retry strategy:
 
 ### Generate Client Code
 
+### Generate Code from OpenAPI
+
 ```bash
-make generate
+cd api/sitemanager && oapi-codegen -config .oapi-codegen.yaml openapi.yaml
+```
+
+Or use go generate:
+
+```bash
+cd api/sitemanager && go generate
 ```
 
 ### Run Linters
 
 ```bash
-make lint
+golangci-lint run ./...
 ```
 
 ### Run Tests
 
 ```bash
-make test
+go test ./...
 ```
 
 ### Build Example
 
 ```bash
-go build -o list-hosts examples/list_hosts/main.go
-UNIFI_API_KEY=your-key ./list-hosts
+cd examples/list_hosts && go build
+UNIFI_API_KEY=your-key ./list_hosts
 ```
+
+## Project Structure
+
+```
+go-unifi/
+├── api/
+│   └── sitemanager/        # UniFi Site Manager API v1 client
+├── internal/               # Shared infrastructure (rate limiting, retry logic)
+├── examples/               # Runnable examples
+```
+
+This structure follows [golang-standards/project-layout](https://github.com/golang-standards/project-layout).
+
+## Supported APIs
+
+### UniFi Site Manager API v1
+`import "github.com/lexfrei/go-unifi/api/sitemanager"`
+
+- ✅ Hosts, Sites, Devices management
+- ✅ ISP Metrics (GET and POST query)
+- ✅ SD-WAN configuration and status
+
+### Coming Soon
+- UniFi Protect API
+- UniFi Access API
+- UniFi Talk API
+
 
 ## API Documentation
 
 - [Official UniFi Site Manager API Documentation](https://developer.ui.com/site-manager-api/gettingstarted)
-- [OpenAPI Specification](./openapi.yaml)
+- [OpenAPI Specification](./api/sitemanager/openapi.yaml)
 
 ## Authentication
 
-1. Go to [unifi.ui.com](https://unifi.ui.com)
+1. Go to [sitemanager.ui.com](https://sitemanager.ui.com)
 2. Navigate to **API** section
 3. Click **Create API Key**
 4. Store the key securely (it displays only once)
@@ -236,7 +271,7 @@ Exceeding limits returns `429 Too Many Requests` with a `Retry-After` header.
 
 ## License
 
-MIT
+BSD-3-Clause - see [LICENSE](./LICENSE) file for details
 
 ## Maintainer
 

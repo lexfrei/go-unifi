@@ -521,3 +521,42 @@ for dir in examples/*/; do go build -o /dev/null "$dir"; done
 - [oapi-codegen Documentation](https://github.com/oapi-codegen/oapi-codegen)
 - [OpenAPI 3.0 Specification](https://spec.openapis.org/oas/v3.0.3)
 - [Go Error Handling Best Practices](https://github.com/cockroachdb/errors)
+
+
+### Project Structure
+
+- **`/api/`** - Публичные API клиенты (sitemanager, protect, access, talk)
+  - Каждый API в своей поддиректории
+  - OpenAPI спецификация, сгенерированный код, клиент
+- **`/internal/`** - Shared infrastructure, недоступен для внешнего импорта
+  - ratelimit - Rate limiting logic
+  - retry - Retry logic with exponential backoff
+- **`/examples/`** - Исполняемые примеры для демонстрации использования
+- **Корень** - go.mod, документация
+
+### Import Paths
+
+- Site Manager API: `github.com/lexfrei/go-unifi/api/sitemanager`
+- Internal packages: `github.com/lexfrei/go-unifi/internal/*` (только для внутреннего использования)
+
+### Development Commands
+
+Generate code:
+```bash
+cd api/sitemanager && oapi-codegen -config .oapi-codegen.yaml openapi.yaml
+```
+
+Or use go generate:
+```bash
+cd api/sitemanager && go generate
+```
+
+Run linters:
+```bash
+golangci-lint run ./...
+```
+
+### Versioning
+
+Use Semantic Versioning (semver).
+

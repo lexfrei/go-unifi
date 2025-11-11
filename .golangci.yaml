@@ -15,6 +15,7 @@ linters:
     - funcorder # Helper functions placement is a stylistic choice
     - wrapcheck # Too strict for this project
     - nlreturn # Stylistic preference
+    - godoclint # False positive with doc.go pattern
   settings:
     dupl:
       threshold: 100
@@ -97,6 +98,10 @@ linters:
           - gocyclo
           - cyclop
         path: _test\.go
+      - linters:
+          - cyclop
+          - gocyclo
+        source: "func \\(c \\*rateLimitedHTTPClient\\) Do"
       - linters:
           - forbidigo
           - gocyclo

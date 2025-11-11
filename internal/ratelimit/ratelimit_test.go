@@ -9,6 +9,7 @@ import (
 )
 
 func TestNewRateLimiter(t *testing.T) {
+	t.Parallel()
 	tests := []struct {
 		name              string
 		requestsPerMinute int
@@ -43,6 +44,7 @@ func TestNewRateLimiter(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 			limiter := NewRateLimiter(tt.requestsPerMinute)
 
 			if limiter == nil {
@@ -65,6 +67,7 @@ func TestNewRateLimiter(t *testing.T) {
 }
 
 func TestRateLimiterAllowsBurst(t *testing.T) {
+	t.Parallel()
 	// Create limiter with 60 req/min (1 req/sec, burst of 60)
 	limiter := NewRateLimiter(60)
 
@@ -79,6 +82,7 @@ func TestRateLimiterAllowsBurst(t *testing.T) {
 }
 
 func TestRateLimiterThrottles(t *testing.T) {
+	t.Parallel()
 	// Create limiter with 60 req/min (1 req/sec)
 	limiter := NewRateLimiter(60)
 
@@ -108,6 +112,7 @@ func TestRateLimiterThrottles(t *testing.T) {
 }
 
 func TestRateLimiterContextCancellation(t *testing.T) {
+	t.Parallel()
 	// Create limiter with very low rate
 	limiter := NewRateLimiter(1)
 
@@ -130,6 +135,7 @@ func TestRateLimiterContextCancellation(t *testing.T) {
 }
 
 func TestRateLimiterHighThroughput(t *testing.T) {
+	t.Parallel()
 	// Create limiter with 1000 req/min
 	limiter := NewRateLimiter(1000)
 

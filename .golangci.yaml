@@ -14,6 +14,7 @@ linters:
     - funcorder # Helper functions placement is a stylistic choice
     - nlreturn # Stylistic preference
     - godoclint # False positive with doc.go pattern
+    - errchkjson # Examples and test code don't need strict JSON marshaling checks
   settings:
     dupl:
       threshold: 100
@@ -87,7 +88,7 @@ linters:
     paths:
       - third_party$
       - builtin$
-      - examples$
+      - examples/
       - cmd/
     rules:
       - linters:
@@ -97,6 +98,7 @@ linters:
           - gocyclo
           - cyclop
           - errcheck
+          - testableexamples
         path: _test\.go
       - linters:
           - cyclop
@@ -126,5 +128,5 @@ formatters:
     paths:
       - third_party$
       - builtin$
-      - examples$
+      - examples/
       - cmd/

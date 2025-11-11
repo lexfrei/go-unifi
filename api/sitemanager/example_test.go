@@ -39,48 +39,12 @@ func ExampleUnifiClient_ListHosts() {
 	// Output:
 }
 
-func ExampleUnifiClient_GetHostByID() {
-	// Create client
-	client, _ := sitemanager.New("your-api-key")
-
-	hostID := "host-id-here"
-
-	_ = client
-	_ = hostID
-	// host, err := client.GetHostByID(context.Background(), hostID)
-	// Output:
-}
-
 func ExampleUnifiClient_ListSites() {
 	// Create client
 	client, _ := sitemanager.New("your-api-key")
 
 	_ = client
 	// sites, err := client.ListSites(context.Background())
-	// Output:
-}
-
-func ExampleUnifiClient_ListDevices() {
-	// Create client
-	client, _ := sitemanager.New("your-api-key")
-
-	_ = client
-	// devices, err := client.ListDevices(context.Background(), nil)
-	// Output:
-}
-
-func ExampleUnifiClient_GetISPMetrics() {
-	// Early Access endpoint - client automatically uses EA rate limiter
-	client, _ := sitemanager.New("your-api-key")
-
-	duration := sitemanager.GetISPMetricsParamsDuration("24h")
-	params := &sitemanager.GetISPMetricsParams{
-		Duration: &duration,
-	}
-
-	_ = client
-	_ = params
-	// metrics, err := client.GetISPMetrics(context.Background(), "5m", params)
 	// Output:
 }
 

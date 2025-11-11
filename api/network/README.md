@@ -204,13 +204,19 @@ See [doc.go](./doc.go) for comprehensive package documentation including:
 - Retry logic explanation
 - TLS/SSL certificate handling
 
-## Tested Hardware
+## Testing
 
 This library has been tested and validated against:
+
+### Tested Hardware
+
 - **UniFi Dream Router (UDR7)** running:
-  - UniFi OS **4.3.87** with Network Application **9.4.19**
-  - UniFi OS **4.3.6** with Network Application **9.4.19**
-  - UniFi OS **4.3.6** with Network Application **9.5.21**
+  - UniFi OS **4.3.9** with Network Application **9.4.19**
+
+### Tested Targets (VM)
+
+- UniFi OS **4.3.6** with Network Application **9.4.19**
+- UniFi OS **4.3.6** with Network Application **9.5.21**
 
 **Note:** API responses may vary depending on hardware models, firmware versions, and Network Application releases. The types and tests reflect the actual behavior observed on tested configurations.
 

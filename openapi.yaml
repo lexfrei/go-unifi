@@ -842,26 +842,37 @@ components:
               items:
                 $ref: '#/components/schemas/ISPMetricItem'
 
+    ISPMetricsQuerySiteItem:
+      type: object
+      description: Site query parameters
+      required:
+        - hostId
+        - siteId
+      properties:
+        beginTimestamp:
+          type: string
+          format: date-time
+          description: The earliest timestamp to retrieve data from (RFC3339 format)
+        hostId:
+          type: string
+          description: Host identifier
+        endTimestamp:
+          type: string
+          format: date-time
+          description: The latest timestamp to retrieve data up to (RFC3339 format)
+        siteId:
+          type: string
+          description: Site identifier
+
     ISPMetricsQuery:
       type: object
+      description: ISP metrics query request body
       properties:
         sites:
           type: array
           items:
-            type: string
-          description: List of site IDs to query
-        startTime:
-          type: string
-          format: date-time
-          description: Query start time
-        endTime:
-          type: string
-          format: date-time
-          description: Query end time
-        interval:
-          type: string
-          enum: [5m, 1h]
-          description: Metric interval (5-minute or 1-hour)
+            $ref: '#/components/schemas/ISPMetricsQuerySiteItem'
+          description: Array of sites to query with their parameters
 
     ISPMetricsQueryResponse:
       allOf:
@@ -871,14 +882,20 @@ components:
             data:
               type: object
               properties:
+                message:
+                  type: string
+                  nullable: true
+                  description: Optional message (e.g., error details)
                 status:
                   type: string
                   enum: [success, partialSuccess]
+                  nullable: true
                   description: Query status (partialSuccess if some sites are inaccessible)
                 metrics:
                   type: array
                   items:
                     $ref: '#/components/schemas/ISPMetricItem'
+                  description: Array of ISP metrics for queried sites
 
     # SD-WAN schemas
     SDWANConfig:

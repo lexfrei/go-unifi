@@ -303,3 +303,21 @@ func (c *UnifiClient) GetISPMetrics(ctx context.Context, metricType GetISPMetric
 
 	return resp.JSON200, nil
 }
+
+// QueryISPMetrics queries ISP metrics for specific sites with custom parameters.
+func (c *UnifiClient) QueryISPMetrics(ctx context.Context, metricType string, query ISPMetricsQuery) (*ISPMetricsQueryResponse, error) {
+	resp, err := c.client.QueryISPMetricsWithResponse(ctx, metricType, query)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to query ISP metrics for type %s", metricType)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return resp.JSON200, nil
+}

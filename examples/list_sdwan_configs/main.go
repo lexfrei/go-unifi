@@ -58,7 +58,16 @@ func main() {
 		}
 
 		if cfg.Config != nil {
-			fmt.Printf("  Config: present (%d keys)\n", len(*cfg.Config))
+			fmt.Printf("  Config: present\n")
+			if cfg.Config.Version != nil {
+				fmt.Printf("    Version: %s\n", *cfg.Config.Version)
+			}
+			if cfg.Config.Hubs != nil {
+				fmt.Printf("    Hubs: %d\n", len(*cfg.Config.Hubs))
+			}
+			if cfg.Config.Spokes != nil {
+				fmt.Printf("    Spokes: %d\n", len(*cfg.Config.Spokes))
+			}
 		}
 
 		fmt.Println()

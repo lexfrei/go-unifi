@@ -515,8 +515,8 @@ func (c *APIClient) DeleteDNSRecord(ctx context.Context, site Site, recordID Rec
 		return errors.Wrapf(err, "failed to delete DNS record %s in site %s", recordID, site)
 	}
 
-	if resp.StatusCode() != http.StatusNoContent {
-		//nolint:wrapcheck // Creating new error for non-NoContent status, no source error to wrap
+	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 

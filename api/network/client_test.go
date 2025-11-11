@@ -878,7 +878,7 @@ func TestDeleteDNSRecord(t *testing.T) {
 		{
 			name:           "success",
 			mockResponse:   `{}`,
-			mockStatusCode: http.StatusNoContent,
+			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 		},
 		{
@@ -1615,7 +1615,7 @@ func TestDeleteFirewallPolicy(t *testing.T) {
 		{
 			name:           "success",
 			mockResponse:   `{}`,
-			mockStatusCode: http.StatusNoContent,
+			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 		},
 		{
@@ -1928,7 +1928,7 @@ func TestDeleteTrafficRule(t *testing.T) {
 		{
 			name:           "success",
 			mockResponse:   `{}`,
-			mockStatusCode: http.StatusNoContent,
+			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 		},
 		{
@@ -2226,7 +2226,7 @@ func TestDeleteHotspotVoucher(t *testing.T) {
 		{
 			name:           "success",
 			mockResponse:   `{}`,
-			mockStatusCode: http.StatusNoContent,
+			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 		},
 		{

@@ -434,8 +434,7 @@ components:
             consoleGroupMembers:
               type: array
               items:
-                type: object
-                additionalProperties: true
+                $ref: '#/components/schemas/ConsoleGroupMember'
               description: Console group members information
             controllers:
               type: array
@@ -447,9 +446,7 @@ components:
               format: email
               description: User email address
             features:
-              type: object
-              additionalProperties: true
-              description: Available features for the user
+              $ref: '#/components/schemas/UserDataFeatures'
             fullName:
               type: string
               description: User's full name
@@ -486,13 +483,10 @@ components:
             apps:
               type: array
               items:
-                type: object
-                additionalProperties: true
+                $ref: '#/components/schemas/ReportedStateApp'
               description: Installed applications with their status and features
             autoUpdate:
-              type: object
-              additionalProperties: true
-              description: Auto-update configuration
+              $ref: '#/components/schemas/AutoUpdateConfig'
             availableChannels:
               type: array
               items:
@@ -509,8 +503,7 @@ components:
             controllers:
               type: array
               items:
-                type: object
-                additionalProperties: true
+                $ref: '#/components/schemas/Controller'
               description: Installed controllers with their configuration and status
             country:
               type: integer
@@ -529,17 +522,11 @@ components:
               type: string
               description: Direct connect domain for remote access
             features:
-              type: object
-              additionalProperties: true
-              description: Device features and capabilities
+              $ref: '#/components/schemas/DeviceFeatures'
             firmwareUpdate:
-              type: object
-              additionalProperties: true
-              description: Firmware update information
+              $ref: '#/components/schemas/FirmwareUpdateInfo'
             hardware:
-              type: object
-              additionalProperties: true
-              description: Hardware information including CPU, MAC, serial number, etc.
+              $ref: '#/components/schemas/HardwareInfo'
             host_type:
               type: integer
               description: Host type identifier
@@ -547,9 +534,7 @@ components:
               type: string
               description: Device hostname
             internetIssues5min:
-              type: object
-              additionalProperties: true
-              description: Internet connectivity issues in 5-minute periods
+              $ref: '#/components/schemas/InternetIssues'
             ip:
               type: string
               description: Public IP address
@@ -596,9 +581,7 @@ components:
               type: string
               description: Device timezone
             uidb:
-              type: object
-              additionalProperties: true
-              description: Device database information including images
+              $ref: '#/components/schemas/UidbInfo'
             unadoptedUnifiOSDevices:
               type: array
               items:
@@ -691,9 +674,7 @@ components:
           type: string
           description: Unique device identifier
         uidb:
-          type: object
-          description: Device database information (structure varies by UniFi OS version)
-          additionalProperties: true
+          $ref: '#/components/schemas/UidbInfo'
 
     DevicesResponse:
       allOf:
@@ -837,6 +818,454 @@ components:
           properties:
             data:
               $ref: '#/components/schemas/SDWANConfigStatus'
+
+    # Typed schemas for ReportedState nested structures
+
+    ReportedStateApp:
+      type: object
+      properties:
+        controllerStatus:
+          type: string
+          description: Controller status
+        features:
+          type: object
+          additionalProperties:
+            type: boolean
+          description: App features map
+        flags:
+          type: array
+          items:
+            type: string
+          description: App flags
+        identityFeatures:
+          type: object
+          properties:
+            hostingIdentityHubScore:
+              type: integer
+            standard:
+              type: boolean
+            ucs:
+              type: boolean
+            ucsAgent:
+              type: boolean
+            ucsRemoteAccessViaUOS:
+              type: boolean
+            unifiedAdminsUsersPage:
+              type: boolean
+        identityState:
+          type: object
+          properties:
+            enterpriseActivated:
+              type: boolean
+            migrationNeeded:
+              type: boolean
+            migrationStatus:
+              type: string
+            migrationStatusMessage:
+              type: string
+            organizationManaged:
+              type: boolean
+            standardActivated:
+              type: boolean
+            ucsActivated:
+              type: boolean
+            ucsAgentActivated:
+              type: boolean
+            ucsAgentVersion:
+              type: string
+            ucsSetuped:
+              type: boolean
+            ucsVersion:
+              type: string
+            usersOrAdminsExist:
+              type: boolean
+        isConfigured:
+          type: boolean
+        isInstalled:
+          type: boolean
+        isRunning:
+          type: boolean
+        name:
+          type: string
+        port:
+          type: integer
+        prefetch:
+          type: array
+          items:
+            type: string
+          description: Prefetch resources list
+        swaiVersion:
+          type: integer
+          description: SWAI version number
+        type:
+          type: string
+          description: App type
+        uiIcon:
+          type: string
+          description: UI icon path
+        uiVersion:
+          type: string
+          description: UI version
+        version:
+          type: string
+          description: App version
+
+    AutoUpdateConfig:
+      type: object
+      properties:
+        includeApplications:
+          type: boolean
+        preferencesPrompt:
+          nullable: true
+        schedule:
+          type: object
+          properties:
+            frequency:
+              type: string
+              description: Update frequency (daily, weekly, etc.)
+            hour:
+              type: integer
+              description: Hour of day for updates (0-23)
+
+    Controller:
+      type: object
+      properties:
+        controllerStatus:
+          type: string
+        features:
+          type: object
+          additionalProperties:
+            type: boolean
+        handledRequirements:
+          type: object
+          additionalProperties: true
+        initialDeviceListSynced:
+          type: boolean
+        installState:
+          type: string
+          description: Installation state (updateFailed, uninstalled, etc.)
+        integrationApis:
+          type: array
+          items:
+            type: object
+            properties:
+              apiDocsLocation:
+                type: string
+              name:
+                type: string
+              version:
+                type: string
+        isConfigured:
+          type: boolean
+        isInstalled:
+          type: boolean
+        isRunning:
+          type: boolean
+        name:
+          type: string
+          description: Controller name (network, protect, access, etc.)
+        port:
+          type: integer
+        prefetch:
+          type: array
+          items:
+            type: string
+        releaseChannel:
+          type: string
+          description: Release channel (release, beta, etc.)
+        required:
+          type: boolean
+        state:
+          type: string
+          description: Controller state (active, inactive)
+        status:
+          type: string
+          description: Status (ok, offline)
+        statusMessage:
+          type: string
+        swaiVersion:
+          type: integer
+        type:
+          type: string
+          description: Controller type
+        uiVersion:
+          type: string
+        unadoptedDevices:
+          type: array
+          items: {}
+        updatable:
+          type: boolean
+        updateAvailable:
+          type: string
+          nullable: true
+          description: Version available for update
+        updateProgress:
+          type: integer
+          description: Update progress percentage
+        updateSchedule:
+          type: object
+          properties:
+            frequency:
+              type: string
+            hour:
+              type: integer
+        version:
+          type: string
+        versionRaw:
+          type: string
+          description: Raw version string
+
+    HardwareInfo:
+      type: object
+      properties:
+        bom:
+          type: string
+          description: Bill of materials number
+        cpu.id:
+          type: string
+          description: CPU identifier
+        debianCodename:
+          type: string
+          description: Debian codename
+        firmwareVersion:
+          type: string
+        hwrev:
+          type: integer
+          description: Hardware revision
+        mac:
+          type: string
+          description: MAC address
+        name:
+          type: string
+          description: Hardware model name
+        qrid:
+          type: string
+          description: QR code identifier
+        reboot:
+          type: string
+          description: Reboot duration in seconds
+        serialno:
+          type: string
+          description: Serial number
+        shortname:
+          type: string
+          description: Short model name (e.g., UDR7)
+        subtype:
+          type: string
+        sysid:
+          type: integer
+          description: System identifier
+        upgrade:
+          type: string
+          description: Upgrade duration in seconds
+        uuid:
+          type: string
+          format: uuid
+          description: Hardware UUID
+
+    DeviceFeatures:
+      type: object
+      properties:
+        alarmManager:
+          type: boolean
+        apiIntegration:
+          type: boolean
+        applications:
+          type: object
+          properties:
+            access:
+              type: object
+              properties:
+                mspPlayback:
+                  type: boolean
+        captiveProxy:
+          type: boolean
+        cloud:
+          type: object
+          properties:
+            applicationEvents:
+              type: boolean
+            applicationEventsHttp:
+              type: boolean
+            ucp4GuestConnection:
+              type: boolean
+        cloudBackup:
+          type: boolean
+        customSmtpServer:
+          type: boolean
+        deviceList:
+          type: object
+          properties:
+            autolinkDevices:
+              type: boolean
+            partialUpdates:
+              type: boolean
+            ucp4Events:
+              type: boolean
+        directRemoteConnection:
+          type: boolean
+        hasBezel:
+          type: boolean
+        hasGateway:
+          type: boolean
+        hasLCM:
+          type: boolean
+        hasLED:
+          type: boolean
+        identity:
+          type: object
+          properties:
+            hostingIdentityHubScore:
+              type: integer
+            standard:
+              type: boolean
+            ucs:
+              type: boolean
+            ucsAgent:
+              type: boolean
+            ucsRemoteAccessViaUOS:
+              type: boolean
+            unifiedAdminsUsersPage:
+              type: boolean
+        infoApis:
+          type: object
+          properties:
+            firmwareUpdate:
+              type: boolean
+        isAutomaticFailoverAvailable:
+          type: boolean
+        led:
+          type: object
+          properties:
+            canSetColor:
+              type: boolean
+        mfa:
+          type: boolean
+        mspBridgeModesSupported:
+          type: boolean
+        netInAppBackupSupport:
+          type: boolean
+        notifications:
+          type: boolean
+        sharedTokens:
+          type: boolean
+        snmpConfig:
+          type: boolean
+        supportForm:
+          type: boolean
+        syslog:
+          type: boolean
+        teleport:
+          type: boolean
+        teleportState:
+          type: string
+        uidService:
+          type: boolean
+        updates:
+          type: object
+          properties:
+            applicationReleaseChannels:
+              type: boolean
+            applicationSchedules:
+              type: boolean
+
+    FirmwareUpdateInfo:
+      type: object
+      properties:
+        latestAvailableVersion:
+          type: string
+          nullable: true
+          description: Latest firmware version available
+
+    InternetIssues:
+      type: object
+      properties:
+        periods:
+          type: array
+          items:
+            type: object
+            properties:
+              index:
+                type: integer
+                description: Time period index
+
+    UidbInfo:
+      type: object
+      properties:
+        guid:
+          type: string
+          format: uuid
+        id:
+          type: string
+          format: uuid
+        images:
+          type: object
+          additionalProperties:
+            type: string
+          description: Image hash map
+
+    UserDataFeatures:
+      type: object
+      properties:
+        deviceGroups:
+          type: boolean
+        floorplan:
+          type: object
+          properties:
+            canEdit:
+              type: boolean
+            canView:
+              type: boolean
+        manageApplications:
+          type: boolean
+        notifications:
+          type: boolean
+        webrtc:
+          type: object
+          properties:
+            iceRestart:
+              type: boolean
+            mediaStreams:
+              type: boolean
+            mediaStreamsAV1:
+              type: boolean
+            mediaStreamsH265:
+              type: boolean
+            twoWayAudio:
+              type: boolean
+
+    ConsoleGroupMember:
+      type: object
+      properties:
+        mac:
+          type: string
+        role:
+          type: string
+        roleAttributes:
+          type: object
+          properties:
+            applications:
+              type: object
+              additionalProperties:
+                type: object
+                properties:
+                  owned:
+                    type: boolean
+                  required:
+                    type: boolean
+                  supported:
+                    type: boolean
+            candidateRoles:
+              type: array
+              items:
+                type: string
+            connectedState:
+              type: string
+            connectedStateLastChanged:
+              type: string
+              format: date-time
+        sysId:
+          type: integer
 
   responses:
     BadRequest:

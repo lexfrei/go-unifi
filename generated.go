@@ -44,13 +44,156 @@ const (
 	Success        ISPMetricsQueryResponseDataStatus = "success"
 )
 
+// AutoUpdateConfig defines model for AutoUpdateConfig.
+type AutoUpdateConfig struct {
+	IncludeApplications *bool       `json:"includeApplications,omitempty"`
+	PreferencesPrompt   interface{} `json:"preferencesPrompt"`
+	Schedule            *struct {
+		// Frequency Update frequency (daily, weekly, etc.)
+		Frequency *string `json:"frequency,omitempty"`
+
+		// Hour Hour of day for updates (0-23)
+		Hour *int `json:"hour,omitempty"`
+	} `json:"schedule,omitempty"`
+}
+
+// ConsoleGroupMember defines model for ConsoleGroupMember.
+type ConsoleGroupMember struct {
+	Mac            *string `json:"mac,omitempty"`
+	Role           *string `json:"role,omitempty"`
+	RoleAttributes *struct {
+		Applications *map[string]struct {
+			Owned     *bool `json:"owned,omitempty"`
+			Required  *bool `json:"required,omitempty"`
+			Supported *bool `json:"supported,omitempty"`
+		} `json:"applications,omitempty"`
+		CandidateRoles            *[]string  `json:"candidateRoles,omitempty"`
+		ConnectedState            *string    `json:"connectedState,omitempty"`
+		ConnectedStateLastChanged *time.Time `json:"connectedStateLastChanged,omitempty"`
+	} `json:"roleAttributes,omitempty"`
+	SysId *int `json:"sysId,omitempty"`
+}
+
+// Controller defines model for Controller.
+type Controller struct {
+	ControllerStatus        *string                 `json:"controllerStatus,omitempty"`
+	Features                *map[string]bool        `json:"features,omitempty"`
+	HandledRequirements     *map[string]interface{} `json:"handledRequirements,omitempty"`
+	InitialDeviceListSynced *bool                   `json:"initialDeviceListSynced,omitempty"`
+
+	// InstallState Installation state (updateFailed, uninstalled, etc.)
+	InstallState    *string `json:"installState,omitempty"`
+	IntegrationApis *[]struct {
+		ApiDocsLocation *string `json:"apiDocsLocation,omitempty"`
+		Name            *string `json:"name,omitempty"`
+		Version         *string `json:"version,omitempty"`
+	} `json:"integrationApis,omitempty"`
+	IsConfigured *bool `json:"isConfigured,omitempty"`
+	IsInstalled  *bool `json:"isInstalled,omitempty"`
+	IsRunning    *bool `json:"isRunning,omitempty"`
+
+	// Name Controller name (network, protect, access, etc.)
+	Name     *string   `json:"name,omitempty"`
+	Port     *int      `json:"port,omitempty"`
+	Prefetch *[]string `json:"prefetch,omitempty"`
+
+	// ReleaseChannel Release channel (release, beta, etc.)
+	ReleaseChannel *string `json:"releaseChannel,omitempty"`
+	Required       *bool   `json:"required,omitempty"`
+
+	// State Controller state (active, inactive)
+	State *string `json:"state,omitempty"`
+
+	// Status Status (ok, offline)
+	Status        *string `json:"status,omitempty"`
+	StatusMessage *string `json:"statusMessage,omitempty"`
+	SwaiVersion   *int    `json:"swaiVersion,omitempty"`
+
+	// Type Controller type
+	Type             *string        `json:"type,omitempty"`
+	UiVersion        *string        `json:"uiVersion,omitempty"`
+	UnadoptedDevices *[]interface{} `json:"unadoptedDevices,omitempty"`
+	Updatable        *bool          `json:"updatable,omitempty"`
+
+	// UpdateAvailable Version available for update
+	UpdateAvailable *string `json:"updateAvailable"`
+
+	// UpdateProgress Update progress percentage
+	UpdateProgress *int `json:"updateProgress,omitempty"`
+	UpdateSchedule *struct {
+		Frequency *string `json:"frequency,omitempty"`
+		Hour      *int    `json:"hour,omitempty"`
+	} `json:"updateSchedule,omitempty"`
+	Version *string `json:"version,omitempty"`
+
+	// VersionRaw Raw version string
+	VersionRaw *string `json:"versionRaw,omitempty"`
+}
+
 // Device defines model for Device.
 type Device struct {
 	// Id Unique device identifier
-	Id *string `json:"id,omitempty"`
+	Id   *string   `json:"id,omitempty"`
+	Uidb *UidbInfo `json:"uidb,omitempty"`
+}
 
-	// Uidb Device database information (structure varies by UniFi OS version)
-	Uidb *map[string]interface{} `json:"uidb,omitempty"`
+// DeviceFeatures defines model for DeviceFeatures.
+type DeviceFeatures struct {
+	AlarmManager   *bool `json:"alarmManager,omitempty"`
+	ApiIntegration *bool `json:"apiIntegration,omitempty"`
+	Applications   *struct {
+		Access *struct {
+			MspPlayback *bool `json:"mspPlayback,omitempty"`
+		} `json:"access,omitempty"`
+	} `json:"applications,omitempty"`
+	CaptiveProxy *bool `json:"captiveProxy,omitempty"`
+	Cloud        *struct {
+		ApplicationEvents     *bool `json:"applicationEvents,omitempty"`
+		ApplicationEventsHttp *bool `json:"applicationEventsHttp,omitempty"`
+		Ucp4GuestConnection   *bool `json:"ucp4GuestConnection,omitempty"`
+	} `json:"cloud,omitempty"`
+	CloudBackup      *bool `json:"cloudBackup,omitempty"`
+	CustomSmtpServer *bool `json:"customSmtpServer,omitempty"`
+	DeviceList       *struct {
+		AutolinkDevices *bool `json:"autolinkDevices,omitempty"`
+		PartialUpdates  *bool `json:"partialUpdates,omitempty"`
+		Ucp4Events      *bool `json:"ucp4Events,omitempty"`
+	} `json:"deviceList,omitempty"`
+	DirectRemoteConnection *bool `json:"directRemoteConnection,omitempty"`
+	HasBezel               *bool `json:"hasBezel,omitempty"`
+	HasGateway             *bool `json:"hasGateway,omitempty"`
+	HasLCM                 *bool `json:"hasLCM,omitempty"`
+	HasLED                 *bool `json:"hasLED,omitempty"`
+	Identity               *struct {
+		HostingIdentityHubScore *int  `json:"hostingIdentityHubScore,omitempty"`
+		Standard                *bool `json:"standard,omitempty"`
+		Ucs                     *bool `json:"ucs,omitempty"`
+		UcsAgent                *bool `json:"ucsAgent,omitempty"`
+		UcsRemoteAccessViaUOS   *bool `json:"ucsRemoteAccessViaUOS,omitempty"`
+		UnifiedAdminsUsersPage  *bool `json:"unifiedAdminsUsersPage,omitempty"`
+	} `json:"identity,omitempty"`
+	InfoApis *struct {
+		FirmwareUpdate *bool `json:"firmwareUpdate,omitempty"`
+	} `json:"infoApis,omitempty"`
+	IsAutomaticFailoverAvailable *bool `json:"isAutomaticFailoverAvailable,omitempty"`
+	Led                          *struct {
+		CanSetColor *bool `json:"canSetColor,omitempty"`
+	} `json:"led,omitempty"`
+	Mfa                     *bool   `json:"mfa,omitempty"`
+	MspBridgeModesSupported *bool   `json:"mspBridgeModesSupported,omitempty"`
+	NetInAppBackupSupport   *bool   `json:"netInAppBackupSupport,omitempty"`
+	Notifications           *bool   `json:"notifications,omitempty"`
+	SharedTokens            *bool   `json:"sharedTokens,omitempty"`
+	SnmpConfig              *bool   `json:"snmpConfig,omitempty"`
+	SupportForm             *bool   `json:"supportForm,omitempty"`
+	Syslog                  *bool   `json:"syslog,omitempty"`
+	Teleport                *bool   `json:"teleport,omitempty"`
+	TeleportState           *string `json:"teleportState,omitempty"`
+	UidService              *bool   `json:"uidService,omitempty"`
+	Updates                 *struct {
+		ApplicationReleaseChannels *bool `json:"applicationReleaseChannels,omitempty"`
+		ApplicationSchedules       *bool `json:"applicationSchedules,omitempty"`
+	} `json:"updates,omitempty"`
 }
 
 // DevicesResponse defines model for DevicesResponse.
@@ -77,6 +220,56 @@ type ErrorResponse struct {
 
 	// TraceId Unique identifier for debugging purposes
 	TraceId string `json:"traceId"`
+}
+
+// FirmwareUpdateInfo defines model for FirmwareUpdateInfo.
+type FirmwareUpdateInfo struct {
+	// LatestAvailableVersion Latest firmware version available
+	LatestAvailableVersion *string `json:"latestAvailableVersion"`
+}
+
+// HardwareInfo defines model for HardwareInfo.
+type HardwareInfo struct {
+	// Bom Bill of materials number
+	Bom *string `json:"bom,omitempty"`
+
+	// CpuId CPU identifier
+	CpuId *string `json:"cpu.id,omitempty"`
+
+	// DebianCodename Debian codename
+	DebianCodename  *string `json:"debianCodename,omitempty"`
+	FirmwareVersion *string `json:"firmwareVersion,omitempty"`
+
+	// Hwrev Hardware revision
+	Hwrev *int `json:"hwrev,omitempty"`
+
+	// Mac MAC address
+	Mac *string `json:"mac,omitempty"`
+
+	// Name Hardware model name
+	Name *string `json:"name,omitempty"`
+
+	// Qrid QR code identifier
+	Qrid *string `json:"qrid,omitempty"`
+
+	// Reboot Reboot duration in seconds
+	Reboot *string `json:"reboot,omitempty"`
+
+	// Serialno Serial number
+	Serialno *string `json:"serialno,omitempty"`
+
+	// Shortname Short model name (e.g., UDR7)
+	Shortname *string `json:"shortname,omitempty"`
+	Subtype   *string `json:"subtype,omitempty"`
+
+	// Sysid System identifier
+	Sysid *int `json:"sysid,omitempty"`
+
+	// Upgrade Upgrade duration in seconds
+	Upgrade *string `json:"upgrade,omitempty"`
+
+	// Uuid Hardware UUID
+	Uuid *openapi_types.UUID `json:"uuid,omitempty"`
 }
 
 // Host defines model for Host.
@@ -134,10 +327,8 @@ type Host_ReportedState struct {
 	Anonid *openapi_types.UUID `json:"anonid,omitempty"`
 
 	// Apps Installed applications with their status and features
-	Apps *[]map[string]interface{} `json:"apps,omitempty"`
-
-	// AutoUpdate Auto-update configuration
-	AutoUpdate *map[string]interface{} `json:"autoUpdate,omitempty"`
+	Apps       *[]ReportedStateApp `json:"apps,omitempty"`
+	AutoUpdate *AutoUpdateConfig   `json:"autoUpdate,omitempty"`
 
 	// AvailableChannels Available release channels
 	AvailableChannels *[]string `json:"availableChannels,omitempty"`
@@ -149,7 +340,7 @@ type Host_ReportedState struct {
 	ControllerUuid *string `json:"controller_uuid,omitempty"`
 
 	// Controllers Installed controllers with their configuration and status
-	Controllers *[]map[string]interface{} `json:"controllers,omitempty"`
+	Controllers *[]Controller `json:"controllers,omitempty"`
 
 	// Country Country code
 	Country *int `json:"country,omitempty"`
@@ -164,25 +355,17 @@ type Host_ReportedState struct {
 	DeviceStateLastChanged *int `json:"deviceStateLastChanged,omitempty"`
 
 	// DirectConnectDomain Direct connect domain for remote access
-	DirectConnectDomain *string `json:"directConnectDomain,omitempty"`
-
-	// Features Device features and capabilities
-	Features *map[string]interface{} `json:"features,omitempty"`
-
-	// FirmwareUpdate Firmware update information
-	FirmwareUpdate *map[string]interface{} `json:"firmwareUpdate,omitempty"`
-
-	// Hardware Hardware information including CPU, MAC, serial number, etc.
-	Hardware *map[string]interface{} `json:"hardware,omitempty"`
+	DirectConnectDomain *string             `json:"directConnectDomain,omitempty"`
+	Features            *DeviceFeatures     `json:"features,omitempty"`
+	FirmwareUpdate      *FirmwareUpdateInfo `json:"firmwareUpdate,omitempty"`
+	Hardware            *HardwareInfo       `json:"hardware,omitempty"`
 
 	// HostType Host type identifier
 	HostType *int `json:"host_type,omitempty"`
 
 	// Hostname Device hostname
-	Hostname *string `json:"hostname,omitempty"`
-
-	// InternetIssues5min Internet connectivity issues in 5-minute periods
-	InternetIssues5min *map[string]interface{} `json:"internetIssues5min,omitempty"`
+	Hostname           *string         `json:"hostname,omitempty"`
+	InternetIssues5min *InternetIssues `json:"internetIssues5min,omitempty"`
 
 	// Ip Public IP address
 	Ip *string `json:"ip,omitempty"`
@@ -224,10 +407,8 @@ type Host_ReportedState struct {
 	State *string `json:"state,omitempty"`
 
 	// Timezone Device timezone
-	Timezone *string `json:"timezone,omitempty"`
-
-	// Uidb Device database information including images
-	Uidb *map[string]interface{} `json:"uidb,omitempty"`
+	Timezone *string   `json:"timezone,omitempty"`
+	Uidb     *UidbInfo `json:"uidb,omitempty"`
 
 	// UnadoptedUnifiOSDevices List of unadopted UniFi OS devices
 	UnadoptedUnifiOSDevices *[]map[string]interface{} `json:"unadoptedUnifiOSDevices,omitempty"`
@@ -249,16 +430,14 @@ type Host_UserData struct {
 	Apps *[]string `json:"apps,omitempty"`
 
 	// ConsoleGroupMembers Console group members information
-	ConsoleGroupMembers *[]map[string]interface{} `json:"consoleGroupMembers,omitempty"`
+	ConsoleGroupMembers *[]ConsoleGroupMember `json:"consoleGroupMembers,omitempty"`
 
 	// Controllers List of available controllers
 	Controllers *[]string `json:"controllers,omitempty"`
 
 	// Email User email address
-	Email *openapi_types.Email `json:"email,omitempty"`
-
-	// Features Available features for the user
-	Features *map[string]interface{} `json:"features,omitempty"`
+	Email    *openapi_types.Email `json:"email,omitempty"`
+	Features *UserDataFeatures    `json:"features,omitempty"`
 
 	// FullName User's full name
 	FullName *string `json:"fullName,omitempty"`
@@ -366,6 +545,71 @@ type ISPMetricsResponse struct {
 	TraceId string `json:"traceId"`
 }
 
+// InternetIssues defines model for InternetIssues.
+type InternetIssues struct {
+	Periods *[]struct {
+		// Index Time period index
+		Index *int `json:"index,omitempty"`
+	} `json:"periods,omitempty"`
+}
+
+// ReportedStateApp defines model for ReportedStateApp.
+type ReportedStateApp struct {
+	// ControllerStatus Controller status
+	ControllerStatus *string `json:"controllerStatus,omitempty"`
+
+	// Features App features map
+	Features *map[string]bool `json:"features,omitempty"`
+
+	// Flags App flags
+	Flags            *[]string `json:"flags,omitempty"`
+	IdentityFeatures *struct {
+		HostingIdentityHubScore *int  `json:"hostingIdentityHubScore,omitempty"`
+		Standard                *bool `json:"standard,omitempty"`
+		Ucs                     *bool `json:"ucs,omitempty"`
+		UcsAgent                *bool `json:"ucsAgent,omitempty"`
+		UcsRemoteAccessViaUOS   *bool `json:"ucsRemoteAccessViaUOS,omitempty"`
+		UnifiedAdminsUsersPage  *bool `json:"unifiedAdminsUsersPage,omitempty"`
+	} `json:"identityFeatures,omitempty"`
+	IdentityState *struct {
+		EnterpriseActivated    *bool   `json:"enterpriseActivated,omitempty"`
+		MigrationNeeded        *bool   `json:"migrationNeeded,omitempty"`
+		MigrationStatus        *string `json:"migrationStatus,omitempty"`
+		MigrationStatusMessage *string `json:"migrationStatusMessage,omitempty"`
+		OrganizationManaged    *bool   `json:"organizationManaged,omitempty"`
+		StandardActivated      *bool   `json:"standardActivated,omitempty"`
+		UcsActivated           *bool   `json:"ucsActivated,omitempty"`
+		UcsAgentActivated      *bool   `json:"ucsAgentActivated,omitempty"`
+		UcsAgentVersion        *string `json:"ucsAgentVersion,omitempty"`
+		UcsSetuped             *bool   `json:"ucsSetuped,omitempty"`
+		UcsVersion             *string `json:"ucsVersion,omitempty"`
+		UsersOrAdminsExist     *bool   `json:"usersOrAdminsExist,omitempty"`
+	} `json:"identityState,omitempty"`
+	IsConfigured *bool   `json:"isConfigured,omitempty"`
+	IsInstalled  *bool   `json:"isInstalled,omitempty"`
+	IsRunning    *bool   `json:"isRunning,omitempty"`
+	Name         *string `json:"name,omitempty"`
+	Port         *int    `json:"port,omitempty"`
+
+	// Prefetch Prefetch resources list
+	Prefetch *[]string `json:"prefetch,omitempty"`
+
+	// SwaiVersion SWAI version number
+	SwaiVersion *int `json:"swaiVersion,omitempty"`
+
+	// Type App type
+	Type *string `json:"type,omitempty"`
+
+	// UiIcon UI icon path
+	UiIcon *string `json:"uiIcon,omitempty"`
+
+	// UiVersion UI version
+	UiVersion *string `json:"uiVersion,omitempty"`
+
+	// Version App version
+	Version *string `json:"version,omitempty"`
+}
+
 // SDWANConfig defines model for SDWANConfig.
 type SDWANConfig struct {
 	// Config SD-WAN configuration data
@@ -469,6 +713,33 @@ type SuccessResponse struct {
 
 	// TraceId Unique identifier for debugging purposes
 	TraceId string `json:"traceId"`
+}
+
+// UidbInfo defines model for UidbInfo.
+type UidbInfo struct {
+	Guid *openapi_types.UUID `json:"guid,omitempty"`
+	Id   *openapi_types.UUID `json:"id,omitempty"`
+
+	// Images Image hash map
+	Images *map[string]string `json:"images,omitempty"`
+}
+
+// UserDataFeatures defines model for UserDataFeatures.
+type UserDataFeatures struct {
+	DeviceGroups *bool `json:"deviceGroups,omitempty"`
+	Floorplan    *struct {
+		CanEdit *bool `json:"canEdit,omitempty"`
+		CanView *bool `json:"canView,omitempty"`
+	} `json:"floorplan,omitempty"`
+	ManageApplications *bool `json:"manageApplications,omitempty"`
+	Notifications      *bool `json:"notifications,omitempty"`
+	Webrtc             *struct {
+		IceRestart       *bool `json:"iceRestart,omitempty"`
+		MediaStreams     *bool `json:"mediaStreams,omitempty"`
+		MediaStreamsAV1  *bool `json:"mediaStreamsAV1,omitempty"`
+		MediaStreamsH265 *bool `json:"mediaStreamsH265,omitempty"`
+		TwoWayAudio      *bool `json:"twoWayAudio,omitempty"`
+	} `json:"webrtc,omitempty"`
 }
 
 // BadGateway defines model for BadGateway.
@@ -3091,75 +3362,100 @@ func ParseListSitesResponse(rsp *http.Response) (*ListSitesResponse, error) {
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"AAAA//+567v3524AAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

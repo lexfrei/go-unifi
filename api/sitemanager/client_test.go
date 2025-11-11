@@ -559,9 +559,85 @@ const (
   "traceId": "a7dc15e0eb4527142d7823515b15f87d"
 }`
 
+	queryISPMetricsSuccess = `{
+  "data": {
+    "metrics": [
+      {
+        "metricType": "5m",
+        "periods": [
+          {
+            "data": {
+              "wan": {
+                "avgLatency": 1,
+                "download_kbps": 0,
+                "downtime": 0,
+                "ispAsn": "12578",
+                "ispName": "ISP",
+                "maxLatency": 2,
+                "packetLoss": 0,
+                "upload_kbps": 0,
+                "uptime": 100
+              }
+            },
+            "metricTime": "2024-06-30T13:35:00Z",
+            "version": "1"
+          }
+        ],
+        "hostId": "900A6F00301100000000074A6BA90000000007A3387E0000000063EC9853:123456789",
+        "siteId": "661900ae6aec8f548d49fd54"
+      }
+    ]
+  },
+  "httpStatusCode": 200,
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d"
+}`
+
+	queryISPMetricsPartialSuccess = `{
+  "data": {
+    "metrics": [
+      {
+        "metricType": "5m",
+        "periods": [
+          {
+            "data": {
+              "wan": {
+                "avgLatency": 1,
+                "download_kbps": 0,
+                "downtime": 0,
+                "ispAsn": "12578",
+                "ispName": "ISP",
+                "maxLatency": 2,
+                "packetLoss": 0,
+                "upload_kbps": 0,
+                "uptime": 100
+              }
+            },
+            "metricTime": "2024-06-30T13:35:00Z",
+            "version": "1"
+          }
+        ],
+        "hostId": "900A6F00301100000000074A6BA90000000007A3387E0000000063EC9853:123456789",
+        "siteId": "661900ae6aec8f548d49fd54"
+      }
+    ],
+    "message": "some of the requested sites are not accessible for the user or were ignored as duplicates",
+    "status": "partialSuccess"
+  },
+  "httpStatusCode": 200,
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d"
+}`
+
+	invalidParameterError = `{
+  "code": "parameter_invalid",
+  "httpStatusCode": 400,
+  "message": "invalid beginTimestamp format: 2024-06-30",
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d"
+}`
+
 	testAPIKey    = "test-api-key"
 	testToken     = "test-token"
 	testNextToken = "ba8e384e-3308-4236-b344-7357657351ca" //nolint:gosec // Test pagination token, not a real credential
+	testHostID    = "900A6F00301100000000074A6BA90000000007A3387E0000000063EC9853:123456789"
 )
 
 func TestNew(t *testing.T) {
@@ -1200,7 +1276,7 @@ func TestListDevices(t *testing.T) {
 				if len(resp.Data) != 1 {
 					t.Errorf("len(Data) = %d, want 1", len(resp.Data))
 				}
-				if resp.Data[0].HostId == nil || *resp.Data[0].HostId != "900A6F00301100000000074A6BA90000000007A3387E0000000063EC9853:123456789" {
+				if resp.Data[0].HostId == nil || *resp.Data[0].HostId != testHostID {
 					t.Error("HostId not set correctly")
 				}
 				if resp.Data[0].Devices == nil || len(*resp.Data[0].Devices) != 2 {
@@ -1333,7 +1409,7 @@ func TestGetISPMetrics(t *testing.T) {
 					t.Errorf("len(Data) = %d, want 1", len(resp.Data))
 				}
 				metric := resp.Data[0]
-				if metric.MetricType == nil || *metric.MetricType != "5m" {
+				if metric.MetricType == nil || *metric.MetricType != string(N5m) {
 					t.Error("MetricType not set correctly")
 				}
 				if metric.Periods == nil || len(*metric.Periods) == 0 {
@@ -1744,6 +1820,169 @@ func TestListSDWANConfigs(t *testing.T) {
 			}
 
 			resp, err := client.ListSDWANConfigs(context.Background())
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+				return
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
+			}
+		})
+	}
+}
+
+func TestQueryISPMetrics(t *testing.T) {
+	t.Parallel()
+
+	testSiteID := "661900ae6aec8f548d49fd54"
+	testQuery := ISPMetricsQuery{
+		Sites: &[]ISPMetricsQuerySiteItem{
+			{
+				SiteId: testSiteID,
+				HostId: testHostID,
+			},
+		},
+	}
+
+	tests := []struct {
+		name           string
+		metricType     string
+		query          ISPMetricsQuery
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+		checkResponse  func(t *testing.T, resp *ISPMetricsQueryResponse)
+	}{
+		{
+			name:           "success",
+			metricType:     "5m",
+			query:          testQuery,
+			mockResponse:   queryISPMetricsSuccess,
+			mockStatusCode: http.StatusOK,
+			wantErr:        false,
+			checkResponse: func(t *testing.T, resp *ISPMetricsQueryResponse) {
+				t.Helper()
+				if resp == nil {
+					t.Fatal("response is nil")
+				}
+				if resp.Data.Metrics == nil || len(*resp.Data.Metrics) != 1 {
+					t.Fatalf("len(Metrics) = %d, want 1", len(*resp.Data.Metrics))
+				}
+				metric := (*resp.Data.Metrics)[0]
+				if metric.MetricType == nil || *metric.MetricType != string(N5m) {
+					t.Error("MetricType not set correctly")
+				}
+				if metric.SiteId == nil || *metric.SiteId != testSiteID {
+					t.Error("SiteId not set correctly")
+				}
+			},
+		},
+		{
+			name:           "partial success",
+			metricType:     "5m",
+			query:          testQuery,
+			mockResponse:   queryISPMetricsPartialSuccess,
+			mockStatusCode: http.StatusOK,
+			wantErr:        false,
+			checkResponse: func(t *testing.T, resp *ISPMetricsQueryResponse) {
+				t.Helper()
+				if resp == nil {
+					t.Fatal("response is nil")
+				}
+				if resp.Data.Status == nil || *resp.Data.Status != "partialSuccess" {
+					t.Error("Status should be partialSuccess")
+				}
+				if resp.Data.Message == nil {
+					t.Error("Message should be set for partial success")
+				}
+			},
+		},
+		{
+			name:           "invalid parameter",
+			metricType:     "5m",
+			query:          testQuery,
+			mockResponse:   invalidParameterError,
+			mockStatusCode: http.StatusBadRequest,
+			wantErr:        true,
+		},
+		{
+			name:           "unauthorized",
+			metricType:     "5m",
+			query:          testQuery,
+			mockResponse:   unauthorizedError,
+			mockStatusCode: http.StatusUnauthorized,
+			wantErr:        true,
+		},
+		{
+			name:           "rate limit",
+			metricType:     "5m",
+			query:          testQuery,
+			mockResponse:   rateLimitError,
+			mockStatusCode: http.StatusTooManyRequests,
+			wantErr:        true,
+		},
+		{
+			name:           "server error",
+			metricType:     "5m",
+			query:          testQuery,
+			mockResponse:   serverError,
+			mockStatusCode: http.StatusInternalServerError,
+			wantErr:        true,
+		},
+		{
+			name:           "bad gateway",
+			metricType:     "5m",
+			query:          testQuery,
+			mockResponse:   `{"code": "bad_gateway", "httpStatusCode": 502, "message": "bad gateway", "traceId": "a7dc15e0eb4527142d7823515b15f87d"}`,
+			mockStatusCode: http.StatusBadGateway,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				// Verify request - EA endpoint
+				expectedPath := "/ea/isp-metrics/" + tt.metricType + "/query"
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+				if r.Method != http.MethodPost {
+					t.Errorf("Request method = %s, want POST", r.Method)
+				}
+				if r.Header.Get("X-Api-Key") != testAPIKey {
+					t.Error("X-Api-Key header not set")
+				}
+				if r.Header.Get("Content-Type") != "application/json" {
+					t.Error("Content-Type header should be application/json")
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := NewWithConfig(&ClientConfig{
+				APIKey:  testAPIKey,
+				BaseURL: server.URL,
+			})
+			if err != nil {
+				t.Fatalf("NewWithConfig failed: %v", err)
+			}
+
+			resp, err := client.QueryISPMetrics(context.Background(), tt.metricType, tt.query)
 
 			if tt.wantErr {
 				if err == nil {

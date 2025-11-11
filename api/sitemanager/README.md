@@ -16,12 +16,22 @@ Pure Go client library for UniFi Site Manager API v1.
 - ✅ **Context support** for all operations
 - ✅ **Detailed type definitions** for Hosts, Sites, Devices, ISP Metrics, and SD-WAN
 
-## Tested Hardware
+## Testing
 
-This library has been tested against:
+This library has been tested and validated against:
+
+### Tested Hardware
+
 - **UniFi Dream Router (UDR7)** running:
-  - UniFi OS **4.3.87**
+  - UniFi OS **4.3.9**
   - Network Application **9.4.19**
+
+### Validation Approach
+
+- Validated against **Official UniFi Site Manager API v1 Documentation**
+- All types and behavior tested on real hardware
+
+**Note:** API responses may vary depending on hardware models, firmware versions, and UniFi OS releases. The types and tests reflect the actual behavior observed on tested configurations.
 
 ## Installation
 
@@ -103,28 +113,41 @@ client, err := sitemanager.NewWithConfig(&sitemanager.ClientConfig{
 
 ## API Coverage
 
-### Stable (v1)
+> **Note:** All methods have been tested against real UniFi Dream Router (UDR7) hardware and validated against official UniFi Site Manager API documentation. Types and tests represent actual API behavior.
 
-- ✅ **Hosts**
-  - `ListHosts(ctx, params)` - List all hosts with pagination
-  - `GetHostByID(ctx, id)` - Get host details by ID
+### Hosts
 
-- ✅ **Sites**
-  - `ListSites(ctx)` - List all sites
+| Method | Version | Description |
+|--------|---------|-------------|
+| `ListHosts` | v1 | List all hosts with pagination support |
+| `GetHostByID` | v1 | Get detailed host information by ID |
 
-- ✅ **Devices**
-  - `ListDevices(ctx)` - List all UniFi devices
+### Sites
 
-### Early Access (EA)
+| Method | Version | Description |
+|--------|---------|-------------|
+| `ListSites` | v1 | List all sites with metadata |
 
-- ⚠️ **ISP Metrics**
-  - `GetISPMetrics(ctx, type)` - Get ISP metrics
-  - `QueryISPMetrics(ctx, type, query)` - Query ISP metrics with filters
+### Devices
 
-- ⚠️ **SD-WAN**
-  - `ListSDWANConfigs(ctx)` - List SD-WAN configurations
-  - `GetSDWANConfigByID(ctx, id)` - Get SD-WAN config by ID
-  - `GetSDWANConfigStatus(ctx, id)` - Get SD-WAN config status
+| Method | Version | Description |
+|--------|---------|-------------|
+| `ListDevices` | v1 | List all UniFi devices across sites |
+
+### ISP Metrics (Early Access)
+
+| Method | Version | Description |
+|--------|---------|-------------|
+| `GetISPMetrics` | EA | Get ISP metrics for specified metric type |
+| `QueryISPMetrics` | EA | Query ISP metrics with filters and time ranges |
+
+### SD-WAN (Early Access)
+
+| Method | Version | Description |
+|--------|---------|-------------|
+| `ListSDWANConfigs` | EA | List all SD-WAN configurations |
+| `GetSDWANConfigByID` | EA | Get SD-WAN configuration details by ID |
+| `GetSDWANConfigStatus` | EA | Get SD-WAN configuration status and health |
 
 ## Examples
 
@@ -135,6 +158,10 @@ See the [examples/](../../examples/sitemanager/) directory for complete working 
 - **[list_sites](../../examples/sitemanager/list_sites/)** - List all sites with metadata and statistics
 - **[list_devices](../../examples/sitemanager/list_devices/)** - List all devices with typed access
 - **[get_isp_metrics](../../examples/sitemanager/get_isp_metrics/)** - Get ISP metrics with WAN performance data
+- **[query_isp_metrics](../../examples/sitemanager/query_isp_metrics/)** - Query ISP metrics with time ranges and filters
+- **[list_sdwan_configs](../../examples/sitemanager/list_sdwan_configs/)** - List all SD-WAN configurations
+- **[get_sdwan_config](../../examples/sitemanager/get_sdwan_config/)** - Get SD-WAN configuration details
+- **[get_sdwan_status](../../examples/sitemanager/get_sdwan_status/)** - Get SD-WAN configuration status
 
 ### List Hosts with Pagination
 

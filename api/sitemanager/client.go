@@ -158,8 +158,7 @@ func NewWithConfig(cfg *ClientConfig) (*UnifiClient, error) {
 
 	// Create request editor to add API key header
 	requestEditor := func(_ context.Context, req *http.Request) error {
-		//nolint:canonicalheader // X-API-Key is the correct header name per UniFi API spec
-		req.Header.Set("X-API-Key", cfg.APIKey)
+		req.Header.Set("X-Api-Key", cfg.APIKey)
 		req.Header.Set("Accept", "application/json")
 		return nil
 	}
@@ -182,14 +181,6 @@ func NewWithConfig(cfg *ClientConfig) (*UnifiClient, error) {
 		maxRetries:    cfg.MaxRetries,
 		retryWait:     cfg.RetryWaitTime,
 	}, nil
-}
-
-// NewUnifiClient creates a new Unifi API client with custom configuration.
-//
-// Deprecated: Use New for simple use cases or NewWithConfig for custom configuration.
-// This function is kept for backward compatibility.
-func NewUnifiClient(cfg *ClientConfig) (*UnifiClient, error) {
-	return NewWithConfig(cfg)
 }
 
 // rateLimitedHTTPClient wraps http.Client with rate limiting and retry logic.
@@ -264,6 +255,7 @@ func (c *rateLimitedHTTPClient) Do(req *http.Request) (*http.Response, error) {
 			if attempt < c.maxRetries {
 				continue
 			}
+			//nolint:wrapcheck // Creating new error for rate limit exhaustion, no source error to wrap
 			return nil, errors.Newf("rate limited after %d attempts", attempt+1)
 
 		case resp.StatusCode >= 500:
@@ -272,6 +264,7 @@ func (c *rateLimitedHTTPClient) Do(req *http.Request) (*http.Response, error) {
 			if attempt < c.maxRetries {
 				continue
 			}
+			//nolint:wrapcheck // Creating new error for server error exhaustion, no source error to wrap
 			return nil, errors.Newf("server error %d after %d attempts", resp.StatusCode, attempt+1)
 
 		default:
@@ -292,8 +285,10 @@ func (c *UnifiClient) ListHosts(ctx context.Context, params *ListHostsParams) (*
 
 	if resp.StatusCode() != http.StatusOK {
 		if resp.JSON200 != nil {
+			//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 			return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 		}
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("unexpected status code: %d", resp.StatusCode())
 	}
 
@@ -312,6 +307,7 @@ func (c *UnifiClient) GetHostByID(ctx context.Context, id string) (*HostResponse
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -330,6 +326,7 @@ func (c *UnifiClient) ListSites(ctx context.Context) (*SitesResponse, error) {
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -348,6 +345,7 @@ func (c *UnifiClient) ListDevices(ctx context.Context, params *ListDevicesParams
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -366,6 +364,7 @@ func (c *UnifiClient) GetISPMetrics(ctx context.Context, metricType GetISPMetric
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -384,6 +383,7 @@ func (c *UnifiClient) QueryISPMetrics(ctx context.Context, metricType string, qu
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -402,6 +402,7 @@ func (c *UnifiClient) ListSDWANConfigs(ctx context.Context) (*SDWANConfigsRespon
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -420,6 +421,7 @@ func (c *UnifiClient) GetSDWANConfigByID(ctx context.Context, id string) (*SDWAN
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -438,6 +440,7 @@ func (c *UnifiClient) GetSDWANConfigStatus(ctx context.Context, id string) (*SDW
 	}
 
 	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 

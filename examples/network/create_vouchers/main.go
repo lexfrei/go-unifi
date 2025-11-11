@@ -45,8 +45,8 @@ func main() {
 
 	// Create vouchers
 	count := 3
-	duration := 480      // 8 hours
-	quota := 1           // Single use
+	duration := 480 // 8 hours
+	quota := 1      // Single use
 	note := "Test vouchers created by go-unifi example"
 	qosOverwrite := true
 	qosDown := 10000 // 10 Mbps
@@ -60,13 +60,13 @@ func main() {
 	fmt.Println()
 
 	request := &network.CreateVouchersRequest{
-		Count:           count,
-		Duration:        &duration,
-		Quota:           &quota,
-		Note:            &note,
-		QosOverwrite:    &qosOverwrite,
-		QosRateMaxDown:  &qosDown,
-		QosRateMaxUp:    &qosUp,
+		Count:          count,
+		Duration:       &duration,
+		Quota:          &quota,
+		Note:           &note,
+		QosOverwrite:   &qosOverwrite,
+		QosRateMaxDown: &qosDown,
+		QosRateMaxUp:   &qosUp,
 	}
 
 	vouchers, err := client.CreateHotspotVouchers(ctx, siteID, request)

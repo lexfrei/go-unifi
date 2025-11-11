@@ -10,12 +10,11 @@ linters:
     - wsl
     - wsl_v5
     - testpackage
-    - paralleltest # TODO: enable back and add t.Parallel() to all tests
     - lll
     - funcorder # Helper functions placement is a stylistic choice
-    - wrapcheck # Too strict for this project
     - nlreturn # Stylistic preference
     - godoclint # False positive with doc.go pattern
+    - errchkjson # Examples and test code don't need strict JSON marshaling checks
   settings:
     dupl:
       threshold: 100
@@ -89,7 +88,7 @@ linters:
     paths:
       - third_party$
       - builtin$
-      - examples$
+      - examples/
       - cmd/
     rules:
       - linters:
@@ -98,6 +97,8 @@ linters:
           - gocognit
           - gocyclo
           - cyclop
+          - errcheck
+          - testableexamples
         path: _test\.go
       - linters:
           - cyclop
@@ -127,5 +128,5 @@ formatters:
     paths:
       - third_party$
       - builtin$
-      - examples$
+      - examples/
       - cmd/

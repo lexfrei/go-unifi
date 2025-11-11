@@ -419,8 +419,8 @@ func (c *APIClient) DeleteHotspotVoucher(ctx context.Context, siteID SiteId, vou
 		return errors.Wrapf(err, "failed to delete hotspot voucher %s in site %s", voucherID, siteID)
 	}
 
-	if resp.StatusCode() != http.StatusNoContent {
-		//nolint:wrapcheck // Creating new error for non-NoContent status, no source error to wrap
+	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -574,8 +574,8 @@ func (c *APIClient) DeleteFirewallPolicy(ctx context.Context, site Site, policyI
 		return errors.Wrapf(err, "failed to delete firewall policy %s in site %s", policyID, site)
 	}
 
-	if resp.StatusCode() != http.StatusNoContent {
-		//nolint:wrapcheck // Creating new error for non-NoContent status, no source error to wrap
+	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
@@ -633,8 +633,8 @@ func (c *APIClient) DeleteTrafficRule(ctx context.Context, site Site, ruleID Rul
 		return errors.Wrapf(err, "failed to delete traffic rule %s in site %s", ruleID, site)
 	}
 
-	if resp.StatusCode() != http.StatusNoContent {
-		//nolint:wrapcheck // Creating new error for non-NoContent status, no source error to wrap
+	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
 		return errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 

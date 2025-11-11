@@ -9,7 +9,7 @@ import (
 	"github.com/oapi-codegen/runtime/types"
 )
 
-// Real API responses from 192.168.2.6 test controller.
+// Real API responses from test controller.
 const (
 	// Real response from GET /v2/sites.
 	listSitesSuccess = `{
@@ -75,6 +75,62 @@ const (
     "value": "192.168.100.1",
     "weight": 0
   }`
+
+	// Real response from GET /v1/sites/{site}/devices (empty).
+	listDevicesEmpty = `{
+  "count": 0,
+  "data": [],
+  "limit": 25,
+  "offset": 0,
+  "totalCount": 0
+}`
+
+	// Real response from GET /v1/sites/{site}/clients (empty).
+	listClientsEmpty = `{
+  "count": 0,
+  "data": [],
+  "limit": 25,
+  "offset": 0,
+  "totalCount": 0
+}`
+
+	// Real response from GET /v2/api/site/{site}/dashboard.
+	dashboardSuccess = `{
+  "dashboard_meta": {
+    "end_timestamp": 1762895866647,
+    "layout": "wireless",
+    "start_timestamp": 1762812000000,
+    "widgets": [
+      "most_active_clients",
+      "most_active_aps",
+      "wifi_activity",
+      "wifi_channels",
+      "wifi_client_experience",
+      "wifi_tx_retries",
+      "admin_activity",
+      "device_client_count",
+      "server_ip"
+    ]
+  },
+  "most_active_aps": {
+    "total_bytes": 0
+  },
+  "most_active_clients": {
+    "total_bytes": 0
+  },
+  "wifi_channels": {
+    "radio_channels": [
+      {
+        "available_channels": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        "radio": "ng"
+      },
+      {
+        "available_channels": [36, 40, 44, 48, 52, 56, 60, 64, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144, 149, 153, 157, 161, 165],
+        "radio": "na"
+      }
+    ]
+  }
+}`
 
 	// Empty responses.
 	emptyDNSRecords       = `[]`
@@ -612,6 +668,525 @@ func TestDeleteDNSRecord(t *testing.T) {
 
 			if err != nil {
 				t.Errorf("Unexpected error: %v", err)
+			}
+		})
+	}
+}
+
+func TestListSiteDevices(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+		checkResponse  func(t *testing.T, resp *DevicesResponse)
+	}{
+		{
+			name:           "success with empty list",
+			mockResponse:   listDevicesEmpty,
+			mockStatusCode: http.StatusOK,
+			checkResponse: func(t *testing.T, resp *DevicesResponse) {
+				t.Helper()
+				if resp.Count != 0 {
+					t.Errorf("Count = %d, want 0", resp.Count)
+				}
+				if len(resp.Data) != 0 {
+					t.Errorf("len(Data) = %d, want 0", len(resp.Data))
+				}
+			},
+		},
+		{
+			name:           "unauthorized",
+			mockResponse:   unauthorizedError,
+			mockStatusCode: http.StatusUnauthorized,
+			wantErr:        true,
+		},
+		{
+			name:           "server error",
+			mockResponse:   serverError,
+			mockStatusCode: http.StatusInternalServerError,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/devices"
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			resp, err := client.ListSiteDevices(context.Background(), testSiteID, nil)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
+			}
+		})
+	}
+}
+
+func TestGetDeviceByID(t *testing.T) {
+	t.Parallel()
+
+	testDeviceID := types.UUID{0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00}
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+	}{
+		{
+			name:           "not found",
+			mockResponse:   notFoundError,
+			mockStatusCode: http.StatusNotFound,
+			wantErr:        true,
+		},
+		{
+			name:           "unauthorized",
+			mockResponse:   unauthorizedError,
+			mockStatusCode: http.StatusUnauthorized,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/devices/" + testDeviceID.String()
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			_, err = client.GetDeviceByID(context.Background(), testSiteID, testDeviceID)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+			}
+		})
+	}
+}
+
+func TestListSiteClients(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+		checkResponse  func(t *testing.T, resp *ClientsResponse)
+	}{
+		{
+			name:           "success with empty list",
+			mockResponse:   listClientsEmpty,
+			mockStatusCode: http.StatusOK,
+			checkResponse: func(t *testing.T, resp *ClientsResponse) {
+				t.Helper()
+				if resp.Count != 0 {
+					t.Errorf("Count = %d, want 0", resp.Count)
+				}
+				if len(resp.Data) != 0 {
+					t.Errorf("len(Data) = %d, want 0", len(resp.Data))
+				}
+			},
+		},
+		{
+			name:           "unauthorized",
+			mockResponse:   unauthorizedError,
+			mockStatusCode: http.StatusUnauthorized,
+			wantErr:        true,
+		},
+		{
+			name:           "server error",
+			mockResponse:   serverError,
+			mockStatusCode: http.StatusInternalServerError,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/clients"
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			resp, err := client.ListSiteClients(context.Background(), testSiteID, nil)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
+			}
+		})
+	}
+}
+
+func TestGetClientByID(t *testing.T) {
+	t.Parallel()
+
+	testClientID := types.UUID{0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99}
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+	}{
+		{
+			name:           "not found",
+			mockResponse:   notFoundError,
+			mockStatusCode: http.StatusNotFound,
+			wantErr:        true,
+		},
+		{
+			name:           "unauthorized",
+			mockResponse:   unauthorizedError,
+			mockStatusCode: http.StatusUnauthorized,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/clients/" + testClientID.String()
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			_, err = client.GetClientByID(context.Background(), testSiteID, testClientID)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+			}
+		})
+	}
+}
+
+func TestGetAggregatedDashboard(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+		checkResponse  func(t *testing.T, resp *AggregatedDashboard)
+	}{
+		{
+			name:           "success with real data",
+			mockResponse:   dashboardSuccess,
+			mockStatusCode: http.StatusOK,
+			checkResponse: func(t *testing.T, resp *AggregatedDashboard) {
+				t.Helper()
+				if resp.DashboardMeta == nil {
+					t.Fatal("DashboardMeta is nil")
+				}
+				if resp.DashboardMeta.Layout == nil || *resp.DashboardMeta.Layout != "wireless" {
+					t.Errorf("Layout = %v, want wireless", resp.DashboardMeta.Layout)
+				}
+				if resp.WifiChannels == nil {
+					t.Fatal("WifiChannels is nil")
+				}
+				if resp.WifiChannels.RadioChannels == nil || len(*resp.WifiChannels.RadioChannels) != 2 {
+					t.Errorf("len(RadioChannels) = %d, want 2", len(*resp.WifiChannels.RadioChannels))
+				}
+			},
+		},
+		{
+			name:           "unauthorized",
+			mockResponse:   unauthorizedError,
+			mockStatusCode: http.StatusUnauthorized,
+			wantErr:        true,
+		},
+		{
+			name:           "not found",
+			mockResponse:   notFoundError,
+			mockStatusCode: http.StatusNotFound,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/aggregated-dashboard"
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			resp, err := client.GetAggregatedDashboard(context.Background(), testSiteInternal, nil)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
+			}
+		})
+	}
+}
+
+func TestListFirewallPolicies(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+		checkResponse  func(t *testing.T, resp []FirewallPolicy)
+	}{
+		{
+			name:           "success with empty list",
+			mockResponse:   emptyFirewallPolicies,
+			mockStatusCode: http.StatusOK,
+			checkResponse: func(t *testing.T, resp []FirewallPolicy) {
+				t.Helper()
+				if len(resp) != 0 {
+					t.Errorf("len(resp) = %d, want 0", len(resp))
+				}
+			},
+		},
+		{
+			name:           "unauthorized",
+			mockResponse:   unauthorizedError,
+			mockStatusCode: http.StatusUnauthorized,
+			wantErr:        true,
+		},
+		{
+			name:           "server error",
+			mockResponse:   serverError,
+			mockStatusCode: http.StatusInternalServerError,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/firewall-policies"
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			resp, err := client.ListFirewallPolicies(context.Background(), testSiteInternal)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
+			}
+		})
+	}
+}
+
+func TestListTrafficRules(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+		checkResponse  func(t *testing.T, resp []TrafficRule)
+	}{
+		{
+			name:           "success with empty list",
+			mockResponse:   emptyTrafficRules,
+			mockStatusCode: http.StatusOK,
+			checkResponse: func(t *testing.T, resp []TrafficRule) {
+				t.Helper()
+				if len(resp) != 0 {
+					t.Errorf("len(resp) = %d, want 0", len(resp))
+				}
+			},
+		},
+		{
+			name:           "unauthorized",
+			mockResponse:   unauthorizedError,
+			mockStatusCode: http.StatusUnauthorized,
+			wantErr:        true,
+		},
+		{
+			name:           "server error",
+			mockResponse:   serverError,
+			mockStatusCode: http.StatusInternalServerError,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/trafficrules"
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			resp, err := client.ListTrafficRules(context.Background(), testSiteInternal)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
 			}
 		})
 	}

@@ -641,20 +641,22 @@ components:
     Site:
       type: object
       properties:
-        id:
+        siteId:
           type: string
-          description: Unique site identifier
-        name:
+          description: Unique identifier of the site
+        hostId:
           type: string
-          description: Site name
+          description: Unique identifier of the host device managing this site
         meta:
-          type: object
-          description: Site metadata (structure varies by UniFi Network version)
-          additionalProperties: true
+          $ref: '#/components/schemas/SiteMeta'
         statistics:
-          type: object
-          description: Site statistics (structure varies by UniFi Network version)
-          additionalProperties: true
+          $ref: '#/components/schemas/SiteStatistics'
+        permission:
+          type: string
+          description: Permission level of the current user for this site (admin, readonly, etc.)
+        isOwner:
+          type: boolean
+          description: Indicates if the current user is the owner of this site
 
     SitesResponse:
       allOf:
@@ -665,6 +667,9 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Site'
+            nextToken:
+              type: string
+              description: Pagination token for fetching the next set of results
 
     # Device schemas
     Device:
@@ -1266,6 +1271,136 @@ components:
               format: date-time
         sysId:
           type: integer
+
+    SiteMeta:
+      type: object
+      properties:
+        desc:
+          type: string
+          description: Site description
+        gatewayMac:
+          type: string
+          description: Gateway MAC address
+        name:
+          type: string
+          description: Site name
+        timezone:
+          type: string
+          description: Site timezone
+
+    SiteStatistics:
+      type: object
+      properties:
+        counts:
+          type: object
+          properties:
+            criticalNotification:
+              type: integer
+            gatewayDevice:
+              type: integer
+            guestClient:
+              type: integer
+            lanConfiguration:
+              type: integer
+            offlineDevice:
+              type: integer
+            offlineGatewayDevice:
+              type: integer
+            offlineWifiDevice:
+              type: integer
+            offlineWiredDevice:
+              type: integer
+            pendingUpdateDevice:
+              type: integer
+            totalDevice:
+              type: integer
+            wanConfiguration:
+              type: integer
+            wifiClient:
+              type: integer
+            wifiConfiguration:
+              type: integer
+            wifiDevice:
+              type: integer
+            wiredClient:
+              type: integer
+            wiredDevice:
+              type: integer
+        gateway:
+          type: object
+          properties:
+            hardwareId:
+              type: string
+              format: uuid
+            inspectionState:
+              type: string
+              description: Inspection state (off, on, etc.)
+            ipsMode:
+              type: string
+              description: IPS mode (ids, ips, etc.)
+            ipsSignature:
+              type: object
+              properties:
+                rulesCount:
+                  type: integer
+                type:
+                  type: string
+                  description: Signature type (ET, etc.)
+            shortname:
+              type: string
+              description: Gateway model shortname
+        internetIssues:
+          type: array
+          items: {}
+          description: List of internet issues
+        ispInfo:
+          type: object
+          properties:
+            name:
+              type: string
+              description: ISP name
+            organization:
+              type: string
+              description: ISP organization
+        percentages:
+          type: object
+          properties:
+            txRetry:
+              type: number
+              description: TX retry percentage
+            wanUptime:
+              type: number
+              description: WAN uptime percentage
+        wanMagic:
+          type: object
+          properties:
+            available:
+              type: boolean
+            enabled:
+              type: boolean
+            subscribed:
+              type: boolean
+        wans:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              externalIp:
+                type: string
+                description: External IP address
+              ispInfo:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  organization:
+                    type: string
+              wanIssues:
+                type: array
+                items: {}
+              wanUptime:
+                type: number
+                description: WAN uptime percentage
 
   responses:
     BadRequest:

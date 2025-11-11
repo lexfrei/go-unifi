@@ -102,6 +102,8 @@ linters:
           - cyclop
           - goconst
           - funlen
+          - gocognit
+          - nestif
         path: examples/
 formatters:
   enable:

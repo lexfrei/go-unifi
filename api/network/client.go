@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/cockroachdb/errors"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 	"golang.org/x/time/rate"
 
 	"github.com/lexfrei/go-unifi/internal/ratelimit"
@@ -345,6 +346,74 @@ func (c *APIClient) GetClientByID(ctx context.Context, siteID SiteId, clientID C
 	}
 
 	return resp.JSON200, nil
+}
+
+// ListHotspotVouchers retrieves a list of all hotspot vouchers for a specific site.
+func (c *APIClient) ListHotspotVouchers(ctx context.Context, siteID SiteId, params *ListHotspotVouchersParams) (*HotspotVouchersResponse, error) {
+	resp, err := c.client.ListHotspotVouchersWithResponse(ctx, siteID, params)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to list hotspot vouchers for site %s", siteID)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return resp.JSON200, nil
+}
+
+// CreateHotspotVouchers creates one or more hotspot vouchers for temporary guest access.
+func (c *APIClient) CreateHotspotVouchers(ctx context.Context, siteID SiteId, request *CreateVouchersRequest) (*HotspotVouchersResponse, error) {
+	resp, err := c.client.CreateHotspotVouchersWithResponse(ctx, siteID, *request)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to create hotspot vouchers for site %s", siteID)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return resp.JSON200, nil
+}
+
+// GetHotspotVoucher retrieves detailed information about a specific hotspot voucher.
+func (c *APIClient) GetHotspotVoucher(ctx context.Context, siteID SiteId, voucherID openapi_types.UUID) (*HotspotVoucher, error) {
+	resp, err := c.client.GetHotspotVoucherWithResponse(ctx, siteID, voucherID)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to get hotspot voucher %s in site %s", voucherID, siteID)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return resp.JSON200, nil
+}
+
+// DeleteHotspotVoucher permanently deletes a hotspot voucher.
+func (c *APIClient) DeleteHotspotVoucher(ctx context.Context, siteID SiteId, voucherID openapi_types.UUID) error {
+	resp, err := c.client.DeleteHotspotVoucherWithResponse(ctx, siteID, voucherID)
+	if err != nil {
+		return errors.Wrapf(err, "failed to delete hotspot voucher %s in site %s", voucherID, siteID)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	return nil
 }
 
 // ListDNSRecords lists all static DNS records for a site.

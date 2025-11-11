@@ -120,6 +120,14 @@ const (
 	FirewallPolicyInputIpVersionIPV6 FirewallPolicyInputIpVersion = "IPV6"
 )
 
+// Defines values for HotspotVoucherStatus.
+const (
+	EXPIRED    HotspotVoucherStatus = "EXPIRED"
+	USED       HotspotVoucherStatus = "USED"
+	VALIDMULTI HotspotVoucherStatus = "VALID_MULTI"
+	VALIDONE   HotspotVoucherStatus = "VALID_ONE"
+)
+
 // Defines values for PoEStandard.
 const (
 	N8023af PoEStandard = "802.3af"
@@ -307,6 +315,39 @@ type ClientsResponse struct {
 
 	// TotalCount Total number of items available
 	TotalCount int `json:"totalCount"`
+}
+
+// CreateVouchersRequest defines model for CreateVouchersRequest.
+type CreateVouchersRequest struct {
+	// Bytes Total data quota in MB (0 = unlimited)
+	Bytes *int `json:"bytes,omitempty"`
+
+	// Count Number of vouchers to create
+	Count int `json:"count"`
+
+	// Down Download bandwidth limit in Kbps (legacy, use qos_rate_max_down)
+	Down *int `json:"down,omitempty"`
+
+	// Duration Validity period in minutes (default = 1440, 0 = unlimited)
+	Duration *int `json:"duration,omitempty"`
+
+	// Note Optional note for all created vouchers
+	Note *string `json:"note,omitempty"`
+
+	// QosOverwrite Whether to apply custom bandwidth limits
+	QosOverwrite *bool `json:"qos_overwrite,omitempty"`
+
+	// QosRateMaxDown Maximum download speed in Kbps (0 = unlimited)
+	QosRateMaxDown *int `json:"qos_rate_max_down,omitempty"`
+
+	// QosRateMaxUp Maximum upload speed in Kbps (0 = unlimited)
+	QosRateMaxUp *int `json:"qos_rate_max_up,omitempty"`
+
+	// Quota Maximum uses per voucher (default = 1, 0 = unlimited)
+	Quota *int `json:"quota,omitempty"`
+
+	// Up Upload bandwidth limit in Kbps (legacy, use qos_rate_max_up)
+	Up *int `json:"up,omitempty"`
 }
 
 // DNSRecord defines model for DNSRecord.
@@ -568,6 +609,64 @@ type FirewallPolicyInputAction string
 // FirewallPolicyInputIpVersion IP version to match
 type FirewallPolicyInputIpVersion string
 
+// HotspotVoucher defines model for HotspotVoucher.
+type HotspotVoucher struct {
+	// UnderscoreId Unique identifier for the voucher
+	UnderscoreId openapi_types.UUID `json:"_id"`
+
+	// Code The voucher code that guests use to access the network
+	Code string `json:"code"`
+
+	// CreateTime Unix timestamp when voucher was created
+	CreateTime int `json:"create_time"`
+
+	// Duration Validity period in minutes (0 = unlimited)
+	Duration *int `json:"duration,omitempty"`
+
+	// Note Optional note or description for the voucher
+	Note *string `json:"note,omitempty"`
+
+	// QosOverwrite Whether custom bandwidth limits are applied
+	QosOverwrite *bool `json:"qos_overwrite,omitempty"`
+
+	// QosRateMaxDown Maximum download speed in Kbps (0 = unlimited)
+	QosRateMaxDown *int `json:"qos_rate_max_down,omitempty"`
+
+	// QosRateMaxUp Maximum upload speed in Kbps (0 = unlimited)
+	QosRateMaxUp *int `json:"qos_rate_max_up,omitempty"`
+
+	// Quota Maximum number of times the voucher can be used (0 = unlimited)
+	Quota *int `json:"quota,omitempty"`
+
+	// SiteId The site this voucher belongs to
+	SiteId *openapi_types.UUID `json:"site_id,omitempty"`
+
+	// Status Current status of the voucher
+	Status *HotspotVoucherStatus `json:"status,omitempty"`
+
+	// Used Number of times the voucher has been used
+	Used *int `json:"used,omitempty"`
+}
+
+// HotspotVoucherStatus Current status of the voucher
+type HotspotVoucherStatus string
+
+// HotspotVouchersResponse defines model for HotspotVouchersResponse.
+type HotspotVouchersResponse struct {
+	// Count Number of items in current response
+	Count int              `json:"count"`
+	Data  []HotspotVoucher `json:"data"`
+
+	// Limit Maximum number of items per page
+	Limit int `json:"limit"`
+
+	// Offset Number of items skipped
+	Offset int `json:"offset"`
+
+	// TotalCount Total number of items available
+	TotalCount int `json:"totalCount"`
+}
+
 // NetworkClient defines model for NetworkClient.
 type NetworkClient = ClientListItem
 
@@ -770,6 +869,9 @@ type Site = string
 // SiteId defines model for SiteId.
 type SiteId = openapi_types.UUID
 
+// BadRequest defines model for BadRequest.
+type BadRequest = ErrorResponse
+
 // NotFound defines model for NotFound.
 type NotFound = ErrorResponse
 
@@ -803,11 +905,23 @@ type ListSiteDevicesParams struct {
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 }
 
+// ListHotspotVouchersParams defines parameters for ListHotspotVouchers.
+type ListHotspotVouchersParams struct {
+	// Offset Number of items to skip before starting to return results (for pagination)
+	Offset *Offset `form:"offset,omitempty" json:"offset,omitempty"`
+
+	// Limit Maximum number of items to return per page
+	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
+}
+
 // GetAggregatedDashboardParams defines parameters for GetAggregatedDashboard.
 type GetAggregatedDashboardParams struct {
 	// HistorySeconds Number of seconds of history to include (default 86400 = 24 hours)
 	HistorySeconds *int `form:"historySeconds,omitempty" json:"historySeconds,omitempty"`
 }
+
+// CreateHotspotVouchersJSONRequestBody defines body for CreateHotspotVouchers for application/json ContentType.
+type CreateHotspotVouchersJSONRequestBody = CreateVouchersRequest
 
 // UpdateFirewallPolicyJSONRequestBody defines body for UpdateFirewallPolicy for application/json ContentType.
 type UpdateFirewallPolicyJSONRequestBody = FirewallPolicyInput
@@ -909,6 +1023,20 @@ type ClientInterface interface {
 	// GetDeviceById request
 	GetDeviceById(ctx context.Context, siteId SiteId, deviceId DeviceId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListHotspotVouchers request
+	ListHotspotVouchers(ctx context.Context, siteId SiteId, params *ListHotspotVouchersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateHotspotVouchersWithBody request with any body
+	CreateHotspotVouchersWithBody(ctx context.Context, siteId SiteId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateHotspotVouchers(ctx context.Context, siteId SiteId, body CreateHotspotVouchersJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteHotspotVoucher request
+	DeleteHotspotVoucher(ctx context.Context, siteId SiteId, voucherId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetHotspotVoucher request
+	GetHotspotVoucher(ctx context.Context, siteId SiteId, voucherId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetAggregatedDashboard request
 	GetAggregatedDashboard(ctx context.Context, site Site, params *GetAggregatedDashboardParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -998,6 +1126,66 @@ func (c *Client) ListSiteDevices(ctx context.Context, siteId SiteId, params *Lis
 
 func (c *Client) GetDeviceById(ctx context.Context, siteId SiteId, deviceId DeviceId, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetDeviceByIdRequest(c.Server, siteId, deviceId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListHotspotVouchers(ctx context.Context, siteId SiteId, params *ListHotspotVouchersParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListHotspotVouchersRequest(c.Server, siteId, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateHotspotVouchersWithBody(ctx context.Context, siteId SiteId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateHotspotVouchersRequestWithBody(c.Server, siteId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateHotspotVouchers(ctx context.Context, siteId SiteId, body CreateHotspotVouchersJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateHotspotVouchersRequest(c.Server, siteId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteHotspotVoucher(ctx context.Context, siteId SiteId, voucherId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteHotspotVoucherRequest(c.Server, siteId, voucherId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetHotspotVoucher(ctx context.Context, siteId SiteId, voucherId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetHotspotVoucherRequest(c.Server, siteId, voucherId)
 	if err != nil {
 		return nil, err
 	}
@@ -1450,6 +1638,207 @@ func NewGetDeviceByIdRequest(server string, siteId SiteId, deviceId DeviceId) (*
 	}
 
 	operationPath := fmt.Sprintf("/integration/v1/sites/%s/devices/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListHotspotVouchersRequest generates requests for ListHotspotVouchers
+func NewListHotspotVouchersRequest(server string, siteId SiteId, params *ListHotspotVouchersParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "siteId", runtime.ParamLocationPath, siteId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integration/v1/sites/%s/hotspot/vouchers", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if params.Offset != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "offset", runtime.ParamLocationQuery, *params.Offset); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithLocation("form", true, "limit", runtime.ParamLocationQuery, *params.Limit); err != nil {
+				return nil, err
+			} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+				return nil, err
+			} else {
+				for k, v := range parsed {
+					for _, v2 := range v {
+						queryValues.Add(k, v2)
+					}
+				}
+			}
+
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateHotspotVouchersRequest calls the generic CreateHotspotVouchers builder with application/json body
+func NewCreateHotspotVouchersRequest(server string, siteId SiteId, body CreateHotspotVouchersJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateHotspotVouchersRequestWithBody(server, siteId, "application/json", bodyReader)
+}
+
+// NewCreateHotspotVouchersRequestWithBody generates requests for CreateHotspotVouchers with any type of body
+func NewCreateHotspotVouchersRequestWithBody(server string, siteId SiteId, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "siteId", runtime.ParamLocationPath, siteId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integration/v1/sites/%s/hotspot/vouchers", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteHotspotVoucherRequest generates requests for DeleteHotspotVoucher
+func NewDeleteHotspotVoucherRequest(server string, siteId SiteId, voucherId openapi_types.UUID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "siteId", runtime.ParamLocationPath, siteId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "voucherId", runtime.ParamLocationPath, voucherId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integration/v1/sites/%s/hotspot/vouchers/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetHotspotVoucherRequest generates requests for GetHotspotVoucher
+func NewGetHotspotVoucherRequest(server string, siteId SiteId, voucherId openapi_types.UUID) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "siteId", runtime.ParamLocationPath, siteId)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "voucherId", runtime.ParamLocationPath, voucherId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/integration/v1/sites/%s/hotspot/vouchers/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -1974,6 +2363,20 @@ type ClientWithResponsesInterface interface {
 	// GetDeviceByIdWithResponse request
 	GetDeviceByIdWithResponse(ctx context.Context, siteId SiteId, deviceId DeviceId, reqEditors ...RequestEditorFn) (*GetDeviceByIdResponse, error)
 
+	// ListHotspotVouchersWithResponse request
+	ListHotspotVouchersWithResponse(ctx context.Context, siteId SiteId, params *ListHotspotVouchersParams, reqEditors ...RequestEditorFn) (*ListHotspotVouchersResponse, error)
+
+	// CreateHotspotVouchersWithBodyWithResponse request with any body
+	CreateHotspotVouchersWithBodyWithResponse(ctx context.Context, siteId SiteId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateHotspotVouchersResponse, error)
+
+	CreateHotspotVouchersWithResponse(ctx context.Context, siteId SiteId, body CreateHotspotVouchersJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateHotspotVouchersResponse, error)
+
+	// DeleteHotspotVoucherWithResponse request
+	DeleteHotspotVoucherWithResponse(ctx context.Context, siteId SiteId, voucherId openapi_types.UUID, reqEditors ...RequestEditorFn) (*DeleteHotspotVoucherResponse, error)
+
+	// GetHotspotVoucherWithResponse request
+	GetHotspotVoucherWithResponse(ctx context.Context, siteId SiteId, voucherId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetHotspotVoucherResponse, error)
+
 	// GetAggregatedDashboardWithResponse request
 	GetAggregatedDashboardWithResponse(ctx context.Context, site Site, params *GetAggregatedDashboardParams, reqEditors ...RequestEditorFn) (*GetAggregatedDashboardResponse, error)
 
@@ -2127,6 +2530,102 @@ func (r GetDeviceByIdResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetDeviceByIdResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListHotspotVouchersResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *HotspotVouchersResponse
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListHotspotVouchersResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListHotspotVouchersResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateHotspotVouchersResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *HotspotVouchersResponse
+	JSON400      *BadRequest
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateHotspotVouchersResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateHotspotVouchersResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteHotspotVoucherResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteHotspotVoucherResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteHotspotVoucherResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetHotspotVoucherResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *HotspotVoucher
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetHotspotVoucherResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetHotspotVoucherResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -2418,6 +2917,50 @@ func (c *ClientWithResponses) GetDeviceByIdWithResponse(ctx context.Context, sit
 		return nil, err
 	}
 	return ParseGetDeviceByIdResponse(rsp)
+}
+
+// ListHotspotVouchersWithResponse request returning *ListHotspotVouchersResponse
+func (c *ClientWithResponses) ListHotspotVouchersWithResponse(ctx context.Context, siteId SiteId, params *ListHotspotVouchersParams, reqEditors ...RequestEditorFn) (*ListHotspotVouchersResponse, error) {
+	rsp, err := c.ListHotspotVouchers(ctx, siteId, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListHotspotVouchersResponse(rsp)
+}
+
+// CreateHotspotVouchersWithBodyWithResponse request with arbitrary body returning *CreateHotspotVouchersResponse
+func (c *ClientWithResponses) CreateHotspotVouchersWithBodyWithResponse(ctx context.Context, siteId SiteId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateHotspotVouchersResponse, error) {
+	rsp, err := c.CreateHotspotVouchersWithBody(ctx, siteId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateHotspotVouchersResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateHotspotVouchersWithResponse(ctx context.Context, siteId SiteId, body CreateHotspotVouchersJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateHotspotVouchersResponse, error) {
+	rsp, err := c.CreateHotspotVouchers(ctx, siteId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateHotspotVouchersResponse(rsp)
+}
+
+// DeleteHotspotVoucherWithResponse request returning *DeleteHotspotVoucherResponse
+func (c *ClientWithResponses) DeleteHotspotVoucherWithResponse(ctx context.Context, siteId SiteId, voucherId openapi_types.UUID, reqEditors ...RequestEditorFn) (*DeleteHotspotVoucherResponse, error) {
+	rsp, err := c.DeleteHotspotVoucher(ctx, siteId, voucherId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteHotspotVoucherResponse(rsp)
+}
+
+// GetHotspotVoucherWithResponse request returning *GetHotspotVoucherResponse
+func (c *ClientWithResponses) GetHotspotVoucherWithResponse(ctx context.Context, siteId SiteId, voucherId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetHotspotVoucherResponse, error) {
+	rsp, err := c.GetHotspotVoucher(ctx, siteId, voucherId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetHotspotVoucherResponse(rsp)
 }
 
 // GetAggregatedDashboardWithResponse request returning *GetAggregatedDashboardResponse
@@ -2718,6 +3261,166 @@ func ParseGetDeviceByIdResponse(rsp *http.Response) (*GetDeviceByIdResponse, err
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest Device
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListHotspotVouchersResponse parses an HTTP response from a ListHotspotVouchersWithResponse call
+func ParseListHotspotVouchersResponse(rsp *http.Response) (*ListHotspotVouchersResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListHotspotVouchersResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest HotspotVouchersResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateHotspotVouchersResponse parses an HTTP response from a CreateHotspotVouchersWithResponse call
+func ParseCreateHotspotVouchersResponse(rsp *http.Response) (*CreateHotspotVouchersResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateHotspotVouchersResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest HotspotVouchersResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteHotspotVoucherResponse parses an HTTP response from a DeleteHotspotVoucherWithResponse call
+func ParseDeleteHotspotVoucherResponse(rsp *http.Response) (*DeleteHotspotVoucherResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteHotspotVoucherResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetHotspotVoucherResponse parses an HTTP response from a GetHotspotVoucherWithResponse call
+func ParseGetHotspotVoucherResponse(rsp *http.Response) (*GetHotspotVoucherResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetHotspotVoucherResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest HotspotVoucher
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -3159,116 +3862,132 @@ func ParseUpdateTrafficRuleResponse(rsp *http.Response) (*UpdateTrafficRuleRespo
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
-	"AP//wyear8KAAAA=",
+	"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",
+	"lyqXmQAA",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

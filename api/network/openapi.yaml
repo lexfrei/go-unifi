@@ -40,6 +40,7 @@ info:
     - Site management and listing
     - Device inventory and monitoring
     - Client tracking and access control
+    - Guest hotspot voucher management
     - Static DNS record management
     - Firewall policy management
     - Traffic rule configuration
@@ -70,6 +71,8 @@ tags:
     description: Network device management and monitoring
   - name: Clients
     description: Client device tracking and access control
+  - name: Hotspot
+    description: Guest hotspot voucher management
   - name: DNS
     description: Static DNS record management
   - name: Firewall
@@ -206,6 +209,112 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NetworkClient'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /integration/v1/sites/{siteId}/hotspot/vouchers:
+    get:
+      summary: List hotspot vouchers
+      description: |
+        Retrieves a paginated list of all hotspot guest vouchers for the specified site.
+
+        Hotspot vouchers provide temporary network access to guests without requiring credentials.
+      operationId: listHotspotVouchers
+      tags:
+        - Hotspot
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - $ref: '#/components/parameters/Offset'
+        - $ref: '#/components/parameters/Limit'
+      responses:
+        '200':
+          description: Successful response with list of vouchers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HotspotVouchersResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      summary: Create hotspot vouchers
+      description: |
+        Creates one or more hotspot guest vouchers for temporary network access.
+
+        Vouchers can be customized with duration, bandwidth limits, and usage restrictions.
+      operationId: createHotspotVouchers
+      tags:
+        - Hotspot
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVouchersRequest'
+      responses:
+        '200':
+          description: Successful response with created vouchers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HotspotVouchersResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /integration/v1/sites/{siteId}/hotspot/vouchers/{voucherId}:
+    get:
+      summary: Get hotspot voucher by ID
+      description: Retrieves detailed information for a specific hotspot voucher.
+      operationId: getHotspotVoucher
+      tags:
+        - Hotspot
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - name: voucherId
+          in: path
+          required: true
+          description: Unique identifier of the voucher
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successful response with voucher details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HotspotVoucher'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Delete hotspot voucher
+      description: Permanently deletes a hotspot voucher, revoking guest access.
+      operationId: deleteHotspotVoucher
+      tags:
+        - Hotspot
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - name: voucherId
+          in: path
+          required: true
+          description: Unique identifier of the voucher to delete
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Voucher successfully deleted
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -639,6 +748,19 @@ components:
             message: "No endpoint GET /integration/v1/sites/invalid-id"
             timestamp: "2025-11-11T16:00:00Z"
             requestPath: /integration/v1/sites/invalid-id
+
+    BadRequest:
+      description: Bad Request - Invalid or malformed request data
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            statusCode: 400
+            statusName: BAD_REQUEST
+            message: "Invalid request: count must be between 1 and 1000"
+            timestamp: "2025-11-11T16:00:00Z"
+            requestPath: /integration/v1/sites/88f7af54-98f8-306a-a1c7-c9349722b1f6/hotspot/vouchers
 
   schemas:
     # Base response types
@@ -1097,6 +1219,135 @@ components:
             - RESTRICTED
             - BLOCKED
           example: DEFAULT
+
+    # Hotspot Vouchers
+    HotspotVouchersResponse:
+      allOf:
+        - $ref: '#/components/schemas/PaginatedResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/HotspotVoucher'
+
+    HotspotVoucher:
+      type: object
+      required:
+        - _id
+        - code
+        - create_time
+      properties:
+        _id:
+          type: string
+          format: uuid
+          description: Unique identifier for the voucher
+          example: 68e04e991056cd46ea9edcd4
+        code:
+          type: string
+          description: The voucher code that guests use to access the network
+          example: 12345-67890
+        duration:
+          type: integer
+          description: Validity period in minutes (0 = unlimited)
+          example: 480
+        quota:
+          type: integer
+          description: Maximum number of times the voucher can be used (0 = unlimited)
+          example: 1
+        note:
+          type: string
+          description: Optional note or description for the voucher
+          example: Guest WiFi for conference room A
+        create_time:
+          type: integer
+          description: Unix timestamp when voucher was created
+          example: 1709654400
+        used:
+          type: integer
+          description: Number of times the voucher has been used
+          example: 0
+        status:
+          type: string
+          description: Current status of the voucher
+          enum:
+            - VALID_ONE
+            - VALID_MULTI
+            - USED
+            - EXPIRED
+          example: VALID_ONE
+        qos_overwrite:
+          type: boolean
+          description: Whether custom bandwidth limits are applied
+          example: true
+        qos_rate_max_down:
+          type: integer
+          description: Maximum download speed in Kbps (0 = unlimited)
+          example: 10000
+        qos_rate_max_up:
+          type: integer
+          description: Maximum upload speed in Kbps (0 = unlimited)
+          example: 5000
+        site_id:
+          type: string
+          format: uuid
+          description: The site this voucher belongs to
+          example: 88f7af54-98f8-306a-a1c7-c9349722b1f6
+
+    CreateVouchersRequest:
+      type: object
+      required:
+        - count
+      properties:
+        count:
+          type: integer
+          description: Number of vouchers to create
+          minimum: 1
+          maximum: 1000
+          example: 10
+        duration:
+          type: integer
+          description: Validity period in minutes (default = 1440, 0 = unlimited)
+          minimum: 0
+          example: 480
+        quota:
+          type: integer
+          description: Maximum uses per voucher (default = 1, 0 = unlimited)
+          minimum: 0
+          example: 1
+        note:
+          type: string
+          description: Optional note for all created vouchers
+          example: Conference guest WiFi
+        qos_overwrite:
+          type: boolean
+          description: Whether to apply custom bandwidth limits
+          example: true
+        qos_rate_max_down:
+          type: integer
+          description: Maximum download speed in Kbps (0 = unlimited)
+          minimum: 0
+          example: 10000
+        qos_rate_max_up:
+          type: integer
+          description: Maximum upload speed in Kbps (0 = unlimited)
+          minimum: 0
+          example: 5000
+        up:
+          type: integer
+          description: Upload bandwidth limit in Kbps (legacy, use qos_rate_max_up)
+          minimum: 0
+          example: 5000
+        down:
+          type: integer
+          description: Download bandwidth limit in Kbps (legacy, use qos_rate_max_down)
+          minimum: 0
+          example: 10000
+        bytes:
+          type: integer
+          description: Total data quota in MB (0 = unlimited)
+          minimum: 0
+          example: 1024
 
     # DNS Records
     DNSRecord:

@@ -76,22 +76,143 @@ const (
     "weight": 0
   }`
 
-	// Real response from GET /v1/sites/{site}/devices (empty).
-	listDevicesEmpty = `{
-  "count": 0,
-  "data": [],
+	// Real response from GET /v1/sites/{site}/devices with 2 devices.
+	listDevicesSuccess = `{
+  "count": 2,
+  "data": [
+    {
+      "features": ["switching", "accessPoint"],
+      "id": "6204b587-7215-235b-d068-f96ca12eab52",
+      "interfaces": ["ports", "radios"],
+      "ipAddress": "10.94.26.13",
+      "macAddress": "aa:bb:cc:99:ea:6b",
+      "model": "UDR7",
+      "name": "Device-1",
+      "state": "ONLINE"
+    },
+    {
+      "features": ["switching"],
+      "id": "0cd24618-8745-b626-b3c3-57692a02433e",
+      "interfaces": ["ports"],
+      "ipAddress": "10.166.169.226",
+      "macAddress": "aa:bb:cc:6f:6d:73",
+      "model": "USW Flex Mini",
+      "name": "Device-2",
+      "state": "ONLINE"
+    }
+  ],
   "limit": 25,
   "offset": 0,
-  "totalCount": 0
+  "totalCount": 2
 }`
 
-	// Real response from GET /v1/sites/{site}/clients (empty).
-	listClientsEmpty = `{
-  "count": 0,
-  "data": [],
+	// Real response from GET /v1/sites/{site}/devices/{id} with full device details.
+	singleDeviceSuccess = `{
+  "configurationId": "c212be130585ee93",
+  "features": {
+    "accessPoint": {},
+    "switching": {}
+  },
+  "firmwareUpdatable": false,
+  "firmwareVersion": "4.3.9",
+  "id": "6204b587-7215-235b-d068-f96ca12eab52",
+  "interfaces": {
+    "ports": [
+      {
+        "connector": "RJ45",
+        "idx": 1,
+        "maxSpeedMbps": 2500,
+        "poe": {
+          "enabled": true,
+          "standard": "802.3af",
+          "state": "UP",
+          "type": 1
+        },
+        "speedMbps": 1000,
+        "state": "UP"
+      },
+      {
+        "connector": "RJ45",
+        "idx": 2,
+        "maxSpeedMbps": 2500,
+        "speedMbps": 2500,
+        "state": "UP"
+      }
+    ],
+    "radios": [
+      {
+        "channel": 6,
+        "channelWidthMHz": 20,
+        "frequencyGHz": 2.4,
+        "wlanStandard": "802.11be"
+      },
+      {
+        "channel": 40,
+        "channelWidthMHz": 80,
+        "frequencyGHz": 5,
+        "wlanStandard": "802.11be"
+      }
+    ]
+  },
+  "ipAddress": "10.94.26.13",
+  "macAddress": "aa:bb:cc:99:ea:6b",
+  "model": "UDR7",
+  "name": "Device-1",
+  "provisionedAt": "2025-11-03T21:41:04Z",
+  "state": "ONLINE",
+  "supported": true
+}`
+
+	// Real response from GET /v1/sites/{site}/clients with 3 clients (truncated from 15).
+	listClientsSuccess = `{
+  "count": 3,
+  "data": [
+    {
+      "access": {"type": "DEFAULT"},
+      "connectedAt": "2025-10-19T10:09:31Z",
+      "id": "7fe038e8-946b-fa53-7335-6c00bee84657",
+      "ipAddress": "10.222.189.242",
+      "macAddress": "aa:bb:cc:14:01:56",
+      "name": "client-1",
+      "type": "WIRED",
+      "uplinkDeviceId": "6204b587-7215-235b-d068-f96ca12eab52"
+    },
+    {
+      "access": {"type": "DEFAULT"},
+      "connectedAt": "2025-10-19T10:10:24Z",
+      "id": "17f9729f-a6d9-63da-7185-579a4bd70979",
+      "ipAddress": "10.103.206.70",
+      "macAddress": "aa:bb:cc:9c:58:6f",
+      "name": "client-2",
+      "type": "WIRELESS",
+      "uplinkDeviceId": "6204b587-7215-235b-d068-f96ca12eab52"
+    },
+    {
+      "access": {"type": "DEFAULT"},
+      "connectedAt": "2025-10-24T21:15:12Z",
+      "id": "d0fde4ea-6ed0-a42b-ae3c-e848132e56b4",
+      "ipAddress": "10.157.45.243",
+      "macAddress": "aa:bb:cc:10:a8:87",
+      "name": "client-3",
+      "type": "WIRELESS",
+      "uplinkDeviceId": "6204b587-7215-235b-d068-f96ca12eab52"
+    }
+  ],
   "limit": 25,
   "offset": 0,
-  "totalCount": 0
+  "totalCount": 3
+}`
+
+	// Real response from GET /v1/sites/{site}/clients/{id} with single client.
+	singleClientSuccess = `{
+  "access": {"type": "DEFAULT"},
+  "connectedAt": "2025-10-19T10:09:31Z",
+  "id": "7fe038e8-946b-fa53-7335-6c00bee84657",
+  "ipAddress": "10.222.189.242",
+  "macAddress": "aa:bb:cc:14:01:56",
+  "name": "client-1",
+  "type": "WIRED",
+  "uplinkDeviceId": "6204b587-7215-235b-d068-f96ca12eab52"
 }`
 
 	// Real response from GET /v2/api/site/{site}/dashboard.
@@ -150,6 +271,8 @@ const (
 	testRecordID     = "6913a4964a990741124a6d94"
 	testHostKey      = "testhost1.local"
 	testHostValue    = "192.168.100.1"
+	testModelUDR7    = "UDR7"
+	testTypeWired    = "WIRED"
 )
 
 var testSiteID = types.UUID{0x88, 0xf7, 0xaf, 0x54, 0x98, 0xf8, 0x30, 0x6a, 0xa1, 0xc7, 0xc9, 0x34, 0x97, 0x22, 0xb1, 0xf6}
@@ -684,16 +807,22 @@ func TestListSiteDevices(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *DevicesResponse)
 	}{
 		{
-			name:           "success with empty list",
-			mockResponse:   listDevicesEmpty,
+			name:           "success with devices",
+			mockResponse:   listDevicesSuccess,
 			mockStatusCode: http.StatusOK,
 			checkResponse: func(t *testing.T, resp *DevicesResponse) {
 				t.Helper()
-				if resp.Count != 0 {
-					t.Errorf("Count = %d, want 0", resp.Count)
+				if resp.Count != 2 {
+					t.Errorf("Count = %d, want 2", resp.Count)
 				}
-				if len(resp.Data) != 0 {
-					t.Errorf("len(Data) = %d, want 0", len(resp.Data))
+				if len(resp.Data) != 2 {
+					t.Errorf("len(Data) = %d, want 2", len(resp.Data))
+				}
+				if resp.Data[0].Model != testModelUDR7 {
+					t.Errorf("Model = %v, want %s", resp.Data[0].Model, testModelUDR7)
+				}
+				if resp.Data[1].Model != "USW Flex Mini" {
+					t.Errorf("Model = %v, want USW Flex Mini", resp.Data[1].Model)
 				}
 			},
 		},
@@ -755,14 +884,35 @@ func TestListSiteDevices(t *testing.T) {
 func TestGetDeviceByID(t *testing.T) {
 	t.Parallel()
 
-	testDeviceID := types.UUID{0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00}
+	testDeviceID := types.UUID{0x62, 0x04, 0xb5, 0x87, 0x72, 0x15, 0x23, 0x5b, 0xd0, 0x68, 0xf9, 0x6c, 0xa1, 0x2e, 0xab, 0x52}
 
 	tests := []struct {
 		name           string
 		mockResponse   string
 		mockStatusCode int
 		wantErr        bool
+		checkResponse  func(t *testing.T, resp *Device)
 	}{
+		{
+			name:           "success with full device",
+			mockResponse:   singleDeviceSuccess,
+			mockStatusCode: http.StatusOK,
+			checkResponse: func(t *testing.T, resp *Device) {
+				t.Helper()
+				if resp.Model != testModelUDR7 {
+					t.Errorf("Model = %v, want %s", resp.Model, testModelUDR7)
+				}
+				if resp.FirmwareVersion != "4.3.9" {
+					t.Errorf("FirmwareVersion = %v, want 4.3.9", resp.FirmwareVersion)
+				}
+				if resp.Interfaces.Ports == nil || len(*resp.Interfaces.Ports) != 2 {
+					t.Errorf("len(Ports) = %d, want 2", len(*resp.Interfaces.Ports))
+				}
+				if resp.Interfaces.Radios == nil || len(*resp.Interfaces.Radios) != 2 {
+					t.Errorf("len(Radios) = %d, want 2", len(*resp.Interfaces.Radios))
+				}
+			},
+		},
 		{
 			name:           "not found",
 			mockResponse:   notFoundError,
@@ -798,7 +948,7 @@ func TestGetDeviceByID(t *testing.T) {
 				t.Fatalf("New failed: %v", err)
 			}
 
-			_, err = client.GetDeviceByID(context.Background(), testSiteID, testDeviceID)
+			resp, err := client.GetDeviceByID(context.Background(), testSiteID, testDeviceID)
 
 			if tt.wantErr {
 				if err == nil {
@@ -809,6 +959,10 @@ func TestGetDeviceByID(t *testing.T) {
 
 			if err != nil {
 				t.Errorf("Unexpected error: %v", err)
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
 			}
 		})
 	}
@@ -825,16 +979,22 @@ func TestListSiteClients(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *ClientsResponse)
 	}{
 		{
-			name:           "success with empty list",
-			mockResponse:   listClientsEmpty,
+			name:           "success with clients",
+			mockResponse:   listClientsSuccess,
 			mockStatusCode: http.StatusOK,
 			checkResponse: func(t *testing.T, resp *ClientsResponse) {
 				t.Helper()
-				if resp.Count != 0 {
-					t.Errorf("Count = %d, want 0", resp.Count)
+				if resp.Count != 3 {
+					t.Errorf("Count = %d, want 3", resp.Count)
 				}
-				if len(resp.Data) != 0 {
-					t.Errorf("len(Data) = %d, want 0", len(resp.Data))
+				if len(resp.Data) != 3 {
+					t.Errorf("len(Data) = %d, want 3", len(resp.Data))
+				}
+				if string(resp.Data[0].Type) != testTypeWired {
+					t.Errorf("Type = %v, want %s", resp.Data[0].Type, testTypeWired)
+				}
+				if string(resp.Data[1].Type) != "WIRELESS" {
+					t.Errorf("Type = %v, want WIRELESS", resp.Data[1].Type)
 				}
 			},
 		},
@@ -896,14 +1056,32 @@ func TestListSiteClients(t *testing.T) {
 func TestGetClientByID(t *testing.T) {
 	t.Parallel()
 
-	testClientID := types.UUID{0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99}
+	testClientID := types.UUID{0x7f, 0xe0, 0x38, 0xe8, 0x94, 0x6b, 0xfa, 0x53, 0x73, 0x35, 0x6c, 0x00, 0xbe, 0xe8, 0x46, 0x57}
 
 	tests := []struct {
 		name           string
 		mockResponse   string
 		mockStatusCode int
 		wantErr        bool
+		checkResponse  func(t *testing.T, resp *NetworkClient)
 	}{
+		{
+			name:           "success with client details",
+			mockResponse:   singleClientSuccess,
+			mockStatusCode: http.StatusOK,
+			checkResponse: func(t *testing.T, resp *NetworkClient) {
+				t.Helper()
+				if string(resp.Type) != testTypeWired {
+					t.Errorf("Type = %v, want %s", resp.Type, testTypeWired)
+				}
+				if resp.Name != "client-1" {
+					t.Errorf("Name = %v, want client-1", resp.Name)
+				}
+				if resp.MacAddress != "aa:bb:cc:14:01:56" {
+					t.Errorf("MacAddress = %v, want aa:bb:cc:14:01:56", resp.MacAddress)
+				}
+			},
+		},
 		{
 			name:           "not found",
 			mockResponse:   notFoundError,
@@ -939,7 +1117,7 @@ func TestGetClientByID(t *testing.T) {
 				t.Fatalf("New failed: %v", err)
 			}
 
-			_, err = client.GetClientByID(context.Background(), testSiteID, testClientID)
+			resp, err := client.GetClientByID(context.Background(), testSiteID, testClientID)
 
 			if tt.wantErr {
 				if err == nil {
@@ -950,6 +1128,10 @@ func TestGetClientByID(t *testing.T) {
 
 			if err != nil {
 				t.Errorf("Unexpected error: %v", err)
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
 			}
 		})
 	}

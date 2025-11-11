@@ -66,40 +66,75 @@ func main() {
 
 ## API Coverage
 
-- ✅ **Sites**
-  - `ListSites(ctx, params)` - List all configured sites
+> **Note:** All methods have been tested against real UniFi Dream Router (UDR7) hardware. The API specification is derived from:
+> - UniFi Network controller endpoint documentation (accessible from the controller UI)
+> - Official UniFi Network API documentation
+> - Reverse engineering of controller behavior
+>
+> When a method is present in the endpoint documentation, we trust its behavior. Types and tests represent actual API behavior observed during testing.
 
-- ✅ **Devices**
-  - `ListSiteDevices(ctx, siteID, params)` - List devices for a site
-  - `GetDeviceByID(ctx, siteID, deviceID)` - Get detailed device information
+### Sites
 
-- ✅ **Clients**
-  - `ListSiteClients(ctx, siteID, params)` - List clients for a site
-  - `GetClientByID(ctx, siteID, clientID)` - Get client details
+| Method | Version | Description |
+|--------|---------|-------------|
+| `ListSites` | v1 | List all configured sites with metadata |
 
-- ✅ **Hotspot Vouchers**
-  - `ListHotspotVouchers(ctx, siteID, params)` - List guest vouchers
-  - `CreateHotspotVouchers(ctx, siteID, request)` - Create vouchers with custom limits
-  - `GetHotspotVoucher(ctx, siteID, voucherID)` - Get voucher details
-  - `DeleteHotspotVoucher(ctx, siteID, voucherID)` - Delete voucher
+### Devices
 
-- ✅ **DNS (v2 API)**
-  - `ListDNSRecords(ctx, site)` - List static DNS records
-  - `CreateDNSRecord(ctx, site, record)` - Create DNS record
-  - `GetDNSRecord(ctx, site, recordID)` - Get DNS record details
-  - `UpdateDNSRecord(ctx, site, recordID, record)` - Update DNS record
-  - `DeleteDNSRecord(ctx, site, recordID)` - Delete DNS record
+| Method | Version | Description |
+|--------|---------|-------------|
+| `ListSiteDevices` | v1 | List all devices for a specific site |
+| `GetDeviceByID` | v1 | Get detailed device information by ID |
 
-- ✅ **Firewall (v2 API)**
-  - `ListFirewallPolicies(ctx, site)` - List firewall policies
-  - `UpdateFirewallPolicy(ctx, site, policyID, policy)` - Update policy
+### Clients
 
-- ✅ **Traffic Rules (v2 API)**
-  - `ListTrafficRules(ctx, site)` - List traffic routing rules
-  - `UpdateTrafficRule(ctx, site, ruleID, rule)` - Update traffic rule
+| Method | Version | Description |
+|--------|---------|-------------|
+| `ListSiteClients` | v1 | List all connected clients for a site |
+| `GetClientByID` | v1 | Get detailed client information by ID |
 
-- ✅ **Analytics (v2 API)**
-  - `GetAggregatedDashboard(ctx, site, params)` - Get dashboard statistics
+### DNS Records
+
+| Method | Version | Description |
+|--------|---------|-------------|
+| `ListDNSRecords` | v2 | List all static DNS records |
+| `CreateDNSRecord` | v2 | Create a new DNS record |
+| `GetDNSRecordByID` | v2 | Get DNS record details by ID |
+| `UpdateDNSRecord` | v2 | Update existing DNS record |
+| `DeleteDNSRecord` | v2 | Delete DNS record |
+
+### Firewall Policies
+
+| Method | Version | Description |
+|--------|---------|-------------|
+| `ListFirewallPolicies` | v2 | List all firewall policies |
+| `CreateFirewallPolicy` | v2 | Create a new firewall policy |
+| `UpdateFirewallPolicy` | v2 | Update existing firewall policy |
+| `DeleteFirewallPolicy` | v2 | Delete firewall policy |
+
+### Traffic Rules
+
+| Method | Version | Description |
+|--------|---------|-------------|
+| `ListTrafficRules` | v2 | List all traffic routing rules |
+| `CreateTrafficRule` | v2 | Create a new traffic rule |
+| `UpdateTrafficRule` | v2 | Update existing traffic rule |
+| `DeleteTrafficRule` | v2 | Delete traffic rule |
+
+### Hotspot Vouchers
+
+| Method | Version | Description |
+|--------|---------|-------------|
+| `ListHotspotVouchers` | v1 | List all guest portal vouchers |
+| `CreateHotspotVouchers` | v1 | Create vouchers with custom limits |
+| `GetHotspotVoucher` | v1 | Get voucher details by ID |
+| `DeleteHotspotVoucher` | v1 | Delete voucher |
+
+### Analytics
+
+| Method | Version | Description |
+|--------|---------|-------------|
+| `GetAggregatedDashboard` | v2 | Get aggregated dashboard statistics |
 
 ## Controller Access
 
@@ -171,9 +206,13 @@ See [doc.go](./doc.go) for comprehensive package documentation including:
 
 ## Tested Hardware
 
-- **UniFi Dream Router (UDR7)**
-  - UniFi OS 4.3.87
-  - Network Application 9.4.19
+This library has been tested and validated against:
+- **UniFi Dream Router (UDR7)** running:
+  - UniFi OS **4.3.87** with Network Application **9.4.19**
+  - UniFi OS **4.3.6** with Network Application **9.4.19**
+  - UniFi OS **4.3.6** with Network Application **9.5.21**
+
+**Note:** API responses may vary depending on hardware models, firmware versions, and Network Application releases. The types and tests reflect the actual behavior observed on tested configurations.
 
 ## Related
 

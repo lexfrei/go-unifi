@@ -3,21 +3,23 @@ info:
   title: UniFi Network API
   version: 1.0.0
   description: |
-    UniFi Network API provides programmatic access to UniFi network devices, clients, and configurations
+    UniFi Network API provides programmatic access to UniFi network devices, clients, DNS, and configurations
     running on local UniFi controllers.
 
-    This is the Local Application API, accessed through the UniFi controller at `/proxy/network/integration/v1/`.
+    This is the Local Application API, accessed through the UniFi controller at `/proxy/network/`.
 
     ## Authentication
     All requests require an API key passed via the X-API-KEY header.
 
-    ## Base Path
-    All endpoints are prefixed with `/proxy/network/integration/v1` when accessed through the UniFi controller.
+    ## API Versions
+    - **Integration API (v1)**: `/proxy/network/integration/v1` - Sites, Devices, Clients
+    - **DNS API (v2)**: `/proxy/network/v2/api/site/{site}/static-dns` - Static DNS records
 
     ## Features
     - Site management and listing
     - Device inventory and monitoring
     - Client tracking and access control
+    - Static DNS record management
     - Real-time status information
 
   contact:
@@ -28,7 +30,7 @@ info:
     url: https://opensource.org/licenses/BSD-3-Clause
 
 servers:
-  - url: https://{controller}/proxy/network/integration/v1
+  - url: https://{controller}/proxy/network
     description: Local UniFi controller
     variables:
       controller:
@@ -45,9 +47,11 @@ tags:
     description: Network device management and monitoring
   - name: Clients
     description: Client device tracking and access control
+  - name: DNS
+    description: Static DNS record management
 
 paths:
-  /sites:
+  /integration/v1/sites:
     get:
       summary: List all sites
       description: |
@@ -72,7 +76,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /sites/{siteId}/devices:
+  /integration/v1/sites/{siteId}/devices:
     get:
       summary: List devices for a site
       description: |
@@ -97,7 +101,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /sites/{siteId}/devices/{deviceId}:
+  /integration/v1/sites/{siteId}/devices/{deviceId}:
     get:
       summary: Get device details
       description: |
@@ -125,7 +129,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /sites/{siteId}/clients:
+  /integration/v1/sites/{siteId}/clients:
     get:
       summary: List clients for a site
       description: |
@@ -150,7 +154,7 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
-  /sites/{siteId}/clients/{clientId}:
+  /integration/v1/sites/{siteId}/clients/{clientId}:
     get:
       summary: Get client details
       description: |
@@ -173,6 +177,138 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/NetworkClient'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # DNS API (v2)
+  /v2/api/site/{site}/static-dns:
+    get:
+      summary: List DNS records
+      description: |
+        Retrieves all static DNS records configured for the specified site.
+
+        Supports all standard DNS record types: A, AAAA, CNAME, MX, NS, SRV, TXT.
+      operationId: listDNSRecords
+      tags:
+        - DNS
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with list of DNS records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DNSRecord'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    post:
+      summary: Create DNS record
+      description: |
+        Creates a new static DNS record for the specified site.
+
+        For SRV records, provide priority, weight, and port fields.
+      operationId: createDNSRecord
+      tags:
+        - DNS
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DNSRecordInput'
+      responses:
+        '200':
+          description: Successfully created DNS record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DNSRecord'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /v2/api/site/{site}/static-dns/{recordId}:
+    get:
+      summary: Get DNS record by ID
+      description: Retrieves details of a specific DNS record
+      operationId: getDNSRecordById
+      tags:
+        - DNS
+      parameters:
+        - $ref: '#/components/parameters/Site'
+        - $ref: '#/components/parameters/RecordId'
+      responses:
+        '200':
+          description: Successful response with DNS record details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DNSRecord'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      summary: Update DNS record
+      description: Updates an existing DNS record
+      operationId: updateDNSRecord
+      tags:
+        - DNS
+      parameters:
+        - $ref: '#/components/parameters/Site'
+        - $ref: '#/components/parameters/RecordId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DNSRecordInput'
+      responses:
+        '200':
+          description: Successfully updated DNS record
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DNSRecord'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      summary: Delete DNS record
+      description: Deletes a DNS record from the site
+      operationId: deleteDNSRecord
+      tags:
+        - DNS
+      parameters:
+        - $ref: '#/components/parameters/Site'
+        - $ref: '#/components/parameters/RecordId'
+      responses:
+        '204':
+          description: Successfully deleted DNS record
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -239,6 +375,24 @@ components:
         maximum: 100
         default: 25
       example: 25
+
+    Site:
+      name: site
+      in: path
+      required: true
+      description: The site name (internal reference)
+      schema:
+        type: string
+      example: default
+
+    RecordId:
+      name: recordId
+      in: path
+      required: true
+      description: The unique identifier of the DNS record
+      schema:
+        type: string
+      example: 68e04e991056cd46ea9edcd4
 
   responses:
     Unauthorized:
@@ -724,3 +878,109 @@ components:
             - RESTRICTED
             - BLOCKED
           example: DEFAULT
+
+    # DNS Records
+    DNSRecord:
+      type: object
+      required:
+        - _id
+        - enabled
+        - key
+        - record_type
+        - value
+      properties:
+        _id:
+          type: string
+          description: Unique identifier for the DNS record
+          example: 68e04e991056cd46ea9edcd4
+        enabled:
+          type: boolean
+          description: Whether the DNS record is enabled
+          example: true
+        key:
+          type: string
+          description: DNS record name (hostname or domain)
+          example: "*.home.lex.la"
+        record_type:
+          type: string
+          description: DNS record type
+          enum:
+            - A
+            - AAAA
+            - CNAME
+            - MX
+            - NS
+            - SRV
+            - TXT
+          example: A
+        value:
+          type: string
+          description: DNS record value (IP address, target hostname, etc.)
+          example: 172.16.100.250
+        ttl:
+          type: integer
+          description: Time to live in seconds (0 = default)
+          default: 0
+          example: 0
+        priority:
+          type: integer
+          description: Priority for MX and SRV records
+          example: 0
+        weight:
+          type: integer
+          description: Weight for SRV records
+          example: 0
+        port:
+          type: integer
+          description: Port number for SRV records
+          example: 0
+
+    DNSRecordInput:
+      type: object
+      required:
+        - key
+        - record_type
+        - value
+      properties:
+        enabled:
+          type: boolean
+          description: Whether the DNS record should be enabled
+          default: true
+          example: true
+        key:
+          type: string
+          description: DNS record name (hostname or domain)
+          example: "api.example.com"
+        record_type:
+          type: string
+          description: DNS record type
+          enum:
+            - A
+            - AAAA
+            - CNAME
+            - MX
+            - NS
+            - SRV
+            - TXT
+          example: A
+        value:
+          type: string
+          description: DNS record value (IP address, target hostname, etc.)
+          example: 192.168.1.100
+        ttl:
+          type: integer
+          description: Time to live in seconds (0 = default)
+          default: 0
+          example: 0
+        priority:
+          type: integer
+          description: Priority for MX and SRV records
+          example: 10
+        weight:
+          type: integer
+          description: Weight for SRV records
+          example: 5
+        port:
+          type: integer
+          description: Port number for SRV records
+          example: 443

@@ -346,3 +346,89 @@ func (c *APIClient) GetClientByID(ctx context.Context, siteID SiteId, clientID C
 
 	return resp.JSON200, nil
 }
+
+// ListDNSRecords lists all static DNS records for a site.
+func (c *APIClient) ListDNSRecords(ctx context.Context, site Site) ([]DNSRecord, error) {
+	resp, err := c.client.ListDNSRecordsWithResponse(ctx, site)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to list DNS records for site %s", site)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return *resp.JSON200, nil
+}
+
+// CreateDNSRecord creates a new static DNS record.
+func (c *APIClient) CreateDNSRecord(ctx context.Context, site Site, record *DNSRecordInput) (*DNSRecord, error) {
+	resp, err := c.client.CreateDNSRecordWithResponse(ctx, site, *record)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to create DNS record %s in site %s", record.Key, site)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return resp.JSON200, nil
+}
+
+// GetDNSRecordByID retrieves a specific DNS record by ID.
+func (c *APIClient) GetDNSRecordByID(ctx context.Context, site Site, recordID RecordId) (*DNSRecord, error) {
+	resp, err := c.client.GetDNSRecordByIdWithResponse(ctx, site, recordID)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to get DNS record %s in site %s", recordID, site)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return resp.JSON200, nil
+}
+
+// UpdateDNSRecord updates an existing DNS record.
+func (c *APIClient) UpdateDNSRecord(ctx context.Context, site Site, recordID RecordId, record *DNSRecordInput) (*DNSRecord, error) {
+	resp, err := c.client.UpdateDNSRecordWithResponse(ctx, site, recordID, *record)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to update DNS record %s in site %s", recordID, site)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return resp.JSON200, nil
+}
+
+// DeleteDNSRecord deletes a DNS record.
+func (c *APIClient) DeleteDNSRecord(ctx context.Context, site Site, recordID RecordId) error {
+	resp, err := c.client.DeleteDNSRecordWithResponse(ctx, site, recordID)
+	if err != nil {
+		return errors.Wrapf(err, "failed to delete DNS record %s in site %s", recordID, site)
+	}
+
+	if resp.StatusCode() != http.StatusNoContent {
+		return errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	return nil
+}

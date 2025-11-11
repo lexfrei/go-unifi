@@ -39,6 +39,28 @@ const (
 	WIRELESS ClientListItemType = "WIRELESS"
 )
 
+// Defines values for DNSRecordRecordType.
+const (
+	DNSRecordRecordTypeA     DNSRecordRecordType = "A"
+	DNSRecordRecordTypeAAAA  DNSRecordRecordType = "AAAA"
+	DNSRecordRecordTypeCNAME DNSRecordRecordType = "CNAME"
+	DNSRecordRecordTypeMX    DNSRecordRecordType = "MX"
+	DNSRecordRecordTypeNS    DNSRecordRecordType = "NS"
+	DNSRecordRecordTypeSRV   DNSRecordRecordType = "SRV"
+	DNSRecordRecordTypeTXT   DNSRecordRecordType = "TXT"
+)
+
+// Defines values for DNSRecordInputRecordType.
+const (
+	DNSRecordInputRecordTypeA     DNSRecordInputRecordType = "A"
+	DNSRecordInputRecordTypeAAAA  DNSRecordInputRecordType = "AAAA"
+	DNSRecordInputRecordTypeCNAME DNSRecordInputRecordType = "CNAME"
+	DNSRecordInputRecordTypeMX    DNSRecordInputRecordType = "MX"
+	DNSRecordInputRecordTypeNS    DNSRecordInputRecordType = "NS"
+	DNSRecordInputRecordTypeSRV   DNSRecordInputRecordType = "SRV"
+	DNSRecordInputRecordTypeTXT   DNSRecordInputRecordType = "TXT"
+)
+
 // Defines values for DeviceState.
 const (
 	DeviceStateOFFLINE      DeviceState = "OFFLINE"
@@ -176,6 +198,69 @@ type ClientsResponse struct {
 	// TotalCount Total number of items available
 	TotalCount int `json:"totalCount"`
 }
+
+// DNSRecord defines model for DNSRecord.
+type DNSRecord struct {
+	// UnderscoreId Unique identifier for the DNS record
+	UnderscoreId string `json:"_id"`
+
+	// Enabled Whether the DNS record is enabled
+	Enabled bool `json:"enabled"`
+
+	// Key DNS record name (hostname or domain)
+	Key string `json:"key"`
+
+	// Port Port number for SRV records
+	Port *int `json:"port,omitempty"`
+
+	// Priority Priority for MX and SRV records
+	Priority *int `json:"priority,omitempty"`
+
+	// RecordType DNS record type
+	RecordType DNSRecordRecordType `json:"record_type"`
+
+	// Ttl Time to live in seconds (0 = default)
+	Ttl *int `json:"ttl,omitempty"`
+
+	// Value DNS record value (IP address, target hostname, etc.)
+	Value string `json:"value"`
+
+	// Weight Weight for SRV records
+	Weight *int `json:"weight,omitempty"`
+}
+
+// DNSRecordRecordType DNS record type
+type DNSRecordRecordType string
+
+// DNSRecordInput defines model for DNSRecordInput.
+type DNSRecordInput struct {
+	// Enabled Whether the DNS record should be enabled
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// Key DNS record name (hostname or domain)
+	Key string `json:"key"`
+
+	// Port Port number for SRV records
+	Port *int `json:"port,omitempty"`
+
+	// Priority Priority for MX and SRV records
+	Priority *int `json:"priority,omitempty"`
+
+	// RecordType DNS record type
+	RecordType DNSRecordInputRecordType `json:"record_type"`
+
+	// Ttl Time to live in seconds (0 = default)
+	Ttl *int `json:"ttl,omitempty"`
+
+	// Value DNS record value (IP address, target hostname, etc.)
+	Value string `json:"value"`
+
+	// Weight Weight for SRV records
+	Weight *int `json:"weight,omitempty"`
+}
+
+// DNSRecordInputRecordType DNS record type
+type DNSRecordInputRecordType string
 
 // Device defines model for Device.
 type Device struct {
@@ -431,6 +516,12 @@ type Limit = int
 // Offset defines model for Offset.
 type Offset = int
 
+// RecordId defines model for RecordId.
+type RecordId = string
+
+// Site defines model for Site.
+type Site = string
+
 // SiteId defines model for SiteId.
 type SiteId = openapi_types.UUID
 
@@ -466,6 +557,12 @@ type ListSiteDevicesParams struct {
 	// Limit Maximum number of items to return per page
 	Limit *Limit `form:"limit,omitempty" json:"limit,omitempty"`
 }
+
+// CreateDNSRecordJSONRequestBody defines body for CreateDNSRecord for application/json ContentType.
+type CreateDNSRecordJSONRequestBody = DNSRecordInput
+
+// UpdateDNSRecordJSONRequestBody defines body for UpdateDNSRecord for application/json ContentType.
+type UpdateDNSRecordJSONRequestBody = DNSRecordInput
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -554,6 +651,25 @@ type ClientInterface interface {
 
 	// GetDeviceById request
 	GetDeviceById(ctx context.Context, siteId SiteId, deviceId DeviceId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListDNSRecords request
+	ListDNSRecords(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateDNSRecordWithBody request with any body
+	CreateDNSRecordWithBody(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	CreateDNSRecord(ctx context.Context, site Site, body CreateDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteDNSRecord request
+	DeleteDNSRecord(ctx context.Context, site Site, recordId RecordId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetDNSRecordById request
+	GetDNSRecordById(ctx context.Context, site Site, recordId RecordId, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateDNSRecordWithBody request with any body
+	UpdateDNSRecordWithBody(ctx context.Context, site Site, recordId RecordId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	UpdateDNSRecord(ctx context.Context, site Site, recordId RecordId, body UpdateDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) ListSites(ctx context.Context, params *ListSitesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -616,6 +732,90 @@ func (c *Client) GetDeviceById(ctx context.Context, siteId SiteId, deviceId Devi
 	return c.Client.Do(req)
 }
 
+func (c *Client) ListDNSRecords(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListDNSRecordsRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateDNSRecordWithBody(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateDNSRecordRequestWithBody(c.Server, site, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) CreateDNSRecord(ctx context.Context, site Site, body CreateDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateDNSRecordRequest(c.Server, site, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) DeleteDNSRecord(ctx context.Context, site Site, recordId RecordId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteDNSRecordRequest(c.Server, site, recordId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetDNSRecordById(ctx context.Context, site Site, recordId RecordId, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetDNSRecordByIdRequest(c.Server, site, recordId)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateDNSRecordWithBody(ctx context.Context, site Site, recordId RecordId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateDNSRecordRequestWithBody(c.Server, site, recordId, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) UpdateDNSRecord(ctx context.Context, site Site, recordId RecordId, body UpdateDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateDNSRecordRequest(c.Server, site, recordId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 // NewListSitesRequest generates requests for ListSites
 func NewListSitesRequest(server string, params *ListSitesParams) (*http.Request, error) {
 	var err error
@@ -625,7 +825,7 @@ func NewListSitesRequest(server string, params *ListSitesParams) (*http.Request,
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/sites")
+	operationPath := fmt.Sprintf("/integration/v1/sites")
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -697,7 +897,7 @@ func NewListSiteClientsRequest(server string, siteId SiteId, params *ListSiteCli
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/sites/%s/clients", pathParam0)
+	operationPath := fmt.Sprintf("/integration/v1/sites/%s/clients", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -776,7 +976,7 @@ func NewGetClientByIdRequest(server string, siteId SiteId, clientId ClientId) (*
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/sites/%s/clients/%s", pathParam0, pathParam1)
+	operationPath := fmt.Sprintf("/integration/v1/sites/%s/clients/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -810,7 +1010,7 @@ func NewListSiteDevicesRequest(server string, siteId SiteId, params *ListSiteDev
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/sites/%s/devices", pathParam0)
+	operationPath := fmt.Sprintf("/integration/v1/sites/%s/devices", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -889,7 +1089,7 @@ func NewGetDeviceByIdRequest(server string, siteId SiteId, deviceId DeviceId) (*
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/sites/%s/devices/%s", pathParam0, pathParam1)
+	operationPath := fmt.Sprintf("/integration/v1/sites/%s/devices/%s", pathParam0, pathParam1)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -903,6 +1103,223 @@ func NewGetDeviceByIdRequest(server string, siteId SiteId, deviceId DeviceId) (*
 	if err != nil {
 		return nil, err
 	}
+
+	return req, nil
+}
+
+// NewListDNSRecordsRequest generates requests for ListDNSRecords
+func NewListDNSRecordsRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/static-dns", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewCreateDNSRecordRequest calls the generic CreateDNSRecord builder with application/json body
+func NewCreateDNSRecordRequest(server string, site Site, body CreateDNSRecordJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateDNSRecordRequestWithBody(server, site, "application/json", bodyReader)
+}
+
+// NewCreateDNSRecordRequestWithBody generates requests for CreateDNSRecord with any type of body
+func NewCreateDNSRecordRequestWithBody(server string, site Site, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/static-dns", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewDeleteDNSRecordRequest generates requests for DeleteDNSRecord
+func NewDeleteDNSRecordRequest(server string, site Site, recordId RecordId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "recordId", runtime.ParamLocationPath, recordId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/static-dns/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("DELETE", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetDNSRecordByIdRequest generates requests for GetDNSRecordById
+func NewGetDNSRecordByIdRequest(server string, site Site, recordId RecordId) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "recordId", runtime.ParamLocationPath, recordId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/static-dns/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewUpdateDNSRecordRequest calls the generic UpdateDNSRecord builder with application/json body
+func NewUpdateDNSRecordRequest(server string, site Site, recordId RecordId, body UpdateDNSRecordJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateDNSRecordRequestWithBody(server, site, recordId, "application/json", bodyReader)
+}
+
+// NewUpdateDNSRecordRequestWithBody generates requests for UpdateDNSRecord with any type of body
+func NewUpdateDNSRecordRequestWithBody(server string, site Site, recordId RecordId, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "recordId", runtime.ParamLocationPath, recordId)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/static-dns/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("PUT", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -964,6 +1381,25 @@ type ClientWithResponsesInterface interface {
 
 	// GetDeviceByIdWithResponse request
 	GetDeviceByIdWithResponse(ctx context.Context, siteId SiteId, deviceId DeviceId, reqEditors ...RequestEditorFn) (*GetDeviceByIdResponse, error)
+
+	// ListDNSRecordsWithResponse request
+	ListDNSRecordsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListDNSRecordsResponse, error)
+
+	// CreateDNSRecordWithBodyWithResponse request with any body
+	CreateDNSRecordWithBodyWithResponse(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateDNSRecordResponse, error)
+
+	CreateDNSRecordWithResponse(ctx context.Context, site Site, body CreateDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateDNSRecordResponse, error)
+
+	// DeleteDNSRecordWithResponse request
+	DeleteDNSRecordWithResponse(ctx context.Context, site Site, recordId RecordId, reqEditors ...RequestEditorFn) (*DeleteDNSRecordResponse, error)
+
+	// GetDNSRecordByIdWithResponse request
+	GetDNSRecordByIdWithResponse(ctx context.Context, site Site, recordId RecordId, reqEditors ...RequestEditorFn) (*GetDNSRecordByIdResponse, error)
+
+	// UpdateDNSRecordWithBodyWithResponse request with any body
+	UpdateDNSRecordWithBodyWithResponse(ctx context.Context, site Site, recordId RecordId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDNSRecordResponse, error)
+
+	UpdateDNSRecordWithResponse(ctx context.Context, site Site, recordId RecordId, body UpdateDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDNSRecordResponse, error)
 }
 
 type ListSitesResponse struct {
@@ -1086,6 +1522,126 @@ func (r GetDeviceByIdResponse) StatusCode() int {
 	return 0
 }
 
+type ListDNSRecordsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]DNSRecord
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListDNSRecordsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListDNSRecordsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type CreateDNSRecordResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *DNSRecord
+	JSON400      *ErrorResponse
+	JSON401      *Unauthorized
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateDNSRecordResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateDNSRecordResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type DeleteDNSRecordResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteDNSRecordResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteDNSRecordResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetDNSRecordByIdResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *DNSRecord
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetDNSRecordByIdResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetDNSRecordByIdResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type UpdateDNSRecordResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *DNSRecord
+	JSON400      *ErrorResponse
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateDNSRecordResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateDNSRecordResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 // ListSitesWithResponse request returning *ListSitesResponse
 func (c *ClientWithResponses) ListSitesWithResponse(ctx context.Context, params *ListSitesParams, reqEditors ...RequestEditorFn) (*ListSitesResponse, error) {
 	rsp, err := c.ListSites(ctx, params, reqEditors...)
@@ -1129,6 +1685,67 @@ func (c *ClientWithResponses) GetDeviceByIdWithResponse(ctx context.Context, sit
 		return nil, err
 	}
 	return ParseGetDeviceByIdResponse(rsp)
+}
+
+// ListDNSRecordsWithResponse request returning *ListDNSRecordsResponse
+func (c *ClientWithResponses) ListDNSRecordsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListDNSRecordsResponse, error) {
+	rsp, err := c.ListDNSRecords(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListDNSRecordsResponse(rsp)
+}
+
+// CreateDNSRecordWithBodyWithResponse request with arbitrary body returning *CreateDNSRecordResponse
+func (c *ClientWithResponses) CreateDNSRecordWithBodyWithResponse(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateDNSRecordResponse, error) {
+	rsp, err := c.CreateDNSRecordWithBody(ctx, site, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateDNSRecordResponse(rsp)
+}
+
+func (c *ClientWithResponses) CreateDNSRecordWithResponse(ctx context.Context, site Site, body CreateDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateDNSRecordResponse, error) {
+	rsp, err := c.CreateDNSRecord(ctx, site, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateDNSRecordResponse(rsp)
+}
+
+// DeleteDNSRecordWithResponse request returning *DeleteDNSRecordResponse
+func (c *ClientWithResponses) DeleteDNSRecordWithResponse(ctx context.Context, site Site, recordId RecordId, reqEditors ...RequestEditorFn) (*DeleteDNSRecordResponse, error) {
+	rsp, err := c.DeleteDNSRecord(ctx, site, recordId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteDNSRecordResponse(rsp)
+}
+
+// GetDNSRecordByIdWithResponse request returning *GetDNSRecordByIdResponse
+func (c *ClientWithResponses) GetDNSRecordByIdWithResponse(ctx context.Context, site Site, recordId RecordId, reqEditors ...RequestEditorFn) (*GetDNSRecordByIdResponse, error) {
+	rsp, err := c.GetDNSRecordById(ctx, site, recordId, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetDNSRecordByIdResponse(rsp)
+}
+
+// UpdateDNSRecordWithBodyWithResponse request with arbitrary body returning *UpdateDNSRecordResponse
+func (c *ClientWithResponses) UpdateDNSRecordWithBodyWithResponse(ctx context.Context, site Site, recordId RecordId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDNSRecordResponse, error) {
+	rsp, err := c.UpdateDNSRecordWithBody(ctx, site, recordId, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateDNSRecordResponse(rsp)
+}
+
+func (c *ClientWithResponses) UpdateDNSRecordWithResponse(ctx context.Context, site Site, recordId RecordId, body UpdateDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDNSRecordResponse, error) {
+	rsp, err := c.UpdateDNSRecord(ctx, site, recordId, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateDNSRecordResponse(rsp)
 }
 
 // ParseListSitesResponse parses an HTTP response from a ListSitesWithResponse call
@@ -1331,70 +1948,283 @@ func ParseGetDeviceByIdResponse(rsp *http.Response) (*GetDeviceByIdResponse, err
 	return response, nil
 }
 
+// ParseListDNSRecordsResponse parses an HTTP response from a ListDNSRecordsWithResponse call
+func ParseListDNSRecordsResponse(rsp *http.Response) (*ListDNSRecordsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListDNSRecordsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []DNSRecord
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseCreateDNSRecordResponse parses an HTTP response from a CreateDNSRecordWithResponse call
+func ParseCreateDNSRecordResponse(rsp *http.Response) (*CreateDNSRecordResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateDNSRecordResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest DNSRecord
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseDeleteDNSRecordResponse parses an HTTP response from a DeleteDNSRecordWithResponse call
+func ParseDeleteDNSRecordResponse(rsp *http.Response) (*DeleteDNSRecordResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteDNSRecordResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetDNSRecordByIdResponse parses an HTTP response from a GetDNSRecordByIdWithResponse call
+func ParseGetDNSRecordByIdResponse(rsp *http.Response) (*GetDNSRecordByIdResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetDNSRecordByIdResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest DNSRecord
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseUpdateDNSRecordResponse parses an HTTP response from a UpdateDNSRecordWithResponse call
+func ParseUpdateDNSRecordResponse(rsp *http.Response) (*UpdateDNSRecordResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateDNSRecordResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest DNSRecord
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest ErrorResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

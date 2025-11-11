@@ -74,8 +74,9 @@ func TestRateLimiterAllowsBurst(t *testing.T) {
 	ctx := context.Background()
 
 	// Should allow burst of 60 requests immediately
-	for i := 0; i < 60; i++ {
-		if err := limiter.Wait(ctx); err != nil {
+	for i := range 60 {
+		err := limiter.Wait(ctx)
+		if err != nil {
 			t.Fatalf("Request %d failed: %v", i, err)
 		}
 	}
@@ -89,15 +90,17 @@ func TestRateLimiterThrottles(t *testing.T) {
 	ctx := context.Background()
 
 	// Exhaust burst
-	for i := 0; i < 60; i++ {
-		if err := limiter.Wait(ctx); err != nil {
+	for i := range 60 {
+		err := limiter.Wait(ctx)
+		if err != nil {
 			t.Fatalf("Burst request %d failed: %v", i, err)
 		}
 	}
 
 	// Next request should be throttled
 	start := time.Now()
-	if err := limiter.Wait(ctx); err != nil {
+	err := limiter.Wait(ctx)
+	if err != nil {
 		t.Fatalf("Throttled request failed: %v", err)
 	}
 	elapsed := time.Since(start)
@@ -119,7 +122,8 @@ func TestRateLimiterContextCancellation(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	// Exhaust burst
-	if err := limiter.Wait(ctx); err != nil {
+	err := limiter.Wait(ctx)
+	if err != nil {
 		t.Fatalf("First request failed: %v", err)
 	}
 
@@ -127,7 +131,8 @@ func TestRateLimiterContextCancellation(t *testing.T) {
 	cancel()
 
 	// Next request should fail with context cancellation
-	if err := limiter.Wait(ctx); err == nil {
+	err = limiter.Wait(ctx)
+	if err == nil {
 		t.Error("Expected error from cancelled context, got nil")
 	} else if !errors.Is(err, context.Canceled) {
 		t.Errorf("Expected context.Canceled error, got %v", err)
@@ -144,8 +149,9 @@ func TestRateLimiterHighThroughput(t *testing.T) {
 
 	// Make 100 requests
 	requestCount := 100
-	for i := 0; i < requestCount; i++ {
-		if err := limiter.Wait(ctx); err != nil {
+	for i := range requestCount {
+		err := limiter.Wait(ctx)
+		if err != nil {
 			t.Fatalf("Request %d failed: %v", i, err)
 		}
 	}
@@ -162,8 +168,7 @@ func TestRateLimiterHighThroughput(t *testing.T) {
 }
 
 func BenchmarkNewRateLimiter(b *testing.B) {
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		NewRateLimiter(1000)
 	}
 }
@@ -171,8 +176,7 @@ func BenchmarkNewRateLimiter(b *testing.B) {
 func BenchmarkRateLimiterAllow(b *testing.B) {
 	limiter := NewRateLimiter(10000)
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		limiter.Allow()
 	}
 }

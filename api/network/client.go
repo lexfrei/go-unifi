@@ -484,11 +484,10 @@ func (c *APIClient) GetDNSRecordByID(ctx context.Context, site Site, recordID Re
 	return resp.JSON200, nil
 }
 
-// UpdateDNSRecord updates an existing DNS record.
-func (c *APIClient) UpdateDNSRecord(ctx context.Context, site Site, recordID RecordId, record *DNSRecordInput) (*DNSRecord, error) {
-	resp, err := c.client.UpdateDNSRecordWithResponse(ctx, site, recordID, *record)
+// updateResource is a generic helper for update operations.
+func updateResource[T any](resp interface{ StatusCode() int }, data *T, err error, errorMsg string) (*T, error) {
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to update DNS record %s in site %s", recordID, site)
+		return nil, errors.Wrap(err, errorMsg)
 	}
 
 	if resp.StatusCode() != http.StatusOK {
@@ -496,11 +495,17 @@ func (c *APIClient) UpdateDNSRecord(ctx context.Context, site Site, recordID Rec
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
 	}
 
-	if resp.JSON200 == nil {
+	if data == nil {
 		return nil, errors.New("empty response from API")
 	}
 
-	return resp.JSON200, nil
+	return data, nil
+}
+
+// UpdateDNSRecord updates an existing DNS record.
+func (c *APIClient) UpdateDNSRecord(ctx context.Context, site Site, recordID RecordId, record *DNSRecordInput) (*DNSRecord, error) {
+	resp, err := c.client.UpdateDNSRecordWithResponse(ctx, site, recordID, *record)
+	return updateResource(resp, resp.JSON200, err, errors.Newf("failed to update DNS record %s in site %s", recordID, site).Error())
 }
 
 // DeleteDNSRecord deletes a DNS record.
@@ -540,20 +545,7 @@ func (c *APIClient) ListFirewallPolicies(ctx context.Context, site Site) ([]Fire
 // UpdateFirewallPolicy updates an existing firewall policy.
 func (c *APIClient) UpdateFirewallPolicy(ctx context.Context, site Site, policyID PolicyId, policy *FirewallPolicyInput) (*FirewallPolicy, error) {
 	resp, err := c.client.UpdateFirewallPolicyWithResponse(ctx, site, policyID, *policy)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to update firewall policy %s in site %s", policyID, site)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	return updateResource(resp, resp.JSON200, err, errors.Newf("failed to update firewall policy %s in site %s", policyID, site).Error())
 }
 
 // CreateFirewallPolicy creates a new firewall policy.
@@ -612,20 +604,7 @@ func (c *APIClient) ListTrafficRules(ctx context.Context, site Site) ([]TrafficR
 // UpdateTrafficRule updates an existing traffic rule.
 func (c *APIClient) UpdateTrafficRule(ctx context.Context, site Site, ruleID RuleId, rule *TrafficRuleInput) (*TrafficRule, error) {
 	resp, err := c.client.UpdateTrafficRuleWithResponse(ctx, site, ruleID, *rule)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to update traffic rule %s in site %s", ruleID, site)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	return updateResource(resp, resp.JSON200, err, errors.Newf("failed to update traffic rule %s in site %s", ruleID, site).Error())
 }
 
 // CreateTrafficRule creates a new traffic rule.

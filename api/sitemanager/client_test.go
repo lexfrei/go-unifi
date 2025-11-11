@@ -486,6 +486,66 @@ const (
   "traceId": "a7dc15e0eb4527142d7823515b15f87d"
 }`
 
+	getSDWANConfigByIDSuccess = `{
+  "data": {
+    "id": "b344034f-2636-478c-8c7a-e3350f8ed37a",
+    "name": "RS test",
+    "type": "sdwan-hbsp",
+    "variant": "single",
+    "settings": {
+      "hubsInterconnect": null,
+      "spokeToHubTunnelsMode": "scalable",
+      "spokesAutoScaleAndNatEnabled": true,
+      "spokesAutoScaleAndNatRange": "172.16.0.0/12",
+      "spokesIsolate": true,
+      "spokeStandardSettingsEnabled": false,
+      "spokeStandardSettingsValues": null,
+      "spokeToHubRouting": "geo"
+    },
+    "hubs": [
+      {
+        "id": "9C05D6B1DA7100000000080A820B000000000877B4A4000000006634E113:779231894_670d14b2b4e979611b761866",
+        "hostId": "9C05D6B1DA7100000000080A820B000000000877B4A4000000006634E113:779231894",
+        "siteId": "670d14b2b4e979611b761866",
+        "networkIds": [
+          "670d14deb4e979611b761880"
+        ],
+        "routes": [],
+        "primaryWan": "WAN",
+        "wanFailover": false
+      }
+    ],
+    "spokes": [
+      {
+        "id": "28704E43D00C0000000008339D3C0000000008A2F4D300000000669FE9E7:1731456649_670d153bf6db0d4204f8d150",
+        "hostId": "28704E43D00C0000000008339D3C0000000008A2F4D300000000669FE9E7:1731456649",
+        "siteId": "670d153bf6db0d4204f8d150",
+        "networkIds": [],
+        "routes": [
+          "172.16.1.0/24"
+        ],
+        "primaryWan": "WAN",
+        "wanFailover": false,
+        "hubsPriority": null
+      },
+      {
+        "id": "F4E2C61FA6000000000007D5831A00000000083CEEC600000000655DA309:763649230_66b5f02af5521234f6f28a23",
+        "hostId": "F4E2C61FA6000000000007D5831A00000000083CEEC600000000655DA309:763649230",
+        "siteId": "66b5f02af5521234f6f28a23",
+        "networkIds": [],
+        "routes": [
+          "172.16.2.0/24"
+        ],
+        "primaryWan": "WAN",
+        "wanFailover": false,
+        "hubsPriority": null
+      }
+    ]
+  },
+  "httpStatusCode": 200,
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d"
+}`
+
 	// Test constants.
 	testAPIKey    = "test-api-key"
 	testToken     = "test-token"
@@ -1448,6 +1508,121 @@ func TestGetSDWANConfigStatus(t *testing.T) {
 			}
 
 			resp, err := client.GetSDWANConfigStatus(context.Background(), tt.configID)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+				return
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
+			}
+		})
+	}
+}
+
+func TestGetSDWANConfigByID(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name           string
+		configID       string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+		checkResponse  func(t *testing.T, resp *SDWANConfigResponse)
+	}{
+		{
+			name:           "success",
+			configID:       "b344034f-2636-478c-8c7a-e3350f8ed37a",
+			mockResponse:   getSDWANConfigByIDSuccess,
+			mockStatusCode: http.StatusOK,
+			wantErr:        false,
+			checkResponse: func(t *testing.T, resp *SDWANConfigResponse) {
+				t.Helper()
+				if resp == nil {
+					t.Fatal("response is nil")
+				}
+				if resp.Data.Id == nil || *resp.Data.Id != "b344034f-2636-478c-8c7a-e3350f8ed37a" {
+					t.Error("ID not set correctly")
+				}
+				if resp.Data.Name == nil || *resp.Data.Name != "RS test" {
+					t.Error("Name not set correctly")
+				}
+				if resp.Data.Hubs == nil || len(*resp.Data.Hubs) != 1 {
+					t.Errorf("len(Hubs) = %d, want 1", len(*resp.Data.Hubs))
+				}
+				if resp.Data.Spokes == nil || len(*resp.Data.Spokes) != 2 {
+					t.Errorf("len(Spokes) = %d, want 2", len(*resp.Data.Spokes))
+				}
+			},
+		},
+		{
+			name:           "not found",
+			configID:       "non-existent-id",
+			mockResponse:   sdwanConfigStatusNotFound,
+			mockStatusCode: http.StatusNotFound,
+			wantErr:        true,
+		},
+		{
+			name:           "unauthorized",
+			configID:       "b344034f-2636-478c-8c7a-e3350f8ed37a",
+			mockResponse:   unauthorizedError,
+			mockStatusCode: http.StatusUnauthorized,
+			wantErr:        true,
+		},
+		{
+			name:           "rate limit",
+			configID:       "b344034f-2636-478c-8c7a-e3350f8ed37a",
+			mockResponse:   rateLimitError,
+			mockStatusCode: http.StatusTooManyRequests,
+			wantErr:        true,
+		},
+		{
+			name:           "server error",
+			configID:       "b344034f-2636-478c-8c7a-e3350f8ed37a",
+			mockResponse:   serverError,
+			mockStatusCode: http.StatusInternalServerError,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				// Verify request - EA endpoint
+				expectedPath := "/ea/sd-wan-configs/" + tt.configID
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+				if r.Header.Get("X-Api-Key") != testAPIKey {
+					t.Error("X-Api-Key header not set")
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := NewWithConfig(&ClientConfig{
+				APIKey:  testAPIKey,
+				BaseURL: server.URL,
+			})
+			if err != nil {
+				t.Fatalf("NewWithConfig failed: %v", err)
+			}
+
+			resp, err := client.GetSDWANConfigByID(context.Background(), tt.configID)
 
 			if tt.wantErr {
 				if err == nil {

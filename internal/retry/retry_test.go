@@ -141,7 +141,7 @@ func TestParseRetryAfter(t *testing.T) {
 func BenchmarkShouldRetry(b *testing.B) {
 	statusCodes := []int{200, 400, 429, 500, 502, 503, 504}
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		for _, code := range statusCodes {
 			ShouldRetry(code)
 		}
@@ -151,7 +151,7 @@ func BenchmarkShouldRetry(b *testing.B) {
 func BenchmarkParseRetryAfter(b *testing.B) {
 	headers := []string{"", "60", "120", "invalid"}
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		for _, header := range headers {
 			ParseRetryAfter(header)
 		}

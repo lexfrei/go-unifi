@@ -207,9 +207,34 @@ paths:
         - name: type
           in: path
           required: true
-          description: The metric type to retrieve
+          description: Specifies whether metrics are returned using 5m or 1h intervals
           schema:
             type: string
+            enum: ['5m', '1h']
+          example: '5m'
+        - name: beginTimestamp
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: The earliest timestamp to retrieve data from (RFC3339 format)
+          example: "2024-06-30T13:35:00Z"
+        - name: endTimestamp
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: The latest timestamp to retrieve data up to (RFC3339 format)
+          example: "2024-06-30T15:35:00Z"
+        - name: duration
+          in: query
+          schema:
+            type: string
+            enum: ['24h', '7d', '30d']
+          description: |
+            Specifies the time range of metrics to retrieve, starting from when the request is made.
+            Supports 24h for 5-minute metrics, and 7d or 30d for 1-hour metrics.
+            This parameter cannot be used with beginTimestamp or endTimestamp.
       responses:
         '200':
           description: Successful response
@@ -735,20 +760,77 @@ components:
               description: Pagination token for fetching the next set of results
 
     # ISP Metrics schemas
-    ISPMetric:
+    ISPMetricWanData:
       type: object
+      description: WAN interface metrics data
       properties:
-        timestamp:
+        avgLatency:
+          type: integer
+          description: Average latency in milliseconds
+        download_kbps:
+          type: integer
+          description: Download speed in kbps
+        downtime:
+          type: integer
+          description: Downtime duration in seconds
+        ispAsn:
+          type: string
+          description: ISP Autonomous System Number
+        ispName:
+          type: string
+          description: ISP name
+        maxLatency:
+          type: integer
+          description: Maximum latency in milliseconds
+        packetLoss:
+          type: integer
+          description: Packet loss percentage
+        upload_kbps:
+          type: integer
+          description: Upload speed in kbps
+        uptime:
+          type: integer
+          description: Uptime duration in seconds
+
+    ISPMetricPeriodData:
+      type: object
+      description: Period-specific metrics data
+      properties:
+        wan:
+          $ref: '#/components/schemas/ISPMetricWanData'
+
+    ISPMetricPeriod:
+      type: object
+      description: Metric period information
+      properties:
+        data:
+          $ref: '#/components/schemas/ISPMetricPeriodData'
+        metricTime:
           type: string
           format: date-time
-          description: Metric timestamp
-        value:
-          type: number
-          description: Metric value
-        type:
+          description: Timestamp of the metric
+        version:
           type: string
-          description: Metric type
-      additionalProperties: true
+          description: Metric version
+
+    ISPMetricItem:
+      type: object
+      description: ISP metric entry for a specific site and host
+      properties:
+        metricType:
+          type: string
+          description: Type of metric
+        periods:
+          type: array
+          items:
+            $ref: '#/components/schemas/ISPMetricPeriod'
+          description: Array of metric periods
+        hostId:
+          type: string
+          description: Host identifier
+        siteId:
+          type: string
+          description: Site identifier
 
     ISPMetricsResponse:
       allOf:
@@ -758,7 +840,7 @@ components:
             data:
               type: array
               items:
-                $ref: '#/components/schemas/ISPMetric'
+                $ref: '#/components/schemas/ISPMetricItem'
 
     ISPMetricsQuery:
       type: object
@@ -796,7 +878,7 @@ components:
                 metrics:
                   type: array
                   items:
-                    $ref: '#/components/schemas/ISPMetric'
+                    $ref: '#/components/schemas/ISPMetricItem'
 
     # SD-WAN schemas
     SDWANConfig:

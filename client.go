@@ -285,3 +285,21 @@ func (c *UnifiClient) ListDevices(ctx context.Context, params *ListDevicesParams
 
 	return resp.JSON200, nil
 }
+
+// GetISPMetrics retrieves ISP metrics data across all sites.
+func (c *UnifiClient) GetISPMetrics(ctx context.Context, metricType GetISPMetricsParamsType, params *GetISPMetricsParams) (*ISPMetricsResponse, error) {
+	resp, err := c.client.GetISPMetricsWithResponse(ctx, metricType, params)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to get ISP metrics for type %s", string(metricType))
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return resp.JSON200, nil
+}

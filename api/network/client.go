@@ -38,7 +38,7 @@ type APIClient struct {
 
 // ClientConfig holds configuration for the Network API client.
 type ClientConfig struct {
-	// ControllerURL is the base URL of the UniFi controller (e.g., "https://192.168.1.1")
+	// ControllerURL is the base URL of the UniFi controller (e.g., "https://unifi.local" or "https://192.168.1.1")
 	ControllerURL string
 
 	// APIKey is the API key for authentication
@@ -80,7 +80,7 @@ type ClientConfig struct {
 //
 // Example:
 //
-//	client, err := network.New("https://192.168.1.1", "your-api-key")
+//	client, err := network.New("https://unifi.local", "your-api-key")
 func New(controllerURL, apiKey string) (*APIClient, error) {
 	return NewWithConfig(&ClientConfig{
 		ControllerURL:      controllerURL,
@@ -95,7 +95,7 @@ func New(controllerURL, apiKey string) (*APIClient, error) {
 // Example:
 //
 //	client, err := network.NewWithConfig(&network.ClientConfig{
-//	    ControllerURL:      "https://192.168.1.1",
+//	    ControllerURL:      "https://unifi.local",
 //	    APIKey:             "your-api-key",
 //	    InsecureSkipVerify: true,
 //	    RateLimitPerMinute: 500,

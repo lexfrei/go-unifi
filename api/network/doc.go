@@ -40,7 +40,7 @@
 //
 //	func main() {
 //	    // Create client
-//	    client, err := network.New("https://192.168.1.1", "your-api-key")
+//	    client, err := network.New("https://unifi.local", "your-api-key")
 //	    if err != nil {
 //	        log.Fatal(err)
 //	    }
@@ -71,7 +71,7 @@
 // For custom rate limits, timeouts, or TLS settings:
 //
 //	client, err := network.NewWithConfig(&network.ClientConfig{
-//	    ControllerURL:      "https://192.168.1.1",
+//	    ControllerURL:      "https://unifi.local",
 //	    APIKey:             "your-api-key",
 //	    InsecureSkipVerify: true,              // For self-signed certificates
 //	    RateLimitPerMinute: 500,                // Custom rate limit

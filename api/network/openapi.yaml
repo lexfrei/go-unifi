@@ -32,8 +32,8 @@ servers:
     description: Local UniFi controller
     variables:
       controller:
-        default: 192.168.1.1
-        description: IP address or hostname of your UniFi controller
+        default: unifi.local
+        description: Hostname or IP address of your UniFi controller (e.g., unifi.local, 192.168.1.1)
 
 security:
   - ApiKeyAuth: []

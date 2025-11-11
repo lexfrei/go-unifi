@@ -11,6 +11,11 @@ Pure Go client library for UniFi Site Manager API v1.
 - ✅ **Context support** for all operations
 - ✅ **Detailed type definitions** for Hosts, Sites, Devices, ISP Metrics, and SD-WAN
 
+## Tested Hardware
+
+This library has been tested against:
+- **UniFi Dream Router (UDR7)** running UniFi OS **4.3.87**
+
 ## Installation
 
 ```bash

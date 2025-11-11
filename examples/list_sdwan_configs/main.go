@@ -57,17 +57,26 @@ func main() {
 			fmt.Printf("  Type: %s\n", *cfg.Type)
 		}
 
-		if cfg.Config != nil {
-			fmt.Printf("  Config: present\n")
-			if cfg.Config.Version != nil {
-				fmt.Printf("    Version: %s\n", *cfg.Config.Version)
+		if cfg.Variant != nil {
+			fmt.Printf("  Variant: %s\n", *cfg.Variant)
+		}
+
+		if cfg.Settings != nil {
+			fmt.Printf("  Settings: present\n")
+			if cfg.Settings.SpokeToHubTunnelsMode != nil {
+				fmt.Printf("    Tunnels Mode: %s\n", *cfg.Settings.SpokeToHubTunnelsMode)
 			}
-			if cfg.Config.Hubs != nil {
-				fmt.Printf("    Hubs: %d\n", len(*cfg.Config.Hubs))
+			if cfg.Settings.SpokesIsolate != nil {
+				fmt.Printf("    Spokes Isolate: %t\n", *cfg.Settings.SpokesIsolate)
 			}
-			if cfg.Config.Spokes != nil {
-				fmt.Printf("    Spokes: %d\n", len(*cfg.Config.Spokes))
-			}
+		}
+
+		if cfg.Hubs != nil {
+			fmt.Printf("  Hubs: %d\n", len(*cfg.Hubs))
+		}
+
+		if cfg.Spokes != nil {
+			fmt.Printf("  Spokes: %d\n", len(*cfg.Spokes))
 		}
 
 		fmt.Println()

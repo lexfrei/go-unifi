@@ -14,7 +14,9 @@ Pure Go client library for UniFi Site Manager API v1.
 ## Tested Hardware
 
 This library has been tested against:
-- **UniFi Dream Router (UDR7)** running UniFi OS **4.3.87**
+- **UniFi Dream Router (UDR7)** running:
+  - UniFi OS **4.3.87**
+  - Network Application **9.4.19**
 
 ## Installation
 
@@ -110,6 +112,14 @@ client, err := unifi.NewUnifiClient(unifi.ClientConfig{
   - `GetSDWANConfigStatus(ctx, id)` - Get SD-WAN config status
 
 ## Examples
+
+See the [examples/](./examples/) directory for complete working examples:
+
+- **[list_hosts](./examples/list_hosts/)** - List all hosts with pagination
+- **[get_host](./examples/get_host/)** - Get detailed host information
+- **[list_sites](./examples/list_sites/)** - List all sites with metadata and statistics
+- **[list_devices](./examples/list_devices/)** - List all devices with typed access
+- **[get_isp_metrics](./examples/get_isp_metrics/)** - Get ISP metrics with WAN performance data
 
 ### List Hosts with Pagination
 

@@ -276,7 +276,7 @@ paths:
                 $ref: '#/components/schemas/NewEndpointResponse'
 ```
 
-2. **Add response schema**:
+1. **Add response schema**:
 ```yaml
 components:
   schemas:
@@ -289,9 +289,9 @@ components:
               $ref: '#/components/schemas/NewData'
 ```
 
-3. **Regenerate**: `make generate`
+1. **Regenerate**: `make generate`
 
-4. **Add wrapper method in client.go**:
+1. **Add wrapper method in client.go**:
 ```go
 func (c *UnifiClient) GetNewEndpoint(ctx context.Context) (*NewEndpointResponse, error) {
     resp, err := c.client.GetNewEndpointWithResponse(ctx)
@@ -311,11 +311,11 @@ func (c *UnifiClient) GetNewEndpoint(ctx context.Context) (*NewEndpointResponse,
 }
 ```
 
-5. **Create example**: `examples/new_endpoint/main.go`
+1. **Create example**: `examples/new_endpoint/main.go`
 
-6. **Test with real API**
+1. **Test with real API**
 
-7. **Commit together**: `git add openapi.yaml generated.go client.go examples/`
+1. **Commit together**: `git add openapi.yaml generated.go client.go examples/`
 
 ### Adding Type Definitions
 
@@ -343,13 +343,13 @@ components:
           $ref: '#/components/schemas/NestedType'
 ```
 
-4. **Reference in parent**:
+1. **Reference in parent**:
 ```yaml
 parentField:
   $ref: '#/components/schemas/NewComplexType'
 ```
 
-5. **Regenerate and verify**:
+1. **Regenerate and verify**:
 ```bash
 make generate
 grep "type NewComplexType" generated.go

@@ -12,6 +12,10 @@ examples/*/[!.]*
 !examples/*/*.mod
 !examples/*/*.sum
 
+# Tool binaries
+cmd/*/test-reality
+cmd/test-reality/test-reality
+
 # Build artifacts
 /bin/
 /dist/

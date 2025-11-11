@@ -90,6 +90,7 @@ linters:
       - third_party$
       - builtin$
       - examples$
+      - cmd/
     rules:
       - linters:
           - funlen
@@ -127,3 +128,4 @@ formatters:
       - third_party$
       - builtin$
       - examples$
+      - cmd/

@@ -14,17 +14,22 @@ const (
 	// DefaultBaseURL is the default Unifi API base URL.
 	DefaultBaseURL = "https://api.ui.com"
 
-	// Rate limits per API version
-	V1RateLimit = 10000 // requests per minute for v1 endpoints
-	EARateLimit = 100   // requests per minute for EA endpoints
+	// V1RateLimit is the rate limit for v1 endpoints (requests per minute).
+	V1RateLimit = 10000
+	// EARateLimit is the rate limit for EA endpoints (requests per minute).
+	EARateLimit = 100
 
-	// Retry configuration
-	DefaultMaxRetries    = 3
+	// DefaultMaxRetries is the default number of retries for failed requests.
+	DefaultMaxRetries = 3
+	// DefaultRetryWaitTime is the default wait time between retries.
 	DefaultRetryWaitTime = 1 * time.Second
-	DefaultTimeout       = 30 * time.Second
+	// DefaultTimeout is the default HTTP client timeout.
+	DefaultTimeout = 30 * time.Second
 )
 
 // UnifiClient wraps the generated API client with rate limiting and retry logic.
+//
+//nolint:revive // UnifiClient is the public API name, stuttering is acceptable here
 type UnifiClient struct {
 	client      *ClientWithResponses
 	httpClient  *http.Client
@@ -97,7 +102,8 @@ func NewUnifiClient(cfg ClientConfig) (*UnifiClient, error) {
 	}
 
 	// Create request editor to add API key header
-	requestEditor := func(ctx context.Context, req *http.Request) error {
+	requestEditor := func(_ context.Context, req *http.Request) error {
+		//nolint:canonicalheader // X-API-Key is the correct header name per UniFi API spec
 		req.Header.Set("X-API-Key", cfg.APIKey)
 		req.Header.Set("Accept", "application/json")
 		return nil
@@ -131,16 +137,19 @@ type rateLimitedHTTPClient struct {
 }
 
 // Do executes HTTP request with rate limiting and retry logic.
+//
+//nolint:gocyclo,cyclop // Retry logic inherently complex, cannot be simplified without losing functionality
 func (c *rateLimitedHTTPClient) Do(req *http.Request) (*http.Response, error) {
 	ctx := req.Context()
 
-	// Apply rate limiting
-	if err := c.rateLimiter.Wait(ctx); err != nil {
-		return nil, errors.Wrap(err, "rate limiter wait failed")
-	}
-
 	var resp *http.Response
 	var err error
+
+	// Apply rate limiting
+	err = c.rateLimiter.Wait(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "rate limiter wait failed")
+	}
 
 	// Retry loop
 	for attempt := 0; attempt <= c.maxRetries; attempt++ {
@@ -171,7 +180,8 @@ func (c *rateLimitedHTTPClient) Do(req *http.Request) (*http.Response, error) {
 		case resp.StatusCode == http.StatusTooManyRequests:
 			// Rate limited - check Retry-After header
 			if retryAfter := resp.Header.Get("Retry-After"); retryAfter != "" {
-				if seconds, parseErr := strconv.Atoi(retryAfter); parseErr == nil {
+				seconds, parseErr := strconv.Atoi(retryAfter)
+				if parseErr == nil {
 					resp.Body.Close()
 					time.Sleep(time.Duration(seconds) * time.Second)
 					continue

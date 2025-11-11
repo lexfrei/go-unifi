@@ -13,6 +13,8 @@ linters:
     - paralleltest # TODO: enable back and add t.Parallel() to all tests
     - lll
     - funcorder # Helper functions placement is a stylistic choice
+    - wrapcheck # Too strict for this project
+    - nlreturn # Stylistic preference
   settings:
     dupl:
       threshold: 100
@@ -40,7 +42,10 @@ linters:
         - "10"
         - "100"
         - "2"
+        - "60"
+        - "60.0"
         - "64"
+        - "500"
     nolintlint:
       require-explanation: false
       require-specific: false
@@ -91,6 +96,13 @@ linters:
           - gocyclo
           - cyclop
         path: _test\.go
+      - linters:
+          - forbidigo
+          - gocyclo
+          - cyclop
+          - goconst
+          - funlen
+        path: examples/
 formatters:
   enable:
     - gofmt

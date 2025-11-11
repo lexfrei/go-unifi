@@ -1,235 +1,123 @@
 # go-unifi
 
-Almost pure Go client library for UniFi Site Manager API v1.
+Pure Go client libraries for UniFi APIs with type-safe code generation from OpenAPI specifications.
 
-## Features
+## 📦 Available APIs
 
-- ✅ **Type-safe client** generated from OpenAPI specification
-- ✅ **Dual rate limiting** (automatic: 10,000 req/min for v1, 100 req/min for EA)
-- ✅ **Automatic retries** with exponential backoff for 5xx and 429 errors
-- ✅ **Error handling** using `github.com/cockroachdb/errors`
-- ✅ **Context support** for all operations
-- ✅ **Detailed type definitions** for Hosts, Sites, Devices, ISP Metrics, and SD-WAN
+### [UniFi Site Manager API](./api/sitemanager/)
 
-## Tested Hardware
+Cloud-based API for managing multiple UniFi sites from a central location.
 
-This library has been tested against:
-- **UniFi Dream Router (UDR7)** running:
-  - UniFi OS **4.3.87**
-  - Network Application **9.4.19**
+```go
+import "github.com/lexfrei/go-unifi/api/sitemanager"
 
-## Installation
+client, _ := sitemanager.New("your-api-key")
+hosts, _ := client.ListHosts(context.Background(), nil)
+```
+
+**Features:**
+- Hosts, Sites, Devices management
+- ISP Metrics and monitoring
+- SD-WAN configuration
+- Dual rate limiting (10K req/min v1, 100 req/min EA)
+
+**Documentation:** [api/sitemanager/README.md](./api/sitemanager/)
+
+---
+
+### [UniFi Network API](./api/network/)
+
+Local controller API for detailed device and client management on your network.
+
+```go
+import "github.com/lexfrei/go-unifi/api/network"
+
+client, _ := network.New("https://unifi.local", "your-api-key")
+sites, _ := client.ListSites(context.Background(), nil)
+```
+
+**Features:**
+- Sites, Devices, Clients management
+- Real-time device status
+- Port and radio interface details
+- Support for self-signed certificates
+
+**Documentation:** [api/network/doc.go](./api/network/doc.go)
+
+---
+
+## 🚀 Quick Start
+
+### Installation
 
 ```bash
 go get github.com/lexfrei/go-unifi
 ```
 
-## Quick Start
+### Choose Your API
 
-```go
-package main
+**Use Site Manager API when:**
+- Managing multiple sites remotely
+- Accessing cloud-hosted controllers
+- Need ISP metrics and SD-WAN features
+- Want centralized monitoring
 
-import (
-    "context"
-    "fmt"
-    "log"
+**Use Network API when:**
+- Managing a single local controller
+- Need detailed device/client information
+- Working with on-premises hardware
+- Require real-time port/radio status
 
-    "github.com/lexfrei/go-unifi/api/sitemanager"
-)
+## 📖 Examples
 
-func main() {
-    // Create client with defaults
-    client, err := sitemanager.New("your-api-key")
-    if err != nil {
-        log.Fatal(err)
-    }
+- [Site Manager Examples](./examples/sitemanager/) - Cloud API usage
+- [Network API Examples](./examples/network/) - Local controller usage
 
-    // List all hosts
-    hosts, err := client.ListHosts(context.Background(), nil)
-    if err != nil {
-        log.Fatal(err)
-    }
+## ✨ Features
 
-    // Print hosts
-    for _, host := range hosts.Data {
-        fmt.Printf("Host: %s (%s)\n", host.Id, host.Type)
-    }
-}
+- ✅ **Type-safe** - Generated from OpenAPI specifications
+- ✅ **Rate limiting** - Automatic with configurable limits
+- ✅ **Retry logic** - Exponential backoff for failures
+- ✅ **Error handling** - Using `github.com/cockroachdb/errors`
+- ✅ **Context support** - All operations support cancellation
+- ✅ **Well documented** - Extensive examples and godoc
+
+## 🧪 Tested Hardware
+
+- **UniFi Dream Router (UDR7)**
+  - UniFi OS 4.3.87
+  - Network Application 9.4.19
+
+## 🏗️ Project Structure
+
+```
+go-unifi/
+├── api/
+│   ├── sitemanager/    # Cloud-based Site Manager API
+│   └── network/        # Local Network API
+├── internal/           # Shared infrastructure (rate limiting, retry)
+├── examples/           # Working examples for both APIs
+└── cmd/                # Command-line tools
 ```
 
-## Configuration
-
-### Simple (Recommended)
-
-```go
-// Most common use case - uses sensible defaults
-client, err := sitemanager.New("your-api-key")
-```
-
-### Custom Configuration
-
-```go
-// For advanced use cases (custom timeouts, rate limits, etc.)
-client, err := sitemanager.NewWithConfig(&sitemanager.ClientConfig{
-    // Required: Your API key from sitemanager.ui.com
-    APIKey: "your-api-key",
-
-    // Optional: Custom base URL (defaults to https://api.ui.com)
-    BaseURL: "https://api.ui.com",
-
-    // Optional: Rate limits (defaults: v1=10000, EA=100 requests/minute)
-    // The client automatically selects the appropriate limiter based on endpoint
-    V1RateLimitPerMinute: 5000,  // Custom v1 rate limit
-    EARateLimitPerMinute: 50,    // Custom EA rate limit
-
-    // Optional: Maximum number of retries (defaults to 3)
-    MaxRetries: 3,
-
-    // Optional: Wait time between retries (defaults to 1s)
-    RetryWaitTime: time.Second,
-
-    // Optional: HTTP client timeout (defaults to 30s)
-    Timeout: 30 * time.Second,
-
-    // Optional: Custom HTTP client
-    HTTPClient: &http.Client{},
-})
-```
-
-## API Coverage
-
-### Stable (v1)
-
-- ✅ **Hosts**
-  - `ListHosts(ctx, params)` - List all hosts with pagination
-  - `GetHostByID(ctx, id)` - Get host details by ID
-
-- ✅ **Sites**
-  - `ListSites(ctx)` - List all sites
-
-- ✅ **Devices**
-  - `ListDevices(ctx)` - List all UniFi devices
-
-### Early Access (EA)
-
-- ⚠️ **ISP Metrics**
-  - `GetISPMetrics(ctx, type)` - Get ISP metrics
-  - `QueryISPMetrics(ctx, type, query)` - Query ISP metrics with filters
-
-- ⚠️ **SD-WAN**
-  - `ListSDWANConfigs(ctx)` - List SD-WAN configurations
-  - `GetSDWANConfigByID(ctx, id)` - Get SD-WAN config by ID
-  - `GetSDWANConfigStatus(ctx, id)` - Get SD-WAN config status
-
-## Examples
-
-See the [examples/](./examples/) directory for complete working examples:
-
-- **[list_hosts](./examples/list_hosts/)** - List all hosts with pagination
-- **[get_host](./examples/get_host/)** - Get detailed host information
-- **[list_sites](./examples/list_sites/)** - List all sites with metadata and statistics
-- **[list_devices](./examples/list_devices/)** - List all devices with typed access
-- **[get_isp_metrics](./examples/get_isp_metrics/)** - Get ISP metrics with WAN performance data
-
-### List Hosts with Pagination
-
-```go
-params := &sitemanager.ListHostsParams{
-    PageSize:  sitemanager.PtrString("10"),
-    NextToken: sitemanager.PtrString("token-from-previous-response"),
-}
-
-hosts, err := client.ListHosts(ctx, params)
-if err != nil {
-    log.Fatal(err)
-}
-
-// Check if more pages available
-if hosts.NextToken != nil && *hosts.NextToken != "" {
-    fmt.Printf("Next page token: %s\n", *hosts.NextToken)
-}
-```
-
-### Get Host Details
-
-```go
-host, err := client.GetHostByID(ctx, "host-id-here")
-if err != nil {
-    log.Fatal(err)
-}
-
-fmt.Printf("Host Type: %s\n", host.Data.Type)
-fmt.Printf("IP Address: %s\n", *host.Data.IpAddress)
-```
-
-### Error Handling
-
-The library uses `github.com/cockroachdb/errors` for enhanced error handling:
-
-```go
-hosts, err := client.ListHosts(ctx, params)
-if err != nil {
-    // Errors include full stack traces
-    fmt.Printf("Error: %+v\n", err)
-    return
-}
-```
-
-## Rate Limiting
-
-The client automatically manages separate rate limiters for different endpoint types:
-
-- **v1 endpoints**: 10,000 requests/minute (automatic)
-- **Early Access endpoints** (/api/ea/*): 100 requests/minute (automatic)
-- **Automatic rate limiter selection** based on request URL
-- **Client-side rate limiting** prevents exceeding API limits
-- **Automatic retries** for 429 (Too Many Requests) responses
-- **Respects Retry-After header** from server
-
-No manual configuration needed - the client handles rate limiting transparently.
-
-## Retry Logic
-
-Automatic retries for:
-
-- **Network errors** (connection failures, timeouts)
-- **5xx server errors**
-- **429 rate limit errors**
-
-Retry strategy:
-
-- Exponential backoff
-- Configurable max retries (default: 3)
-- Configurable wait time (default: 1s)
-
-## Development
+## 🛠️ Development
 
 ### Generate Code from OpenAPI
 
 ```bash
+# Site Manager API
 cd api/sitemanager && oapi-codegen -config .oapi-codegen.yaml openapi.yaml
-```
 
-Or use go generate:
-
-```bash
-cd api/sitemanager && go generate
+# Network API
+cd api/network && oapi-codegen -config .oapi-codegen.yaml openapi.yaml
 ```
 
 ### Test Against Reality
 
-Validate types against real API responses to find `any` usage and type mismatches:
+Validate types against real API responses:
 
 ```bash
-# Run directly
 go run github.com/lexfrei/go-unifi/cmd/test-reality@latest -api-key your-key
-
-# Or install globally
-go install github.com/lexfrei/go-unifi/cmd/test-reality@latest
-test-reality -api-key your-key
-
-# Verbose mode with full JSON samples
-test-reality -api-key your-key -verbose
 ```
 
 See [cmd/test-reality/README.md](./cmd/test-reality/README.md) for details.
@@ -240,68 +128,39 @@ See [cmd/test-reality/README.md](./cmd/test-reality/README.md) for details.
 golangci-lint run ./...
 ```
 
-### Run Tests
+## 📚 API Documentation
 
-```bash
-go test ./...
-```
+- [UniFi Site Manager API](https://developer.ui.com/site-manager-api/gettingstarted) - Official docs
+- [UniFi Network API](https://developer.ui.com/network-api/unifi-network-api) - Official docs
+- [OpenAPI Specifications](./api/) - Local specs for both APIs
 
-### Build Examples
+## 🔑 Authentication
 
-```bash
-cd examples/list_hosts && go build
-UNIFI_API_KEY=your-key ./list_hosts
-```
+### Site Manager API
 
-## Project Structure
-
-```
-go-unifi/
-├── api/
-│   └── sitemanager/        # UniFi Site Manager API v1 client
-├── internal/               # Shared infrastructure (rate limiting, retry logic)
-├── examples/               # Runnable examples
-```
-
-This structure follows [golang-standards/project-layout](https://github.com/golang-standards/project-layout).
-
-## Supported APIs
-
-### UniFi Site Manager API v1
-
-`import "github.com/lexfrei/go-unifi/api/sitemanager"`
-
-- ✅ Hosts, Sites, Devices management
-- ✅ ISP Metrics (GET and POST query)
-- ✅ SD-WAN configuration and status
-
-## API Documentation
-
-- [Official UniFi Site Manager API Documentation](https://developer.ui.com/site-manager-api/gettingstarted)
-- [OpenAPI Specification](./api/sitemanager/openapi.yaml)
-
-## Authentication
-
-1. Go to [sitemanager.ui.com](https://sitemanager.ui.com)
+1. Go to [unifi.ui.com](https://unifi.ui.com)
 2. Navigate to **API** section
 3. Click **Create API Key**
-4. Store the key securely (it displays only once)
-5. Pass the key to the client configuration
+4. Store securely and pass to client
 
-## Rate Limits
+### Network API
 
-- **v1 endpoints**: 10,000 requests per minute
-- **Early Access endpoints**: 100 requests per minute
+1. Open UniFi Network controller
+2. Go to **Settings > Control Plane > Integrations**
+3. Create API key
+4. Use with local controller URL
 
-Exceeding limits returns `429 Too Many Requests` with a `Retry-After` header.
-
-## License
+## 📄 License
 
 BSD-3-Clause - see [LICENSE](./LICENSE) file for details
 
-## Maintainer
+## 👤 Maintainer
 
-### Aleksei Sviridkin
+**Aleksei Sviridkin**
 
 - Email: <f@lex.la>
 - GPG: F57F 85FC 7975 F22B BC3F 2504 9C17 3EB1 B531 AA1F
+
+---
+
+**Note:** This library provides unofficial Go clients for UniFi APIs. Not affiliated with or endorsed by Ubiquiti Inc.

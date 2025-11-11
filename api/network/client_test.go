@@ -253,10 +253,53 @@ const (
   }
 }`
 
+	// Mock firewall policy for CREATE/UPDATE tests.
+	singleFirewallPolicy = `{
+    "_id": "507f1f77bcf86cd799439011",
+    "action": "ALLOW",
+    "enabled": true,
+    "name": "test-policy-1"
+  }`
+
+	// Mock traffic rule for CREATE/UPDATE tests.
+	singleTrafficRule = `{
+    "_id": "507f1f77bcf86cd799439012",
+    "enabled": true,
+    "description": "test-rule-1",
+    "matching_target": "INTERNET"
+  }`
+
+	// Mock hotspot vouchers response.
+	listVouchersSuccess = `{
+    "count": 2,
+    "data": [
+      {
+        "code": "12345-67890",
+        "id": "507f1f77bcf86cd799439013",
+        "status": "VALID"
+      },
+      {
+        "code": "98765-43210",
+        "id": "507f1f77bcf86cd799439014",
+        "status": "VALID"
+      }
+    ],
+    "limit": 100,
+    "offset": 0,
+    "totalCount": 2
+  }`
+
+	singleVoucher = `{
+    "code": "12345-67890",
+    "id": "507f1f77bcf86cd799439013",
+    "status": "VALID"
+  }`
+
 	// Empty responses.
 	emptyDNSRecords       = `[]`
 	emptyFirewallPolicies = `[]`
 	emptyTrafficRules     = `[]`
+	emptyVouchers         = `{"count": 0, "data": [], "limit": 100, "offset": 0, "totalCount": 0}`
 
 	// Common error responses.
 	unauthorizedError = `{"error": "unauthorized", "message": "Invalid API key"}`
@@ -713,6 +756,96 @@ func TestGetDNSRecordByID(t *testing.T) {
 			}
 
 			resp, err := client.GetDNSRecordByID(context.Background(), testSiteInternal, testRecordID)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+				return
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
+			}
+		})
+	}
+}
+
+func TestUpdateDNSRecord(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+		checkResponse  func(t *testing.T, resp *DNSRecord)
+	}{
+		{
+			name:           "success",
+			mockResponse:   singleDNSRecord,
+			mockStatusCode: http.StatusOK,
+			wantErr:        false,
+			checkResponse: func(t *testing.T, resp *DNSRecord) {
+				t.Helper()
+				if resp == nil {
+					t.Fatal("response is nil")
+				}
+				if resp.Key != testHostKey {
+					t.Errorf("Key = %s, want %s", resp.Key, testHostKey)
+				}
+			},
+		},
+		{
+			name:           "not found",
+			mockResponse:   notFoundError,
+			mockStatusCode: http.StatusNotFound,
+			wantErr:        true,
+		},
+		{
+			name:           "bad request",
+			mockResponse:   badRequestError,
+			mockStatusCode: http.StatusBadRequest,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/static-dns/" + testRecordID
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+				if r.Method != http.MethodPut {
+					t.Errorf("Method = %s, want PUT", r.Method)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			input := &DNSRecordInput{
+				Key:        testHostKey,
+				RecordType: DNSRecordInputRecordTypeA,
+				Value:      testHostValue,
+			}
+
+			resp, err := client.UpdateDNSRecord(context.Background(), testSiteInternal, testRecordID, input)
 
 			if tt.wantErr {
 				if err == nil {
@@ -1298,6 +1431,241 @@ func TestListFirewallPolicies(t *testing.T) {
 	}
 }
 
+func TestCreateFirewallPolicy(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+		checkResponse  func(t *testing.T, resp *FirewallPolicy)
+	}{
+		{
+			name:           "success",
+			mockResponse:   singleFirewallPolicy,
+			mockStatusCode: http.StatusOK,
+			wantErr:        false,
+			checkResponse: func(t *testing.T, resp *FirewallPolicy) {
+				t.Helper()
+				if resp == nil {
+					t.Fatal("response is nil")
+				}
+				if resp.Name != "test-policy-1" {
+					t.Errorf("Name = %s, want test-policy-1", resp.Name)
+				}
+			},
+		},
+		{
+			name:           "bad request",
+			mockResponse:   badRequestError,
+			mockStatusCode: http.StatusBadRequest,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/firewall-policies"
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+				if r.Method != http.MethodPost {
+					t.Errorf("Method = %s, want POST", r.Method)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			input := &FirewallPolicyInput{
+				Action:  FirewallPolicyInputActionALLOW,
+				Enabled: true,
+				Name:    "test-policy-1",
+			}
+
+			resp, err := client.CreateFirewallPolicy(context.Background(), testSiteInternal, input)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+				return
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
+			}
+		})
+	}
+}
+
+func TestUpdateFirewallPolicy(t *testing.T) {
+	t.Parallel()
+
+	policyID := "507f1f77bcf86cd799439011"
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+		checkResponse  func(t *testing.T, resp *FirewallPolicy)
+	}{
+		{
+			name:           "success",
+			mockResponse:   singleFirewallPolicy,
+			mockStatusCode: http.StatusOK,
+			wantErr:        false,
+			checkResponse: func(t *testing.T, resp *FirewallPolicy) {
+				t.Helper()
+				if resp == nil {
+					t.Fatal("response is nil")
+				}
+				if resp.Name != "test-policy-1" {
+					t.Errorf("Name = %s, want test-policy-1", resp.Name)
+				}
+			},
+		},
+		{
+			name:           "not found",
+			mockResponse:   notFoundError,
+			mockStatusCode: http.StatusNotFound,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/firewall-policies/" + policyID
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+				if r.Method != http.MethodPut {
+					t.Errorf("Method = %s, want PUT", r.Method)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			input := &FirewallPolicyInput{
+				Action:  FirewallPolicyInputActionALLOW,
+				Enabled: true,
+				Name:    "test-policy-1",
+			}
+
+			resp, err := client.UpdateFirewallPolicy(context.Background(), testSiteInternal, policyID, input)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+				return
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
+			}
+		})
+	}
+}
+
+func TestDeleteFirewallPolicy(t *testing.T) {
+	t.Parallel()
+
+	policyID := "507f1f77bcf86cd799439011"
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+	}{
+		{
+			name:           "success",
+			mockResponse:   `{}`,
+			mockStatusCode: http.StatusNoContent,
+			wantErr:        false,
+		},
+		{
+			name:           "not found",
+			mockResponse:   notFoundError,
+			mockStatusCode: http.StatusNotFound,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/firewall-policies/" + policyID
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+				if r.Method != http.MethodDelete {
+					t.Errorf("Method = %s, want DELETE", r.Method)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			err = client.DeleteFirewallPolicy(context.Background(), testSiteInternal, policyID)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+			}
+		})
+	}
+}
+
 func TestListTrafficRules(t *testing.T) {
 	t.Parallel()
 
@@ -1369,6 +1737,541 @@ func TestListTrafficRules(t *testing.T) {
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
+			}
+		})
+	}
+}
+
+func TestCreateTrafficRule(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+		checkResponse  func(t *testing.T, resp *TrafficRule)
+	}{
+		{
+			name:           "success",
+			mockResponse:   singleTrafficRule,
+			mockStatusCode: http.StatusOK,
+			wantErr:        false,
+			checkResponse: func(t *testing.T, resp *TrafficRule) {
+				t.Helper()
+				if resp == nil {
+					t.Fatal("response is nil")
+				}
+				if resp.Description == nil || *resp.Description != "test-rule-1" {
+					t.Errorf("Description = %v, want test-rule-1", resp.Description)
+				}
+			},
+		},
+		{
+			name:           "bad request",
+			mockResponse:   badRequestError,
+			mockStatusCode: http.StatusBadRequest,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/trafficrules"
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+				if r.Method != http.MethodPost {
+					t.Errorf("Method = %s, want POST", r.Method)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			desc := "test-rule-1"
+			input := &TrafficRuleInput{
+				Enabled:        true,
+				MatchingTarget: TrafficRuleInputMatchingTargetINTERNET,
+				Description:    &desc,
+			}
+
+			resp, err := client.CreateTrafficRule(context.Background(), testSiteInternal, input)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+				return
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
+			}
+		})
+	}
+}
+
+func TestUpdateTrafficRule(t *testing.T) {
+	t.Parallel()
+
+	ruleID := "507f1f77bcf86cd799439012"
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+		checkResponse  func(t *testing.T, resp *TrafficRule)
+	}{
+		{
+			name:           "success",
+			mockResponse:   singleTrafficRule,
+			mockStatusCode: http.StatusOK,
+			wantErr:        false,
+			checkResponse: func(t *testing.T, resp *TrafficRule) {
+				t.Helper()
+				if resp == nil {
+					t.Fatal("response is nil")
+				}
+				if resp.Description == nil || *resp.Description != "test-rule-1" {
+					t.Errorf("Description = %v, want test-rule-1", resp.Description)
+				}
+			},
+		},
+		{
+			name:           "not found",
+			mockResponse:   notFoundError,
+			mockStatusCode: http.StatusNotFound,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/trafficrules/" + ruleID
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+				if r.Method != http.MethodPut {
+					t.Errorf("Method = %s, want PUT", r.Method)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			desc := "test-rule-1"
+			input := &TrafficRuleInput{
+				Enabled:        true,
+				MatchingTarget: TrafficRuleInputMatchingTargetINTERNET,
+				Description:    &desc,
+			}
+
+			resp, err := client.UpdateTrafficRule(context.Background(), testSiteInternal, ruleID, input)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+				return
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
+			}
+		})
+	}
+}
+
+func TestDeleteTrafficRule(t *testing.T) {
+	t.Parallel()
+
+	ruleID := "507f1f77bcf86cd799439012"
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+	}{
+		{
+			name:           "success",
+			mockResponse:   `{}`,
+			mockStatusCode: http.StatusNoContent,
+			wantErr:        false,
+		},
+		{
+			name:           "not found",
+			mockResponse:   notFoundError,
+			mockStatusCode: http.StatusNotFound,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/trafficrules/" + ruleID
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+				if r.Method != http.MethodDelete {
+					t.Errorf("Method = %s, want DELETE", r.Method)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			err = client.DeleteTrafficRule(context.Background(), testSiteInternal, ruleID)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+			}
+		})
+	}
+}
+
+func TestListHotspotVouchers(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+		checkResponse  func(t *testing.T, resp *HotspotVouchersResponse)
+	}{
+		{
+			name:           "success with vouchers",
+			mockResponse:   listVouchersSuccess,
+			mockStatusCode: http.StatusOK,
+			wantErr:        false,
+			checkResponse: func(t *testing.T, resp *HotspotVouchersResponse) {
+				t.Helper()
+				if resp.Count != 2 {
+					t.Errorf("Count = %d, want 2", resp.Count)
+				}
+				if len(resp.Data) != 2 {
+					t.Errorf("len(Data) = %d, want 2", len(resp.Data))
+				}
+			},
+		},
+		{
+			name:           "success with empty list",
+			mockResponse:   emptyVouchers,
+			mockStatusCode: http.StatusOK,
+			wantErr:        false,
+			checkResponse: func(t *testing.T, resp *HotspotVouchersResponse) {
+				t.Helper()
+				if resp.Count != 0 {
+					t.Errorf("Count = %d, want 0", resp.Count)
+				}
+			},
+		},
+		{
+			name:           "unauthorized",
+			mockResponse:   unauthorizedError,
+			mockStatusCode: http.StatusUnauthorized,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/hotspot/vouchers"
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			resp, err := client.ListHotspotVouchers(context.Background(), testSiteID, nil)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+				return
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
+			}
+		})
+	}
+}
+
+func TestCreateHotspotVouchers(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+	}{
+		{
+			name:           "success",
+			mockResponse:   listVouchersSuccess,
+			mockStatusCode: http.StatusOK,
+			wantErr:        false,
+		},
+		{
+			name:           "bad request",
+			mockResponse:   badRequestError,
+			mockStatusCode: http.StatusBadRequest,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/hotspot/vouchers"
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+				if r.Method != http.MethodPost {
+					t.Errorf("Method = %s, want POST", r.Method)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			quota := 1
+			input := &CreateVouchersRequest{
+				Count: 1,
+				Quota: &quota,
+			}
+
+			_, err = client.CreateHotspotVouchers(context.Background(), testSiteID, input)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+			}
+		})
+	}
+}
+
+func TestGetHotspotVoucher(t *testing.T) {
+	t.Parallel()
+
+	testVoucherID := types.UUID{0x50, 0x7f, 0x1f, 0x77, 0xbc, 0xf8, 0x6c, 0xd7, 0x99, 0x43, 0x90, 0x13, 0x00, 0x00, 0x00, 0x00}
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+		checkResponse  func(t *testing.T, resp *HotspotVoucher)
+	}{
+		{
+			name:           "success",
+			mockResponse:   singleVoucher,
+			mockStatusCode: http.StatusOK,
+			wantErr:        false,
+			checkResponse: func(t *testing.T, resp *HotspotVoucher) {
+				t.Helper()
+				if resp == nil {
+					t.Fatal("response is nil")
+				}
+				if resp.Code != "12345-67890" {
+					t.Errorf("Code = %v, want 12345-67890", resp.Code)
+				}
+			},
+		},
+		{
+			name:           "not found",
+			mockResponse:   notFoundError,
+			mockStatusCode: http.StatusNotFound,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/hotspot/vouchers/" + testVoucherID.String()
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			resp, err := client.GetHotspotVoucher(context.Background(), testSiteID, testVoucherID)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+				return
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
+			}
+		})
+	}
+}
+
+func TestDeleteHotspotVoucher(t *testing.T) {
+	t.Parallel()
+
+	testVoucherID := types.UUID{0x50, 0x7f, 0x1f, 0x77, 0xbc, 0xf8, 0x6c, 0xd7, 0x99, 0x43, 0x90, 0x13, 0x00, 0x00, 0x00, 0x00}
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+	}{
+		{
+			name:           "success",
+			mockResponse:   `{}`,
+			mockStatusCode: http.StatusNoContent,
+			wantErr:        false,
+		},
+		{
+			name:           "not found",
+			mockResponse:   notFoundError,
+			mockStatusCode: http.StatusNotFound,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/hotspot/vouchers/" + testVoucherID.String()
+				if r.URL.Path != expectedPath {
+					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
+				}
+				if r.Method != http.MethodDelete {
+					t.Errorf("Method = %s, want DELETE", r.Method)
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := New(server.URL, testAPIKey)
+			if err != nil {
+				t.Fatalf("New failed: %v", err)
+			}
+
+			err = client.DeleteHotspotVoucher(context.Background(), testSiteID, testVoucherID)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
 			}
 		})
 	}

@@ -146,6 +146,34 @@ paths:
       operationId: listDevices
       tags:
         - Devices
+      parameters:
+        - name: hostIds
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          description: List of host IDs to filter the results
+          style: form
+          explode: true
+        - name: time
+          in: query
+          schema:
+            type: string
+            format: date-time
+          description: Last processed timestamp of devices in RFC3339 format
+          example: "2025-06-17T02:45:58Z"
+        - name: pageSize
+          in: query
+          schema:
+            type: string
+          description: Number of items to return per page
+          example: "10"
+        - name: nextToken
+          in: query
+          schema:
+            type: string
+          description: Token for pagination to retrieve the next set of results
       responses:
         '200':
           description: Successful response
@@ -675,9 +703,21 @@ components:
     Device:
       type: object
       properties:
-        id:
+        hostId:
           type: string
-          description: Unique device identifier
+          description: Unique identifier of the host device
+        hostName:
+          type: string
+          description: Name of the host device
+        devices:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeviceItem'
+          description: List of devices managed by this host
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update time in RFC3339 format
         uidb:
           $ref: '#/components/schemas/UidbInfo'
 
@@ -690,6 +730,9 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Device'
+            nextToken:
+              type: string
+              description: Pagination token for fetching the next set of results
 
     # ISP Metrics schemas
     ISPMetric:
@@ -1200,6 +1243,10 @@ components:
         guid:
           type: string
           format: uuid
+          nullable: true
+        iconId:
+          type: string
+          format: uuid
         id:
           type: string
           format: uuid
@@ -1208,6 +1255,65 @@ components:
           additionalProperties:
             type: string
           description: Image hash map
+
+    DeviceItem:
+      type: object
+      description: Individual device information
+      properties:
+        adoptionTime:
+          type: string
+          format: date-time
+          description: Time when device was adopted
+        firmwareStatus:
+          type: string
+          description: Firmware status (upToDate, updateAvailable, etc.)
+        id:
+          type: string
+          description: Device ID (usually MAC address)
+        ip:
+          type: string
+          description: Device IP address
+        isConsole:
+          type: boolean
+          description: Whether this device is a console
+        isManaged:
+          type: boolean
+          description: Whether this device is managed
+        mac:
+          type: string
+          description: Device MAC address
+        model:
+          type: string
+          description: Device model name
+        name:
+          type: string
+          description: Device name
+        note:
+          type: string
+          nullable: true
+          description: User-defined note
+        productLine:
+          type: string
+          description: Product line (network, protect, access, etc.)
+        shortname:
+          type: string
+          description: Short model name
+        startupTime:
+          type: string
+          format: date-time
+          description: Last startup time
+        status:
+          type: string
+          description: Device status (online, offline, etc.)
+        uidb:
+          $ref: '#/components/schemas/UidbInfo'
+        updateAvailable:
+          type: string
+          nullable: true
+          description: Available update version if any
+        version:
+          type: string
+          description: Current firmware version
 
     UserDataFeatures:
       type: object

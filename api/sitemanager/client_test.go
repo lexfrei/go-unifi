@@ -457,6 +457,7 @@ func TestNewWithConfig(t *testing.T) {
 			},
 			wantErr: false,
 			checkFields: func(t *testing.T, client *UnifiClient) {
+				t.Helper()
 				// Just verify client was created
 				if client.client == nil {
 					t.Error("client is nil")
@@ -516,6 +517,7 @@ func TestListHosts(t *testing.T) {
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp *HostsResponse) {
+				t.Helper()
 				if resp == nil {
 					t.Fatal("response is nil")
 				}
@@ -536,6 +538,7 @@ func TestListHosts(t *testing.T) {
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp *HostsResponse) {
+				t.Helper()
 				if resp == nil {
 					t.Fatal("response is nil")
 				}
@@ -645,6 +648,7 @@ func TestGetHostByID(t *testing.T) {
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp *HostResponse) {
+				t.Helper()
 				if resp == nil {
 					t.Fatal("response is nil")
 				}
@@ -663,6 +667,7 @@ func TestGetHostByID(t *testing.T) {
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp *HostResponse) {
+				t.Helper()
 				if resp == nil {
 					t.Fatal("response is nil")
 				}
@@ -865,6 +870,7 @@ func TestListSites(t *testing.T) {
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp *SitesResponse) {
+				t.Helper()
 				if resp == nil {
 					t.Fatal("response is nil")
 				}
@@ -975,6 +981,7 @@ func TestListDevices(t *testing.T) {
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp *DevicesResponse) {
+				t.Helper()
 				if resp == nil {
 					t.Fatal("response is nil")
 				}
@@ -1106,6 +1113,7 @@ func TestGetISPMetrics(t *testing.T) {
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp *ISPMetricsResponse) {
+				t.Helper()
 				if resp == nil {
 					t.Fatal("response is nil")
 				}

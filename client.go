@@ -339,3 +339,39 @@ func (c *UnifiClient) ListSDWANConfigs(ctx context.Context) (*SDWANConfigsRespon
 
 	return resp.JSON200, nil
 }
+
+// GetSDWANConfigByID retrieves detailed information about a specific SD-WAN configuration by ID.
+func (c *UnifiClient) GetSDWANConfigByID(ctx context.Context, id string) (*SDWANConfigResponse, error) {
+	resp, err := c.client.GetSDWANConfigByIdWithResponse(ctx, id)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to get SD-WAN config %s", id)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return resp.JSON200, nil
+}
+
+// GetSDWANConfigStatus retrieves the deployment status of a specific SD-WAN configuration.
+func (c *UnifiClient) GetSDWANConfigStatus(ctx context.Context, id string) (*SDWANConfigStatusResponse, error) {
+	resp, err := c.client.GetSDWANConfigStatusWithResponse(ctx, id)
+	if err != nil {
+		return nil, errors.Wrapf(err, "failed to get SD-WAN config status %s", id)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return resp.JSON200, nil
+}

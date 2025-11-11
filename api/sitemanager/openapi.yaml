@@ -525,7 +525,6 @@ components:
             status:
               type: string
               description: User status
-          additionalProperties: true
         reportedState:
           type: object
           description: Device's reported state information
@@ -665,9 +664,7 @@ components:
                     type: integer
                   type:
                     type: string
-                additionalProperties: true
               description: WAN interfaces configuration
-          additionalProperties: true
 
     HostsResponse:
       allOf:
@@ -1350,6 +1347,7 @@ components:
         includeApplications:
           type: boolean
         preferencesPrompt:
+          type: boolean
           nullable: true
         schedule:
           type: object

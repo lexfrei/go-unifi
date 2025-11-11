@@ -19,7 +19,7 @@ func main() {
 	}
 
 	// Create client with EA rate limit (100 req/min for Early Access endpoints)
-	client, err := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
+	client, err := sitemanager.NewWithConfig(sitemanager.ClientConfig{
 		APIKey:             apiKey,
 		RateLimitPerMinute: sitemanager.EARateLimit,
 	})

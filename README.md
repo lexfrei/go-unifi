@@ -38,16 +38,14 @@ import (
 )
 
 func main() {
-    // Create client
-    client, err := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
-        APIKey: "your-api-key-here",
-    })
+    // Create client with defaults
+    client, err := sitemanager.New("your-api-key")
     if err != nil {
         log.Fatal(err)
     }
 
     // List all hosts
-    hosts, err := client.ListHosts(context.Background(), &sitemanager.ListHostsParams{})
+    hosts, err := client.ListHosts(context.Background(), nil)
     if err != nil {
         log.Fatal(err)
     }
@@ -61,8 +59,18 @@ func main() {
 
 ## Configuration
 
+### Simple (Recommended)
+
 ```go
-client, err := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
+// Most common use case - uses sensible defaults
+client, err := sitemanager.New("your-api-key")
+```
+
+### Custom Configuration
+
+```go
+// For advanced use cases (custom timeouts, EA endpoints, etc.)
+client, err := sitemanager.NewWithConfig(sitemanager.ClientConfig{
     // Required: Your API key from sitemanager.ui.com
     APIKey: "your-api-key",
 
@@ -70,7 +78,7 @@ client, err := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
     BaseURL: "https://api.ui.com",
 
     // Optional: Rate limit per minute (defaults to 10000 for v1)
-    RateLimitPerMinute: 10000,
+    RateLimitPerMinute: sitemanager.V1RateLimit,  // or EARateLimit for EA endpoints
 
     // Optional: Maximum number of retries (defaults to 3)
     MaxRetries: 3,

@@ -8,11 +8,8 @@ import (
 	"github.com/lexfrei/go-unifi/api/sitemanager"
 )
 
-func ExampleNewUnifiClient() {
-	client, err := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
-		APIKey:             os.Getenv("UNIFI_API_KEY"),
-		RateLimitPerMinute: sitemanager.V1RateLimit,
-	})
+func ExampleNew() {
+	client, err := sitemanager.New(os.Getenv("UNIFI_API_KEY"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -21,9 +18,9 @@ func ExampleNewUnifiClient() {
 	// Output:
 }
 
-func ExampleNewUnifiClient_earlyAccess() {
-	// For Early Access endpoints, use EARateLimit (100 req/min)
-	client, err := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
+func ExampleNewWithConfig() {
+	// For custom configuration (e.g., Early Access endpoints with 100 req/min limit)
+	client, err := sitemanager.NewWithConfig(sitemanager.ClientConfig{
 		APIKey:             os.Getenv("UNIFI_API_KEY"),
 		RateLimitPerMinute: sitemanager.EARateLimit,
 	})
@@ -31,14 +28,12 @@ func ExampleNewUnifiClient_earlyAccess() {
 		log.Fatal(err)
 	}
 
-	_ = client // use client for EA endpoints
+	_ = client // use client with custom config
 	// Output:
 }
 
 func ExampleUnifiClient_ListHosts() {
-	client, _ := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
-		APIKey: os.Getenv("UNIFI_API_KEY"),
-	})
+	client, _ := sitemanager.New(os.Getenv("UNIFI_API_KEY"))
 
 	ctx := context.Background()
 	_, err := client.ListHosts(ctx, nil)
@@ -49,9 +44,7 @@ func ExampleUnifiClient_ListHosts() {
 }
 
 func ExampleUnifiClient_GetHostByID() {
-	client, _ := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
-		APIKey: os.Getenv("UNIFI_API_KEY"),
-	})
+	client, _ := sitemanager.New(os.Getenv("UNIFI_API_KEY"))
 
 	ctx := context.Background()
 	hostID := "host-id-here"
@@ -64,9 +57,7 @@ func ExampleUnifiClient_GetHostByID() {
 }
 
 func ExampleUnifiClient_ListSites() {
-	client, _ := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
-		APIKey: os.Getenv("UNIFI_API_KEY"),
-	})
+	client, _ := sitemanager.New(os.Getenv("UNIFI_API_KEY"))
 
 	ctx := context.Background()
 	_, err := client.ListSites(ctx)
@@ -77,9 +68,7 @@ func ExampleUnifiClient_ListSites() {
 }
 
 func ExampleUnifiClient_ListDevices() {
-	client, _ := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
-		APIKey: os.Getenv("UNIFI_API_KEY"),
-	})
+	client, _ := sitemanager.New(os.Getenv("UNIFI_API_KEY"))
 
 	ctx := context.Background()
 	_, err := client.ListDevices(ctx, nil)
@@ -90,9 +79,10 @@ func ExampleUnifiClient_ListDevices() {
 }
 
 func ExampleUnifiClient_GetISPMetrics() {
-	client, _ := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
+	// Early Access endpoint requires lower rate limit
+	client, _ := sitemanager.NewWithConfig(sitemanager.ClientConfig{
 		APIKey:             os.Getenv("UNIFI_API_KEY"),
-		RateLimitPerMinute: sitemanager.EARateLimit, // EA endpoint
+		RateLimitPerMinute: sitemanager.EARateLimit,
 	})
 
 	ctx := context.Background()
@@ -108,9 +98,10 @@ func ExampleUnifiClient_GetISPMetrics() {
 }
 
 func ExampleUnifiClient_ListSDWANConfigs() {
-	client, _ := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
+	// Early Access endpoint requires lower rate limit
+	client, _ := sitemanager.NewWithConfig(sitemanager.ClientConfig{
 		APIKey:             os.Getenv("UNIFI_API_KEY"),
-		RateLimitPerMinute: sitemanager.EARateLimit, // EA endpoint
+		RateLimitPerMinute: sitemanager.EARateLimit,
 	})
 
 	ctx := context.Background()

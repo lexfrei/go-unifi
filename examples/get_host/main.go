@@ -24,9 +24,7 @@ func main() {
 	}
 
 	// Create client with default configuration
-	client, err := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
-		APIKey: apiKey,
-	})
+	client, err := sitemanager.New(apiKey)
 	if err != nil {
 		log.Fatalf("Failed to create client: %v", err)
 	}

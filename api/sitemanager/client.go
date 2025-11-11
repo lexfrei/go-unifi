@@ -64,8 +64,39 @@ type ClientConfig struct {
 	Timeout time.Duration
 }
 
-// NewUnifiClient creates a new Unifi API client with rate limiting and retry logic.
-func NewUnifiClient(cfg ClientConfig) (*UnifiClient, error) {
+// New creates a new Unifi API client with default settings.
+// This is the recommended way to create a client for most use cases.
+//
+// Default settings:
+//   - Rate limit: 10,000 requests/minute (v1 endpoints)
+//   - Base URL: https://api.ui.com
+//   - Max retries: 3
+//   - Retry wait time: 1 second
+//   - Timeout: 30 seconds
+//
+// For custom configuration, use NewWithConfig.
+//
+// Example:
+//
+//	client, err := sitemanager.New("your-api-key")
+func New(apiKey string) (*UnifiClient, error) {
+	return NewWithConfig(ClientConfig{
+		APIKey: apiKey,
+	})
+}
+
+// NewWithConfig creates a new Unifi API client with custom configuration.
+// Use this when you need to customize rate limits, timeouts, or other settings.
+//
+// For Early Access endpoints, set RateLimitPerMinute to EARateLimit (100 req/min).
+//
+// Example:
+//
+//	client, err := sitemanager.NewWithConfig(sitemanager.ClientConfig{
+//	    APIKey:             "your-api-key",
+//	    RateLimitPerMinute: sitemanager.EARateLimit,
+//	})
+func NewWithConfig(cfg ClientConfig) (*UnifiClient, error) {
 	if cfg.APIKey == "" {
 		return nil, errors.New("API key is required")
 	}
@@ -128,6 +159,14 @@ func NewUnifiClient(cfg ClientConfig) (*UnifiClient, error) {
 		maxRetries:  cfg.MaxRetries,
 		retryWait:   cfg.RetryWaitTime,
 	}, nil
+}
+
+// NewUnifiClient creates a new Unifi API client with custom configuration.
+//
+// Deprecated: Use New for simple use cases or NewWithConfig for custom configuration.
+// This function is kept for backward compatibility.
+func NewUnifiClient(cfg ClientConfig) (*UnifiClient, error) {
+	return NewWithConfig(cfg)
 }
 
 // rateLimitedHTTPClient wraps http.Client with rate limiting and retry logic.

@@ -17,10 +17,8 @@
 //
 // # Example Usage
 //
-//	client, err := sitemanager.NewUnifiClient(sitemanager.ClientConfig{
-//	    APIKey:             "your-api-key",
-//	    RateLimitPerMinute: sitemanager.V1RateLimit,
-//	})
+//	// Simple: create client with defaults
+//	client, err := sitemanager.New("your-api-key")
 //	if err != nil {
 //	    log.Fatal(err)
 //	}
@@ -31,6 +29,15 @@
 //	}
 //
 //	for _, host := range hosts.Data {
-//	    fmt.Printf("Host: %s\n", *host.Name)
+//	    fmt.Printf("Host: %s (%s)\n", host.Id, host.Type)
 //	}
+//
+// # Custom Configuration
+//
+// For Early Access endpoints or custom settings:
+//
+//	client, err := sitemanager.NewWithConfig(sitemanager.ClientConfig{
+//	    APIKey:             "your-api-key",
+//	    RateLimitPerMinute: sitemanager.EARateLimit,  // 100 req/min for EA
+//	})
 package sitemanager

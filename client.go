@@ -321,3 +321,21 @@ func (c *UnifiClient) QueryISPMetrics(ctx context.Context, metricType string, qu
 
 	return resp.JSON200, nil
 }
+
+// ListSDWANConfigs retrieves a list of all SD-WAN configurations.
+func (c *UnifiClient) ListSDWANConfigs(ctx context.Context) (*SDWANConfigsResponse, error) {
+	resp, err := c.client.ListSDWANConfigsWithResponse(ctx)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to list SD-WAN configs")
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return nil, errors.New("empty response from API")
+	}
+
+	return resp.JSON200, nil
+}

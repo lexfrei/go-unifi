@@ -4,19 +4,21 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 )
 
 // Mock responses based on actual UniFi API responses
 const (
+	// Original examples from user (ucore)
 	listHostsSuccess = `{
   "data": [
     {
       "id": "70A7419783ED0000000006797F060000000006C719490000000062ABD4EA:1261206302",
       "hardwareId": "e5bf13cd-98a7-5a96-9463-0d65d78cd3a4",
       "type": "ucore",
-      "ipAddress": "220.130.137.169",
+      "ipAddress": "203.0.113.1",
       "owner": true,
       "isBlocked": false,
       "lastConnectionStateChange": "2024-04-16T02:52:54.193Z",
@@ -24,7 +26,7 @@ const (
         "apps": ["users"],
         "consoleGroupMembers": [
           {
-            "mac": "70A7419783ED",
+            "mac": "AABBCCDDEEFF",
             "role": "UNADOPTED",
             "roleAttributes": {
               "applications": {
@@ -54,6 +56,41 @@ const (
   "httpStatusCode": 200,
   "traceId": "a7dc15e0eb4527142d7823515b15f87d",
   "nextToken": "ba8e384e-3308-4236-b344-7357657351ca"
+}`
+
+	// Example from test-reality (console type)
+	listHostsSuccessConsole = `{
+  "data": [
+    {
+      "id": "942A6FCE26520000000008A62C8000000000091C92E70000000067801E31:392959371",
+      "hardwareId": "0d5e371f-5c89-50ab-a732-f2d68bc2acd0",
+      "type": "console",
+      "ipAddress": "203.0.113.2",
+      "owner": true,
+      "isBlocked": false,
+      "lastConnectionStateChange": "2024-04-10T21:08:21.567Z",
+      "registrationTime": "2024-04-10T21:11:53Z",
+      "latestBackupTime": "2024-11-05T18:40:36Z",
+      "userData": {
+        "apps": ["users"],
+        "email": "user@example.com",
+        "fullName": "Example User",
+        "role": "owner",
+        "status": "ACTIVE"
+      },
+      "reportedState": {
+        "hostname": "example-console",
+        "hardware": {
+          "shortname": "UDR7",
+          "firmwareVersion": "4.3.9"
+        },
+        "version": "4.3.87"
+      }
+    }
+  ],
+  "httpStatusCode": 200,
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d",
+  "nextToken": ""
 }`
 
 	getHostUcoreSuccess = `{
@@ -155,32 +192,61 @@ const (
   "data": [
     {
       "hostId": "900A6F00301100000000074A6BA90000000007A3387E0000000063EC9853:123456789",
-      "hostName": "unifi.yourdomain.com",
+      "hostName": "unifi.example.com",
       "devices": [
         {
-          "id": "F4E2C6C23F13",
-          "mac": "F4E2C6C23F13",
-          "name": "unifi.yourdomain.com",
-          "model": "UDM SE",
-          "shortname": "UDMPROSE",
-          "ip": "192.168.1.226",
+          "id": "AABBCCDDEEFF",
+          "mac": "AABBCCDDEEFF",
+          "name": "USW Flex Mini",
+          "model": "USW Flex Mini",
+          "shortname": "USMINI",
+          "ip": "172.16.10.34",
           "productLine": "network",
           "status": "online",
-          "version": "4.1.13",
+          "version": "2.1.6",
+          "firmwareStatus": "upToDate",
+          "updateAvailable": null,
+          "isConsole": false,
+          "isManaged": true,
+          "startupTime": "2024-06-19T13:41:43Z",
+          "adoptionTime": "2024-04-22T19:02:31Z",
+          "note": null,
+          "uidb": {
+            "guid": null,
+            "iconId": "7a060fbb-8a8b-471c-9f57-da477ff3e04e",
+            "id": "b13610ef-7e73-4a14-985a-53bb75a62401",
+            "images": {
+              "default": "e3fbf220c145f4301929576039d52d19",
+              "nopadding": "4608b98cfbc13adfb538490b117db81a",
+              "topology": "96c7cd1cb0ba8f00200d7a771136d05f"
+            }
+          }
+        },
+        {
+          "id": "112233445566",
+          "mac": "112233445566",
+          "name": "UniFi Console",
+          "model": "UDR7",
+          "shortname": "UDR7",
+          "ip": "192.168.1.1",
+          "productLine": "network",
+          "status": "online",
+          "version": "4.3.9",
           "firmwareStatus": "upToDate",
           "updateAvailable": null,
           "isConsole": true,
           "isManaged": true,
-          "startupTime": "2024-06-19T13:41:43Z",
-          "adoptionTime": null,
+          "startupTime": "2024-10-19T10:07:38Z",
+          "adoptionTime": "2024-08-22T18:34:28Z",
           "note": null,
           "uidb": {
-            "guid": "0fd8c390-a0e8-4cb2-b93a-7b3051c83c46",
-            "id": "e85485da-54c3-4906-8f19-3cef4116ff02",
+            "guid": "54167124-c67e-1b94-7b83-d6cf5607422e",
+            "iconId": "de18d135-06a1-5654-f233-e8c843840c28",
+            "id": "e06fdc4f-c73f-2124-775b-6ab68813fae6",
             "images": {
-              "default": "3008400039c483c496f4ad820242c447",
-              "nopadding": "67b553529d0e523ca9dd4826076c5f3f",
-              "topology": "8371ecdda1f00f1636a2eefadf0d7d47"
+              "default": "3288444f002474b27c076cfc801d3d0c",
+              "nopadding": "88cb62422549d0014c077c510ae98b19",
+              "topology": "a11d0f6ce02119c83f9cca6e2fe361aa"
             }
           }
         }
@@ -193,6 +259,35 @@ const (
   "nextToken": "ba8e384e-3308-4236-b344-7357657351ca"
 }`
 
+	getISPMetricsSuccess = `{
+  "data": [
+    {
+      "metricType": "5m",
+      "periods": [
+        {
+          "data": {
+            "wan": {
+              "avgLatency": 14,
+              "download_kbps": 1000000,
+              "downtime": 0,
+              "ispAsn": "12345",
+              "ispName": "Example ISP",
+              "maxLatency": 15,
+              "packetLoss": 0,
+              "upload_kbps": 1000000,
+              "uptime": 100
+            }
+          },
+          "metricTime": "2024-11-10T18:55:00Z",
+          "version": "9.4.19"
+        }
+      ]
+    }
+  ],
+  "httpStatusCode": 200,
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d"
+}`
+
 	listSitesSuccess = `{
   "data": [
     {
@@ -200,7 +295,7 @@ const (
       "hostId": "900A6F00301100000000074A6BA90000000007A3387E0000000063EC9853:123456789",
       "meta": {
         "desc": "Default",
-        "gatewayMac": "70:a7:41:97:83:ed",
+        "gatewayMac": "aa:bb:cc:dd:ee:ff",
         "name": "default",
         "timezone": "Asia/Taipei"
       },
@@ -400,7 +495,7 @@ func TestListHosts(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *HostsResponse)
 	}{
 		{
-			name:           "success",
+			name:           "success - ucore type",
 			mockResponse:   listHostsSuccess,
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -416,6 +511,29 @@ func TestListHosts(t *testing.T) {
 				}
 				if resp.NextToken == nil || *resp.NextToken != "ba8e384e-3308-4236-b344-7357657351ca" {
 					t.Error("NextToken not set correctly")
+				}
+			},
+		},
+		{
+			name:           "success - console type",
+			mockResponse:   listHostsSuccessConsole,
+			mockStatusCode: http.StatusOK,
+			wantErr:        false,
+			checkResponse: func(t *testing.T, resp *HostsResponse) {
+				if resp == nil {
+					t.Fatal("response is nil")
+				}
+				if len(resp.Data) != 1 {
+					t.Errorf("len(Data) = %d, want 1", len(resp.Data))
+				}
+				if resp.Data[0].Type != Console {
+					t.Errorf("Host type = %v, want console", resp.Data[0].Type)
+				}
+				if resp.Data[0].ReportedState == nil {
+					t.Fatal("ReportedState is nil for console")
+				}
+				if resp.Data[0].ReportedState.Hostname == nil || *resp.Data[0].ReportedState.Hostname != "example-console" {
+					t.Error("Hostname not set correctly")
 				}
 			},
 		},
@@ -832,15 +950,24 @@ func TestListDevices(t *testing.T) {
 				if resp.Data[0].HostId == nil || *resp.Data[0].HostId != "900A6F00301100000000074A6BA90000000007A3387E0000000063EC9853:123456789" {
 					t.Error("HostId not set correctly")
 				}
-				if resp.Data[0].Devices == nil || len(*resp.Data[0].Devices) != 1 {
-					t.Errorf("len(Devices) = %d, want 1", len(*resp.Data[0].Devices))
+				if resp.Data[0].Devices == nil || len(*resp.Data[0].Devices) != 2 {
+					t.Errorf("len(Devices) = %d, want 2", len(*resp.Data[0].Devices))
 				}
+				// Check first device (USW Flex Mini)
 				device := (*resp.Data[0].Devices)[0]
-				if device.Model == nil || *device.Model != "UDM SE" {
-					t.Error("Device model not set correctly")
+				if device.Model == nil || *device.Model != "USW Flex Mini" {
+					t.Error("First device model not set correctly")
 				}
 				if device.Status == nil || *device.Status != "online" {
-					t.Error("Device status not set correctly")
+					t.Error("First device status not set correctly")
+				}
+				// Check second device (UDR7)
+				device2 := (*resp.Data[0].Devices)[1]
+				if device2.Model == nil || *device2.Model != "UDR7" {
+					t.Error("Second device model not set correctly")
+				}
+				if device2.IsConsole == nil || !*device2.IsConsole {
+					t.Error("Second device should be console")
 				}
 				if resp.NextToken == nil || *resp.NextToken != "ba8e384e-3308-4236-b344-7357657351ca" {
 					t.Error("NextToken not set correctly")
@@ -915,6 +1042,122 @@ func TestListDevices(t *testing.T) {
 
 			if err != nil {
 				t.Errorf("ListDevices() unexpected error: %v", err)
+				return
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
+			}
+		})
+	}
+}
+
+func TestGetISPMetrics(t *testing.T) {
+	tests := []struct {
+		name           string
+		metricType     GetISPMetricsParamsType
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+		checkResponse  func(t *testing.T, resp *ISPMetricsResponse)
+	}{
+		{
+			name:           "success",
+			metricType:     "5m",
+			mockResponse:   getISPMetricsSuccess,
+			mockStatusCode: http.StatusOK,
+			wantErr:        false,
+			checkResponse: func(t *testing.T, resp *ISPMetricsResponse) {
+				if resp == nil {
+					t.Fatal("response is nil")
+				}
+				if len(resp.Data) != 1 {
+					t.Errorf("len(Data) = %d, want 1", len(resp.Data))
+				}
+				metric := resp.Data[0]
+				if metric.MetricType == nil || *metric.MetricType != "5m" {
+					t.Error("MetricType not set correctly")
+				}
+				if metric.Periods == nil || len(*metric.Periods) == 0 {
+					t.Fatal("Periods is nil or empty")
+				}
+				period := (*metric.Periods)[0]
+				if period.Data == nil {
+					t.Fatal("Period data is nil")
+				}
+			},
+		},
+		{
+			name:           "parameter invalid",
+			metricType:     "5m",
+			mockResponse:   parameterInvalidError,
+			mockStatusCode: http.StatusBadRequest,
+			wantErr:        true,
+		},
+		{
+			name:           "unauthorized",
+			metricType:     "5m",
+			mockResponse:   unauthorizedError,
+			mockStatusCode: http.StatusUnauthorized,
+			wantErr:        true,
+		},
+		{
+			name:           "rate limit",
+			metricType:     "5m",
+			mockResponse:   rateLimitError,
+			mockStatusCode: http.StatusTooManyRequests,
+			wantErr:        true,
+		},
+		{
+			name:           "server error",
+			metricType:     "5m",
+			mockResponse:   serverError,
+			mockStatusCode: http.StatusInternalServerError,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				// Verify request - EA endpoint
+				if !strings.HasPrefix(r.URL.Path, "/ea/isp-metrics/") {
+					t.Errorf("Request path = %s, want /ea/isp-metrics/*", r.URL.Path)
+				}
+				if r.Header.Get("X-API-KEY") != "test-api-key" {
+					t.Error("X-API-KEY header not set")
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := NewWithConfig(&ClientConfig{
+				APIKey:  "test-api-key",
+				BaseURL: server.URL,
+			})
+			if err != nil {
+				t.Fatalf("NewWithConfig failed: %v", err)
+			}
+
+			duration := GetISPMetricsParamsDuration("24h")
+			params := &GetISPMetricsParams{
+				Duration: &duration,
+			}
+
+			resp, err := client.GetISPMetrics(context.Background(), tt.metricType, params)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("GetISPMetrics() expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("GetISPMetrics() unexpected error: %v", err)
 				return
 			}
 

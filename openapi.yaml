@@ -1020,33 +1020,233 @@ components:
             data:
               $ref: '#/components/schemas/SDWANConfig'
 
-    SDWANConfigStatus:
+    SDWANWanStatus:
       type: object
+      description: WAN interface status information
       properties:
-        id:
+        ip:
           type: string
-          description: SD-WAN configuration identifier
-        deploymentProgress:
-          type: number
-          minimum: 0
-          maximum: 100
-          description: Deployment progress percentage
+          description: WAN IP address
+        latency:
+          type: integer
+          nullable: true
+          description: WAN latency in milliseconds
+        internetIssues:
+          type: array
+          items:
+            type: string
+          nullable: true
+          description: List of internet connectivity issues
+        wanId:
+          type: string
+          description: WAN interface identifier
+
+    SDWANNetwork:
+      type: object
+      description: Network configuration in hub/spoke
+      properties:
+        networkId:
+          type: string
+          description: Network identifier
+        name:
+          type: string
+          description: Network name
         errors:
           type: array
           items:
             type: string
-          description: List of deployment errors
+          description: Network configuration errors
+        warnings:
+          type: array
+          items:
+            type: string
+          description: Network configuration warnings
+
+    SDWANRoute:
+      type: object
+      description: Route configuration in hub/spoke
+      properties:
+        routeValue:
+          type: string
+          description: Route in CIDR format
+        errors:
+          type: array
+          items:
+            type: string
+          description: Route configuration errors
+        warnings:
+          type: array
+          items:
+            type: string
+          description: Route configuration warnings
+
+    SDWANTunnel:
+      type: object
+      description: Tunnel status between spoke and hub
+      properties:
+        spokeWanId:
+          type: string
+          description: Spoke WAN interface ID
+        hubWanId:
+          type: string
+          description: Hub WAN interface ID
+        status:
+          type: string
+          description: Tunnel status (connected, disconnected, etc.)
+
+    SDWANConnection:
+      type: object
+      description: Connection from spoke to hub
+      properties:
+        hubId:
+          type: string
+          description: Hub identifier
+        tunnels:
+          type: array
+          items:
+            $ref: '#/components/schemas/SDWANTunnel'
+          description: Array of tunnels to the hub
+
+    SDWANHubStatus:
+      type: object
+      description: Hub deployment status
+      properties:
+        id:
+          type: string
+          description: Hub endpoint identifier
+        hostId:
+          type: string
+          description: Host identifier
+        siteId:
+          type: string
+          description: Site identifier
+        name:
+          type: string
+          description: Hub name
+        primaryWanStatus:
+          $ref: '#/components/schemas/SDWANWanStatus'
+        secondaryWanStatus:
+          $ref: '#/components/schemas/SDWANWanStatus'
+        errors:
+          type: array
+          items:
+            type: string
+          description: Hub configuration errors
+        warnings:
+          type: array
+          items:
+            type: string
+          description: Hub configuration warnings
+        numberOfTunnelsUsedByOtherFeatures:
+          type: integer
+          description: Number of tunnels used by other features
+        networks:
+          type: array
+          items:
+            $ref: '#/components/schemas/SDWANNetwork'
+          description: Networks advertised by the hub
+        routes:
+          type: array
+          items:
+            $ref: '#/components/schemas/SDWANRoute'
+          description: Routes advertised by the hub
+        applyStatus:
+          type: string
+          description: Configuration apply status
+
+    SDWANSpokeStatus:
+      type: object
+      description: Spoke deployment status
+      properties:
+        id:
+          type: string
+          description: Spoke endpoint identifier
+        hostId:
+          type: string
+          description: Host identifier
+        siteId:
+          type: string
+          description: Site identifier
+        name:
+          type: string
+          description: Spoke name
+        primaryWanStatus:
+          $ref: '#/components/schemas/SDWANWanStatus'
+        secondaryWanStatus:
+          $ref: '#/components/schemas/SDWANWanStatus'
+        errors:
+          type: array
+          items:
+            type: string
+          description: Spoke configuration errors
+        warnings:
+          type: array
+          items:
+            type: string
+          description: Spoke configuration warnings
+        numberOfTunnelsUsedByOtherFeatures:
+          type: integer
+          description: Number of tunnels used by other features
+        networks:
+          type: array
+          items:
+            $ref: '#/components/schemas/SDWANNetwork'
+          description: Networks advertised by the spoke
+        routes:
+          type: array
+          items:
+            $ref: '#/components/schemas/SDWANRoute'
+          description: Routes advertised by the spoke
+        connections:
+          type: array
+          items:
+            $ref: '#/components/schemas/SDWANConnection'
+          description: Connections from spoke to hubs
+        applyStatus:
+          type: string
+          description: Configuration apply status
+
+    SDWANConfigStatus:
+      type: object
+      description: SD-WAN configuration deployment status
+      properties:
+        id:
+          type: string
+          description: SD-WAN configuration identifier
+        fingerprint:
+          type: string
+          description: Configuration fingerprint
+        updatedAt:
+          type: integer
+          format: int64
+          description: Last update timestamp
         hubs:
           type: array
           items:
-            type: object
-            properties:
-              id:
-                type: string
-              status:
-                type: string
-            additionalProperties: true
-          description: Associated hub statuses
+            $ref: '#/components/schemas/SDWANHubStatus'
+          description: Hub deployment statuses
+        spokes:
+          type: array
+          items:
+            $ref: '#/components/schemas/SDWANSpokeStatus'
+          description: Spoke deployment statuses
+        lastGeneratedAt:
+          type: integer
+          format: int64
+          description: Last generation timestamp
+        generateStatus:
+          type: string
+          description: Generation status
+        errors:
+          type: array
+          items:
+            type: string
+          description: Configuration-level errors
+        warnings:
+          type: array
+          items:
+            type: string
+          description: Configuration-level warnings
 
     SDWANConfigStatusResponse:
       allOf:

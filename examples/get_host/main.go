@@ -73,6 +73,12 @@ func main() {
 
 	if host.Data.ReportedState != nil {
 		fmt.Printf("Reported State: present\n")
+		if host.Data.ReportedState.Version != nil {
+			fmt.Printf("  UniFi OS Version: %s\n", *host.Data.ReportedState.Version)
+		}
+		if host.Data.ReportedState.Hostname != nil {
+			fmt.Printf("  Hostname: %s\n", *host.Data.ReportedState.Hostname)
+		}
 	}
 
 	// Print full JSON if verbose flag is set

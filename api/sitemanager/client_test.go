@@ -547,6 +547,18 @@ const (
 }`
 
 	// Test constants.
+	listSDWANConfigsSuccess = `{
+  "data": [
+    {
+      "id": "9304163b-680d-4de8-a7a0-7617e328911d",
+      "name": "SD-WAN test",
+      "type": "sdwan-hbsp"
+    }
+  ],
+  "httpStatusCode": 200,
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d"
+}`
+
 	testAPIKey    = "test-api-key"
 	testToken     = "test-token"
 	testNextToken = "ba8e384e-3308-4236-b344-7357657351ca" //nolint:gosec // Test pagination token, not a real credential
@@ -1623,6 +1635,115 @@ func TestGetSDWANConfigByID(t *testing.T) {
 			}
 
 			resp, err := client.GetSDWANConfigByID(context.Background(), tt.configID)
+
+			if tt.wantErr {
+				if err == nil {
+					t.Error("Expected error, got nil")
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("Unexpected error: %v", err)
+				return
+			}
+
+			if tt.checkResponse != nil {
+				tt.checkResponse(t, resp)
+			}
+		})
+	}
+}
+
+func TestListSDWANConfigs(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name           string
+		mockResponse   string
+		mockStatusCode int
+		wantErr        bool
+		checkResponse  func(t *testing.T, resp *SDWANConfigsResponse)
+	}{
+		{
+			name:           "success",
+			mockResponse:   listSDWANConfigsSuccess,
+			mockStatusCode: http.StatusOK,
+			wantErr:        false,
+			checkResponse: func(t *testing.T, resp *SDWANConfigsResponse) {
+				t.Helper()
+				if resp == nil {
+					t.Fatal("response is nil")
+				}
+				if len(resp.Data) != 1 {
+					t.Fatalf("len(Data) = %d, want 1", len(resp.Data))
+				}
+				config := resp.Data[0]
+				if config.Id == nil || *config.Id != "9304163b-680d-4de8-a7a0-7617e328911d" {
+					t.Error("ID not set correctly")
+				}
+				if config.Name == nil || *config.Name != "SD-WAN test" {
+					t.Error("Name not set correctly")
+				}
+				if config.Type == nil || *config.Type != "sdwan-hbsp" {
+					t.Error("Type not set correctly")
+				}
+			},
+		},
+		{
+			name:           "unauthorized",
+			mockResponse:   unauthorizedError,
+			mockStatusCode: http.StatusUnauthorized,
+			wantErr:        true,
+		},
+		{
+			name:           "rate limit",
+			mockResponse:   rateLimitError,
+			mockStatusCode: http.StatusTooManyRequests,
+			wantErr:        true,
+		},
+		{
+			name:           "server error",
+			mockResponse:   serverError,
+			mockStatusCode: http.StatusInternalServerError,
+			wantErr:        true,
+		},
+		{
+			name:           "bad gateway",
+			mockResponse:   `{"code": "bad_gateway", "httpStatusCode": 502, "message": "bad gateway", "traceId": "a7dc15e0eb4527142d7823515b15f87d"}`,
+			mockStatusCode: http.StatusBadGateway,
+			wantErr:        true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				// Verify request - EA endpoint
+				if r.URL.Path != "/ea/sd-wan-configs" {
+					t.Errorf("Request path = %s, want /ea/sd-wan-configs", r.URL.Path)
+				}
+				if r.Header.Get("X-Api-Key") != testAPIKey {
+					t.Error("X-Api-Key header not set")
+				}
+
+				w.Header().Set("Content-Type", "application/json")
+				w.WriteHeader(tt.mockStatusCode)
+				w.Write([]byte(tt.mockResponse))
+			}))
+			defer server.Close()
+
+			client, err := NewWithConfig(&ClientConfig{
+				APIKey:  testAPIKey,
+				BaseURL: server.URL,
+			})
+			if err != nil {
+				t.Fatalf("NewWithConfig failed: %v", err)
+			}
+
+			resp, err := client.ListSDWANConfigs(context.Background())
 
 			if tt.wantErr {
 				if err == nil {

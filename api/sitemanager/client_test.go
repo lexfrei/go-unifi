@@ -347,8 +347,8 @@ const (
 }`
 
 	// Test constants.
-	testAPIKey    = "test-api-key"      //nolint:gosec // Test API key, not a real credential
-	testToken     = "test-token"        //nolint:gosec // Test token, not a real credential
+	testAPIKey    = "test-api-key" //nolint:gosec // Test API key, not a real credential
+	testToken     = "test-token"
 	testNextToken = "ba8e384e-3308-4236-b344-7357657351ca" //nolint:gosec // Test pagination token, not a real credential
 )
 

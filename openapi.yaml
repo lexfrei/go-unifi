@@ -898,10 +898,93 @@ components:
                   description: Array of ISP metrics for queried sites
 
     # SD-WAN schemas
+    SDWANSpokeSettings:
+      type: object
+      nullable: true
+      description: Spoke standard settings values
+      additionalProperties: true
+
+    SDWANSetLogs:
+      type: object
+      description: Advanced SD-WAN settings
+      properties:
+        hubsInterconnect:
+          type: boolean
+          description: Enable hubs interconnect
+        spokefulltunneltoHub:
+          type: string
+          enum: [healthiness, reliability, stability]
+          description: Spoke full tunnel to hub mode
+        spokeAutocalculateBandwithUse:
+          type: boolean
+          description: Auto-calculate bandwidth usage for spokes
+        spokeAutocalculateRange:
+          type: string
+          description: Auto-calculate range configuration
+        spokeisolate:
+          type: boolean
+          description: Spoke isolation setting
+        spokeStandardsettingsEnabled:
+          type: boolean
+          description: Enable spoke standard settings
+        spokeStandardsettingsvalues:
+          $ref: '#/components/schemas/SDWANSpokeSettings'
+        spokefintuning:
+          type: string
+          description: Spoke fine tuning configuration
+
+    SDWANEndpoint:
+      type: object
+      description: SD-WAN hub or spoke endpoint configuration
+      properties:
+        id:
+          type: string
+          description: Endpoint identifier
+        hostId:
+          type: string
+          description: Host identifier
+        siteId:
+          type: string
+          description: Site identifier
+        networkIds:
+          type: array
+          items:
+            type: string
+          description: List of networks belonging to the hub
+        routes:
+          type: array
+          items:
+            type: string
+          description: Subnets in CIDR format
+        primaryWan:
+          type: string
+          description: Primary WAN interface
+        backupWan:
+          type: string
+          description: Backup WAN interface
+        wanFailover:
+          type: boolean
+          description: Enable WAN failover
+
     SDWANConfigData:
       type: object
-      description: SD-WAN configuration data (structure varies by config type)
-      additionalProperties: true
+      description: SD-WAN configuration data
+      properties:
+        version:
+          type: string
+          description: Version of SD-WAN configuration
+        setLogs:
+          $ref: '#/components/schemas/SDWANSetLogs'
+        hubs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SDWANEndpoint'
+          description: Array of hub configurations
+        spokes:
+          type: array
+          items:
+            $ref: '#/components/schemas/SDWANEndpoint'
+          description: Array of spoke configurations
 
     SDWANConfig:
       type: object

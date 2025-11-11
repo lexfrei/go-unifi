@@ -204,8 +204,6 @@ Retry strategy:
 
 ## Development
 
-### Generate Client Code
-
 ### Generate Code from OpenAPI
 
 ```bash
@@ -217,6 +215,19 @@ Or use go generate:
 ```bash
 cd api/sitemanager && go generate
 ```
+
+### Test Against Reality
+
+Validate types against real API responses to find `any` usage and type mismatches:
+
+```bash
+go run ./cmd/test-reality -api-key your-key
+
+# Verbose mode with full JSON samples
+go run ./cmd/test-reality -api-key your-key -verbose
+```
+
+See [cmd/test-reality/README.md](./cmd/test-reality/README.md) for details.
 
 ### Run Linters
 
@@ -230,7 +241,7 @@ golangci-lint run ./...
 go test ./...
 ```
 
-### Build Example
+### Build Examples
 
 ```bash
 cd examples/list_hosts && go build
@@ -252,6 +263,7 @@ This structure follows [golang-standards/project-layout](https://github.com/gola
 ## Supported APIs
 
 ### UniFi Site Manager API v1
+
 `import "github.com/lexfrei/go-unifi/api/sitemanager"`
 
 - ✅ Hosts, Sites, Devices management
@@ -259,10 +271,10 @@ This structure follows [golang-standards/project-layout](https://github.com/gola
 - ✅ SD-WAN configuration and status
 
 ### Coming Soon
+
 - UniFi Protect API
 - UniFi Access API
 - UniFi Talk API
-
 
 ## API Documentation
 
@@ -290,6 +302,7 @@ BSD-3-Clause - see [LICENSE](./LICENSE) file for details
 
 ## Maintainer
 
-**Aleksei Sviridkin**
-- Email: f@lex.la
+### Aleksei Sviridkin
+
+- Email: <f@lex.la>
 - GPG: F57F 85FC 7975 F22B BC3F 2504 9C17 3EB1 B531 AA1F

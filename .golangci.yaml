@@ -104,6 +104,7 @@ linters:
           - funlen
           - gocognit
           - nestif
+          - gocritic
         path: examples/
 formatters:
   enable:

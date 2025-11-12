@@ -1,0 +1,49 @@
+name: Question
+description: Ask a question about usage or implementation
+title: "[Question]: "
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have a question? We're here to help!
+
+        **Note:** For general discussions or ideas, consider using [Discussions](https://github.com/lexfrei/go-unifi/discussions) instead.
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What would you like to know?
+      placeholder: Ask your question clearly
+    validations:
+      required: true
+
+  - type: dropdown
+    id: api-package
+    attributes:
+      label: API Package
+      description: Which API package is your question about? (optional)
+      options:
+        - General
+        - Site Manager API (api/sitemanager)
+        - Network API (api/network)
+        - Internal packages
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: What I've Tried
+      description: What have you already attempted? (optional)
+      placeholder: |
+        Describe what you've tried so far:
+        - Checked documentation
+        - Tried code example...
+        - etc.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Any additional context that might help (optional)
+      placeholder: Provide any relevant details about your setup or use case

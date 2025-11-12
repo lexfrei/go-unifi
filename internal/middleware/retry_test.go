@@ -19,7 +19,7 @@ func TestRetry(t *testing.T) {
 	t.Run("success on first attempt", func(t *testing.T) {
 		t.Parallel()
 
-		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 			w.WriteHeader(http.StatusOK)
 		}))
 		defer server.Close()
@@ -29,7 +29,7 @@ func TestRetry(t *testing.T) {
 			InitialWait: time.Millisecond,
 		})(http.DefaultTransport)
 
-		req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 		resp, err := transport.RoundTrip(req)
 		if err != nil {
 			t.Fatalf("RoundTrip() error = %v", err)
@@ -45,7 +45,7 @@ func TestRetry(t *testing.T) {
 		t.Parallel()
 
 		attempts := 0
-		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 			attempts++
 			if attempts < 3 {
 				w.WriteHeader(http.StatusInternalServerError)
@@ -60,7 +60,7 @@ func TestRetry(t *testing.T) {
 			InitialWait: time.Millisecond,
 		})(http.DefaultTransport)
 
-		req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 		resp, err := transport.RoundTrip(req)
 		if err != nil {
 			t.Fatalf("RoundTrip() error = %v", err)
@@ -80,7 +80,7 @@ func TestRetry(t *testing.T) {
 		t.Parallel()
 
 		attempts := 0
-		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 			attempts++
 			w.WriteHeader(http.StatusNotFound)
 		}))
@@ -91,7 +91,7 @@ func TestRetry(t *testing.T) {
 			InitialWait: time.Millisecond,
 		})(http.DefaultTransport)
 
-		req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 		resp, err := transport.RoundTrip(req)
 		if err != nil {
 			t.Fatalf("RoundTrip() error = %v", err)
@@ -129,7 +129,7 @@ func TestRetry(t *testing.T) {
 			InitialWait: time.Millisecond,
 		})(http.DefaultTransport)
 
-		req, _ := http.NewRequest(http.MethodPost, server.URL, strings.NewReader("test body"))
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, server.URL, strings.NewReader("test body"))
 		resp, err := transport.RoundTrip(req)
 		if err != nil {
 			t.Fatalf("RoundTrip() error = %v", err)
@@ -145,7 +145,7 @@ func TestRetry(t *testing.T) {
 		t.Parallel()
 
 		attempts := 0
-		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 			attempts++
 			if attempts == 1 {
 				w.Header().Set("Retry-After", "1")
@@ -162,7 +162,7 @@ func TestRetry(t *testing.T) {
 		})(http.DefaultTransport)
 
 		start := time.Now()
-		req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 		resp, err := transport.RoundTrip(req)
 		duration := time.Since(start)
 
@@ -180,7 +180,7 @@ func TestRetry(t *testing.T) {
 	t.Run("context cancellation during retry", func(t *testing.T) {
 		t.Parallel()
 
-		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 			w.WriteHeader(http.StatusInternalServerError)
 		}))
 		defer server.Close()
@@ -193,8 +193,11 @@ func TestRetry(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
 		defer cancel()
 
-		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, nil)
-		_, err := transport.RoundTrip(req)
+		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, http.NoBody)
+		resp, err := transport.RoundTrip(req)
+		if resp != nil {
+			resp.Body.Close()
+		}
 
 		if err == nil {
 			t.Error("expected error on context cancellation")
@@ -210,7 +213,7 @@ func TestRetryWithObservability(t *testing.T) {
 	t.Parallel()
 
 	attempts := 0
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		attempts++
 		if attempts < 3 {
 			w.WriteHeader(http.StatusInternalServerError)
@@ -230,7 +233,7 @@ func TestRetryWithObservability(t *testing.T) {
 		Metrics:     metrics,
 	})(http.DefaultTransport)
 
-	req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 	resp, err := transport.RoundTrip(req)
 	if err != nil {
 		t.Fatalf("RoundTrip() error = %v", err)

@@ -316,6 +316,10 @@ const (
 	testHostValue    = "192.168.100.1"
 	testModelUDR7    = "UDR7"
 	testTypeWired    = "WIRED"
+	testPolicyName   = "test-policy-1"
+	testPolicyID     = "507f1f77bcf86cd799439011"
+	testRuleName     = "test-rule-1"
+	testRuleID       = "507f1f77bcf86cd799439012"
 )
 
 var testSiteID = types.UUID{0x88, 0xf7, 0xaf, 0x54, 0x98, 0xf8, 0x30, 0x6a, 0xa1, 0xc7, 0xc9, 0x34, 0x97, 0x22, 0xb1, 0xf6}
@@ -466,7 +470,7 @@ func TestListSites(t *testing.T) {
 				if r.URL.Path != "/proxy/network/integration/v1/sites" {
 					t.Errorf("Request path = %s, want /proxy/network/integration/v1/sites", r.URL.Path)
 				}
-				//nolint:canonicalheader // X-API-KEY is the correct header name per UniFi API spec
+				//nolint:canonicalheader // X-API-KEY is the correct header name per UniFi API specification
 				if r.Header.Get("X-API-KEY") != testAPIKey {
 					t.Error("X-API-KEY header not set")
 				}
@@ -573,7 +577,7 @@ func TestListDNSRecords(t *testing.T) {
 				if r.URL.Path != expectedPath {
 					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
 				}
-				//nolint:canonicalheader // X-API-KEY is the correct header name per UniFi API spec
+				//nolint:canonicalheader // X-API-KEY is the correct header name per UniFi API specification
 				if r.Header.Get("X-API-KEY") != testAPIKey {
 					t.Error("X-API-KEY header not set")
 				}
@@ -1378,8 +1382,8 @@ func TestCreateFirewallPolicy(t *testing.T) {
 				if resp == nil {
 					t.Fatal("response is nil")
 				}
-				if resp.Name != "test-policy-1" {
-					t.Errorf("Name = %s, want test-policy-1", resp.Name)
+				if resp.Name != testPolicyName {
+					t.Errorf("Name = %s, want %s", resp.Name, testPolicyName)
 				}
 			},
 		},
@@ -1418,7 +1422,7 @@ func TestCreateFirewallPolicy(t *testing.T) {
 			input := &FirewallPolicyInput{
 				Action:  FirewallPolicyInputActionALLOW,
 				Enabled: true,
-				Name:    "test-policy-1",
+				Name:    testPolicyName,
 			}
 
 			resp, err := client.CreateFirewallPolicy(context.Background(), testSiteInternal, input)
@@ -1445,7 +1449,7 @@ func TestCreateFirewallPolicy(t *testing.T) {
 func TestUpdateFirewallPolicy(t *testing.T) {
 	t.Parallel()
 
-	policyID := "507f1f77bcf86cd799439011"
+	policyID := testPolicyID
 
 	tests := []struct {
 		name           string
@@ -1464,8 +1468,8 @@ func TestUpdateFirewallPolicy(t *testing.T) {
 				if resp == nil {
 					t.Fatal("response is nil")
 				}
-				if resp.Name != "test-policy-1" {
-					t.Errorf("Name = %s, want test-policy-1", resp.Name)
+				if resp.Name != testPolicyName {
+					t.Errorf("Name = %s, want %s", resp.Name, testPolicyName)
 				}
 			},
 		},
@@ -1504,7 +1508,7 @@ func TestUpdateFirewallPolicy(t *testing.T) {
 			input := &FirewallPolicyInput{
 				Action:  FirewallPolicyInputActionALLOW,
 				Enabled: true,
-				Name:    "test-policy-1",
+				Name:    testPolicyName,
 			}
 
 			resp, err := client.UpdateFirewallPolicy(context.Background(), testSiteInternal, policyID, input)
@@ -1531,7 +1535,7 @@ func TestUpdateFirewallPolicy(t *testing.T) {
 func TestDeleteFirewallPolicy(t *testing.T) {
 	t.Parallel()
 
-	policyID := "507f1f77bcf86cd799439011"
+	policyID := testPolicyID
 
 	tests := []struct {
 		name           string
@@ -1689,7 +1693,7 @@ func TestCreateTrafficRule(t *testing.T) {
 				if resp == nil {
 					t.Fatal("response is nil")
 				}
-				if resp.Description == nil || *resp.Description != "test-rule-1" {
+				if resp.Description == nil || *resp.Description != testRuleName {
 					t.Errorf("Description = %v, want test-rule-1", resp.Description)
 				}
 			},
@@ -1726,7 +1730,7 @@ func TestCreateTrafficRule(t *testing.T) {
 				t.Fatalf("New failed: %v", err)
 			}
 
-			desc := "test-rule-1"
+			desc := testRuleName
 			input := &TrafficRuleInput{
 				Enabled:        true,
 				MatchingTarget: TrafficRuleInputMatchingTargetINTERNET,
@@ -1757,7 +1761,7 @@ func TestCreateTrafficRule(t *testing.T) {
 func TestUpdateTrafficRule(t *testing.T) {
 	t.Parallel()
 
-	ruleID := "507f1f77bcf86cd799439012"
+	ruleID := testRuleID
 
 	tests := []struct {
 		name           string
@@ -1776,7 +1780,7 @@ func TestUpdateTrafficRule(t *testing.T) {
 				if resp == nil {
 					t.Fatal("response is nil")
 				}
-				if resp.Description == nil || *resp.Description != "test-rule-1" {
+				if resp.Description == nil || *resp.Description != testRuleName {
 					t.Errorf("Description = %v, want test-rule-1", resp.Description)
 				}
 			},
@@ -1813,7 +1817,7 @@ func TestUpdateTrafficRule(t *testing.T) {
 				t.Fatalf("New failed: %v", err)
 			}
 
-			desc := "test-rule-1"
+			desc := testRuleName
 			input := &TrafficRuleInput{
 				Enabled:        true,
 				MatchingTarget: TrafficRuleInputMatchingTargetINTERNET,
@@ -1844,7 +1848,7 @@ func TestUpdateTrafficRule(t *testing.T) {
 func TestDeleteTrafficRule(t *testing.T) {
 	t.Parallel()
 
-	ruleID := "507f1f77bcf86cd799439012"
+	ruleID := testRuleID
 
 	tests := []struct {
 		name           string

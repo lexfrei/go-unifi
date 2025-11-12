@@ -1,6 +1,7 @@
 package httpclient_test
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -75,6 +76,7 @@ func TestMiddlewareChaining(t *testing.T) {
 			order = append(order, "middleware1-before")
 			resp, err := next.RoundTrip(req)
 			order = append(order, "middleware1-after")
+			//nolint:wrapcheck // Test middleware - passes through errors unchanged
 			return resp, err
 		})
 	}
@@ -84,12 +86,13 @@ func TestMiddlewareChaining(t *testing.T) {
 			order = append(order, "middleware2-before")
 			resp, err := next.RoundTrip(req)
 			order = append(order, "middleware2-after")
+			//nolint:wrapcheck // Test middleware - passes through errors unchanged
 			return resp, err
 		})
 	}
 
 	// Setup test server
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		order = append(order, "server")
 		w.WriteHeader(http.StatusOK)
 	}))
@@ -101,7 +104,7 @@ func TestMiddlewareChaining(t *testing.T) {
 	)
 
 	// Make request
-	req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 	resp, err := client.Do(req)
 	if err != nil {
 		t.Fatalf("Request failed: %v", err)
@@ -131,14 +134,14 @@ func TestMiddlewareChaining(t *testing.T) {
 func TestDo(t *testing.T) {
 	t.Parallel()
 
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("test response"))
 	}))
 	defer server.Close()
 
 	client := httpclient.New()
-	req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -156,7 +159,7 @@ func TestDo(t *testing.T) {
 	}
 }
 
-// roundTripperFunc is an adapter to use functions as http.RoundTripper
+// roundTripperFunc is an adapter to use functions as http.RoundTripper.
 type roundTripperFunc func(*http.Request) (*http.Response, error)
 
 func (f roundTripperFunc) RoundTrip(req *http.Request) (*http.Response, error) {
@@ -165,17 +168,17 @@ func (f roundTripperFunc) RoundTrip(req *http.Request) (*http.Response, error) {
 
 // BenchmarkClient measures the overhead of the client with and without middleware.
 func BenchmarkClient(b *testing.B) {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
 	defer server.Close()
 
 	b.Run("NoMiddleware", func(b *testing.B) {
 		client := httpclient.New()
-		req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 
 		b.ResetTimer()
-		for i := 0; i < b.N; i++ {
+		for range b.N {
 			resp, err := client.Do(req)
 			if err != nil {
 				b.Fatal(err)
@@ -190,10 +193,10 @@ func BenchmarkClient(b *testing.B) {
 		}
 
 		client := httpclient.New(httpclient.WithMiddleware(noop))
-		req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 
 		b.ResetTimer()
-		for i := 0; i < b.N; i++ {
+		for range b.N {
 			resp, err := client.Do(req)
 			if err != nil {
 				b.Fatal(err)

@@ -24,25 +24,25 @@ func BenchmarkNoopMetricsRecorder(b *testing.B) {
 	recorder := observability.NoopMetricsRecorder()
 
 	b.Run("RecordHTTPRequest", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
+		for range b.N {
 			recorder.RecordHTTPRequest("GET", "/test", 200, time.Second)
 		}
 	})
 
 	b.Run("RecordRetry", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
+		for range b.N {
 			recorder.RecordRetry(1, "/endpoint")
 		}
 	})
 
 	b.Run("RecordRateLimit", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
+		for range b.N {
 			recorder.RecordRateLimit("/endpoint", time.Millisecond*100)
 		}
 	})
 
 	b.Run("RecordError", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
+		for range b.N {
 			recorder.RecordError("operation", "NetworkError")
 		}
 	})

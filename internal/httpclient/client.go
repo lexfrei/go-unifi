@@ -6,6 +6,11 @@ import (
 	"time"
 )
 
+const (
+	// DefaultTimeout is the default HTTP client timeout.
+	DefaultTimeout = 30 * time.Second
+)
+
 // Client is an HTTP client that supports middleware chaining.
 type Client struct {
 	base       *http.Client
@@ -20,7 +25,7 @@ type Middleware func(http.RoundTripper) http.RoundTripper
 func New(opts ...Option) *Client {
 	c := &Client{
 		base: &http.Client{
-			Timeout: 30 * time.Second,
+			Timeout: DefaultTimeout,
 		},
 		middleware: []Middleware{},
 	}
@@ -49,6 +54,7 @@ func New(opts ...Option) *Client {
 
 // Do executes an HTTP request using the configured middleware chain.
 func (c *Client) Do(req *http.Request) (*http.Response, error) {
+	//nolint:wrapcheck // Proxy method - middleware chain handles error context
 	return c.base.Do(req)
 }
 

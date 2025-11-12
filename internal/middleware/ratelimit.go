@@ -67,14 +67,17 @@ func (t *rateLimitTransport) RoundTrip(req *http.Request) (*http.Response, error
 
 	if limiter == nil {
 		// No rate limiting
+		//nolint:wrapcheck // Middleware passes through errors from next handler in chain
 		return t.next.RoundTrip(req)
 	}
 
 	// Wait for rate limiter
-	if err := t.waitWithObservability(ctx, limiter, endpoint, req.URL.Path); err != nil {
+	err := t.waitWithObservability(ctx, limiter, endpoint, req.URL.Path)
+	if err != nil {
 		return nil, err
 	}
 
+	//nolint:wrapcheck // Middleware passes through errors from next handler in chain
 	return t.next.RoundTrip(req)
 }
 

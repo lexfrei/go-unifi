@@ -208,14 +208,14 @@ func (c *UnifiClient) ListHosts(ctx context.Context, params *ListHostsParams) (*
 }
 
 // GetHostByID retrieves detailed information about a specific host.
-func (c *UnifiClient) GetHostByID(ctx context.Context, id string) (*HostResponse, error) {
-	resp, err := c.client.GetHostByIdWithResponse(ctx, id)
+func (c *UnifiClient) GetHostByID(ctx context.Context, hostID string) (*HostResponse, error) {
+	resp, err := c.client.GetHostByIdWithResponse(ctx, hostID)
 	var data *HostResponse
 	if resp != nil {
 		data = resp.JSON200
 	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, data, err, errors.Newf("failed to get host %s", id).Error())
+	return response.Handle(resp, data, err, errors.Newf("failed to get host %s", hostID).Error())
 }
 
 // ListSites retrieves a list of all sites configured on the controller.
@@ -274,23 +274,23 @@ func (c *UnifiClient) ListSDWANConfigs(ctx context.Context) (*SDWANConfigsRespon
 }
 
 // GetSDWANConfigByID retrieves detailed information about a specific SD-WAN configuration.
-func (c *UnifiClient) GetSDWANConfigByID(ctx context.Context, id string) (*SDWANConfigResponse, error) {
-	resp, err := c.client.GetSDWANConfigByIdWithResponse(ctx, id)
+func (c *UnifiClient) GetSDWANConfigByID(ctx context.Context, configID string) (*SDWANConfigResponse, error) {
+	resp, err := c.client.GetSDWANConfigByIdWithResponse(ctx, configID)
 	var data *SDWANConfigResponse
 	if resp != nil {
 		data = resp.JSON200
 	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, data, err, errors.Newf("failed to get SD-WAN config %s", id).Error())
+	return response.Handle(resp, data, err, errors.Newf("failed to get SD-WAN config %s", configID).Error())
 }
 
 // GetSDWANConfigStatus retrieves the status of a specific SD-WAN configuration.
-func (c *UnifiClient) GetSDWANConfigStatus(ctx context.Context, id string) (*SDWANConfigStatusResponse, error) {
-	resp, err := c.client.GetSDWANConfigStatusWithResponse(ctx, id)
+func (c *UnifiClient) GetSDWANConfigStatus(ctx context.Context, configID string) (*SDWANConfigStatusResponse, error) {
+	resp, err := c.client.GetSDWANConfigStatusWithResponse(ctx, configID)
 	var data *SDWANConfigStatusResponse
 	if resp != nil {
 		data = resp.JSON200
 	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, data, err, errors.Newf("failed to get SD-WAN config status for %s", id).Error())
+	return response.Handle(resp, data, err, errors.Newf("failed to get SD-WAN config status for %s", configID).Error())
 }

@@ -1,6 +1,7 @@
 package middleware_test
 
 import (
+	"context"
 	"crypto/tls"
 	"net/http"
 	"net/http/httptest"
@@ -26,7 +27,7 @@ func TestAuth(t *testing.T) {
 
 	transport := middleware.Auth("X-Api-Key", "test-key-123")(http.DefaultTransport)
 
-	req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 	resp, err := transport.RoundTrip(req)
 	if err != nil {
 		t.Fatalf("RoundTrip() error = %v", err)
@@ -41,20 +42,21 @@ func TestAuth(t *testing.T) {
 func TestAuthDoesNotModifyOriginalRequest(t *testing.T) {
 	t.Parallel()
 
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
 	defer server.Close()
 
 	transport := middleware.Auth("X-Api-Key", "test-key")(http.DefaultTransport)
 
-	req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 	originalHeaders := len(req.Header)
 
-	_, err := transport.RoundTrip(req)
+	resp, err := transport.RoundTrip(req)
 	if err != nil {
 		t.Fatalf("RoundTrip() error = %v", err)
 	}
+	defer resp.Body.Close()
 
 	// Original request should not be modified
 	if len(req.Header) != originalHeaders {
@@ -103,7 +105,7 @@ func TestInsecureSkipVerify(t *testing.T) {
 func TestObservability(t *testing.T) {
 	t.Parallel()
 
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
 	defer server.Close()
@@ -113,7 +115,7 @@ func TestObservability(t *testing.T) {
 
 	transport := middleware.Observability(logger, metrics)(http.DefaultTransport)
 
-	req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 	resp, err := transport.RoundTrip(req)
 	if err != nil {
 		t.Fatalf("RoundTrip() error = %v", err)
@@ -128,7 +130,7 @@ func TestObservability(t *testing.T) {
 func TestObservabilityWithNilParams(t *testing.T) {
 	t.Parallel()
 
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
 	defer server.Close()
@@ -136,10 +138,10 @@ func TestObservabilityWithNilParams(t *testing.T) {
 	// Should use no-op implementations
 	transport := middleware.Observability(nil, nil)(http.DefaultTransport)
 
-	req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 	resp, err := transport.RoundTrip(req)
 	if err != nil {
 		t.Fatalf("RoundTrip() error = %v", err)
 	}
-	defer resp.Body.Close()
+	resp.Body.Close()
 }

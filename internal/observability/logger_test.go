@@ -34,7 +34,7 @@ func TestField(t *testing.T) {
 		name  string
 		field observability.Field
 		key   string
-		value interface{}
+		value any
 	}{
 		{
 			name:  "string value",
@@ -76,7 +76,7 @@ func BenchmarkNoopLogger(b *testing.B) {
 	logger := observability.NoopLogger()
 
 	b.Run("Info", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
+		for range b.N {
 			logger.Info("test message")
 		}
 	})
@@ -87,13 +87,13 @@ func BenchmarkNoopLogger(b *testing.B) {
 			{Key: "key2", Value: 42},
 		}
 
-		for i := 0; i < b.N; i++ {
+		for range b.N {
 			logger.Info("test message", fields...)
 		}
 	})
 
 	b.Run("With", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
+		for range b.N {
 			logger.With(observability.Field{Key: "key", Value: "value"})
 		}
 	})

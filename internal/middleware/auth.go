@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"maps"
 	"net/http"
 )
 
@@ -32,6 +33,7 @@ func (t *authTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	// Add auth header
 	req.Header.Set(t.headerName, t.headerValue)
 
+	//nolint:wrapcheck // Middleware passes through errors from next handler in chain
 	return t.next.RoundTrip(req)
 }
 
@@ -40,8 +42,6 @@ func cloneRequest(req *http.Request) *http.Request {
 	r := new(http.Request)
 	*r = *req
 	r.Header = make(http.Header, len(req.Header))
-	for k, v := range req.Header {
-		r.Header[k] = v
-	}
+	maps.Copy(r.Header, req.Header)
 	return r
 }

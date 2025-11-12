@@ -57,6 +57,7 @@ func (t *observabilityTransport) RoundTrip(req *http.Request) (*http.Response, e
 
 		t.metrics.RecordError("http_request", "NetworkError")
 
+		//nolint:wrapcheck // Observability middleware logs error but passes it through unchanged
 		return nil, err
 	}
 
@@ -68,7 +69,7 @@ func (t *observabilityTransport) RoundTrip(req *http.Request) (*http.Response, e
 		{Key: "duration", Value: duration},
 	}
 
-	if resp.StatusCode >= 400 {
+	if resp.StatusCode >= http.StatusBadRequest {
 		t.logger.Warn("http request completed with error", fields...)
 	} else {
 		t.logger.Debug("http request completed", fields...)

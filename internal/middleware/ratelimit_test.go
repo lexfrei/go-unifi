@@ -18,7 +18,7 @@ func TestRateLimit(t *testing.T) {
 	t.Run("single limiter", func(t *testing.T) {
 		t.Parallel()
 
-		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 			w.WriteHeader(http.StatusOK)
 		}))
 		defer server.Close()
@@ -31,8 +31,8 @@ func TestRateLimit(t *testing.T) {
 		})(http.DefaultTransport)
 
 		// First 2 requests should be fast
-		for i := 0; i < 2; i++ {
-			req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+		for i := range 2 {
+			req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 			start := time.Now()
 			resp, err := transport.RoundTrip(req)
 			duration := time.Since(start)
@@ -48,7 +48,7 @@ func TestRateLimit(t *testing.T) {
 		}
 
 		// Third request should be rate limited
-		req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 		start := time.Now()
 		resp, err := transport.RoundTrip(req)
 		duration := time.Since(start)
@@ -66,7 +66,7 @@ func TestRateLimit(t *testing.T) {
 	t.Run("selector mode", func(t *testing.T) {
 		t.Parallel()
 
-		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 			w.WriteHeader(http.StatusOK)
 		}))
 		defer server.Close()
@@ -87,7 +87,7 @@ func TestRateLimit(t *testing.T) {
 		})(http.DefaultTransport)
 
 		// Fast endpoint should not be rate limited
-		req, _ := http.NewRequest(http.MethodGet, server.URL+"/fast", nil)
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL+"/fast", http.NoBody)
 		start := time.Now()
 		resp, err := transport.RoundTrip(req)
 		duration := time.Since(start)
@@ -102,12 +102,12 @@ func TestRateLimit(t *testing.T) {
 		}
 
 		// Slow endpoint - use up the token
-		req, _ = http.NewRequest(http.MethodGet, server.URL+"/slow", nil)
+		req, _ = http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL+"/slow", http.NoBody)
 		resp, _ = transport.RoundTrip(req)
 		resp.Body.Close()
 
 		// Second slow request should be rate limited
-		req, _ = http.NewRequest(http.MethodGet, server.URL+"/slow", nil)
+		req, _ = http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL+"/slow", http.NoBody)
 		start = time.Now()
 		resp, err = transport.RoundTrip(req)
 		duration = time.Since(start)
@@ -125,7 +125,7 @@ func TestRateLimit(t *testing.T) {
 	t.Run("nil limiter - no rate limiting", func(t *testing.T) {
 		t.Parallel()
 
-		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 			w.WriteHeader(http.StatusOK)
 		}))
 		defer server.Close()
@@ -135,7 +135,7 @@ func TestRateLimit(t *testing.T) {
 		})(http.DefaultTransport)
 
 		// Should complete quickly without rate limiting
-		req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 		start := time.Now()
 		resp, err := transport.RoundTrip(req)
 		duration := time.Since(start)
@@ -153,7 +153,7 @@ func TestRateLimit(t *testing.T) {
 	t.Run("context cancellation", func(t *testing.T) {
 		t.Parallel()
 
-		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 			w.WriteHeader(http.StatusOK)
 		}))
 		defer server.Close()
@@ -169,8 +169,11 @@ func TestRateLimit(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
 		defer cancel()
 
-		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, nil)
-		_, err := transport.RoundTrip(req)
+		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, http.NoBody)
+		resp, err := transport.RoundTrip(req)
+		if resp != nil {
+			resp.Body.Close()
+		}
 
 		if err == nil {
 			t.Error("expected error on context cancellation")

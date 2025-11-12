@@ -5,7 +5,7 @@ package observability
 // Field represents a structured logging field (key-value pair).
 type Field struct {
 	Key   string
-	Value interface{}
+	Value any
 }
 
 // Logger is an interface for structured logging.
@@ -33,6 +33,8 @@ type noopLogger struct{}
 
 // NoopLogger returns a logger that does nothing.
 // This is the default logger used when none is provided.
+//
+//nolint:ireturn // Factory function must return interface for dependency injection pattern
 func NoopLogger() Logger {
 	return &noopLogger{}
 }
@@ -41,4 +43,6 @@ func (l *noopLogger) Debug(string, ...Field) {}
 func (l *noopLogger) Info(string, ...Field)  {}
 func (l *noopLogger) Warn(string, ...Field)  {}
 func (l *noopLogger) Error(string, ...Field) {}
-func (l *noopLogger) With(...Field) Logger   { return l }
+
+//nolint:ireturn // Method must return interface to satisfy Logger interface
+func (l *noopLogger) With(...Field) Logger { return l }

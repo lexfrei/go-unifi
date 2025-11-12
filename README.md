@@ -1,5 +1,11 @@
 # go-unifi
 
+[![CI](https://github.com/lexfrei/go-unifi/actions/workflows/ci.yml/badge.svg)](https://github.com/lexfrei/go-unifi/actions/workflows/ci.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/lexfrei/go-unifi)](https://goreportcard.com/report/github.com/lexfrei/go-unifi)
+[![codecov](https://codecov.io/gh/lexfrei/go-unifi/branch/main/graph/badge.svg)](https://codecov.io/gh/lexfrei/go-unifi)
+[![Go Reference](https://pkg.go.dev/badge/github.com/lexfrei/go-unifi.svg)](https://pkg.go.dev/github.com/lexfrei/go-unifi)
+[![License](https://img.shields.io/github/license/lexfrei/go-unifi)](LICENSE)
+
 Almost pure Go client libraries for UniFi APIs with type-safe code generation from OpenAPI specifications.
 
 ## 📦 Available APIs

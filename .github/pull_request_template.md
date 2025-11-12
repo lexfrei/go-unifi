@@ -52,3 +52,17 @@ If yes, please describe:
 ## Additional Context
 
 <!-- Optional: Add any other information, links, or notes -->
+
+---
+
+## Metadata (Conventional Commits footers)
+
+<!--
+Add these footers at the end of PR description for automated parsing.
+Fill based on sections above. Format: <token>: <value>
+-->
+
+API-Package: <!-- sitemanager | network | internal | other -->
+Breaking-Change: <!-- yes | no -->
+Tested-On: <!-- UDR7, UniFi OS 4.3.9, Network 9.4.19 -->
+AI-Assisted: <!-- Claude 3.5 Sonnet, code generation | no -->

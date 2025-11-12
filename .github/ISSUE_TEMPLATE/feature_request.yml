@@ -1,0 +1,75 @@
+name: Feature Request
+description: Request a new feature or enhancement
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a feature! Please provide details about what you'd like to see.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What feature or enhancement would you like to see?
+      placeholder: Clear description of the requested feature
+    validations:
+      required: true
+
+  - type: dropdown
+    id: api-package
+    attributes:
+      label: API Package
+      description: Which API package is this for?
+      options:
+        - Site Manager API (api/sitemanager)
+        - Network API (api/network)
+        - Internal packages
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: endpoint
+    attributes:
+      label: API Endpoint/Method
+      description: Which endpoint or new functionality?
+      placeholder: "Example: CreatePortProfile, UpdateFirewallGroup, new SD-WAN endpoint"
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-case
+    attributes:
+      label: Use Case
+      description: Why is this feature needed? What problem does it solve?
+      placeholder: Describe the use case and why this feature would be valuable
+    validations:
+      required: true
+
+  - type: textarea
+    id: how-to-test
+    attributes:
+      label: How to Test
+      description: How can this be tested/reproduced on a real UniFi controller?
+      placeholder: |
+        Describe how to verify this works on actual hardware/VM:
+        1. Navigate to...
+        2. Create/modify...
+        3. Verify...
+    validations:
+      required: true
+
+  - type: input
+    id: api-docs
+    attributes:
+      label: API Documentation
+      description: Link to official UniFi API documentation (if available)
+      placeholder: "https://developer.ui.com/..."
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Any other information, examples, or references (optional)

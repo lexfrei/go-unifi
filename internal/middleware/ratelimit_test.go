@@ -1,0 +1,183 @@
+package middleware_test
+
+import (
+	"context"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/lexfrei/go-unifi/internal/middleware"
+	"golang.org/x/time/rate"
+)
+
+func TestRateLimit(t *testing.T) {
+	t.Parallel()
+
+	t.Run("single limiter", func(t *testing.T) {
+		t.Parallel()
+
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer server.Close()
+
+		// Allow 2 requests per second
+		limiter := rate.NewLimiter(2, 2)
+
+		transport := middleware.RateLimit(middleware.RateLimitConfig{
+			Limiter: limiter,
+		})(http.DefaultTransport)
+
+		// First 2 requests should be fast
+		for i := 0; i < 2; i++ {
+			req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+			start := time.Now()
+			resp, err := transport.RoundTrip(req)
+			duration := time.Since(start)
+
+			if err != nil {
+				t.Fatalf("RoundTrip() error = %v", err)
+			}
+			resp.Body.Close()
+
+			if duration > 100*time.Millisecond {
+				t.Errorf("request %d took %v, expected < 100ms", i+1, duration)
+			}
+		}
+
+		// Third request should be rate limited
+		req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+		start := time.Now()
+		resp, err := transport.RoundTrip(req)
+		duration := time.Since(start)
+
+		if err != nil {
+			t.Fatalf("RoundTrip() error = %v", err)
+		}
+		resp.Body.Close()
+
+		if duration < 100*time.Millisecond {
+			t.Errorf("third request took %v, expected >= 100ms (rate limited)", duration)
+		}
+	})
+
+	t.Run("selector mode", func(t *testing.T) {
+		t.Parallel()
+
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer server.Close()
+
+		// Two limiters: fast and slow
+		fastLimiter := rate.NewLimiter(100, 100)
+		slowLimiter := rate.NewLimiter(1, 1)
+
+		selector := func(req *http.Request) (*rate.Limiter, string) {
+			if strings.Contains(req.URL.Path, "/fast") {
+				return fastLimiter, "fast"
+			}
+			return slowLimiter, "slow"
+		}
+
+		transport := middleware.RateLimit(middleware.RateLimitConfig{
+			Selector: selector,
+		})(http.DefaultTransport)
+
+		// Fast endpoint should not be rate limited
+		req, _ := http.NewRequest(http.MethodGet, server.URL+"/fast", nil)
+		start := time.Now()
+		resp, err := transport.RoundTrip(req)
+		duration := time.Since(start)
+
+		if err != nil {
+			t.Fatalf("RoundTrip() error = %v", err)
+		}
+		resp.Body.Close()
+
+		if duration > 50*time.Millisecond {
+			t.Errorf("fast endpoint took %v, expected < 50ms", duration)
+		}
+
+		// Slow endpoint - use up the token
+		req, _ = http.NewRequest(http.MethodGet, server.URL+"/slow", nil)
+		resp, _ = transport.RoundTrip(req)
+		resp.Body.Close()
+
+		// Second slow request should be rate limited
+		req, _ = http.NewRequest(http.MethodGet, server.URL+"/slow", nil)
+		start = time.Now()
+		resp, err = transport.RoundTrip(req)
+		duration = time.Since(start)
+
+		if err != nil {
+			t.Fatalf("RoundTrip() error = %v", err)
+		}
+		resp.Body.Close()
+
+		if duration < 500*time.Millisecond {
+			t.Errorf("slow endpoint took %v, expected >= 500ms (rate limited)", duration)
+		}
+	})
+
+	t.Run("nil limiter - no rate limiting", func(t *testing.T) {
+		t.Parallel()
+
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer server.Close()
+
+		transport := middleware.RateLimit(middleware.RateLimitConfig{
+			Limiter: nil, // No limiter
+		})(http.DefaultTransport)
+
+		// Should complete quickly without rate limiting
+		req, _ := http.NewRequest(http.MethodGet, server.URL, nil)
+		start := time.Now()
+		resp, err := transport.RoundTrip(req)
+		duration := time.Since(start)
+
+		if err != nil {
+			t.Fatalf("RoundTrip() error = %v", err)
+		}
+		resp.Body.Close()
+
+		if duration > 50*time.Millisecond {
+			t.Errorf("request took %v, expected < 50ms (no rate limiting)", duration)
+		}
+	})
+
+	t.Run("context cancellation", func(t *testing.T) {
+		t.Parallel()
+
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		}))
+		defer server.Close()
+
+		// Very restrictive limiter
+		limiter := rate.NewLimiter(0.1, 1)
+		limiter.Allow() // Use up the token
+
+		transport := middleware.RateLimit(middleware.RateLimitConfig{
+			Limiter: limiter,
+		})(http.DefaultTransport)
+
+		ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
+		defer cancel()
+
+		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, nil)
+		_, err := transport.RoundTrip(req)
+
+		if err == nil {
+			t.Error("expected error on context cancellation")
+		}
+
+		if !strings.Contains(err.Error(), "context") {
+			t.Errorf("error = %v, want context-related error", err)
+		}
+	})
+}

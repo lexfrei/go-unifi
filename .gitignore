@@ -21,10 +21,6 @@ cmd/test-reality/test-reality
 /dist/
 /build/
 
-# Go workspace
-go.work
-go.work.sum
-
 # IDE
 .vscode/
 .idea/

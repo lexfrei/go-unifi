@@ -99,7 +99,6 @@ func main() {
 |--------|---------|-------------|
 | `ListDNSRecords` | v2 | List all static DNS records |
 | `CreateDNSRecord` | v2 | Create a new DNS record |
-| `GetDNSRecordByID` | v2 | Get DNS record details by ID |
 | `UpdateDNSRecord` | v2 | Update existing DNS record |
 | `DeleteDNSRecord` | v2 | Delete DNS record |
 

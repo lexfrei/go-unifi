@@ -466,8 +466,9 @@ func TestListSites(t *testing.T) {
 				if r.URL.Path != "/proxy/network/integration/v1/sites" {
 					t.Errorf("Request path = %s, want /proxy/network/integration/v1/sites", r.URL.Path)
 				}
-				if r.Header.Get("X-Api-Key") != testAPIKey {
-					t.Error("X-Api-Key header not set")
+				//nolint:canonicalheader // X-API-KEY is the correct header name per UniFi API spec
+				if r.Header.Get("X-API-KEY") != testAPIKey {
+					t.Error("X-API-KEY header not set")
 				}
 
 				w.Header().Set("Content-Type", "application/json")
@@ -572,8 +573,9 @@ func TestListDNSRecords(t *testing.T) {
 				if r.URL.Path != expectedPath {
 					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
 				}
-				if r.Header.Get("X-Api-Key") != testAPIKey {
-					t.Error("X-Api-Key header not set")
+				//nolint:canonicalheader // X-API-KEY is the correct header name per UniFi API spec
+				if r.Header.Get("X-API-KEY") != testAPIKey {
+					t.Error("X-API-KEY header not set")
 				}
 
 				w.Header().Set("Content-Type", "application/json")
@@ -681,81 +683,6 @@ func TestCreateDNSRecord(t *testing.T) {
 			}
 
 			resp, err := client.CreateDNSRecord(context.Background(), testSiteInternal, input)
-
-			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
-				return
-			}
-
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-				return
-			}
-
-			if tt.checkResponse != nil {
-				tt.checkResponse(t, resp)
-			}
-		})
-	}
-}
-
-func TestGetDNSRecordByID(t *testing.T) {
-	t.Parallel()
-
-	tests := []struct {
-		name           string
-		mockResponse   string
-		mockStatusCode int
-		wantErr        bool
-		checkResponse  func(t *testing.T, resp *DNSRecord)
-	}{
-		{
-			name:           "success",
-			mockResponse:   singleDNSRecord,
-			mockStatusCode: http.StatusOK,
-			wantErr:        false,
-			checkResponse: func(t *testing.T, resp *DNSRecord) {
-				t.Helper()
-				if resp == nil {
-					t.Fatal("response is nil")
-				}
-				if resp.UnderscoreId != testRecordID {
-					t.Errorf("_id = %s, want %s", resp.UnderscoreId, testRecordID)
-				}
-			},
-		},
-		{
-			name:           "not found",
-			mockResponse:   notFoundError,
-			mockStatusCode: http.StatusNotFound,
-			wantErr:        true,
-		},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
-
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/static-dns/" + testRecordID
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(tt.mockStatusCode)
-				w.Write([]byte(tt.mockResponse))
-			}))
-			defer server.Close()
-
-			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
-
-			resp, err := client.GetDNSRecordByID(context.Background(), testSiteInternal, testRecordID)
 
 			if tt.wantErr {
 				if err == nil {

@@ -10,10 +10,12 @@ import (
 
 	"github.com/cockroachdb/errors"
 	openapi_types "github.com/oapi-codegen/runtime/types"
-	"golang.org/x/time/rate"
 
+	"github.com/lexfrei/go-unifi/internal/httpclient"
+	"github.com/lexfrei/go-unifi/internal/middleware"
+	"github.com/lexfrei/go-unifi/internal/observability"
 	"github.com/lexfrei/go-unifi/internal/ratelimit"
-	"github.com/lexfrei/go-unifi/internal/retry"
+	"github.com/lexfrei/go-unifi/internal/response"
 )
 
 const (
@@ -28,13 +30,9 @@ const (
 	DefaultTimeout = 30 * time.Second
 )
 
-// APIClient wraps the generated API client with rate limiting and retry logic.
+// APIClient wraps the generated API client with composable middleware.
 type APIClient struct {
-	client      *ClientWithResponses
-	httpClient  *http.Client
-	rateLimiter *rate.Limiter
-	maxRetries  int
-	retryWait   time.Duration
+	client *ClientWithResponses
 }
 
 // ClientConfig holds configuration for the Network API client.
@@ -62,6 +60,12 @@ type ClientConfig struct {
 
 	// Timeout sets the HTTP client timeout
 	Timeout time.Duration
+
+	// Logger for observability (optional, uses noop logger if nil)
+	Logger observability.Logger
+
+	// Metrics recorder for observability (optional, uses noop recorder if nil)
+	Metrics observability.MetricsRecorder
 }
 
 // New creates a new UniFi Network API client with default settings.
@@ -100,6 +104,8 @@ func New(controllerURL, apiKey string) (*APIClient, error) {
 //	    APIKey:             "your-api-key",
 //	    InsecureSkipVerify: true,
 //	    RateLimitPerMinute: 500,
+//	    Logger:             myLogger,
+//	    Metrics:            myMetrics,
 //	})
 func NewWithConfig(cfg *ClientConfig) (*APIClient, error) {
 	if cfg == nil {
@@ -126,32 +132,36 @@ func NewWithConfig(cfg *ClientConfig) (*APIClient, error) {
 		cfg.Timeout = DefaultTimeout
 	}
 
-	// Create HTTP client if not provided
-	httpClient := cfg.HTTPClient
-	if httpClient == nil {
-		transport := &http.Transport{
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: cfg.InsecureSkipVerify, //nolint:gosec // User-configurable
-			},
-		}
-		httpClient = &http.Client{
-			Timeout:   cfg.Timeout,
-			Transport: transport,
-		}
-	}
-
 	// Create rate limiter
 	rateLimiter := ratelimit.NewRateLimiter(cfg.RateLimitPerMinute)
 
-	// Wrap HTTP client with rate limiting and retry logic
-	rateLimitedClient := &rateLimitedHTTPClient{
-		client:      httpClient,
-		rateLimiter: rateLimiter,
-		maxRetries:  cfg.MaxRetries,
-		retryWait:   cfg.RetryWaitTime,
-	}
+	// Build middleware chain (applied in reverse order: last = innermost, applied first)
+	// Order from outside to inside: Observability -> TLS -> RateLimit -> Retry
+	httpClient := httpclient.New(
+		httpclient.WithTimeout(cfg.Timeout),
+		httpclient.WithMiddleware(
+			middleware.Observability(cfg.Logger, cfg.Metrics),
+			middleware.TLSConfig(&tls.Config{
+				InsecureSkipVerify: cfg.InsecureSkipVerify, //nolint:gosec // User-configurable
+			}),
+			middleware.RateLimit(middleware.RateLimitConfig{
+				Limiter: rateLimiter,
+				Logger:  cfg.Logger,
+				Metrics: cfg.Metrics,
+			}),
+			middleware.Retry(middleware.RetryConfig{
+				MaxRetries:  cfg.MaxRetries,
+				InitialWait: cfg.RetryWaitTime,
+				Logger:      cfg.Logger,
+				Metrics:     cfg.Metrics,
+			}),
+		),
+	)
 
-	// Create request editor to add API key header
+	// Build base URL (paths like /integration/v1/sites are added by generated client)
+	baseURL := cfg.ControllerURL + "/proxy/network"
+
+	// Create request editor to add API key and Accept headers
 	requestEditor := func(_ context.Context, req *http.Request) error {
 		//nolint:canonicalheader // X-API-KEY is the correct header name per UniFi API spec
 		req.Header.Set("X-API-KEY", cfg.APIKey)
@@ -159,13 +169,10 @@ func NewWithConfig(cfg *ClientConfig) (*APIClient, error) {
 		return nil
 	}
 
-	// Build base URL (paths like /integration/v1/sites are added by generated client)
-	baseURL := cfg.ControllerURL + "/proxy/network"
-
 	// Create generated client
 	generatedClient, err := NewClientWithResponses(
 		baseURL,
-		WithHTTPClient(rateLimitedClient),
+		WithHTTPClient(httpClient.HTTPClient()),
 		WithRequestEditorFn(requestEditor),
 	)
 	if err != nil {
@@ -173,470 +180,172 @@ func NewWithConfig(cfg *ClientConfig) (*APIClient, error) {
 	}
 
 	return &APIClient{
-		client:      generatedClient,
-		httpClient:  httpClient,
-		rateLimiter: rateLimiter,
-		maxRetries:  cfg.MaxRetries,
-		retryWait:   cfg.RetryWaitTime,
+		client: generatedClient,
 	}, nil
-}
-
-// rateLimitedHTTPClient wraps http.Client with rate limiting and retry logic.
-type rateLimitedHTTPClient struct {
-	client      *http.Client
-	rateLimiter *rate.Limiter
-	maxRetries  int
-	retryWait   time.Duration
-}
-
-// Do executes HTTP request with rate limiting and retry logic.
-func (c *rateLimitedHTTPClient) Do(req *http.Request) (*http.Response, error) {
-	ctx := req.Context()
-
-	var resp *http.Response
-	var err error
-
-	// Apply rate limiting
-	err = c.rateLimiter.Wait(ctx)
-	if err != nil {
-		return nil, errors.Wrap(err, "rate limiter wait failed")
-	}
-
-	// Retry loop
-	for attempt := 0; attempt <= c.maxRetries; attempt++ {
-		if attempt > 0 {
-			// Wait before retry
-			select {
-			case <-time.After(c.retryWait * time.Duration(attempt)):
-			case <-ctx.Done():
-				return nil, errors.Wrap(ctx.Err(), "context cancelled during retry wait")
-			}
-		}
-
-		resp, err = c.client.Do(req)
-		if err != nil {
-			// Network error - retry
-			if attempt < c.maxRetries {
-				continue
-			}
-			return nil, errors.Wrapf(err, "request failed after %d attempts", attempt+1)
-		}
-
-		// Check status code
-		switch {
-		case resp.StatusCode >= 200 && resp.StatusCode < 300:
-			// Success
-			return resp, nil
-
-		case resp.StatusCode == http.StatusTooManyRequests:
-			// Rate limited - check Retry-After header
-			resp.Body.Close()
-			if retryAfter := retry.ParseRetryAfter(resp.Header.Get("Retry-After")); retryAfter > 0 {
-				time.Sleep(retryAfter)
-				continue
-			}
-			// Retry with exponential backoff
-			if attempt < c.maxRetries {
-				continue
-			}
-			//nolint:wrapcheck // Creating new error for rate limit exhaustion, no source error to wrap
-			return nil, errors.Newf("rate limited after %d attempts", attempt+1)
-
-		case resp.StatusCode >= 500:
-			// Server error - retry
-			resp.Body.Close()
-			if attempt < c.maxRetries {
-				continue
-			}
-			//nolint:wrapcheck // Creating new error for server error exhaustion, no source error to wrap
-			return nil, errors.Newf("server error %d after %d attempts", resp.StatusCode, attempt+1)
-
-		default:
-			// Client error or other - don't retry
-			return resp, nil
-		}
-	}
-
-	return resp, errors.New("unexpected retry loop exit")
 }
 
 // ListSites retrieves a list of all sites configured on the controller.
 func (c *APIClient) ListSites(ctx context.Context, params *ListSitesParams) (*SitesResponse, error) {
 	resp, err := c.client.ListSitesWithResponse(ctx, params)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to list sites")
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, resp.JSON200, err, "failed to list sites")
 }
 
 // ListSiteDevices retrieves a list of all devices for a specific site.
 func (c *APIClient) ListSiteDevices(ctx context.Context, siteID SiteId, params *ListSiteDevicesParams) (*DevicesResponse, error) {
 	resp, err := c.client.ListSiteDevicesWithResponse(ctx, siteID, params)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to list devices for site %s", siteID)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to list devices for site %s", siteID).Error())
 }
 
 // GetDeviceByID retrieves detailed information about a specific device.
 func (c *APIClient) GetDeviceByID(ctx context.Context, siteID SiteId, deviceID DeviceId) (*Device, error) {
 	resp, err := c.client.GetDeviceByIdWithResponse(ctx, siteID, deviceID)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to get device %s in site %s", deviceID, siteID)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to get device %s in site %s", deviceID, siteID).Error())
 }
 
 // ListSiteClients retrieves a list of all clients for a specific site.
 func (c *APIClient) ListSiteClients(ctx context.Context, siteID SiteId, params *ListSiteClientsParams) (*ClientsResponse, error) {
 	resp, err := c.client.ListSiteClientsWithResponse(ctx, siteID, params)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to list clients for site %s", siteID)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to list clients for site %s", siteID).Error())
 }
 
 // GetClientByID retrieves detailed information about a specific client.
 func (c *APIClient) GetClientByID(ctx context.Context, siteID SiteId, clientID ClientId) (*NetworkClient, error) {
 	resp, err := c.client.GetClientByIdWithResponse(ctx, siteID, clientID)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to get client %s in site %s", clientID, siteID)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to get client %s in site %s", clientID, siteID).Error())
 }
 
 // ListHotspotVouchers retrieves a list of all hotspot vouchers for a specific site.
 func (c *APIClient) ListHotspotVouchers(ctx context.Context, siteID SiteId, params *ListHotspotVouchersParams) (*HotspotVouchersResponse, error) {
 	resp, err := c.client.ListHotspotVouchersWithResponse(ctx, siteID, params)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to list hotspot vouchers for site %s", siteID)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to list hotspot vouchers for site %s", siteID).Error())
 }
 
 // CreateHotspotVouchers creates one or more hotspot vouchers for temporary guest access.
 func (c *APIClient) CreateHotspotVouchers(ctx context.Context, siteID SiteId, request *CreateVouchersRequest) (*HotspotVouchersResponse, error) {
 	resp, err := c.client.CreateHotspotVouchersWithResponse(ctx, siteID, *request)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to create hotspot vouchers for site %s", siteID)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to create hotspot vouchers for site %s", siteID).Error())
 }
 
 // GetHotspotVoucher retrieves detailed information about a specific hotspot voucher.
 func (c *APIClient) GetHotspotVoucher(ctx context.Context, siteID SiteId, voucherID openapi_types.UUID) (*HotspotVoucher, error) {
 	resp, err := c.client.GetHotspotVoucherWithResponse(ctx, siteID, voucherID)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to get hotspot voucher %s in site %s", voucherID, siteID)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to get hotspot voucher %s in site %s", voucherID, siteID).Error())
 }
 
 // DeleteHotspotVoucher permanently deletes a hotspot voucher.
 func (c *APIClient) DeleteHotspotVoucher(ctx context.Context, siteID SiteId, voucherID openapi_types.UUID) error {
 	resp, err := c.client.DeleteHotspotVoucherWithResponse(ctx, siteID, voucherID)
-	if err != nil {
-		return errors.Wrapf(err, "failed to delete hotspot voucher %s in site %s", voucherID, siteID)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	return nil
+	//nolint:wrapcheck // response.HandleNoContent wraps errors internally
+	return response.HandleNoContent(resp, err, errors.Newf("failed to delete hotspot voucher %s in site %s", voucherID, siteID).Error())
 }
 
 // ListDNSRecords lists all static DNS records for a site.
 func (c *APIClient) ListDNSRecords(ctx context.Context, site Site) ([]DNSRecord, error) {
 	resp, err := c.client.ListDNSRecordsWithResponse(ctx, site)
+	data, err := response.Handle(resp, resp.JSON200, err, errors.Newf("failed to list DNS records for site %s", site).Error())
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to list DNS records for site %s", site)
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
 	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return *resp.JSON200, nil
+	return *data, nil
 }
 
 // CreateDNSRecord creates a new static DNS record.
 func (c *APIClient) CreateDNSRecord(ctx context.Context, site Site, record *DNSRecordInput) (*DNSRecord, error) {
 	resp, err := c.client.CreateDNSRecordWithResponse(ctx, site, *record)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to create DNS record %s in site %s", record.Key, site)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
-}
-
-// updateResource is a generic helper for update operations.
-func updateResource[T any](resp interface{ StatusCode() int }, data *T, err error, errorMsg string) (*T, error) {
-	if err != nil {
-		return nil, errors.Wrap(err, errorMsg)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if data == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return data, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to create DNS record %s in site %s", record.Key, site).Error())
 }
 
 // UpdateDNSRecord updates an existing DNS record.
 func (c *APIClient) UpdateDNSRecord(ctx context.Context, site Site, recordID RecordId, record *DNSRecordInput) (*DNSRecord, error) {
 	resp, err := c.client.UpdateDNSRecordWithResponse(ctx, site, recordID, *record)
-	return updateResource(resp, resp.JSON200, err, errors.Newf("failed to update DNS record %s in site %s", recordID, site).Error())
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to update DNS record %s in site %s", recordID, site).Error())
 }
 
 // DeleteDNSRecord deletes a DNS record.
 func (c *APIClient) DeleteDNSRecord(ctx context.Context, site Site, recordID RecordId) error {
 	resp, err := c.client.DeleteDNSRecordWithResponse(ctx, site, recordID)
-	if err != nil {
-		return errors.Wrapf(err, "failed to delete DNS record %s in site %s", recordID, site)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	return nil
+	//nolint:wrapcheck // response.HandleNoContent wraps errors internally
+	return response.HandleNoContent(resp, err, errors.Newf("failed to delete DNS record %s in site %s", recordID, site).Error())
 }
 
 // ListFirewallPolicies lists all firewall policies for a site.
 func (c *APIClient) ListFirewallPolicies(ctx context.Context, site Site) ([]FirewallPolicy, error) {
 	resp, err := c.client.ListFirewallPoliciesWithResponse(ctx, site)
+	data, err := response.Handle(resp, resp.JSON200, err, errors.Newf("failed to list firewall policies for site %s", site).Error())
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to list firewall policies for site %s", site)
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
 	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return *resp.JSON200, nil
+	return *data, nil
 }
 
 // UpdateFirewallPolicy updates an existing firewall policy.
 func (c *APIClient) UpdateFirewallPolicy(ctx context.Context, site Site, policyID PolicyId, policy *FirewallPolicyInput) (*FirewallPolicy, error) {
 	resp, err := c.client.UpdateFirewallPolicyWithResponse(ctx, site, policyID, *policy)
-	return updateResource(resp, resp.JSON200, err, errors.Newf("failed to update firewall policy %s in site %s", policyID, site).Error())
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to update firewall policy %s in site %s", policyID, site).Error())
 }
 
 // CreateFirewallPolicy creates a new firewall policy.
 func (c *APIClient) CreateFirewallPolicy(ctx context.Context, site Site, policy *FirewallPolicyInput) (*FirewallPolicy, error) {
 	resp, err := c.client.CreateFirewallPolicyWithResponse(ctx, site, *policy)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to create firewall policy in site %s", site)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to create firewall policy in site %s", site).Error())
 }
 
 // DeleteFirewallPolicy permanently deletes a firewall policy.
 func (c *APIClient) DeleteFirewallPolicy(ctx context.Context, site Site, policyID PolicyId) error {
 	resp, err := c.client.DeleteFirewallPolicyWithResponse(ctx, site, policyID)
-	if err != nil {
-		return errors.Wrapf(err, "failed to delete firewall policy %s in site %s", policyID, site)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	return nil
+	//nolint:wrapcheck // response.HandleNoContent wraps errors internally
+	return response.HandleNoContent(resp, err, errors.Newf("failed to delete firewall policy %s in site %s", policyID, site).Error())
 }
 
 // ListTrafficRules lists all traffic rules for a site.
 func (c *APIClient) ListTrafficRules(ctx context.Context, site Site) ([]TrafficRule, error) {
 	resp, err := c.client.ListTrafficRulesWithResponse(ctx, site)
+	data, err := response.Handle(resp, resp.JSON200, err, errors.Newf("failed to list traffic rules for site %s", site).Error())
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to list traffic rules for site %s", site)
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
 	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return *resp.JSON200, nil
+	return *data, nil
 }
 
 // UpdateTrafficRule updates an existing traffic rule.
 func (c *APIClient) UpdateTrafficRule(ctx context.Context, site Site, ruleID RuleId, rule *TrafficRuleInput) (*TrafficRule, error) {
 	resp, err := c.client.UpdateTrafficRuleWithResponse(ctx, site, ruleID, *rule)
-	return updateResource(resp, resp.JSON200, err, errors.Newf("failed to update traffic rule %s in site %s", ruleID, site).Error())
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to update traffic rule %s in site %s", ruleID, site).Error())
 }
 
 // CreateTrafficRule creates a new traffic rule.
 func (c *APIClient) CreateTrafficRule(ctx context.Context, site Site, rule *TrafficRuleInput) (*TrafficRule, error) {
 	resp, err := c.client.CreateTrafficRuleWithResponse(ctx, site, *rule)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to create traffic rule in site %s", site)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to create traffic rule in site %s", site).Error())
 }
 
 // DeleteTrafficRule permanently deletes a traffic rule.
 func (c *APIClient) DeleteTrafficRule(ctx context.Context, site Site, ruleID RuleId) error {
 	resp, err := c.client.DeleteTrafficRuleWithResponse(ctx, site, ruleID)
-	if err != nil {
-		return errors.Wrapf(err, "failed to delete traffic rule %s in site %s", ruleID, site)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	return nil
+	//nolint:wrapcheck // response.HandleNoContent wraps errors internally
+	return response.HandleNoContent(resp, err, errors.Newf("failed to delete traffic rule %s in site %s", ruleID, site).Error())
 }
 
 // GetAggregatedDashboard retrieves aggregated dashboard statistics.
 func (c *APIClient) GetAggregatedDashboard(ctx context.Context, site Site, params *GetAggregatedDashboardParams) (*AggregatedDashboard, error) {
 	resp, err := c.client.GetAggregatedDashboardWithResponse(ctx, site, params)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to get aggregated dashboard for site %s", site)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to get aggregated dashboard for site %s", site).Error())
 }

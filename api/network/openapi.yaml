@@ -381,27 +381,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
 
   /v2/api/site/{site}/static-dns/{recordId}:
-    get:
-      summary: Get DNS record by ID
-      description: Retrieves details of a specific DNS record
-      operationId: getDNSRecordById
-      tags:
-        - DNS
-      parameters:
-        - $ref: '#/components/parameters/Site'
-        - $ref: '#/components/parameters/RecordId'
-      responses:
-        '200':
-          description: Successful response with DNS record details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DNSRecord'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-
     put:
       summary: Update DNS record
       description: Updates an existing DNS record

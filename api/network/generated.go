@@ -1073,9 +1073,6 @@ type ClientInterface interface {
 	// DeleteDNSRecord request
 	DeleteDNSRecord(ctx context.Context, site Site, recordId RecordId, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	// GetDNSRecordById request
-	GetDNSRecordById(ctx context.Context, site Site, recordId RecordId, reqEditors ...RequestEditorFn) (*http.Response, error)
-
 	// UpdateDNSRecordWithBody request with any body
 	UpdateDNSRecordWithBody(ctx context.Context, site Site, recordId RecordId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -1340,18 +1337,6 @@ func (c *Client) CreateDNSRecord(ctx context.Context, site Site, body CreateDNSR
 
 func (c *Client) DeleteDNSRecord(ctx context.Context, site Site, recordId RecordId, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewDeleteDNSRecordRequest(c.Server, site, recordId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetDNSRecordById(ctx context.Context, site Site, recordId RecordId, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetDNSRecordByIdRequest(c.Server, site, recordId)
 	if err != nil {
 		return nil, err
 	}
@@ -2304,47 +2289,6 @@ func NewDeleteDNSRecordRequest(server string, site Site, recordId RecordId) (*ht
 	return req, nil
 }
 
-// NewGetDNSRecordByIdRequest generates requests for GetDNSRecordById
-func NewGetDNSRecordByIdRequest(server string, site Site, recordId RecordId) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
-	if err != nil {
-		return nil, err
-	}
-
-	var pathParam1 string
-
-	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "recordId", runtime.ParamLocationPath, recordId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/v2/api/site/%s/static-dns/%s", pathParam0, pathParam1)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
 // NewUpdateDNSRecordRequest calls the generic UpdateDNSRecord builder with application/json body
 func NewUpdateDNSRecordRequest(server string, site Site, recordId RecordId, body UpdateDNSRecordJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -2676,9 +2620,6 @@ type ClientWithResponsesInterface interface {
 
 	// DeleteDNSRecordWithResponse request
 	DeleteDNSRecordWithResponse(ctx context.Context, site Site, recordId RecordId, reqEditors ...RequestEditorFn) (*DeleteDNSRecordResponse, error)
-
-	// GetDNSRecordByIdWithResponse request
-	GetDNSRecordByIdWithResponse(ctx context.Context, site Site, recordId RecordId, reqEditors ...RequestEditorFn) (*GetDNSRecordByIdResponse, error)
 
 	// UpdateDNSRecordWithBodyWithResponse request with any body
 	UpdateDNSRecordWithBodyWithResponse(ctx context.Context, site Site, recordId RecordId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDNSRecordResponse, error)
@@ -3111,30 +3052,6 @@ func (r DeleteDNSRecordResponse) StatusCode() int {
 	return 0
 }
 
-type GetDNSRecordByIdResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *DNSRecord
-	JSON401      *Unauthorized
-	JSON404      *NotFound
-}
-
-// Status returns HTTPResponse.Status
-func (r GetDNSRecordByIdResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetDNSRecordByIdResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
 type UpdateDNSRecordResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -3440,15 +3357,6 @@ func (c *ClientWithResponses) DeleteDNSRecordWithResponse(ctx context.Context, s
 		return nil, err
 	}
 	return ParseDeleteDNSRecordResponse(rsp)
-}
-
-// GetDNSRecordByIdWithResponse request returning *GetDNSRecordByIdResponse
-func (c *ClientWithResponses) GetDNSRecordByIdWithResponse(ctx context.Context, site Site, recordId RecordId, reqEditors ...RequestEditorFn) (*GetDNSRecordByIdResponse, error) {
-	rsp, err := c.GetDNSRecordById(ctx, site, recordId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetDNSRecordByIdResponse(rsp)
 }
 
 // UpdateDNSRecordWithBodyWithResponse request with arbitrary body returning *UpdateDNSRecordResponse
@@ -4207,46 +4115,6 @@ func ParseDeleteDNSRecordResponse(rsp *http.Response) (*DeleteDNSRecordResponse,
 	return response, nil
 }
 
-// ParseGetDNSRecordByIdResponse parses an HTTP response from a GetDNSRecordByIdWithResponse call
-func ParseGetDNSRecordByIdResponse(rsp *http.Response) (*GetDNSRecordByIdResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetDNSRecordByIdResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest DNSRecord
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
-		var dest Unauthorized
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON401 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest NotFound
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	}
-
-	return response, nil
-}
-
 // ParseUpdateDNSRecordResponse parses an HTTP response from a UpdateDNSRecordWithResponse call
 func ParseUpdateDNSRecordResponse(rsp *http.Response) (*UpdateDNSRecordResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -4583,15 +4451,14 @@ var swaggerSpec = []string{
 	"dajxv/J8ZTbz9ZksfpAcS5wByjYQ2+twnSbWZ50eabpzTdWclzKia+rmY30pNhlFX5UtvCTC+2DggsFg",
 	"MHCBej/EBZ9+d8Fo7ILx5WcXTH6fVOntyeMyv7TGnr599RLKemYXXk9NzwKRCWqOxrV18xJNraOj9/mX",
 	"UdwkCBk/huMC/baKVtDV1XyVQL4mWpPuyi+ljhfeS/rJkjtDqjWV8MxzbK8qr5/ICzbNPPfCXJ62N0rU",
-	"1oPuuUERP0mU7ywDZC87VOjMz6XazQqKoT6rutyrqS4XieJ1NNM1+1gz4qHcmpkYR27EcsZNvDdPTrp5",
-	"7v78dEFQOKMyxPzacYcMKMWQQ3JM1TVJ1my7bv7TufKve+7ExsJ/+LnzIkbA9geVufPMoqC2Xz57Tbqu",
-	"3j8p9lE56EmGjamEgclc62vmnRc1YiJrMxvIdQFRlTFXZQpk7rn/0sZAtqjJS5gDue15PYMgD0ZKjXF1",
-	"87pmQe5Sfh1/fVqJWd1td4EuZ6AJyzzaGCcj1/TWZ7fol7INSrUcfrKUztFuTfsgV3jnP8tDX6gZVCbp",
-	"GkK29SD/eZJbvjC9zRp4PqXW0DwU/M9xnpdJ4HXsgY37uYVKKCqvIFeoiD99q/7a4idWEyvEz19MUdws",
-	"yTIFYBRFZku//PFVUhRH7C6m10IZK2vJktLN+Yf022O+Jod6qphhOA2SWqnxILmHISKCZ7ipKqSU3of4",
-	"mHmtO/9k3YpGzFKXRtdoywzpgswDzm/kfn5NUFWSc9W1FNIX23ia1jQ2d7yrXrE090QKI6bVF9KRTpKb",
-	"XSVFKnvddF2RhnSw4+Qab3GwTUUc0jHiBL7yGOuKPGQWNBpb+lYXgCgX0EnHSmIf5QFzNSOyRocNppgx",
-	"ysOc2BIJ83sFVGHEtNJQkjL1+PXxfwMAAP//OToJSIejAAA=",
+	"1oPuuUERP0mU7ywDZC87VOjMz6XazQqKoT6rutyrqS4XieJ1NNM1+7iFPpobxaY4/vQt+esKnVhT/A8X",
+	"Oi+iAW4vpcyFVxYFtZ2y2TuydZW+SbGPSkBO0itMGQRM5vqwNo98qBGTYGJmA7muHqnSpar0wMwl519a",
+	"E8xWtHgJXTC3Pa+nDebBSKkxLm1dVyfM3ciu46xNy/Cqi80u0HfZNWGZF/viTNSartrsFv1SimHpIv9P",
+	"ltI52q2pHOaqrvxnuWcLBWPKJF1DyLYe5D9P8skWprepgs+n1Bqah4L/OZ7TMgm8jjK4cT+3UAlF5f3T",
+	"ChXxp2/VX1v8xGpihfj5iymKmyVZpvqHoshs3Y8/vkqK4ojdxfRaqGFkrVdRujb9kH57zBdkUO/UMgyn",
+	"QVIoMx4k9ypARPAMN1V5jNLjAB8zTzXn3ytb0YhZipLoAl2ZIV2Qeb33jdzPrwmqSnKu+iJ9+lwXT3Na",
+	"xuaCb9UThuaSQGHE9Op9OtJJcq2npEhl7xquu6GfDnac3OEsDrbpBn86Rpy9VR5j3Q3/zIJGY0vf6tv/",
+	"5eop6ViJ47s8YK5gQNbosMEUM0Z5mBNbFll+r4CqipeWmUnyZR6/Pv5vAAAA//+IqBhZhKEAAA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

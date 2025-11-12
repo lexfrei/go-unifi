@@ -7,3 +7,5 @@ MD029:
 
 # MD013: Line length - disabled for long code examples and URLs
 MD013: false
+
+MD041: false

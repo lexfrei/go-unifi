@@ -1,18 +1,9 @@
 # Markdownlint configuration for go-unifi
 # Relaxed rules for technical documentation
 
-# MD031: Blanks around fences - disabled for compact code examples
-MD031: false
-
-# MD032: Blanks around lists - disabled for compact documentation
-MD032: false
-
 # MD029: Ordered list prefix - allow any style (1/1/1 or 1/2/3)
 MD029:
   style: "ordered"
-
-# MD040: Fenced code language - warn but don't fail for shell examples
-MD040: false
 
 # MD013: Line length - disabled for long code examples and URLs
 MD013: false

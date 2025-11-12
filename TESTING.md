@@ -258,22 +258,24 @@ func TestListHosts(t *testing.T) {
 
 ### Real Controller Testing
 
-We maintain test environments for validation:
+When validating against real UniFi controllers, maintain separate environments:
 
-- **Production controller** (172.16.0.1): **READ-ONLY**, no destructive operations
-- **Test controller** (192.168.2.6:11443): Destructive operations allowed
+- **Production controllers**: **READ-ONLY** access, no destructive operations
+- **Test/Development controllers**: Destructive operations allowed for validation
 
 ### Testing Destructive Operations
 
-**NEVER run DELETE/UPDATE tests on production**:
+**NEVER run DELETE/UPDATE tests on production controllers**:
 
 ```bash
 # ❌ WRONG - Don't do this on production
-UNIFI_CONTROLLER=https://172.16.0.1 go run test_delete.go
+UNIFI_CONTROLLER=https://unifi.local go run test_delete.go
 
-# ✅ CORRECT - Use test environment
-UNIFI_CONTROLLER=https://192.168.2.6:11443 go run test_delete.go
+# ✅ CORRECT - Use dedicated test environment
+UNIFI_CONTROLLER=https://test-unifi.local go run test_delete.go
 ```
+
+Always use a separate test controller (VM or spare hardware) for testing operations that modify configuration.
 
 ## Continuous Integration
 

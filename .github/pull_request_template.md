@@ -37,6 +37,18 @@ All items must be checked:
 - [ ] I follow Conventional Commits style in PR title and commit messages
 - [ ] All commits are signed (`git commit --signoff`)
 
+## AI Assistance
+
+Was AI used in creating this PR?
+
+- [ ] No, this PR was created without AI assistance
+- [ ] Yes, AI was used
+
+If yes, please describe:
+
+- **Model**: <!-- e.g., Claude 3.5 Sonnet, GPT-4, GitHub Copilot -->
+- **How it was used**: <!-- e.g., code generation, test writing, documentation, debugging, refactoring -->
+
 ## Additional Context
 
 <!-- Optional: Add any other information, links, or notes -->

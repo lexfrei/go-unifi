@@ -46,7 +46,7 @@ Was AI used in creating this PR?
 
 If yes, please describe:
 
-- **Model**: <!-- e.g., Claude 3.5 Sonnet, GPT-4, GitHub Copilot -->
+- **Model**: <!-- e.g., Claude Sonnet 4.5, GPT-4, GitHub Copilot -->
 - **How it was used**: <!-- e.g., code generation, test writing, documentation, debugging, refactoring -->
 
 ## Additional Context
@@ -65,4 +65,4 @@ Fill based on sections above. Format: <token>: <value>
 API-Package: <!-- sitemanager | network | internal | other -->
 Breaking-Change: <!-- yes | no -->
 Tested-On: <!-- UDR7, UniFi OS 4.3.9, Network 9.4.19 -->
-AI-Assisted: <!-- Claude 3.5 Sonnet, code generation | no -->
+AI-Assisted: <!-- Claude Sonnet 4.5, code generation | no -->

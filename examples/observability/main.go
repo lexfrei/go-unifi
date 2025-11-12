@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 	"time"
 
@@ -11,44 +12,49 @@ import (
 	"github.com/lexfrei/go-unifi/internal/observability"
 )
 
-// customLogger implements observability.Logger using standard library log package.
+// customLogger implements observability.Logger using Go's structured logger (slog).
 type customLogger struct {
-	*log.Logger
+	logger *slog.Logger
 }
 
 func newCustomLogger() *customLogger {
+	// Create slog logger with JSON handler for structured output
+	handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+		Level: slog.LevelDebug,
+	})
 	return &customLogger{
-		Logger: log.New(os.Stdout, "[UniFi] ", log.LstdFlags|log.Lmsgprefix),
+		logger: slog.New(handler),
 	}
 }
 
 func (l *customLogger) Debug(msg string, fields ...observability.Field) {
-	l.logWithFields("DEBUG", msg, fields)
+	l.logger.Debug(msg, l.convertFields(fields)...)
 }
 
 func (l *customLogger) Info(msg string, fields ...observability.Field) {
-	l.logWithFields("INFO", msg, fields)
+	l.logger.Info(msg, l.convertFields(fields)...)
 }
 
 func (l *customLogger) Warn(msg string, fields ...observability.Field) {
-	l.logWithFields("WARN", msg, fields)
+	l.logger.Warn(msg, l.convertFields(fields)...)
 }
 
 func (l *customLogger) Error(msg string, fields ...observability.Field) {
-	l.logWithFields("ERROR", msg, fields)
+	l.logger.Error(msg, l.convertFields(fields)...)
 }
 
 func (l *customLogger) With(fields ...observability.Field) observability.Logger {
-	// For simplicity, return same logger. In real implementation, could store fields.
-	return l
+	return &customLogger{
+		logger: l.logger.With(l.convertFields(fields)...),
+	}
 }
 
-func (l *customLogger) logWithFields(level, msg string, fields []observability.Field) {
-	fieldStr := ""
+func (l *customLogger) convertFields(fields []observability.Field) []any {
+	args := make([]any, 0, len(fields)*2)
 	for _, f := range fields {
-		fieldStr += fmt.Sprintf(" %s=%v", f.Key, f.Value)
+		args = append(args, f.Key, f.Value)
 	}
-	l.Printf("[%s] %s%s", level, msg, fieldStr)
+	return args
 }
 
 // customMetricsRecorder implements observability.MetricsRecorder.
@@ -139,8 +145,9 @@ func main() {
 	fmt.Println("\n=== Observability Example Complete ===")
 	fmt.Println("Check the logs above to see how custom logger and metrics recorder work.")
 	fmt.Println("\nKey points:")
-	fmt.Println("1. Custom logger receives all HTTP requests, responses, and errors")
-	fmt.Println("2. Metrics recorder tracks request counts, retries, and errors")
-	fmt.Println("3. You can integrate with any logging/metrics system (Prometheus, Datadog, etc.)")
-	fmt.Println("4. Both logger and metrics are optional - defaults to no-op implementations")
+	fmt.Println("1. Custom logger uses slog (structured logging) with JSON output")
+	fmt.Println("2. All HTTP requests, responses, and errors are logged with structured fields")
+	fmt.Println("3. Metrics recorder tracks request counts, retries, and errors")
+	fmt.Println("4. You can integrate with any logging/metrics system (Prometheus, Datadog, etc.)")
+	fmt.Println("5. Both logger and metrics are optional - defaults to no-op implementations")
 }

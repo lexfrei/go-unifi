@@ -14,6 +14,7 @@ on local controllers.
 - ✅ **Type-safe client** generated from OpenAPI specification
 - ✅ **Rate limiting** with configurable limits (default: 1000 req/min)
 - ✅ **Automatic retries** with exponential backoff
+- ✅ **Pluggable observability** - custom logging and metrics support (see [example](../../examples/observability/))
 - ✅ **Self-signed certificates** support for local deployments
 - ✅ **Context support** for all operations
 - ✅ **Comprehensive API coverage** - Sites, Devices, Clients,

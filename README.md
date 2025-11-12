@@ -72,12 +72,14 @@ go get github.com/lexfrei/go-unifi
 
 - [Site Manager Examples](./examples/sitemanager/) - Cloud API usage
 - [Network API Examples](./examples/network/) - Local controller usage
+- [Observability Example](./examples/observability/) - Custom logging and metrics integration
 
 ## ✨ Features
 
 - ✅ **Type-safe** - Generated from OpenAPI specifications
 - ✅ **Rate limiting** - Automatic with configurable limits
 - ✅ **Retry logic** - Exponential backoff for failures
+- ✅ **Observability** - Pluggable logging and metrics (see [example](./examples/observability/))
 - ✅ **Error handling** - Using `github.com/cockroachdb/errors`
 - ✅ **Context support** - All operations support cancellation
 - ✅ **Well documented** - Extensive examples and godoc
@@ -109,8 +111,17 @@ go-unifi/
 ├── api/
 │   ├── sitemanager/    # Cloud-based Site Manager API
 │   └── network/        # Local Network API
-├── internal/           # Shared infrastructure (rate limiting, retry)
+├── internal/           # Shared infrastructure
+│   ├── httpclient/     # HTTP client with middleware support
+│   ├── middleware/     # Composable middleware (auth, retry, rate limit, observability, TLS)
+│   ├── observability/  # Logger and MetricsRecorder interfaces
+│   ├── response/       # Generic response handlers
+│   ├── ratelimit/      # Rate limiting with token bucket
+│   └── retry/          # Retry logic with exponential backoff
 ├── examples/           # Working examples for both APIs
+│   ├── sitemanager/    # Site Manager API examples
+│   ├── network/        # Network API examples
+│   └── observability/  # Custom logging and metrics integration
 └── cmd/                # Command-line tools
 ```
 

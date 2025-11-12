@@ -12,6 +12,7 @@ Pure Go client library for UniFi Site Manager API v1.
 - ✅ **Type-safe client** generated from OpenAPI specification
 - ✅ **Dual rate limiting** (automatic: 10,000 req/min for v1, 100 req/min for EA)
 - ✅ **Automatic retries** with exponential backoff for 5xx and 429 errors
+- ✅ **Pluggable observability** - custom logging and metrics support (see [example](../../examples/observability/))
 - ✅ **Error handling** using `github.com/cockroachdb/errors`
 - ✅ **Context support** for all operations
 - ✅ **Detailed type definitions** for Hosts, Sites, Devices, ISP Metrics, and SD-WAN
@@ -84,7 +85,7 @@ client, err := sitemanager.New("your-api-key")
 ### Custom Configuration
 
 ```go
-// For advanced use cases (custom timeouts, rate limits, etc.)
+// For advanced use cases (custom timeouts, rate limits, observability, etc.)
 client, err := sitemanager.NewWithConfig(&sitemanager.ClientConfig{
     // Required: Your API key from sitemanager.ui.com
     APIKey: "your-api-key",
@@ -108,8 +109,16 @@ client, err := sitemanager.NewWithConfig(&sitemanager.ClientConfig{
 
     // Optional: Custom HTTP client
     HTTPClient: &http.Client{},
+
+    // Optional: Custom logger (implements observability.Logger interface)
+    Logger: myLogger,
+
+    // Optional: Custom metrics recorder (implements observability.MetricsRecorder interface)
+    Metrics: myMetrics,
 })
 ```
+
+See [observability example](../../examples/observability/) for Logger and Metrics implementation.
 
 ## API Coverage
 

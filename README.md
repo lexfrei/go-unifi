@@ -86,15 +86,13 @@ go get github.com/lexfrei/go-unifi
 
 Both API clients have been tested and validated against:
 
-### Tested Hardware
+### Tested Targets
 
 - **UniFi Dream Router (UDR7)** running:
   - UniFi OS **4.3.9** with Network Application **9.4.19**
-
-### Tested Targets (VM)
-
-- UniFi OS **4.3.6** with Network Application **9.4.19**
-- UniFi OS **4.3.6** with Network Application **9.5.21**
+- **VMs** running:
+  - UniFi OS **4.3.6** with Network Application **9.4.19**
+  - UniFi OS **4.3.6** with Network Application **9.5.21**
 
 ### Validation Approach
 

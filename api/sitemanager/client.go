@@ -4,6 +4,7 @@ package sitemanager
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -215,7 +216,7 @@ func (c *UnifiClient) GetHostByID(ctx context.Context, hostID string) (*HostResp
 		data = resp.JSON200
 	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, data, err, errors.Newf("failed to get host %s", hostID).Error())
+	return response.Handle(resp, data, err, "failed to get host "+hostID)
 }
 
 // ListSites retrieves a list of all sites configured on the controller.
@@ -248,7 +249,7 @@ func (c *UnifiClient) GetISPMetrics(ctx context.Context, metricType GetISPMetric
 		data = resp.JSON200
 	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, data, err, errors.Newf("failed to get ISP metrics of type %s", metricType).Error())
+	return response.Handle(resp, data, err, fmt.Sprintf("failed to get ISP metrics of type %s", metricType))
 }
 
 // QueryISPMetrics queries ISP metrics with custom parameters.
@@ -259,7 +260,7 @@ func (c *UnifiClient) QueryISPMetrics(ctx context.Context, metricType string, qu
 		data = resp.JSON200
 	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, data, err, errors.Newf("failed to query ISP metrics of type %s", metricType).Error())
+	return response.Handle(resp, data, err, "failed to query ISP metrics of type "+metricType)
 }
 
 // ListSDWANConfigs retrieves a list of all SD-WAN configurations.
@@ -281,7 +282,7 @@ func (c *UnifiClient) GetSDWANConfigByID(ctx context.Context, configID string) (
 		data = resp.JSON200
 	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, data, err, errors.Newf("failed to get SD-WAN config %s", configID).Error())
+	return response.Handle(resp, data, err, "failed to get SD-WAN config "+configID)
 }
 
 // GetSDWANConfigStatus retrieves the status of a specific SD-WAN configuration.
@@ -292,5 +293,5 @@ func (c *UnifiClient) GetSDWANConfigStatus(ctx context.Context, configID string)
 		data = resp.JSON200
 	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, data, err, errors.Newf("failed to get SD-WAN config status for %s", configID).Error())
+	return response.Handle(resp, data, err, "failed to get SD-WAN config status for "+configID)
 }

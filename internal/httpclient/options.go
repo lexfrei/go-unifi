@@ -34,7 +34,17 @@ func WithTransport(transport http.RoundTripper) Option {
 }
 
 // WithMiddleware adds middleware to the client.
-// Middleware is applied in the order provided: first middleware is outermost.
+// Middleware is applied in reverse order to create the chain:
+// first middleware in the slice becomes the outermost layer.
+//
+// Example:
+//
+//	WithMiddleware(A, B, C) creates chain: A(B(C(transport)))
+//	Request flow: A -> B -> C -> transport -> server
+//	Response flow: server -> transport -> C -> B -> A
+//
+// This allows natural reading order where outer concerns (logging, observability)
+// come first, followed by inner concerns (rate limiting, retries).
 func WithMiddleware(middleware ...Middleware) Option {
 	return func(c *Client) {
 		c.middleware = append(c.middleware, middleware...)

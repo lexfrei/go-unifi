@@ -29,6 +29,11 @@ type RetryConfig struct {
 // It does NOT retry on:
 // - 4xx client errors (except 429).
 // - Successful responses (2xx, 3xx).
+//
+// IMPORTANT: Request bodies are buffered in memory to support retries.
+// For large payloads (e.g., file uploads), this may consume significant memory.
+// The UniFi API typically uses small JSON payloads, so this is not a concern
+// for normal operations.
 func Retry(cfg RetryConfig) func(http.RoundTripper) http.RoundTripper {
 	if cfg.Logger == nil {
 		cfg.Logger = observability.NoopLogger()

@@ -24,7 +24,7 @@ type noopMetricsRecorder struct{}
 // NoopMetricsRecorder returns a metrics recorder that does nothing.
 // This is the default recorder used when none is provided.
 //
-//nolint:ireturn // Factory function must return interface for dependency injection pattern
+//nolint:ireturn // Factory function returning interface is correct DI pattern
 func NoopMetricsRecorder() MetricsRecorder {
 	return &noopMetricsRecorder{}
 }

@@ -465,25 +465,6 @@ func (c *APIClient) CreateDNSRecord(ctx context.Context, site Site, record *DNSR
 	return resp.JSON200, nil
 }
 
-// GetDNSRecordByID retrieves a specific DNS record by ID.
-func (c *APIClient) GetDNSRecordByID(ctx context.Context, site Site, recordID RecordId) (*DNSRecord, error) {
-	resp, err := c.client.GetDNSRecordByIdWithResponse(ctx, site, recordID)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to get DNS record %s in site %s", recordID, site)
-	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
-}
-
 // updateResource is a generic helper for update operations.
 func updateResource[T any](resp interface{ StatusCode() int }, data *T, err error, errorMsg string) (*T, error) {
 	if err != nil {

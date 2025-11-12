@@ -4,6 +4,7 @@ package sitemanager
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -11,8 +12,11 @@ import (
 	"github.com/cockroachdb/errors"
 	"golang.org/x/time/rate"
 
+	"github.com/lexfrei/go-unifi/internal/httpclient"
+	"github.com/lexfrei/go-unifi/internal/middleware"
+	"github.com/lexfrei/go-unifi/internal/observability"
 	"github.com/lexfrei/go-unifi/internal/ratelimit"
-	"github.com/lexfrei/go-unifi/internal/retry"
+	"github.com/lexfrei/go-unifi/internal/response"
 )
 
 const (
@@ -32,15 +36,10 @@ const (
 	DefaultTimeout = 30 * time.Second
 )
 
-// UnifiClient wraps the generated API client with rate limiting and retry logic.
+// UnifiClient wraps the generated API client with composable middleware.
 // It uses separate rate limiters for v1 and Early Access endpoints.
 type UnifiClient struct {
-	client        *ClientWithResponses
-	httpClient    *http.Client
-	v1RateLimiter *rate.Limiter
-	eaRateLimiter *rate.Limiter
-	maxRetries    int
-	retryWait     time.Duration
+	client *ClientWithResponses
 }
 
 // ClientConfig holds configuration for the Unifi API client.
@@ -68,6 +67,12 @@ type ClientConfig struct {
 
 	// Timeout sets the HTTP client timeout
 	Timeout time.Duration
+
+	// Logger for observability (optional, uses noop logger if nil)
+	Logger observability.Logger
+
+	// Metrics recorder for observability (optional, uses noop recorder if nil)
+	Metrics observability.MetricsRecorder
 }
 
 // New creates a new Unifi API client with default settings.
@@ -106,6 +111,8 @@ func New(apiKey string) (*UnifiClient, error) {
 //	    APIKey:               "your-api-key",
 //	    V1RateLimitPerMinute: 5000,  // Custom v1 rate limit
 //	    EARateLimitPerMinute: 50,    // Custom EA rate limit
+//	    Logger:               myLogger,
+//	    Metrics:              myMetrics,
 //	})
 func NewWithConfig(cfg *ClientConfig) (*UnifiClient, error) {
 	if cfg == nil {
@@ -135,28 +142,40 @@ func NewWithConfig(cfg *ClientConfig) (*UnifiClient, error) {
 		cfg.Timeout = DefaultTimeout
 	}
 
-	// Create HTTP client if not provided
-	httpClient := cfg.HTTPClient
-	if httpClient == nil {
-		httpClient = &http.Client{
-			Timeout: cfg.Timeout,
-		}
-	}
-
 	// Create separate rate limiters for v1 and EA endpoints
 	v1RateLimiter := ratelimit.NewRateLimiter(cfg.V1RateLimitPerMinute)
 	eaRateLimiter := ratelimit.NewRateLimiter(cfg.EARateLimitPerMinute)
 
-	// Wrap HTTP client with rate limiters and retry logic
-	rateLimitedClient := &rateLimitedHTTPClient{
-		client:        httpClient,
-		v1RateLimiter: v1RateLimiter,
-		eaRateLimiter: eaRateLimiter,
-		maxRetries:    cfg.MaxRetries,
-		retryWait:     cfg.RetryWaitTime,
+	// Create selector function for dual rate limiters
+	// EA endpoints start with /api/ea/, all others use v1 limiter
+	rateLimiterSelector := func(req *http.Request) (*rate.Limiter, string) {
+		if strings.HasPrefix(req.URL.Path, "/api/ea/") {
+			return eaRateLimiter, "ea"
+		}
+		return v1RateLimiter, "v1"
 	}
 
-	// Create request editor to add API key header
+	// Build middleware chain (applied in reverse order: last = innermost, applied first)
+	// Order from outside to inside: Observability -> RateLimit -> Retry
+	httpClient := httpclient.New(
+		httpclient.WithTimeout(cfg.Timeout),
+		httpclient.WithMiddleware(
+			middleware.Observability(cfg.Logger, cfg.Metrics),
+			middleware.RateLimit(middleware.RateLimitConfig{
+				Selector: rateLimiterSelector,
+				Logger:   cfg.Logger,
+				Metrics:  cfg.Metrics,
+			}),
+			middleware.Retry(middleware.RetryConfig{
+				MaxRetries:  cfg.MaxRetries,
+				InitialWait: cfg.RetryWaitTime,
+				Logger:      cfg.Logger,
+				Metrics:     cfg.Metrics,
+			}),
+		),
+	)
+
+	// Create request editor to add API key and Accept headers
 	requestEditor := func(_ context.Context, req *http.Request) error {
 		req.Header.Set("X-Api-Key", cfg.APIKey)
 		req.Header.Set("Accept", "application/json")
@@ -166,7 +185,7 @@ func NewWithConfig(cfg *ClientConfig) (*UnifiClient, error) {
 	// Create generated client
 	generatedClient, err := NewClientWithResponses(
 		cfg.BaseURL,
-		WithHTTPClient(rateLimitedClient),
+		WithHTTPClient(httpClient.HTTPClient()),
 		WithRequestEditorFn(requestEditor),
 	)
 	if err != nil {
@@ -174,279 +193,105 @@ func NewWithConfig(cfg *ClientConfig) (*UnifiClient, error) {
 	}
 
 	return &UnifiClient{
-		client:        generatedClient,
-		httpClient:    httpClient,
-		v1RateLimiter: v1RateLimiter,
-		eaRateLimiter: eaRateLimiter,
-		maxRetries:    cfg.MaxRetries,
-		retryWait:     cfg.RetryWaitTime,
+		client: generatedClient,
 	}, nil
 }
 
-// rateLimitedHTTPClient wraps http.Client with rate limiting and retry logic.
-// It uses separate rate limiters for v1 and Early Access endpoints.
-type rateLimitedHTTPClient struct {
-	client        *http.Client
-	v1RateLimiter *rate.Limiter
-	eaRateLimiter *rate.Limiter
-	maxRetries    int
-	retryWait     time.Duration
-}
-
-// isEAEndpoint checks if the request URL is an Early Access endpoint.
-func (c *rateLimitedHTTPClient) isEAEndpoint(req *http.Request) bool {
-	path := req.URL.Path
-	return strings.HasPrefix(path, "/api/ea/")
-}
-
-// Do executes HTTP request with rate limiting and retry logic.
-func (c *rateLimitedHTTPClient) Do(req *http.Request) (*http.Response, error) {
-	ctx := req.Context()
-
-	var resp *http.Response
-	var err error
-
-	// Select appropriate rate limiter based on endpoint
-	rateLimiter := c.v1RateLimiter
-	if c.isEAEndpoint(req) {
-		rateLimiter = c.eaRateLimiter
-	}
-
-	// Apply rate limiting
-	err = rateLimiter.Wait(ctx)
-	if err != nil {
-		return nil, errors.Wrap(err, "rate limiter wait failed")
-	}
-
-	// Retry loop
-	for attempt := 0; attempt <= c.maxRetries; attempt++ {
-		if attempt > 0 {
-			// Wait before retry
-			select {
-			case <-time.After(c.retryWait * time.Duration(attempt)):
-			case <-ctx.Done():
-				return nil, errors.Wrap(ctx.Err(), "context cancelled during retry wait")
-			}
-		}
-
-		resp, err = c.client.Do(req)
-		if err != nil {
-			// Network error - retry
-			if attempt < c.maxRetries {
-				continue
-			}
-			return nil, errors.Wrapf(err, "request failed after %d attempts", attempt+1)
-		}
-
-		// Check status code
-		switch {
-		case resp.StatusCode >= 200 && resp.StatusCode < 300:
-			// Success
-			return resp, nil
-
-		case resp.StatusCode == http.StatusTooManyRequests:
-			// Rate limited - check Retry-After header
-			resp.Body.Close()
-			if retryAfter := retry.ParseRetryAfter(resp.Header.Get("Retry-After")); retryAfter > 0 {
-				time.Sleep(retryAfter)
-				continue
-			}
-			// Retry with exponential backoff
-			if attempt < c.maxRetries {
-				continue
-			}
-			//nolint:wrapcheck // Creating new error for rate limit exhaustion, no source error to wrap
-			return nil, errors.Newf("rate limited after %d attempts", attempt+1)
-
-		case resp.StatusCode >= 500:
-			// Server error - retry
-			resp.Body.Close()
-			if attempt < c.maxRetries {
-				continue
-			}
-			//nolint:wrapcheck // Creating new error for server error exhaustion, no source error to wrap
-			return nil, errors.Newf("server error %d after %d attempts", resp.StatusCode, attempt+1)
-
-		default:
-			// Client error or other - don't retry
-			return resp, nil
-		}
-	}
-
-	return resp, errors.New("unexpected retry loop exit")
-}
-
-// ListHosts retrieves a list of all hosts associated with the UI account.
+// ListHosts retrieves a list of all hosts across all sites.
 func (c *UnifiClient) ListHosts(ctx context.Context, params *ListHostsParams) (*HostsResponse, error) {
 	resp, err := c.client.ListHostsWithResponse(ctx, params)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to list hosts")
+	var data *HostsResponse
+	if resp != nil {
+		data = resp.JSON200
 	}
-
-	if resp.StatusCode() != http.StatusOK {
-		if resp.JSON200 != nil {
-			//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-			return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-		}
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("unexpected status code: %d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to list hosts")
 }
 
-// GetHostByID retrieves detailed information about a specific host by ID.
-func (c *UnifiClient) GetHostByID(ctx context.Context, id string) (*HostResponse, error) {
-	resp, err := c.client.GetHostByIdWithResponse(ctx, id)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to get host %s", id)
+// GetHostByID retrieves detailed information about a specific host.
+func (c *UnifiClient) GetHostByID(ctx context.Context, hostID string) (*HostResponse, error) {
+	resp, err := c.client.GetHostByIdWithResponse(ctx, hostID)
+	var data *HostResponse
+	if resp != nil {
+		data = resp.JSON200
 	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to get host "+hostID)
 }
 
-// ListSites retrieves a list of all sites associated with the UI account.
+// ListSites retrieves a list of all sites configured on the controller.
 func (c *UnifiClient) ListSites(ctx context.Context) (*SitesResponse, error) {
 	resp, err := c.client.ListSitesWithResponse(ctx)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to list sites")
+	var data *SitesResponse
+	if resp != nil {
+		data = resp.JSON200
 	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to list sites")
 }
 
-// ListDevices retrieves a list of UniFi devices.
+// ListDevices retrieves a list of all devices across all sites.
 func (c *UnifiClient) ListDevices(ctx context.Context, params *ListDevicesParams) (*DevicesResponse, error) {
 	resp, err := c.client.ListDevicesWithResponse(ctx, params)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to list devices")
+	var data *DevicesResponse
+	if resp != nil {
+		data = resp.JSON200
 	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to list devices")
 }
 
-// GetISPMetrics retrieves ISP metrics data across all sites.
+// GetISPMetrics retrieves ISP performance metrics.
 func (c *UnifiClient) GetISPMetrics(ctx context.Context, metricType GetISPMetricsParamsType, params *GetISPMetricsParams) (*ISPMetricsResponse, error) {
 	resp, err := c.client.GetISPMetricsWithResponse(ctx, metricType, params)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to get ISP metrics for type %s", string(metricType))
+	var data *ISPMetricsResponse
+	if resp != nil {
+		data = resp.JSON200
 	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, fmt.Sprintf("failed to get ISP metrics of type %s", metricType))
 }
 
-// QueryISPMetrics queries ISP metrics for specific sites with custom parameters.
+// QueryISPMetrics queries ISP metrics with custom parameters.
 func (c *UnifiClient) QueryISPMetrics(ctx context.Context, metricType string, query ISPMetricsQuery) (*ISPMetricsQueryResponse, error) {
 	resp, err := c.client.QueryISPMetricsWithResponse(ctx, metricType, query)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to query ISP metrics for type %s", metricType)
+	var data *ISPMetricsQueryResponse
+	if resp != nil {
+		data = resp.JSON200
 	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to query ISP metrics of type "+metricType)
 }
 
 // ListSDWANConfigs retrieves a list of all SD-WAN configurations.
 func (c *UnifiClient) ListSDWANConfigs(ctx context.Context) (*SDWANConfigsResponse, error) {
 	resp, err := c.client.ListSDWANConfigsWithResponse(ctx)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to list SD-WAN configs")
+	var data *SDWANConfigsResponse
+	if resp != nil {
+		data = resp.JSON200
 	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to list SD-WAN configs")
 }
 
-// GetSDWANConfigByID retrieves detailed information about a specific SD-WAN configuration by ID.
-func (c *UnifiClient) GetSDWANConfigByID(ctx context.Context, id string) (*SDWANConfigResponse, error) {
-	resp, err := c.client.GetSDWANConfigByIdWithResponse(ctx, id)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to get SD-WAN config %s", id)
+// GetSDWANConfigByID retrieves detailed information about a specific SD-WAN configuration.
+func (c *UnifiClient) GetSDWANConfigByID(ctx context.Context, configID string) (*SDWANConfigResponse, error) {
+	resp, err := c.client.GetSDWANConfigByIdWithResponse(ctx, configID)
+	var data *SDWANConfigResponse
+	if resp != nil {
+		data = resp.JSON200
 	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to get SD-WAN config "+configID)
 }
 
-// GetSDWANConfigStatus retrieves the deployment status of a specific SD-WAN configuration.
-func (c *UnifiClient) GetSDWANConfigStatus(ctx context.Context, id string) (*SDWANConfigStatusResponse, error) {
-	resp, err := c.client.GetSDWANConfigStatusWithResponse(ctx, id)
-	if err != nil {
-		return nil, errors.Wrapf(err, "failed to get SD-WAN config status %s", id)
+// GetSDWANConfigStatus retrieves the status of a specific SD-WAN configuration.
+func (c *UnifiClient) GetSDWANConfigStatus(ctx context.Context, configID string) (*SDWANConfigStatusResponse, error) {
+	resp, err := c.client.GetSDWANConfigStatusWithResponse(ctx, configID)
+	var data *SDWANConfigStatusResponse
+	if resp != nil {
+		data = resp.JSON200
 	}
-
-	if resp.StatusCode() != http.StatusOK {
-		//nolint:wrapcheck // Creating new error for non-OK status, no source error to wrap
-		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-	}
-
-	if resp.JSON200 == nil {
-		return nil, errors.New("empty response from API")
-	}
-
-	return resp.JSON200, nil
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to get SD-WAN config status for "+configID)
 }

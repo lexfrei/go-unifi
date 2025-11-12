@@ -655,37 +655,15 @@ func TestNew(t *testing.T) {
 	if client.client == nil {
 		t.Error("client.client is nil")
 	}
-
-	if client.httpClient == nil {
-		t.Error("client.httpClient is nil")
-	}
-
-	if client.v1RateLimiter == nil {
-		t.Error("client.v1RateLimiter is nil")
-	}
-
-	if client.eaRateLimiter == nil {
-		t.Error("client.eaRateLimiter is nil")
-	}
-
-	// Check defaults
-	if client.maxRetries != DefaultMaxRetries {
-		t.Errorf("maxRetries = %d, want %d", client.maxRetries, DefaultMaxRetries)
-	}
-
-	if client.retryWait != DefaultRetryWaitTime {
-		t.Errorf("retryWait = %v, want %v", client.retryWait, DefaultRetryWaitTime)
-	}
 }
 
 func TestNewWithConfig(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name        string
-		config      *ClientConfig
-		wantErr     bool
-		checkFields func(t *testing.T, client *UnifiClient)
+		name    string
+		config  *ClientConfig
+		wantErr bool
 	}{
 		{
 			name: "minimal config",
@@ -693,12 +671,6 @@ func TestNewWithConfig(t *testing.T) {
 				APIKey: "test-key",
 			},
 			wantErr: false,
-			checkFields: func(t *testing.T, client *UnifiClient) {
-				t.Helper()
-				if client.maxRetries != DefaultMaxRetries {
-					t.Errorf("maxRetries = %d, want %d", client.maxRetries, DefaultMaxRetries)
-				}
-			},
 		},
 		{
 			name: "custom rate limits",
@@ -708,16 +680,6 @@ func TestNewWithConfig(t *testing.T) {
 				EARateLimitPerMinute: 50,
 			},
 			wantErr: false,
-			checkFields: func(t *testing.T, client *UnifiClient) {
-				t.Helper()
-				// Rate limiters are created, just check they exist
-				if client.v1RateLimiter == nil {
-					t.Error("v1RateLimiter is nil")
-				}
-				if client.eaRateLimiter == nil {
-					t.Error("eaRateLimiter is nil")
-				}
-			},
 		},
 		{
 			name: "custom retry settings",
@@ -727,15 +689,6 @@ func TestNewWithConfig(t *testing.T) {
 				RetryWaitTime: 2 * time.Second,
 			},
 			wantErr: false,
-			checkFields: func(t *testing.T, client *UnifiClient) {
-				t.Helper()
-				if client.maxRetries != 5 {
-					t.Errorf("maxRetries = %d, want 5", client.maxRetries)
-				}
-				if client.retryWait != 2*time.Second {
-					t.Errorf("retryWait = %v, want 2s", client.retryWait)
-				}
-			},
 		},
 		{
 			name: "custom base URL",
@@ -744,13 +697,6 @@ func TestNewWithConfig(t *testing.T) {
 				BaseURL: "https://custom.api.com",
 			},
 			wantErr: false,
-			checkFields: func(t *testing.T, client *UnifiClient) {
-				t.Helper()
-				// Just verify client was created
-				if client.client == nil {
-					t.Error("client is nil")
-				}
-			},
 		},
 		{
 			name: "empty API key",
@@ -782,8 +728,8 @@ func TestNewWithConfig(t *testing.T) {
 				t.Fatal("NewWithConfig() returned nil client")
 			}
 
-			if tt.checkFields != nil {
-				tt.checkFields(t, client)
+			if client.client == nil {
+				t.Error("client.client is nil")
 			}
 		})
 	}

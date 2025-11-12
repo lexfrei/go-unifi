@@ -14,6 +14,7 @@ on local controllers.
 - ✅ **Type-safe client** generated from OpenAPI specification
 - ✅ **Rate limiting** with configurable limits (default: 1000 req/min)
 - ✅ **Automatic retries** with exponential backoff
+- ✅ **Pluggable observability** - custom logging and metrics support (see [example](../../examples/observability/))
 - ✅ **Self-signed certificates** support for local deployments
 - ✅ **Context support** for all operations
 - ✅ **Comprehensive API coverage** - Sites, Devices, Clients,
@@ -99,7 +100,6 @@ func main() {
 |--------|---------|-------------|
 | `ListDNSRecords` | v2 | List all static DNS records |
 | `CreateDNSRecord` | v2 | Create a new DNS record |
-| `GetDNSRecordByID` | v2 | Get DNS record details by ID |
 | `UpdateDNSRecord` | v2 | Update existing DNS record |
 | `DeleteDNSRecord` | v2 | Delete DNS record |
 

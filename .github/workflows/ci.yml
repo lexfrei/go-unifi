@@ -27,13 +27,12 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.25.4'
+          go-version-file: go.mod
           cache: true
 
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.65
           args: --timeout=5m
 
   test:
@@ -46,7 +45,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.25.4'
+          go-version-file: go.mod
           cache: true
 
       - name: Download dependencies
@@ -74,7 +73,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.25.4'
+          go-version-file: go.mod
           cache: true
 
       - name: Download dependencies
@@ -93,7 +92,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.25.4'
+          go-version-file: go.mod
           cache: true
 
       - name: Verify go.mod

@@ -1,0 +1,13 @@
+# Code owners for go-unifi
+# These owners will be automatically requested for review when PRs are opened
+
+# Global owner
+* @lexfrei
+
+# API packages
+/api/sitemanager/ @lexfrei
+/api/network/ @lexfrei
+
+# Documentation
+*.md @lexfrei
+/docs/ @lexfrei

@@ -187,57 +187,89 @@ func NewWithConfig(cfg *ClientConfig) (*APIClient, error) {
 // ListSites retrieves a list of all sites configured on the controller.
 func (c *APIClient) ListSites(ctx context.Context, params *ListSitesParams) (*SitesResponse, error) {
 	resp, err := c.client.ListSitesWithResponse(ctx, params)
+	var data *SitesResponse
+	if resp != nil {
+		data = resp.JSON200
+	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, resp.JSON200, err, "failed to list sites")
+	return response.Handle(resp, data, err, "failed to list sites")
 }
 
 // ListSiteDevices retrieves a list of all devices for a specific site.
 func (c *APIClient) ListSiteDevices(ctx context.Context, siteID SiteId, params *ListSiteDevicesParams) (*DevicesResponse, error) {
 	resp, err := c.client.ListSiteDevicesWithResponse(ctx, siteID, params)
+	var data *DevicesResponse
+	if resp != nil {
+		data = resp.JSON200
+	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to list devices for site %s", siteID).Error())
+	return response.Handle(resp, data, err, errors.Newf("failed to list devices for site %s", siteID).Error())
 }
 
 // GetDeviceByID retrieves detailed information about a specific device.
 func (c *APIClient) GetDeviceByID(ctx context.Context, siteID SiteId, deviceID DeviceId) (*Device, error) {
 	resp, err := c.client.GetDeviceByIdWithResponse(ctx, siteID, deviceID)
+	var data *Device
+	if resp != nil {
+		data = resp.JSON200
+	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to get device %s in site %s", deviceID, siteID).Error())
+	return response.Handle(resp, data, err, errors.Newf("failed to get device %s in site %s", deviceID, siteID).Error())
 }
 
 // ListSiteClients retrieves a list of all clients for a specific site.
 func (c *APIClient) ListSiteClients(ctx context.Context, siteID SiteId, params *ListSiteClientsParams) (*ClientsResponse, error) {
 	resp, err := c.client.ListSiteClientsWithResponse(ctx, siteID, params)
+	var data *ClientsResponse
+	if resp != nil {
+		data = resp.JSON200
+	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to list clients for site %s", siteID).Error())
+	return response.Handle(resp, data, err, errors.Newf("failed to list clients for site %s", siteID).Error())
 }
 
 // GetClientByID retrieves detailed information about a specific client.
 func (c *APIClient) GetClientByID(ctx context.Context, siteID SiteId, clientID ClientId) (*NetworkClient, error) {
 	resp, err := c.client.GetClientByIdWithResponse(ctx, siteID, clientID)
+	var data *NetworkClient
+	if resp != nil {
+		data = resp.JSON200
+	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to get client %s in site %s", clientID, siteID).Error())
+	return response.Handle(resp, data, err, errors.Newf("failed to get client %s in site %s", clientID, siteID).Error())
 }
 
 // ListHotspotVouchers retrieves a list of all hotspot vouchers for a specific site.
 func (c *APIClient) ListHotspotVouchers(ctx context.Context, siteID SiteId, params *ListHotspotVouchersParams) (*HotspotVouchersResponse, error) {
 	resp, err := c.client.ListHotspotVouchersWithResponse(ctx, siteID, params)
+	var data *HotspotVouchersResponse
+	if resp != nil {
+		data = resp.JSON200
+	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to list hotspot vouchers for site %s", siteID).Error())
+	return response.Handle(resp, data, err, errors.Newf("failed to list hotspot vouchers for site %s", siteID).Error())
 }
 
 // CreateHotspotVouchers creates one or more hotspot vouchers for temporary guest access.
 func (c *APIClient) CreateHotspotVouchers(ctx context.Context, siteID SiteId, request *CreateVouchersRequest) (*HotspotVouchersResponse, error) {
 	resp, err := c.client.CreateHotspotVouchersWithResponse(ctx, siteID, *request)
+	var data *HotspotVouchersResponse
+	if resp != nil {
+		data = resp.JSON200
+	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to create hotspot vouchers for site %s", siteID).Error())
+	return response.Handle(resp, data, err, errors.Newf("failed to create hotspot vouchers for site %s", siteID).Error())
 }
 
 // GetHotspotVoucher retrieves detailed information about a specific hotspot voucher.
 func (c *APIClient) GetHotspotVoucher(ctx context.Context, siteID SiteId, voucherID openapi_types.UUID) (*HotspotVoucher, error) {
 	resp, err := c.client.GetHotspotVoucherWithResponse(ctx, siteID, voucherID)
+	var data *HotspotVoucher
+	if resp != nil {
+		data = resp.JSON200
+	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to get hotspot voucher %s in site %s", voucherID, siteID).Error())
+	return response.Handle(resp, data, err, errors.Newf("failed to get hotspot voucher %s in site %s", voucherID, siteID).Error())
 }
 
 // DeleteHotspotVoucher permanently deletes a hotspot voucher.
@@ -250,7 +282,11 @@ func (c *APIClient) DeleteHotspotVoucher(ctx context.Context, siteID SiteId, vou
 // ListDNSRecords lists all static DNS records for a site.
 func (c *APIClient) ListDNSRecords(ctx context.Context, site Site) ([]DNSRecord, error) {
 	resp, err := c.client.ListDNSRecordsWithResponse(ctx, site)
-	data, err := response.Handle(resp, resp.JSON200, err, errors.Newf("failed to list DNS records for site %s", site).Error())
+	var dataPtr *[]DNSRecord
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, errors.Newf("failed to list DNS records for site %s", site).Error())
 	if err != nil {
 		//nolint:wrapcheck // err is already wrapped by response.Handle
 		return nil, err
@@ -261,15 +297,23 @@ func (c *APIClient) ListDNSRecords(ctx context.Context, site Site) ([]DNSRecord,
 // CreateDNSRecord creates a new static DNS record.
 func (c *APIClient) CreateDNSRecord(ctx context.Context, site Site, record *DNSRecordInput) (*DNSRecord, error) {
 	resp, err := c.client.CreateDNSRecordWithResponse(ctx, site, *record)
+	var data *DNSRecord
+	if resp != nil {
+		data = resp.JSON200
+	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to create DNS record %s in site %s", record.Key, site).Error())
+	return response.Handle(resp, data, err, errors.Newf("failed to create DNS record %s in site %s", record.Key, site).Error())
 }
 
 // UpdateDNSRecord updates an existing DNS record.
 func (c *APIClient) UpdateDNSRecord(ctx context.Context, site Site, recordID RecordId, record *DNSRecordInput) (*DNSRecord, error) {
 	resp, err := c.client.UpdateDNSRecordWithResponse(ctx, site, recordID, *record)
+	var data *DNSRecord
+	if resp != nil {
+		data = resp.JSON200
+	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to update DNS record %s in site %s", recordID, site).Error())
+	return response.Handle(resp, data, err, errors.Newf("failed to update DNS record %s in site %s", recordID, site).Error())
 }
 
 // DeleteDNSRecord deletes a DNS record.
@@ -282,7 +326,11 @@ func (c *APIClient) DeleteDNSRecord(ctx context.Context, site Site, recordID Rec
 // ListFirewallPolicies lists all firewall policies for a site.
 func (c *APIClient) ListFirewallPolicies(ctx context.Context, site Site) ([]FirewallPolicy, error) {
 	resp, err := c.client.ListFirewallPoliciesWithResponse(ctx, site)
-	data, err := response.Handle(resp, resp.JSON200, err, errors.Newf("failed to list firewall policies for site %s", site).Error())
+	var dataPtr *[]FirewallPolicy
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, errors.Newf("failed to list firewall policies for site %s", site).Error())
 	if err != nil {
 		//nolint:wrapcheck // err is already wrapped by response.Handle
 		return nil, err
@@ -293,15 +341,23 @@ func (c *APIClient) ListFirewallPolicies(ctx context.Context, site Site) ([]Fire
 // UpdateFirewallPolicy updates an existing firewall policy.
 func (c *APIClient) UpdateFirewallPolicy(ctx context.Context, site Site, policyID PolicyId, policy *FirewallPolicyInput) (*FirewallPolicy, error) {
 	resp, err := c.client.UpdateFirewallPolicyWithResponse(ctx, site, policyID, *policy)
+	var data *FirewallPolicy
+	if resp != nil {
+		data = resp.JSON200
+	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to update firewall policy %s in site %s", policyID, site).Error())
+	return response.Handle(resp, data, err, errors.Newf("failed to update firewall policy %s in site %s", policyID, site).Error())
 }
 
 // CreateFirewallPolicy creates a new firewall policy.
 func (c *APIClient) CreateFirewallPolicy(ctx context.Context, site Site, policy *FirewallPolicyInput) (*FirewallPolicy, error) {
 	resp, err := c.client.CreateFirewallPolicyWithResponse(ctx, site, *policy)
+	var data *FirewallPolicy
+	if resp != nil {
+		data = resp.JSON200
+	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to create firewall policy in site %s", site).Error())
+	return response.Handle(resp, data, err, errors.Newf("failed to create firewall policy in site %s", site).Error())
 }
 
 // DeleteFirewallPolicy permanently deletes a firewall policy.
@@ -314,7 +370,11 @@ func (c *APIClient) DeleteFirewallPolicy(ctx context.Context, site Site, policyI
 // ListTrafficRules lists all traffic rules for a site.
 func (c *APIClient) ListTrafficRules(ctx context.Context, site Site) ([]TrafficRule, error) {
 	resp, err := c.client.ListTrafficRulesWithResponse(ctx, site)
-	data, err := response.Handle(resp, resp.JSON200, err, errors.Newf("failed to list traffic rules for site %s", site).Error())
+	var dataPtr *[]TrafficRule
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, errors.Newf("failed to list traffic rules for site %s", site).Error())
 	if err != nil {
 		//nolint:wrapcheck // err is already wrapped by response.Handle
 		return nil, err
@@ -325,15 +385,23 @@ func (c *APIClient) ListTrafficRules(ctx context.Context, site Site) ([]TrafficR
 // UpdateTrafficRule updates an existing traffic rule.
 func (c *APIClient) UpdateTrafficRule(ctx context.Context, site Site, ruleID RuleId, rule *TrafficRuleInput) (*TrafficRule, error) {
 	resp, err := c.client.UpdateTrafficRuleWithResponse(ctx, site, ruleID, *rule)
+	var data *TrafficRule
+	if resp != nil {
+		data = resp.JSON200
+	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to update traffic rule %s in site %s", ruleID, site).Error())
+	return response.Handle(resp, data, err, errors.Newf("failed to update traffic rule %s in site %s", ruleID, site).Error())
 }
 
 // CreateTrafficRule creates a new traffic rule.
 func (c *APIClient) CreateTrafficRule(ctx context.Context, site Site, rule *TrafficRuleInput) (*TrafficRule, error) {
 	resp, err := c.client.CreateTrafficRuleWithResponse(ctx, site, *rule)
+	var data *TrafficRule
+	if resp != nil {
+		data = resp.JSON200
+	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to create traffic rule in site %s", site).Error())
+	return response.Handle(resp, data, err, errors.Newf("failed to create traffic rule in site %s", site).Error())
 }
 
 // DeleteTrafficRule permanently deletes a traffic rule.
@@ -346,6 +414,10 @@ func (c *APIClient) DeleteTrafficRule(ctx context.Context, site Site, ruleID Rul
 // GetAggregatedDashboard retrieves aggregated dashboard statistics.
 func (c *APIClient) GetAggregatedDashboard(ctx context.Context, site Site, params *GetAggregatedDashboardParams) (*AggregatedDashboard, error) {
 	resp, err := c.client.GetAggregatedDashboardWithResponse(ctx, site, params)
+	var data *AggregatedDashboard
+	if resp != nil {
+		data = resp.JSON200
+	}
 	//nolint:wrapcheck // response.Handle wraps errors internally
-	return response.Handle(resp, resp.JSON200, err, errors.Newf("failed to get aggregated dashboard for site %s", site).Error())
+	return response.Handle(resp, data, err, errors.Newf("failed to get aggregated dashboard for site %s", site).Error())
 }

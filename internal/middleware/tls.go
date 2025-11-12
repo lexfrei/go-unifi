@@ -7,15 +7,20 @@ import (
 
 // TLSConfig returns a middleware that configures TLS for HTTPS connections.
 // This is useful for:
-// - Disabling certificate verification for self-signed certificates (development/testing)
-// - Custom certificate validation
-// - Minimum TLS version enforcement
+// - Disabling certificate verification for self-signed certificates (development/testing).
+// - Custom certificate validation.
+// - Minimum TLS version enforcement.
 func TLSConfig(config *tls.Config) func(http.RoundTripper) http.RoundTripper {
 	return func(next http.RoundTripper) http.RoundTripper {
 		// Get underlying transport or create default
 		transport, ok := next.(*http.Transport)
 		if !ok {
-			transport = http.DefaultTransport.(*http.Transport).Clone()
+			defaultTransport, ok := http.DefaultTransport.(*http.Transport)
+			if !ok {
+				// Should never happen, but handle gracefully
+				return next
+			}
+			transport = defaultTransport.Clone()
 			transport.ForceAttemptHTTP2 = true
 		} else {
 			transport = transport.Clone()

@@ -16,8 +16,8 @@ type RateLimiterSelector func(*http.Request) (*rate.Limiter, string)
 
 // RateLimitConfig configures the rate limit middleware.
 type RateLimitConfig struct {
-	Limiter  *rate.Limiter         // Single limiter (used if Selector is nil)
-	Selector RateLimiterSelector   // Optional: select limiter based on request
+	Limiter  *rate.Limiter       // Single limiter (used if Selector is nil)
+	Selector RateLimiterSelector // Optional: select limiter based on request
 	Logger   observability.Logger
 	Metrics  observability.MetricsRecorder
 }
@@ -25,8 +25,8 @@ type RateLimitConfig struct {
 // RateLimit returns a middleware that applies rate limiting to requests.
 //
 // Two modes of operation:
-// 1. Single limiter: Set cfg.Limiter for uniform rate limiting
-// 2. Selector mode: Set cfg.Selector to choose limiter per request (e.g., v1 vs EA endpoints)
+// 1. Single limiter: Set cfg.Limiter for uniform rate limiting.
+// 2. Selector mode: Set cfg.Selector to choose limiter per request (e.g., v1 vs EA endpoints).
 func RateLimit(cfg RateLimitConfig) func(http.RoundTripper) http.RoundTripper {
 	if cfg.Logger == nil {
 		cfg.Logger = observability.NoopLogger()

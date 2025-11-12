@@ -6,9 +6,9 @@ import (
 
 // Auth returns a middleware that adds an authentication header to all requests.
 // Common header names:
-// - "X-Api-Key" for Site Manager API
-// - "X-API-KEY" for Network API
-// - "Authorization" for Bearer tokens
+// - "X-Api-Key" for Site Manager API.
+// - "X-API-KEY" for Network API.
+// - "Authorization" for Bearer tokens.
 func Auth(headerName, headerValue string) func(http.RoundTripper) http.RoundTripper {
 	return func(next http.RoundTripper) http.RoundTripper {
 		return &authTransport{

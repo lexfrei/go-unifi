@@ -36,6 +36,10 @@ func HandleWithStatus[T any](resp StatusCoder, data *T, err error, errorMsg stri
 		return nil, errors.Wrap(err, errorMsg)
 	}
 
+	if resp == nil {
+		return nil, errors.New("nil response from API client")
+	}
+
 	if resp.StatusCode() != expectedStatus {
 		//nolint:wrapcheck // Creating new error for non-expected status, no source error to wrap
 		return nil, errors.Newf("API error: status=%d", resp.StatusCode())
@@ -69,6 +73,10 @@ func HandleNoContent(resp StatusCoder, err error, errorMsg string) error {
 func HandleNoContentWithStatus(resp StatusCoder, err error, errorMsg string, expectedStatus int) error {
 	if err != nil {
 		return errors.Wrap(err, errorMsg)
+	}
+
+	if resp == nil {
+		return errors.New("nil response from API client")
 	}
 
 	if resp.StatusCode() != expectedStatus {

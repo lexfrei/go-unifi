@@ -14,7 +14,7 @@ import (
 
 // RetryConfig configures the retry middleware.
 type RetryConfig struct {
-	MaxRetries int
+	MaxRetries  int
 	InitialWait time.Duration
 	Logger      observability.Logger
 	Metrics     observability.MetricsRecorder
@@ -22,13 +22,13 @@ type RetryConfig struct {
 
 // Retry returns a middleware that retries failed requests with exponential backoff.
 // It retries on:
-// - Network errors (connection failures, timeouts)
-// - 5xx server errors
-// - 429 rate limit errors (respects Retry-After header)
+// - Network errors (connection failures, timeouts).
+// - 5xx server errors.
+// - 429 rate limit errors (respects Retry-After header).
 //
 // It does NOT retry on:
-// - 4xx client errors (except 429)
-// - Successful responses (2xx, 3xx)
+// - 4xx client errors (except 429).
+// - Successful responses (2xx, 3xx).
 func Retry(cfg RetryConfig) func(http.RoundTripper) http.RoundTripper {
 	if cfg.Logger == nil {
 		cfg.Logger = observability.NoopLogger()

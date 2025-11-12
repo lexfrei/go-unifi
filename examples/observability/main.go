@@ -100,7 +100,8 @@ func main() {
 	metrics := newCustomMetricsRecorder()
 
 	fmt.Println("Creating Site Manager client with custom observability...")
-	fmt.Println("This example demonstrates how to integrate your own logging and metrics.\n")
+	fmt.Println("This example demonstrates how to integrate your own logging and metrics.")
+	fmt.Println()
 
 	// Create client with custom observability
 	client, err := sitemanager.NewWithConfig(&sitemanager.ClientConfig{

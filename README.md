@@ -56,8 +56,14 @@ sites, _ := client.ListSites(context.Background(), nil)
 
 ### Installation
 
+Each API is available as an independent module:
+
 ```bash
-go get github.com/lexfrei/go-unifi
+# Site Manager API
+go get github.com/lexfrei/go-unifi/api/sitemanager@v0.0.1
+
+# Network API
+go get github.com/lexfrei/go-unifi/api/network@v0.0.1
 ```
 
 ### Choose Your API

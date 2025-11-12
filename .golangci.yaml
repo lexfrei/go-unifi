@@ -15,6 +15,7 @@ linters:
     - nlreturn # Stylistic preference
     - godoclint # False positive with doc.go pattern
     - errchkjson # Examples and test code don't need strict JSON marshaling checks
+    - gomoddirectives # Allow local replace directives for modular structure
   settings:
     dupl:
       threshold: 100

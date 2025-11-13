@@ -5,7 +5,7 @@ go 1.25.4
 require (
 	github.com/lexfrei/go-unifi/api/network v0.0.1
 	github.com/lexfrei/go-unifi/api/sitemanager v0.0.1
-	github.com/lexfrei/go-unifi/internal v0.0.0-00010101000000-000000000000
+	github.com/lexfrei/go-unifi/internal v0.0.1
 )
 
 require (

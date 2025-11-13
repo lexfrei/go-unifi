@@ -2,12 +2,10 @@ module github.com/lexfrei/go-unifi/api/network
 
 go 1.25.4
 
-replace github.com/lexfrei/go-unifi/internal => ../../internal
-
 require (
 	github.com/cockroachdb/errors v1.12.0
 	github.com/getkin/kin-openapi v0.133.0
-	github.com/lexfrei/go-unifi/internal v0.0.0-00010101000000-000000000000
+	github.com/lexfrei/go-unifi/internal v0.0.1
 	github.com/oapi-codegen/runtime v1.1.2
 )
 

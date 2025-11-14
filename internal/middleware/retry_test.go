@@ -10,7 +10,7 @@ import (
 	"time"
 
 	"github.com/lexfrei/go-unifi/internal/middleware"
-	"github.com/lexfrei/go-unifi/internal/observability"
+	"github.com/lexfrei/go-unifi/observability"
 )
 
 func TestRetry(t *testing.T) {

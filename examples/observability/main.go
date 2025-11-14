@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/lexfrei/go-unifi/api/sitemanager"
-	"github.com/lexfrei/go-unifi/internal/observability"
+	"github.com/lexfrei/go-unifi/observability"
 )
 
 // customLogger implements observability.Logger using Go's structured logger (slog).

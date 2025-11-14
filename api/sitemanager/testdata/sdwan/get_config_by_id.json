@@ -1,0 +1,59 @@
+{
+  "data": {
+    "id": "b344034f-2636-478c-8c7a-e3350f8ed37a",
+    "name": "RS test",
+    "type": "sdwan-hbsp",
+    "variant": "single",
+    "settings": {
+      "hubsInterconnect": null,
+      "spokeToHubTunnelsMode": "scalable",
+      "spokesAutoScaleAndNatEnabled": true,
+      "spokesAutoScaleAndNatRange": "172.16.0.0/12",
+      "spokesIsolate": true,
+      "spokeStandardSettingsEnabled": false,
+      "spokeStandardSettingsValues": null,
+      "spokeToHubRouting": "geo"
+    },
+    "hubs": [
+      {
+        "id": "9C05D6B1DA7100000000080A820B000000000877B4A4000000006634E113:779231894_670d14b2b4e979611b761866",
+        "hostId": "9C05D6B1DA7100000000080A820B000000000877B4A4000000006634E113:779231894",
+        "siteId": "670d14b2b4e979611b761866",
+        "networkIds": [
+          "670d14deb4e979611b761880"
+        ],
+        "routes": [],
+        "primaryWan": "WAN",
+        "wanFailover": false
+      }
+    ],
+    "spokes": [
+      {
+        "id": "28704E43D00C0000000008339D3C0000000008A2F4D300000000669FE9E7:1731456649_670d153bf6db0d4204f8d150",
+        "hostId": "28704E43D00C0000000008339D3C0000000008A2F4D300000000669FE9E7:1731456649",
+        "siteId": "670d153bf6db0d4204f8d150",
+        "networkIds": [],
+        "routes": [
+          "172.16.1.0/24"
+        ],
+        "primaryWan": "WAN",
+        "wanFailover": false,
+        "hubsPriority": null
+      },
+      {
+        "id": "F4E2C61FA6000000000007D5831A00000000083CEEC600000000655DA309:763649230_66b5f02af5521234f6f28a23",
+        "hostId": "F4E2C61FA6000000000007D5831A00000000083CEEC600000000655DA309:763649230",
+        "siteId": "66b5f02af5521234f6f28a23",
+        "networkIds": [],
+        "routes": [
+          "172.16.2.0/24"
+        ],
+        "primaryWan": "WAN",
+        "wanFailover": false,
+        "hubsPriority": null
+      }
+    ]
+  },
+  "httpStatusCode": 200,
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d"
+}

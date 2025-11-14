@@ -1,0 +1,6 @@
+{
+  "code": "rate_limit",
+  "httpStatusCode": 429,
+  "message": "rate limit exceeded, retry after 5.372786998s",
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d"
+}

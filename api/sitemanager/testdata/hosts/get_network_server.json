@@ -1,0 +1,30 @@
+{
+  "data": {
+    "id": "1d9cf3ee-0c0f-466e-933c-9af829f09b50",
+    "hardwareId": "b000b21e-0000-1111-add9-c1eed3897602",
+    "type": "network-server",
+    "ipAddress": "192.168.1.124",
+    "owner": true,
+    "isBlocked": false,
+    "registrationTime": "2024-02-07T10:25:21.981Z",
+    "lastConnectionStateChange": "2024-06-10T07:52:23.382Z",
+    "userData": null,
+    "reportedState": {
+      "controller_uuid": "b000b21e-0000-1111-add9-c1eed3897602",
+      "deviceId": "1d9cf3ee-0c0f-466e-933c-9af829f09b50",
+      "hardware_id": "b000b21e-0000-1111-add9-c1eed3897602",
+      "host_type": 0,
+      "hostname": "example-domain.ui.com",
+      "inform_port": 8080,
+      "ipAddrs": ["192.168.1.124"],
+      "mgmt_port": 8443,
+      "name": "Self-Hosted Site",
+      "override_inform_host": false,
+      "release_channel": "release",
+      "state": "connected",
+      "version": "8.3.11"
+    }
+  },
+  "httpStatusCode": 200,
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d"
+}

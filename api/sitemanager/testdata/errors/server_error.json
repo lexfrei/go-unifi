@@ -1,0 +1,6 @@
+{
+  "code": "server_error",
+  "httpStatusCode": 500,
+  "message": "failed to list hosts",
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d"
+}

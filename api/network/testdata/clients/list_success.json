@@ -1,0 +1,38 @@
+{
+  "count": 3,
+  "data": [
+    {
+      "access": {"type": "DEFAULT"},
+      "connectedAt": "2025-10-19T10:09:31Z",
+      "id": "7fe038e8-946b-fa53-7335-6c00bee84657",
+      "ipAddress": "10.222.189.242",
+      "macAddress": "aa:bb:cc:14:01:56",
+      "name": "client-1",
+      "type": "WIRED",
+      "uplinkDeviceId": "6204b587-7215-235b-d068-f96ca12eab52"
+    },
+    {
+      "access": {"type": "DEFAULT"},
+      "connectedAt": "2025-10-19T10:10:24Z",
+      "id": "17f9729f-a6d9-63da-7185-579a4bd70979",
+      "ipAddress": "10.103.206.70",
+      "macAddress": "aa:bb:cc:9c:58:6f",
+      "name": "client-2",
+      "type": "WIRELESS",
+      "uplinkDeviceId": "6204b587-7215-235b-d068-f96ca12eab52"
+    },
+    {
+      "access": {"type": "DEFAULT"},
+      "connectedAt": "2025-10-24T21:15:12Z",
+      "id": "d0fde4ea-6ed0-a42b-ae3c-e848132e56b4",
+      "ipAddress": "10.157.45.243",
+      "macAddress": "aa:bb:cc:10:a8:87",
+      "name": "client-3",
+      "type": "WIRELESS",
+      "uplinkDeviceId": "6204b587-7215-235b-d068-f96ca12eab52"
+    }
+  ],
+  "limit": 25,
+  "offset": 0,
+  "totalCount": 3
+}

@@ -1,0 +1,10 @@
+{
+  "access": {"type": "DEFAULT"},
+  "connectedAt": "2025-10-19T10:09:31Z",
+  "id": "7fe038e8-946b-fa53-7335-6c00bee84657",
+  "ipAddress": "10.222.189.242",
+  "macAddress": "aa:bb:cc:14:01:56",
+  "name": "client-1",
+  "type": "WIRED",
+  "uplinkDeviceId": "6204b587-7215-235b-d068-f96ca12eab52"
+}

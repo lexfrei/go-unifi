@@ -1,0 +1,28 @@
+{
+  "count": 2,
+  "data": [
+    {
+      "features": ["switching", "accessPoint"],
+      "id": "6204b587-7215-235b-d068-f96ca12eab52",
+      "interfaces": ["ports", "radios"],
+      "ipAddress": "10.94.26.13",
+      "macAddress": "aa:bb:cc:99:ea:6b",
+      "model": "UDR7",
+      "name": "Device-1",
+      "state": "ONLINE"
+    },
+    {
+      "features": ["switching"],
+      "id": "0cd24618-8745-b626-b3c3-57692a02433e",
+      "interfaces": ["ports"],
+      "ipAddress": "10.166.169.226",
+      "macAddress": "aa:bb:cc:6f:6d:73",
+      "model": "USW Flex Mini",
+      "name": "Device-2",
+      "state": "ONLINE"
+    }
+  ],
+  "limit": 25,
+  "offset": 0,
+  "totalCount": 2
+}

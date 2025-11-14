@@ -16,6 +16,7 @@ linters:
     - godoclint # False positive with doc.go pattern
     - errchkjson # Examples and test code don't need strict JSON marshaling checks
     - gomoddirectives # Allow local replace directives for modular structure
+    - canonicalheader # UniFi API uses non-canonical X-API-KEY header
   settings:
     dupl:
       threshold: 100

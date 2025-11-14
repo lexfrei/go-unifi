@@ -6,309 +6,15 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/lexfrei/go-unifi/api/network/testdata"
+	"github.com/lexfrei/go-unifi/internal/testutil"
 	"github.com/oapi-codegen/runtime/types"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-// Real API responses from test controller.
+// Test constants.
 const (
-	// Real response from GET /v2/sites.
-	listSitesSuccess = `{
-  "count": 1,
-  "data": [
-    {
-      "id": "88f7af54-98f8-306a-a1c7-c9349722b1f6",
-      "internalReference": "default",
-      "name": "Default"
-    }
-  ],
-  "limit": 25,
-  "offset": 0,
-  "totalCount": 1
-}`
-
-	// Real response from GET /v2/site/default/static-dns.
-	listDNSRecordsSuccess = `[
-  {
-    "_id": "6913a4964a990741124a6d94",
-    "enabled": true,
-    "key": "testhost1.local",
-    "port": 0,
-    "priority": 0,
-    "record_type": "A",
-    "ttl": 0,
-    "value": "192.168.100.1",
-    "weight": 0
-  },
-  {
-    "_id": "6913a4964a990741124a6d97",
-    "enabled": true,
-    "key": "testhost2.local",
-    "port": 0,
-    "priority": 0,
-    "record_type": "A",
-    "ttl": 0,
-    "value": "192.168.100.2",
-    "weight": 0
-  },
-  {
-    "_id": "6913a4964a990741124a6d98",
-    "enabled": true,
-    "key": "testhost3.local",
-    "port": 0,
-    "priority": 0,
-    "record_type": "A",
-    "ttl": 0,
-    "value": "192.168.100.3",
-    "weight": 0
-  }
-]`
-
-	// Single DNS record for create/get tests.
-	singleDNSRecord = `{
-    "_id": "6913a4964a990741124a6d94",
-    "enabled": true,
-    "key": "testhost1.local",
-    "port": 0,
-    "priority": 0,
-    "record_type": "A",
-    "ttl": 0,
-    "value": "192.168.100.1",
-    "weight": 0
-  }`
-
-	// Real response from GET /v1/sites/{site}/devices with 2 devices.
-	listDevicesSuccess = `{
-  "count": 2,
-  "data": [
-    {
-      "features": ["switching", "accessPoint"],
-      "id": "6204b587-7215-235b-d068-f96ca12eab52",
-      "interfaces": ["ports", "radios"],
-      "ipAddress": "10.94.26.13",
-      "macAddress": "aa:bb:cc:99:ea:6b",
-      "model": "UDR7",
-      "name": "Device-1",
-      "state": "ONLINE"
-    },
-    {
-      "features": ["switching"],
-      "id": "0cd24618-8745-b626-b3c3-57692a02433e",
-      "interfaces": ["ports"],
-      "ipAddress": "10.166.169.226",
-      "macAddress": "aa:bb:cc:6f:6d:73",
-      "model": "USW Flex Mini",
-      "name": "Device-2",
-      "state": "ONLINE"
-    }
-  ],
-  "limit": 25,
-  "offset": 0,
-  "totalCount": 2
-}`
-
-	// Real response from GET /v1/sites/{site}/devices/{id} with full device details.
-	singleDeviceSuccess = `{
-  "configurationId": "c212be130585ee93",
-  "features": {
-    "accessPoint": {},
-    "switching": {}
-  },
-  "firmwareUpdatable": false,
-  "firmwareVersion": "4.3.9",
-  "id": "6204b587-7215-235b-d068-f96ca12eab52",
-  "interfaces": {
-    "ports": [
-      {
-        "connector": "RJ45",
-        "idx": 1,
-        "maxSpeedMbps": 2500,
-        "poe": {
-          "enabled": true,
-          "standard": "802.3af",
-          "state": "UP",
-          "type": 1
-        },
-        "speedMbps": 1000,
-        "state": "UP"
-      },
-      {
-        "connector": "RJ45",
-        "idx": 2,
-        "maxSpeedMbps": 2500,
-        "speedMbps": 2500,
-        "state": "UP"
-      }
-    ],
-    "radios": [
-      {
-        "channel": 6,
-        "channelWidthMHz": 20,
-        "frequencyGHz": 2.4,
-        "wlanStandard": "802.11be"
-      },
-      {
-        "channel": 40,
-        "channelWidthMHz": 80,
-        "frequencyGHz": 5,
-        "wlanStandard": "802.11be"
-      }
-    ]
-  },
-  "ipAddress": "10.94.26.13",
-  "macAddress": "aa:bb:cc:99:ea:6b",
-  "model": "UDR7",
-  "name": "Device-1",
-  "provisionedAt": "2025-11-03T21:41:04Z",
-  "state": "ONLINE",
-  "supported": true
-}`
-
-	// Real response from GET /v1/sites/{site}/clients with 3 clients (truncated from 15).
-	listClientsSuccess = `{
-  "count": 3,
-  "data": [
-    {
-      "access": {"type": "DEFAULT"},
-      "connectedAt": "2025-10-19T10:09:31Z",
-      "id": "7fe038e8-946b-fa53-7335-6c00bee84657",
-      "ipAddress": "10.222.189.242",
-      "macAddress": "aa:bb:cc:14:01:56",
-      "name": "client-1",
-      "type": "WIRED",
-      "uplinkDeviceId": "6204b587-7215-235b-d068-f96ca12eab52"
-    },
-    {
-      "access": {"type": "DEFAULT"},
-      "connectedAt": "2025-10-19T10:10:24Z",
-      "id": "17f9729f-a6d9-63da-7185-579a4bd70979",
-      "ipAddress": "10.103.206.70",
-      "macAddress": "aa:bb:cc:9c:58:6f",
-      "name": "client-2",
-      "type": "WIRELESS",
-      "uplinkDeviceId": "6204b587-7215-235b-d068-f96ca12eab52"
-    },
-    {
-      "access": {"type": "DEFAULT"},
-      "connectedAt": "2025-10-24T21:15:12Z",
-      "id": "d0fde4ea-6ed0-a42b-ae3c-e848132e56b4",
-      "ipAddress": "10.157.45.243",
-      "macAddress": "aa:bb:cc:10:a8:87",
-      "name": "client-3",
-      "type": "WIRELESS",
-      "uplinkDeviceId": "6204b587-7215-235b-d068-f96ca12eab52"
-    }
-  ],
-  "limit": 25,
-  "offset": 0,
-  "totalCount": 3
-}`
-
-	// Real response from GET /v1/sites/{site}/clients/{id} with single client.
-	singleClientSuccess = `{
-  "access": {"type": "DEFAULT"},
-  "connectedAt": "2025-10-19T10:09:31Z",
-  "id": "7fe038e8-946b-fa53-7335-6c00bee84657",
-  "ipAddress": "10.222.189.242",
-  "macAddress": "aa:bb:cc:14:01:56",
-  "name": "client-1",
-  "type": "WIRED",
-  "uplinkDeviceId": "6204b587-7215-235b-d068-f96ca12eab52"
-}`
-
-	// Real response from GET /v2/api/site/{site}/dashboard.
-	dashboardSuccess = `{
-  "dashboard_meta": {
-    "end_timestamp": 1762895866647,
-    "layout": "wireless",
-    "start_timestamp": 1762812000000,
-    "widgets": [
-      "most_active_clients",
-      "most_active_aps",
-      "wifi_activity",
-      "wifi_channels",
-      "wifi_client_experience",
-      "wifi_tx_retries",
-      "admin_activity",
-      "device_client_count",
-      "server_ip"
-    ]
-  },
-  "most_active_aps": {
-    "total_bytes": 0
-  },
-  "most_active_clients": {
-    "total_bytes": 0
-  },
-  "wifi_channels": {
-    "radio_channels": [
-      {
-        "available_channels": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-        "radio": "ng"
-      },
-      {
-        "available_channels": [36, 40, 44, 48, 52, 56, 60, 64, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144, 149, 153, 157, 161, 165],
-        "radio": "na"
-      }
-    ]
-  }
-}`
-
-	// Mock firewall policy for CREATE/UPDATE tests.
-	singleFirewallPolicy = `{
-    "_id": "507f1f77bcf86cd799439011",
-    "action": "ALLOW",
-    "enabled": true,
-    "name": "test-policy-1"
-  }`
-
-	// Mock traffic rule for CREATE/UPDATE tests.
-	singleTrafficRule = `{
-    "_id": "507f1f77bcf86cd799439012",
-    "enabled": true,
-    "description": "test-rule-1",
-    "matching_target": "INTERNET"
-  }`
-
-	// Mock hotspot vouchers response.
-	listVouchersSuccess = `{
-    "count": 2,
-    "data": [
-      {
-        "code": "12345-67890",
-        "id": "507f1f77bcf86cd799439013",
-        "status": "VALID"
-      },
-      {
-        "code": "98765-43210",
-        "id": "507f1f77bcf86cd799439014",
-        "status": "VALID"
-      }
-    ],
-    "limit": 100,
-    "offset": 0,
-    "totalCount": 2
-  }`
-
-	singleVoucher = `{
-    "code": "12345-67890",
-    "id": "507f1f77bcf86cd799439013",
-    "status": "VALID"
-  }`
-
-	// Empty responses.
-	emptyDNSRecords       = `[]`
-	emptyFirewallPolicies = `[]`
-	emptyTrafficRules     = `[]`
-	emptyVouchers         = `{"count": 0, "data": [], "limit": 100, "offset": 0, "totalCount": 0}`
-
-	// Common error responses.
-	unauthorizedError = `{"error": "unauthorized", "message": "Invalid API key"}`
-	notFoundError     = `{"error": "not_found", "message": "Resource not found"}`
-	badRequestError   = `{"error": "bad_request", "message": "Invalid request"}`
-	rateLimitError    = `{"error": "rate_limit", "message": "Rate limit exceeded"}`
-	serverError       = `{"error": "server_error", "message": "Internal server error"}`
-
-	// Test constants.
 	testAPIKey       = "test-api-key"
 	testSiteInternal = "default"
 	testRecordID     = "6913a4964a990741124a6d94"
@@ -328,13 +34,8 @@ func TestNew(t *testing.T) {
 	t.Parallel()
 
 	client, err := New("https://test.local", testAPIKey)
-	if err != nil {
-		t.Fatalf("New() failed: %v", err)
-	}
-
-	if client == nil {
-		t.Fatal("New() returned nil client")
-	}
+	require.NoError(t, err)
+	require.NotNil(t, client)
 }
 
 func TestNewWithConfig(t *testing.T) {
@@ -383,20 +84,12 @@ func TestNewWithConfig(t *testing.T) {
 			client, err := NewWithConfig(tt.config)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-				return
-			}
-
-			if client == nil {
-				t.Error("Expected client, got nil")
-			}
+			require.NoError(t, err)
+			require.NotNil(t, client)
 		})
 	}
 }
@@ -413,50 +106,36 @@ func TestListSites(t *testing.T) {
 	}{
 		{
 			name:           "success",
-			mockResponse:   listSitesSuccess,
+			mockResponse:   testdata.LoadFixture(t, "sites/list_success.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp *SitesResponse) {
 				t.Helper()
-				if resp == nil {
-					t.Fatal("response is nil")
-				}
-				if resp.Count != 1 {
-					t.Errorf("Count = %d, want 1", resp.Count)
-				}
-				if resp.TotalCount != 1 {
-					t.Errorf("TotalCount = %d, want 1", resp.TotalCount)
-				}
-				if len(resp.Data) != 1 {
-					t.Fatalf("len(Data) = %d, want 1", len(resp.Data))
-				}
+				assert.Equal(t, 1, resp.Count)
+				assert.Equal(t, 1, resp.TotalCount)
+				assert.Len(t, resp.Data, 1)
+
 				site := resp.Data[0]
-				if site.Id != testSiteID {
-					t.Errorf("Site ID = %s, want %s", site.Id, testSiteID)
-				}
-				if site.InternalReference != testSiteInternal {
-					t.Errorf("Site InternalReference = %s, want %s", site.InternalReference, testSiteInternal)
-				}
-				if site.Name != "Default" {
-					t.Errorf("Site Name = %s, want Default", site.Name)
-				}
+				assert.Equal(t, testSiteID, site.Id)
+				assert.Equal(t, testSiteInternal, site.InternalReference)
+				assert.Equal(t, "Default", site.Name)
 			},
 		},
 		{
 			name:           "unauthorized",
-			mockResponse:   unauthorizedError,
+			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
 			name:           "rate limit",
-			mockResponse:   rateLimitError,
+			mockResponse:   testdata.LoadFixture(t, "errors/rate_limit.json"),
 			mockStatusCode: http.StatusTooManyRequests,
 			wantErr:        true,
 		},
 		{
 			name:           "server error",
-			mockResponse:   serverError,
+			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
 		},
@@ -466,39 +145,22 @@ func TestListSites(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				if r.URL.Path != "/proxy/network/integration/v1/sites" {
-					t.Errorf("Request path = %s, want /proxy/network/integration/v1/sites", r.URL.Path)
-				}
-				//nolint:canonicalheader // X-API-KEY is the correct header name per UniFi API specification
-				if r.Header.Get("X-API-KEY") != testAPIKey {
-					t.Error("X-API-KEY header not set")
-				}
-
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(tt.mockStatusCode)
-				w.Write([]byte(tt.mockResponse))
-			}))
+			expectedPath := "/proxy/network/integration/v1/sites"
+			server := testutil.NewMockServer(t, expectedPath, testAPIKey, tt.mockResponse, tt.mockStatusCode)
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			resp, err := client.ListSites(context.Background(), nil)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-				return
-			}
+			require.NoError(t, err)
+			require.NotNil(t, resp)
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
@@ -519,50 +181,39 @@ func TestListDNSRecords(t *testing.T) {
 	}{
 		{
 			name:           "success with records",
-			mockResponse:   listDNSRecordsSuccess,
+			mockResponse:   testdata.LoadFixture(t, "dns/list_success.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp []DNSRecord) {
 				t.Helper()
-				if len(resp) != 3 {
-					t.Fatalf("len(resp) = %d, want 3", len(resp))
-				}
+				assert.Len(t, resp, 3)
+
 				// Check first record
-				if resp[0].Key != testHostKey {
-					t.Errorf("Key = %s, want %s", resp[0].Key, testHostKey)
-				}
-				if resp[0].Value != testHostValue {
-					t.Errorf("Value = %s, want %s", resp[0].Value, testHostValue)
-				}
-				if resp[0].RecordType != "A" {
-					t.Errorf("RecordType = %s, want A", resp[0].RecordType)
-				}
-				if !resp[0].Enabled {
-					t.Error("Enabled = false, want true")
-				}
+				assert.Equal(t, testHostKey, resp[0].Key)
+				assert.Equal(t, testHostValue, resp[0].Value)
+				assert.Equal(t, "A", string(resp[0].RecordType))
+				assert.True(t, resp[0].Enabled)
 			},
 		},
 		{
 			name:           "empty list",
-			mockResponse:   emptyDNSRecords,
+			mockResponse:   testdata.LoadFixture(t, "dns/empty_list.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp []DNSRecord) {
 				t.Helper()
-				if len(resp) != 0 {
-					t.Errorf("len(resp) = %d, want 0", len(resp))
-				}
+				assert.Empty(t, resp)
 			},
 		},
 		{
 			name:           "unauthorized",
-			mockResponse:   unauthorizedError,
+			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
 			name:           "server error",
-			mockResponse:   serverError,
+			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
 		},
@@ -572,40 +223,21 @@ func TestListDNSRecords(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/static-dns"
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-				//nolint:canonicalheader // X-API-KEY is the correct header name per UniFi API specification
-				if r.Header.Get("X-API-KEY") != testAPIKey {
-					t.Error("X-API-KEY header not set")
-				}
-
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(tt.mockStatusCode)
-				w.Write([]byte(tt.mockResponse))
-			}))
+			expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/static-dns"
+			server := testutil.NewMockServer(t, expectedPath, testAPIKey, tt.mockResponse, tt.mockStatusCode)
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			resp, err := client.ListDNSRecords(context.Background(), testSiteInternal)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-				return
-			}
+			require.NoError(t, err)
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
@@ -626,31 +258,24 @@ func TestCreateDNSRecord(t *testing.T) {
 	}{
 		{
 			name:           "success",
-			mockResponse:   singleDNSRecord,
+			mockResponse:   testdata.LoadFixture(t, "dns/single_record.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp *DNSRecord) {
 				t.Helper()
-				if resp == nil {
-					t.Fatal("response is nil")
-				}
-				if resp.Key != testHostKey {
-					t.Errorf("Key = %s, want %s", resp.Key, testHostKey)
-				}
-				if resp.Value != testHostValue {
-					t.Errorf("Value = %s, want %s", resp.Value, testHostValue)
-				}
+				assert.Equal(t, testHostKey, resp.Key)
+				assert.Equal(t, testHostValue, resp.Value)
 			},
 		},
 		{
 			name:           "bad request",
-			mockResponse:   badRequestError,
+			mockResponse:   testdata.LoadFixture(t, "errors/bad_request.json"),
 			mockStatusCode: http.StatusBadRequest,
 			wantErr:        true,
 		},
 		{
 			name:           "unauthorized",
-			mockResponse:   unauthorizedError,
+			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
@@ -662,12 +287,8 @@ func TestCreateDNSRecord(t *testing.T) {
 
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/static-dns"
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-				if r.Method != http.MethodPost {
-					t.Errorf("Method = %s, want POST", r.Method)
-				}
+				assert.Equal(t, expectedPath, r.URL.Path)
+				assert.Equal(t, http.MethodPost, r.Method)
 
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(tt.mockStatusCode)
@@ -676,9 +297,7 @@ func TestCreateDNSRecord(t *testing.T) {
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			input := &DNSRecordInput{
 				Key:        testHostKey,
@@ -689,16 +308,12 @@ func TestCreateDNSRecord(t *testing.T) {
 			resp, err := client.CreateDNSRecord(context.Background(), testSiteInternal, input)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-				return
-			}
+			require.NoError(t, err)
+			require.NotNil(t, resp)
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
@@ -719,28 +334,23 @@ func TestUpdateDNSRecord(t *testing.T) {
 	}{
 		{
 			name:           "success",
-			mockResponse:   singleDNSRecord,
+			mockResponse:   testdata.LoadFixture(t, "dns/single_record.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp *DNSRecord) {
 				t.Helper()
-				if resp == nil {
-					t.Fatal("response is nil")
-				}
-				if resp.Key != testHostKey {
-					t.Errorf("Key = %s, want %s", resp.Key, testHostKey)
-				}
+				assert.Equal(t, testHostKey, resp.Key)
 			},
 		},
 		{
 			name:           "not found",
-			mockResponse:   notFoundError,
+			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
 		},
 		{
 			name:           "bad request",
-			mockResponse:   badRequestError,
+			mockResponse:   testdata.LoadFixture(t, "errors/bad_request.json"),
 			mockStatusCode: http.StatusBadRequest,
 			wantErr:        true,
 		},
@@ -752,12 +362,8 @@ func TestUpdateDNSRecord(t *testing.T) {
 
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/static-dns/" + testRecordID
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-				if r.Method != http.MethodPut {
-					t.Errorf("Method = %s, want PUT", r.Method)
-				}
+				assert.Equal(t, expectedPath, r.URL.Path)
+				assert.Equal(t, http.MethodPut, r.Method)
 
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(tt.mockStatusCode)
@@ -766,9 +372,7 @@ func TestUpdateDNSRecord(t *testing.T) {
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			input := &DNSRecordInput{
 				Key:        testHostKey,
@@ -779,16 +383,12 @@ func TestUpdateDNSRecord(t *testing.T) {
 			resp, err := client.UpdateDNSRecord(context.Background(), testSiteInternal, testRecordID, input)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-				return
-			}
+			require.NoError(t, err)
+			require.NotNil(t, resp)
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
@@ -814,7 +414,7 @@ func TestDeleteDNSRecord(t *testing.T) {
 		},
 		{
 			name:           "not found",
-			mockResponse:   notFoundError,
+			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
 		},
@@ -826,12 +426,8 @@ func TestDeleteDNSRecord(t *testing.T) {
 
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/static-dns/" + testRecordID
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-				if r.Method != http.MethodDelete {
-					t.Errorf("Method = %s, want DELETE", r.Method)
-				}
+				assert.Equal(t, expectedPath, r.URL.Path)
+				assert.Equal(t, http.MethodDelete, r.Method)
 
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(tt.mockStatusCode)
@@ -840,22 +436,16 @@ func TestDeleteDNSRecord(t *testing.T) {
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			err = client.DeleteDNSRecord(context.Background(), testSiteInternal, testRecordID)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-			}
+			require.NoError(t, err)
 		})
 	}
 }
@@ -872,33 +462,25 @@ func TestListSiteDevices(t *testing.T) {
 	}{
 		{
 			name:           "success with devices",
-			mockResponse:   listDevicesSuccess,
+			mockResponse:   testdata.LoadFixture(t, "devices/list_success.json"),
 			mockStatusCode: http.StatusOK,
 			checkResponse: func(t *testing.T, resp *DevicesResponse) {
 				t.Helper()
-				if resp.Count != 2 {
-					t.Errorf("Count = %d, want 2", resp.Count)
-				}
-				if len(resp.Data) != 2 {
-					t.Errorf("len(Data) = %d, want 2", len(resp.Data))
-				}
-				if resp.Data[0].Model != testModelUDR7 {
-					t.Errorf("Model = %v, want %s", resp.Data[0].Model, testModelUDR7)
-				}
-				if resp.Data[1].Model != "USW Flex Mini" {
-					t.Errorf("Model = %v, want USW Flex Mini", resp.Data[1].Model)
-				}
+				assert.Equal(t, 2, resp.Count)
+				assert.Len(t, resp.Data, 2)
+				assert.Equal(t, testModelUDR7, resp.Data[0].Model)
+				assert.Equal(t, "USW Flex Mini", resp.Data[1].Model)
 			},
 		},
 		{
 			name:           "unauthorized",
-			mockResponse:   unauthorizedError,
+			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
 			name:           "server error",
-			mockResponse:   serverError,
+			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
 		},
@@ -908,35 +490,21 @@ func TestListSiteDevices(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/devices"
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(tt.mockStatusCode)
-				w.Write([]byte(tt.mockResponse))
-			}))
+			expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/devices"
+			server := testutil.NewMockServer(t, expectedPath, testAPIKey, tt.mockResponse, tt.mockStatusCode)
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			resp, err := client.ListSiteDevices(context.Background(), testSiteID, nil)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-			}
+			require.NoError(t, err)
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
@@ -959,33 +527,27 @@ func TestGetDeviceByID(t *testing.T) {
 	}{
 		{
 			name:           "success with full device",
-			mockResponse:   singleDeviceSuccess,
+			mockResponse:   testdata.LoadFixture(t, "devices/single_device.json"),
 			mockStatusCode: http.StatusOK,
 			checkResponse: func(t *testing.T, resp *Device) {
 				t.Helper()
-				if resp.Model != testModelUDR7 {
-					t.Errorf("Model = %v, want %s", resp.Model, testModelUDR7)
-				}
-				if resp.FirmwareVersion != "4.3.9" {
-					t.Errorf("FirmwareVersion = %v, want 4.3.9", resp.FirmwareVersion)
-				}
-				if resp.Interfaces.Ports == nil || len(*resp.Interfaces.Ports) != 2 {
-					t.Errorf("len(Ports) = %d, want 2", len(*resp.Interfaces.Ports))
-				}
-				if resp.Interfaces.Radios == nil || len(*resp.Interfaces.Radios) != 2 {
-					t.Errorf("len(Radios) = %d, want 2", len(*resp.Interfaces.Radios))
-				}
+				assert.Equal(t, testModelUDR7, resp.Model)
+				assert.Equal(t, "4.3.9", resp.FirmwareVersion)
+				require.NotNil(t, resp.Interfaces.Ports)
+				assert.Len(t, *resp.Interfaces.Ports, 2)
+				require.NotNil(t, resp.Interfaces.Radios)
+				assert.Len(t, *resp.Interfaces.Radios, 2)
 			},
 		},
 		{
 			name:           "not found",
-			mockResponse:   notFoundError,
+			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
 		},
 		{
 			name:           "unauthorized",
-			mockResponse:   unauthorizedError,
+			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
@@ -995,35 +557,21 @@ func TestGetDeviceByID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/devices/" + testDeviceID.String()
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(tt.mockStatusCode)
-				w.Write([]byte(tt.mockResponse))
-			}))
+			expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/devices/" + testDeviceID.String()
+			server := testutil.NewMockServer(t, expectedPath, testAPIKey, tt.mockResponse, tt.mockStatusCode)
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			resp, err := client.GetDeviceByID(context.Background(), testSiteID, testDeviceID)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-			}
+			require.NoError(t, err)
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
@@ -1044,33 +592,25 @@ func TestListSiteClients(t *testing.T) {
 	}{
 		{
 			name:           "success with clients",
-			mockResponse:   listClientsSuccess,
+			mockResponse:   testdata.LoadFixture(t, "clients/list_success.json"),
 			mockStatusCode: http.StatusOK,
 			checkResponse: func(t *testing.T, resp *ClientsResponse) {
 				t.Helper()
-				if resp.Count != 3 {
-					t.Errorf("Count = %d, want 3", resp.Count)
-				}
-				if len(resp.Data) != 3 {
-					t.Errorf("len(Data) = %d, want 3", len(resp.Data))
-				}
-				if string(resp.Data[0].Type) != testTypeWired {
-					t.Errorf("Type = %v, want %s", resp.Data[0].Type, testTypeWired)
-				}
-				if string(resp.Data[1].Type) != "WIRELESS" {
-					t.Errorf("Type = %v, want WIRELESS", resp.Data[1].Type)
-				}
+				assert.Equal(t, 3, resp.Count)
+				assert.Len(t, resp.Data, 3)
+				assert.Equal(t, testTypeWired, string(resp.Data[0].Type))
+				assert.Equal(t, "WIRELESS", string(resp.Data[1].Type))
 			},
 		},
 		{
 			name:           "unauthorized",
-			mockResponse:   unauthorizedError,
+			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
 			name:           "server error",
-			mockResponse:   serverError,
+			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
 		},
@@ -1080,35 +620,21 @@ func TestListSiteClients(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/clients"
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(tt.mockStatusCode)
-				w.Write([]byte(tt.mockResponse))
-			}))
+			expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/clients"
+			server := testutil.NewMockServer(t, expectedPath, testAPIKey, tt.mockResponse, tt.mockStatusCode)
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			resp, err := client.ListSiteClients(context.Background(), testSiteID, nil)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-			}
+			require.NoError(t, err)
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
@@ -1131,30 +657,24 @@ func TestGetClientByID(t *testing.T) {
 	}{
 		{
 			name:           "success with client details",
-			mockResponse:   singleClientSuccess,
+			mockResponse:   testdata.LoadFixture(t, "clients/single_client.json"),
 			mockStatusCode: http.StatusOK,
 			checkResponse: func(t *testing.T, resp *NetworkClient) {
 				t.Helper()
-				if string(resp.Type) != testTypeWired {
-					t.Errorf("Type = %v, want %s", resp.Type, testTypeWired)
-				}
-				if resp.Name != "client-1" {
-					t.Errorf("Name = %v, want client-1", resp.Name)
-				}
-				if resp.MacAddress != "aa:bb:cc:14:01:56" {
-					t.Errorf("MacAddress = %v, want aa:bb:cc:14:01:56", resp.MacAddress)
-				}
+				assert.Equal(t, testTypeWired, string(resp.Type))
+				assert.Equal(t, "client-1", resp.Name)
+				assert.Equal(t, "aa:bb:cc:14:01:56", resp.MacAddress)
 			},
 		},
 		{
 			name:           "not found",
-			mockResponse:   notFoundError,
+			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
 		},
 		{
 			name:           "unauthorized",
-			mockResponse:   unauthorizedError,
+			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
@@ -1164,35 +684,21 @@ func TestGetClientByID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/clients/" + testClientID.String()
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(tt.mockStatusCode)
-				w.Write([]byte(tt.mockResponse))
-			}))
+			expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/clients/" + testClientID.String()
+			server := testutil.NewMockServer(t, expectedPath, testAPIKey, tt.mockResponse, tt.mockStatusCode)
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			resp, err := client.GetClientByID(context.Background(), testSiteID, testClientID)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-			}
+			require.NoError(t, err)
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
@@ -1213,33 +719,27 @@ func TestGetAggregatedDashboard(t *testing.T) {
 	}{
 		{
 			name:           "success with real data",
-			mockResponse:   dashboardSuccess,
+			mockResponse:   testdata.LoadFixture(t, "dashboard/aggregated.json"),
 			mockStatusCode: http.StatusOK,
 			checkResponse: func(t *testing.T, resp *AggregatedDashboard) {
 				t.Helper()
-				if resp.DashboardMeta == nil {
-					t.Fatal("DashboardMeta is nil")
-				}
-				if resp.DashboardMeta.Layout == nil || *resp.DashboardMeta.Layout != "wireless" {
-					t.Errorf("Layout = %v, want wireless", resp.DashboardMeta.Layout)
-				}
-				if resp.WifiChannels == nil {
-					t.Fatal("WifiChannels is nil")
-				}
-				if resp.WifiChannels.RadioChannels == nil || len(*resp.WifiChannels.RadioChannels) != 2 {
-					t.Errorf("len(RadioChannels) = %d, want 2", len(*resp.WifiChannels.RadioChannels))
-				}
+				require.NotNil(t, resp.DashboardMeta)
+				require.NotNil(t, resp.DashboardMeta.Layout)
+				assert.Equal(t, "wireless", *resp.DashboardMeta.Layout)
+				require.NotNil(t, resp.WifiChannels)
+				require.NotNil(t, resp.WifiChannels.RadioChannels)
+				assert.Len(t, *resp.WifiChannels.RadioChannels, 2)
 			},
 		},
 		{
 			name:           "unauthorized",
-			mockResponse:   unauthorizedError,
+			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
 			name:           "not found",
-			mockResponse:   notFoundError,
+			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
 		},
@@ -1249,35 +749,21 @@ func TestGetAggregatedDashboard(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/aggregated-dashboard"
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(tt.mockStatusCode)
-				w.Write([]byte(tt.mockResponse))
-			}))
+			expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/aggregated-dashboard"
+			server := testutil.NewMockServer(t, expectedPath, testAPIKey, tt.mockResponse, tt.mockStatusCode)
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			resp, err := client.GetAggregatedDashboard(context.Background(), testSiteInternal, nil)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-			}
+			require.NoError(t, err)
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
@@ -1298,24 +784,22 @@ func TestListFirewallPolicies(t *testing.T) {
 	}{
 		{
 			name:           "success with empty list",
-			mockResponse:   emptyFirewallPolicies,
+			mockResponse:   testdata.LoadFixture(t, "firewall/empty_list.json"),
 			mockStatusCode: http.StatusOK,
 			checkResponse: func(t *testing.T, resp []FirewallPolicy) {
 				t.Helper()
-				if len(resp) != 0 {
-					t.Errorf("len(resp) = %d, want 0", len(resp))
-				}
+				assert.Empty(t, resp)
 			},
 		},
 		{
 			name:           "unauthorized",
-			mockResponse:   unauthorizedError,
+			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
 			name:           "server error",
-			mockResponse:   serverError,
+			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
 		},
@@ -1325,35 +809,21 @@ func TestListFirewallPolicies(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/firewall-policies"
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(tt.mockStatusCode)
-				w.Write([]byte(tt.mockResponse))
-			}))
+			expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/firewall-policies"
+			server := testutil.NewMockServer(t, expectedPath, testAPIKey, tt.mockResponse, tt.mockStatusCode)
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			resp, err := client.ListFirewallPolicies(context.Background(), testSiteInternal)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-			}
+			require.NoError(t, err)
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
@@ -1374,22 +844,17 @@ func TestCreateFirewallPolicy(t *testing.T) {
 	}{
 		{
 			name:           "success",
-			mockResponse:   singleFirewallPolicy,
+			mockResponse:   testdata.LoadFixture(t, "firewall/single_policy.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp *FirewallPolicy) {
 				t.Helper()
-				if resp == nil {
-					t.Fatal("response is nil")
-				}
-				if resp.Name != testPolicyName {
-					t.Errorf("Name = %s, want %s", resp.Name, testPolicyName)
-				}
+				assert.Equal(t, testPolicyName, resp.Name)
 			},
 		},
 		{
 			name:           "bad request",
-			mockResponse:   badRequestError,
+			mockResponse:   testdata.LoadFixture(t, "errors/bad_request.json"),
 			mockStatusCode: http.StatusBadRequest,
 			wantErr:        true,
 		},
@@ -1401,12 +866,8 @@ func TestCreateFirewallPolicy(t *testing.T) {
 
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/firewall-policies"
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-				if r.Method != http.MethodPost {
-					t.Errorf("Method = %s, want POST", r.Method)
-				}
+				assert.Equal(t, expectedPath, r.URL.Path)
+				assert.Equal(t, http.MethodPost, r.Method)
 
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(tt.mockStatusCode)
@@ -1415,9 +876,7 @@ func TestCreateFirewallPolicy(t *testing.T) {
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			input := &FirewallPolicyInput{
 				Action:  FirewallPolicyInputActionALLOW,
@@ -1428,16 +887,12 @@ func TestCreateFirewallPolicy(t *testing.T) {
 			resp, err := client.CreateFirewallPolicy(context.Background(), testSiteInternal, input)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-				return
-			}
+			require.NoError(t, err)
+			require.NotNil(t, resp)
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
@@ -1460,22 +915,17 @@ func TestUpdateFirewallPolicy(t *testing.T) {
 	}{
 		{
 			name:           "success",
-			mockResponse:   singleFirewallPolicy,
+			mockResponse:   testdata.LoadFixture(t, "firewall/single_policy.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp *FirewallPolicy) {
 				t.Helper()
-				if resp == nil {
-					t.Fatal("response is nil")
-				}
-				if resp.Name != testPolicyName {
-					t.Errorf("Name = %s, want %s", resp.Name, testPolicyName)
-				}
+				assert.Equal(t, testPolicyName, resp.Name)
 			},
 		},
 		{
 			name:           "not found",
-			mockResponse:   notFoundError,
+			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
 		},
@@ -1487,12 +937,8 @@ func TestUpdateFirewallPolicy(t *testing.T) {
 
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/firewall-policies/" + policyID
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-				if r.Method != http.MethodPut {
-					t.Errorf("Method = %s, want PUT", r.Method)
-				}
+				assert.Equal(t, expectedPath, r.URL.Path)
+				assert.Equal(t, http.MethodPut, r.Method)
 
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(tt.mockStatusCode)
@@ -1501,9 +947,7 @@ func TestUpdateFirewallPolicy(t *testing.T) {
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			input := &FirewallPolicyInput{
 				Action:  FirewallPolicyInputActionALLOW,
@@ -1514,16 +958,12 @@ func TestUpdateFirewallPolicy(t *testing.T) {
 			resp, err := client.UpdateFirewallPolicy(context.Background(), testSiteInternal, policyID, input)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-				return
-			}
+			require.NoError(t, err)
+			require.NotNil(t, resp)
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
@@ -1551,7 +991,7 @@ func TestDeleteFirewallPolicy(t *testing.T) {
 		},
 		{
 			name:           "not found",
-			mockResponse:   notFoundError,
+			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
 		},
@@ -1563,12 +1003,8 @@ func TestDeleteFirewallPolicy(t *testing.T) {
 
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/firewall-policies/" + policyID
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-				if r.Method != http.MethodDelete {
-					t.Errorf("Method = %s, want DELETE", r.Method)
-				}
+				assert.Equal(t, expectedPath, r.URL.Path)
+				assert.Equal(t, http.MethodDelete, r.Method)
 
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(tt.mockStatusCode)
@@ -1577,22 +1013,16 @@ func TestDeleteFirewallPolicy(t *testing.T) {
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			err = client.DeleteFirewallPolicy(context.Background(), testSiteInternal, policyID)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-			}
+			require.NoError(t, err)
 		})
 	}
 }
@@ -1609,24 +1039,22 @@ func TestListTrafficRules(t *testing.T) {
 	}{
 		{
 			name:           "success with empty list",
-			mockResponse:   emptyTrafficRules,
+			mockResponse:   testdata.LoadFixture(t, "traffic/empty_list.json"),
 			mockStatusCode: http.StatusOK,
 			checkResponse: func(t *testing.T, resp []TrafficRule) {
 				t.Helper()
-				if len(resp) != 0 {
-					t.Errorf("len(resp) = %d, want 0", len(resp))
-				}
+				assert.Empty(t, resp)
 			},
 		},
 		{
 			name:           "unauthorized",
-			mockResponse:   unauthorizedError,
+			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
 			name:           "server error",
-			mockResponse:   serverError,
+			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
 		},
@@ -1636,35 +1064,21 @@ func TestListTrafficRules(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/trafficrules"
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(tt.mockStatusCode)
-				w.Write([]byte(tt.mockResponse))
-			}))
+			expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/trafficrules"
+			server := testutil.NewMockServer(t, expectedPath, testAPIKey, tt.mockResponse, tt.mockStatusCode)
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			resp, err := client.ListTrafficRules(context.Background(), testSiteInternal)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-			}
+			require.NoError(t, err)
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
@@ -1685,22 +1099,18 @@ func TestCreateTrafficRule(t *testing.T) {
 	}{
 		{
 			name:           "success",
-			mockResponse:   singleTrafficRule,
+			mockResponse:   testdata.LoadFixture(t, "traffic/single_rule.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp *TrafficRule) {
 				t.Helper()
-				if resp == nil {
-					t.Fatal("response is nil")
-				}
-				if resp.Description == nil || *resp.Description != testRuleName {
-					t.Errorf("Description = %v, want test-rule-1", resp.Description)
-				}
+				require.NotNil(t, resp.Description)
+				assert.Equal(t, testRuleName, *resp.Description)
 			},
 		},
 		{
 			name:           "bad request",
-			mockResponse:   badRequestError,
+			mockResponse:   testdata.LoadFixture(t, "errors/bad_request.json"),
 			mockStatusCode: http.StatusBadRequest,
 			wantErr:        true,
 		},
@@ -1712,12 +1122,8 @@ func TestCreateTrafficRule(t *testing.T) {
 
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/trafficrules"
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-				if r.Method != http.MethodPost {
-					t.Errorf("Method = %s, want POST", r.Method)
-				}
+				assert.Equal(t, expectedPath, r.URL.Path)
+				assert.Equal(t, http.MethodPost, r.Method)
 
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(tt.mockStatusCode)
@@ -1726,9 +1132,7 @@ func TestCreateTrafficRule(t *testing.T) {
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			desc := testRuleName
 			input := &TrafficRuleInput{
@@ -1740,16 +1144,12 @@ func TestCreateTrafficRule(t *testing.T) {
 			resp, err := client.CreateTrafficRule(context.Background(), testSiteInternal, input)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-				return
-			}
+			require.NoError(t, err)
+			require.NotNil(t, resp)
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
@@ -1772,22 +1172,18 @@ func TestUpdateTrafficRule(t *testing.T) {
 	}{
 		{
 			name:           "success",
-			mockResponse:   singleTrafficRule,
+			mockResponse:   testdata.LoadFixture(t, "traffic/single_rule.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp *TrafficRule) {
 				t.Helper()
-				if resp == nil {
-					t.Fatal("response is nil")
-				}
-				if resp.Description == nil || *resp.Description != testRuleName {
-					t.Errorf("Description = %v, want test-rule-1", resp.Description)
-				}
+				require.NotNil(t, resp.Description)
+				assert.Equal(t, testRuleName, *resp.Description)
 			},
 		},
 		{
 			name:           "not found",
-			mockResponse:   notFoundError,
+			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
 		},
@@ -1799,12 +1195,8 @@ func TestUpdateTrafficRule(t *testing.T) {
 
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/trafficrules/" + ruleID
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-				if r.Method != http.MethodPut {
-					t.Errorf("Method = %s, want PUT", r.Method)
-				}
+				assert.Equal(t, expectedPath, r.URL.Path)
+				assert.Equal(t, http.MethodPut, r.Method)
 
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(tt.mockStatusCode)
@@ -1813,9 +1205,7 @@ func TestUpdateTrafficRule(t *testing.T) {
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			desc := testRuleName
 			input := &TrafficRuleInput{
@@ -1827,16 +1217,12 @@ func TestUpdateTrafficRule(t *testing.T) {
 			resp, err := client.UpdateTrafficRule(context.Background(), testSiteInternal, ruleID, input)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-				return
-			}
+			require.NoError(t, err)
+			require.NotNil(t, resp)
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
@@ -1864,7 +1250,7 @@ func TestDeleteTrafficRule(t *testing.T) {
 		},
 		{
 			name:           "not found",
-			mockResponse:   notFoundError,
+			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
 		},
@@ -1876,12 +1262,8 @@ func TestDeleteTrafficRule(t *testing.T) {
 
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				expectedPath := "/proxy/network/v2/api/site/" + testSiteInternal + "/trafficrules/" + ruleID
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-				if r.Method != http.MethodDelete {
-					t.Errorf("Method = %s, want DELETE", r.Method)
-				}
+				assert.Equal(t, expectedPath, r.URL.Path)
+				assert.Equal(t, http.MethodDelete, r.Method)
 
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(tt.mockStatusCode)
@@ -1890,22 +1272,16 @@ func TestDeleteTrafficRule(t *testing.T) {
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			err = client.DeleteTrafficRule(context.Background(), testSiteInternal, ruleID)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-			}
+			require.NoError(t, err)
 		})
 	}
 }
@@ -1922,34 +1298,28 @@ func TestListHotspotVouchers(t *testing.T) {
 	}{
 		{
 			name:           "success with vouchers",
-			mockResponse:   listVouchersSuccess,
+			mockResponse:   testdata.LoadFixture(t, "hotspot/list_vouchers_success.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp *HotspotVouchersResponse) {
 				t.Helper()
-				if resp.Count != 2 {
-					t.Errorf("Count = %d, want 2", resp.Count)
-				}
-				if len(resp.Data) != 2 {
-					t.Errorf("len(Data) = %d, want 2", len(resp.Data))
-				}
+				assert.Equal(t, 2, resp.Count)
+				assert.Len(t, resp.Data, 2)
 			},
 		},
 		{
 			name:           "success with empty list",
-			mockResponse:   emptyVouchers,
+			mockResponse:   testdata.LoadFixture(t, "hotspot/empty_list.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp *HotspotVouchersResponse) {
 				t.Helper()
-				if resp.Count != 0 {
-					t.Errorf("Count = %d, want 0", resp.Count)
-				}
+				assert.Equal(t, 0, resp.Count)
 			},
 		},
 		{
 			name:           "unauthorized",
-			mockResponse:   unauthorizedError,
+			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
@@ -1959,36 +1329,22 @@ func TestListHotspotVouchers(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/hotspot/vouchers"
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(tt.mockStatusCode)
-				w.Write([]byte(tt.mockResponse))
-			}))
+			expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/hotspot/vouchers"
+			server := testutil.NewMockServer(t, expectedPath, testAPIKey, tt.mockResponse, tt.mockStatusCode)
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			resp, err := client.ListHotspotVouchers(context.Background(), testSiteID, nil)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-				return
-			}
+			require.NoError(t, err)
+			require.NotNil(t, resp)
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
@@ -2008,13 +1364,13 @@ func TestCreateHotspotVouchers(t *testing.T) {
 	}{
 		{
 			name:           "success",
-			mockResponse:   listVouchersSuccess,
+			mockResponse:   testdata.LoadFixture(t, "hotspot/list_vouchers_success.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 		},
 		{
 			name:           "bad request",
-			mockResponse:   badRequestError,
+			mockResponse:   testdata.LoadFixture(t, "errors/bad_request.json"),
 			mockStatusCode: http.StatusBadRequest,
 			wantErr:        true,
 		},
@@ -2026,12 +1382,8 @@ func TestCreateHotspotVouchers(t *testing.T) {
 
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/hotspot/vouchers"
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-				if r.Method != http.MethodPost {
-					t.Errorf("Method = %s, want POST", r.Method)
-				}
+				assert.Equal(t, expectedPath, r.URL.Path)
+				assert.Equal(t, http.MethodPost, r.Method)
 
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(tt.mockStatusCode)
@@ -2040,9 +1392,7 @@ func TestCreateHotspotVouchers(t *testing.T) {
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			quota := 1
 			input := &CreateVouchersRequest{
@@ -2053,15 +1403,11 @@ func TestCreateHotspotVouchers(t *testing.T) {
 			_, err = client.CreateHotspotVouchers(context.Background(), testSiteID, input)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-			}
+			require.NoError(t, err)
 		})
 	}
 }
@@ -2080,22 +1426,17 @@ func TestGetHotspotVoucher(t *testing.T) {
 	}{
 		{
 			name:           "success",
-			mockResponse:   singleVoucher,
+			mockResponse:   testdata.LoadFixture(t, "hotspot/single_voucher.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 			checkResponse: func(t *testing.T, resp *HotspotVoucher) {
 				t.Helper()
-				if resp == nil {
-					t.Fatal("response is nil")
-				}
-				if resp.Code != "12345-67890" {
-					t.Errorf("Code = %v, want 12345-67890", resp.Code)
-				}
+				assert.Equal(t, "12345-67890", resp.Code)
 			},
 		},
 		{
 			name:           "not found",
-			mockResponse:   notFoundError,
+			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
 		},
@@ -2105,36 +1446,22 @@ func TestGetHotspotVoucher(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/hotspot/vouchers/" + testVoucherID.String()
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-
-				w.Header().Set("Content-Type", "application/json")
-				w.WriteHeader(tt.mockStatusCode)
-				w.Write([]byte(tt.mockResponse))
-			}))
+			expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/hotspot/vouchers/" + testVoucherID.String()
+			server := testutil.NewMockServer(t, expectedPath, testAPIKey, tt.mockResponse, tt.mockStatusCode)
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			resp, err := client.GetHotspotVoucher(context.Background(), testSiteID, testVoucherID)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-				return
-			}
+			require.NoError(t, err)
+			require.NotNil(t, resp)
 
 			if tt.checkResponse != nil {
 				tt.checkResponse(t, resp)
@@ -2162,7 +1489,7 @@ func TestDeleteHotspotVoucher(t *testing.T) {
 		},
 		{
 			name:           "not found",
-			mockResponse:   notFoundError,
+			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
 		},
@@ -2174,12 +1501,8 @@ func TestDeleteHotspotVoucher(t *testing.T) {
 
 			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				expectedPath := "/proxy/network/integration/v1/sites/" + testSiteID.String() + "/hotspot/vouchers/" + testVoucherID.String()
-				if r.URL.Path != expectedPath {
-					t.Errorf("Request path = %s, want %s", r.URL.Path, expectedPath)
-				}
-				if r.Method != http.MethodDelete {
-					t.Errorf("Method = %s, want DELETE", r.Method)
-				}
+				assert.Equal(t, expectedPath, r.URL.Path)
+				assert.Equal(t, http.MethodDelete, r.Method)
 
 				w.Header().Set("Content-Type", "application/json")
 				w.WriteHeader(tt.mockStatusCode)
@@ -2188,22 +1511,16 @@ func TestDeleteHotspotVoucher(t *testing.T) {
 			defer server.Close()
 
 			client, err := New(server.URL, testAPIKey)
-			if err != nil {
-				t.Fatalf("New failed: %v", err)
-			}
+			require.NoError(t, err)
 
 			err = client.DeleteHotspotVoucher(context.Background(), testSiteID, testVoucherID)
 
 			if tt.wantErr {
-				if err == nil {
-					t.Error("Expected error, got nil")
-				}
+				assert.Error(t, err)
 				return
 			}
 
-			if err != nil {
-				t.Errorf("Unexpected error: %v", err)
-			}
+			require.NoError(t, err)
 		})
 	}
 }

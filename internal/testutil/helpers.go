@@ -22,7 +22,7 @@ func NewMockServer(tb testing.TB, expectedPath, apiKey, responseBody string, sta
 
 		// Validate API key header if provided (check both common variants)
 		if apiKey != "" {
-			actualKey := r.Header.Get("X-API-KEY") //nolint:canonicalheader // X-API-KEY used in network API
+			actualKey := r.Header.Get("X-API-KEY")
 			if actualKey == "" {
 				actualKey = r.Header.Get("X-Api-Key")
 			}

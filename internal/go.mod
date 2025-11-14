@@ -4,7 +4,7 @@ go 1.25.4
 
 require (
 	github.com/cockroachdb/errors v1.12.0
-	github.com/lexfrei/go-unifi/observability v0.0.1
+	github.com/lexfrei/go-unifi/observability v0.1.0
 	golang.org/x/time v0.14.0
 )
 

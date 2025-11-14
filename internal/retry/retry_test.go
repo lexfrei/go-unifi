@@ -3,6 +3,8 @@ package retry
 import (
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestShouldRetry(t *testing.T) {
@@ -67,9 +69,8 @@ func TestShouldRetry(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if got := ShouldRetry(tt.statusCode); got != tt.want {
-				t.Errorf("ShouldRetry(%d) = %v, want %v", tt.statusCode, got, tt.want)
-			}
+			got := ShouldRetry(tt.statusCode)
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
@@ -131,9 +132,8 @@ func TestParseRetryAfter(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
-			if got := ParseRetryAfter(tt.header); got != tt.want {
-				t.Errorf("ParseRetryAfter(%q) = %v, want %v", tt.header, got, tt.want)
-			}
+			got := ParseRetryAfter(tt.header)
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }

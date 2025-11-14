@@ -11,6 +11,8 @@ import (
 
 	"github.com/lexfrei/go-unifi/internal/middleware"
 	"github.com/lexfrei/go-unifi/observability"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestRetry(t *testing.T) {
@@ -31,14 +33,10 @@ func TestRetry(t *testing.T) {
 
 		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 		resp, err := transport.RoundTrip(req)
-		if err != nil {
-			t.Fatalf("RoundTrip() error = %v", err)
-		}
+		require.NoError(t, err)
 		defer resp.Body.Close()
 
-		if resp.StatusCode != http.StatusOK {
-			t.Errorf("StatusCode = %d, want %d", resp.StatusCode, http.StatusOK)
-		}
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
 	})
 
 	t.Run("retry on 500 error", func(t *testing.T) {
@@ -62,18 +60,12 @@ func TestRetry(t *testing.T) {
 
 		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 		resp, err := transport.RoundTrip(req)
-		if err != nil {
-			t.Fatalf("RoundTrip() error = %v", err)
-		}
+		require.NoError(t, err)
 		defer resp.Body.Close()
 
-		if attempts != 3 {
-			t.Errorf("attempts = %d, want %d", attempts, 3)
-		}
+		assert.Equal(t, 3, attempts)
 
-		if resp.StatusCode != http.StatusOK {
-			t.Errorf("StatusCode = %d, want %d", resp.StatusCode, http.StatusOK)
-		}
+		assert.Equal(t, http.StatusOK, resp.StatusCode)
 	})
 
 	t.Run("no retry on 404 error", func(t *testing.T) {
@@ -93,14 +85,10 @@ func TestRetry(t *testing.T) {
 
 		req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 		resp, err := transport.RoundTrip(req)
-		if err != nil {
-			t.Fatalf("RoundTrip() error = %v", err)
-		}
+		require.NoError(t, err)
 		defer resp.Body.Close()
 
-		if attempts != 1 {
-			t.Errorf("attempts = %d, want %d (no retry on 4xx)", attempts, 1)
-		}
+		assert.Equal(t, 1, attempts, "no retry on 4xx")
 	})
 
 	t.Run("retry with body", func(t *testing.T) {
@@ -112,9 +100,7 @@ func TestRetry(t *testing.T) {
 
 			// Read body
 			body, _ := io.ReadAll(r.Body)
-			if string(body) != "test body" {
-				t.Errorf("body = %s, want %s", string(body), "test body")
-			}
+			assert.Equal(t, "test body", string(body))
 
 			if attempts < 2 {
 				w.WriteHeader(http.StatusInternalServerError)
@@ -131,14 +117,10 @@ func TestRetry(t *testing.T) {
 
 		req, _ := http.NewRequestWithContext(context.Background(), http.MethodPost, server.URL, strings.NewReader("test body"))
 		resp, err := transport.RoundTrip(req)
-		if err != nil {
-			t.Fatalf("RoundTrip() error = %v", err)
-		}
+		require.NoError(t, err)
 		defer resp.Body.Close()
 
-		if attempts != 2 {
-			t.Errorf("attempts = %d, want %d", attempts, 2)
-		}
+		assert.Equal(t, 2, attempts)
 	})
 
 	t.Run("respect Retry-After header", func(t *testing.T) {
@@ -166,15 +148,11 @@ func TestRetry(t *testing.T) {
 		resp, err := transport.RoundTrip(req)
 		duration := time.Since(start)
 
-		if err != nil {
-			t.Fatalf("RoundTrip() error = %v", err)
-		}
+		require.NoError(t, err)
 		defer resp.Body.Close()
 
 		// Should respect Retry-After (1 second) instead of initialWait (1 hour)
-		if duration > 2*time.Second {
-			t.Errorf("duration = %v, want < 2s (should use Retry-After)", duration)
-		}
+		assert.Less(t, duration, 2*time.Second, "should use Retry-After instead of initialWait")
 	})
 
 	t.Run("context cancellation during retry", func(t *testing.T) {
@@ -199,13 +177,9 @@ func TestRetry(t *testing.T) {
 			resp.Body.Close()
 		}
 
-		if err == nil {
-			t.Error("expected error on context cancellation")
-		}
+		require.Error(t, err, "expected error on context cancellation")
 
-		if !strings.Contains(err.Error(), "context") {
-			t.Errorf("error = %v, want context-related error", err)
-		}
+		assert.Contains(t, err.Error(), "context", "error should be context-related")
 	})
 }
 
@@ -235,12 +209,8 @@ func TestRetryWithObservability(t *testing.T) {
 
 	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 	resp, err := transport.RoundTrip(req)
-	if err != nil {
-		t.Fatalf("RoundTrip() error = %v", err)
-	}
+	require.NoError(t, err)
 	defer resp.Body.Close()
 
-	if attempts != 3 {
-		t.Errorf("attempts = %d, want %d", attempts, 3)
-	}
+	assert.Equal(t, 3, attempts)
 }

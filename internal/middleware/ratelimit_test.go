@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/lexfrei/go-unifi/internal/middleware"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golang.org/x/time/rate"
 )
 
@@ -37,14 +39,10 @@ func TestRateLimit(t *testing.T) {
 			resp, err := transport.RoundTrip(req)
 			duration := time.Since(start)
 
-			if err != nil {
-				t.Fatalf("RoundTrip() error = %v", err)
-			}
+			require.NoError(t, err)
 			resp.Body.Close()
 
-			if duration > 100*time.Millisecond {
-				t.Errorf("request %d took %v, expected < 100ms", i+1, duration)
-			}
+			assert.Less(t, duration, 100*time.Millisecond, "request %d should complete quickly", i+1)
 		}
 
 		// Third request should be rate limited
@@ -53,14 +51,10 @@ func TestRateLimit(t *testing.T) {
 		resp, err := transport.RoundTrip(req)
 		duration := time.Since(start)
 
-		if err != nil {
-			t.Fatalf("RoundTrip() error = %v", err)
-		}
+		require.NoError(t, err)
 		resp.Body.Close()
 
-		if duration < 100*time.Millisecond {
-			t.Errorf("third request took %v, expected >= 100ms (rate limited)", duration)
-		}
+		assert.GreaterOrEqual(t, duration, 100*time.Millisecond, "third request should be rate limited")
 	})
 
 	t.Run("selector mode", func(t *testing.T) {
@@ -92,14 +86,10 @@ func TestRateLimit(t *testing.T) {
 		resp, err := transport.RoundTrip(req)
 		duration := time.Since(start)
 
-		if err != nil {
-			t.Fatalf("RoundTrip() error = %v", err)
-		}
+		require.NoError(t, err)
 		resp.Body.Close()
 
-		if duration > 50*time.Millisecond {
-			t.Errorf("fast endpoint took %v, expected < 50ms", duration)
-		}
+		assert.Less(t, duration, 50*time.Millisecond, "fast endpoint should not be rate limited")
 
 		// Slow endpoint - use up the token
 		req, _ = http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL+"/slow", http.NoBody)
@@ -112,14 +102,10 @@ func TestRateLimit(t *testing.T) {
 		resp, err = transport.RoundTrip(req)
 		duration = time.Since(start)
 
-		if err != nil {
-			t.Fatalf("RoundTrip() error = %v", err)
-		}
+		require.NoError(t, err)
 		resp.Body.Close()
 
-		if duration < 500*time.Millisecond {
-			t.Errorf("slow endpoint took %v, expected >= 500ms (rate limited)", duration)
-		}
+		assert.GreaterOrEqual(t, duration, 500*time.Millisecond, "slow endpoint should be rate limited")
 	})
 
 	t.Run("nil limiter - no rate limiting", func(t *testing.T) {
@@ -140,14 +126,10 @@ func TestRateLimit(t *testing.T) {
 		resp, err := transport.RoundTrip(req)
 		duration := time.Since(start)
 
-		if err != nil {
-			t.Fatalf("RoundTrip() error = %v", err)
-		}
+		require.NoError(t, err)
 		resp.Body.Close()
 
-		if duration > 50*time.Millisecond {
-			t.Errorf("request took %v, expected < 50ms (no rate limiting)", duration)
-		}
+		assert.Less(t, duration, 50*time.Millisecond, "request should complete quickly without rate limiting")
 	})
 
 	t.Run("context cancellation", func(t *testing.T) {
@@ -175,12 +157,8 @@ func TestRateLimit(t *testing.T) {
 			resp.Body.Close()
 		}
 
-		if err == nil {
-			t.Error("expected error on context cancellation")
-		}
+		require.Error(t, err, "expected error on context cancellation")
 
-		if !strings.Contains(err.Error(), "context") {
-			t.Errorf("error = %v, want context-related error", err)
-		}
+		assert.Contains(t, err.Error(), "context", "error should be context-related")
 	})
 }

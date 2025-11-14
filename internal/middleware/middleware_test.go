@@ -9,6 +9,8 @@ import (
 
 	"github.com/lexfrei/go-unifi/internal/middleware"
 	"github.com/lexfrei/go-unifi/observability"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestAuth(t *testing.T) {
@@ -17,9 +19,7 @@ func TestAuth(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// Check for auth header
 		apiKey := r.Header.Get("X-Api-Key")
-		if apiKey != "test-key-123" {
-			t.Errorf("X-Api-Key = %s, want %s", apiKey, "test-key-123")
-		}
+		assert.Equal(t, "test-key-123", apiKey)
 
 		w.WriteHeader(http.StatusOK)
 	}))
@@ -29,14 +29,10 @@ func TestAuth(t *testing.T) {
 
 	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 	resp, err := transport.RoundTrip(req)
-	if err != nil {
-		t.Fatalf("RoundTrip() error = %v", err)
-	}
+	require.NoError(t, err)
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		t.Errorf("StatusCode = %d, want %d", resp.StatusCode, http.StatusOK)
-	}
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
 func TestAuthDoesNotModifyOriginalRequest(t *testing.T) {
@@ -53,15 +49,11 @@ func TestAuthDoesNotModifyOriginalRequest(t *testing.T) {
 	originalHeaders := len(req.Header)
 
 	resp, err := transport.RoundTrip(req)
-	if err != nil {
-		t.Fatalf("RoundTrip() error = %v", err)
-	}
+	require.NoError(t, err)
 	defer resp.Body.Close()
 
 	// Original request should not be modified
-	if len(req.Header) != originalHeaders {
-		t.Errorf("Original request was modified: headers = %d, want %d", len(req.Header), originalHeaders)
-	}
+	assert.Len(t, req.Header, originalHeaders, "Original request should not be modified")
 }
 
 func TestTLSConfig(t *testing.T) {
@@ -75,17 +67,11 @@ func TestTLSConfig(t *testing.T) {
 
 	// Verify it's an HTTP transport with TLS config
 	httpTransport, ok := transport.(*http.Transport)
-	if !ok {
-		t.Fatal("Transport is not *http.Transport")
-	}
+	require.True(t, ok, "Transport should be *http.Transport")
 
-	if httpTransport.TLSClientConfig == nil {
-		t.Fatal("TLSClientConfig is nil")
-	}
+	require.NotNil(t, httpTransport.TLSClientConfig, "TLSClientConfig should not be nil")
 
-	if httpTransport.TLSClientConfig.MinVersion != tls.VersionTLS12 {
-		t.Errorf("MinVersion = %d, want %d", httpTransport.TLSClientConfig.MinVersion, tls.VersionTLS12)
-	}
+	assert.Equal(t, uint16(tls.VersionTLS12), httpTransport.TLSClientConfig.MinVersion)
 }
 
 func TestInsecureSkipVerify(t *testing.T) {
@@ -93,13 +79,9 @@ func TestInsecureSkipVerify(t *testing.T) {
 
 	config := middleware.InsecureSkipVerify()
 
-	if config == nil {
-		t.Fatal("InsecureSkipVerify() returned nil")
-	}
+	require.NotNil(t, config, "InsecureSkipVerify() should not return nil")
 
-	if !config.InsecureSkipVerify {
-		t.Error("InsecureSkipVerify should be true")
-	}
+	assert.True(t, config.InsecureSkipVerify, "InsecureSkipVerify should be true")
 }
 
 func TestObservability(t *testing.T) {
@@ -117,14 +99,10 @@ func TestObservability(t *testing.T) {
 
 	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 	resp, err := transport.RoundTrip(req)
-	if err != nil {
-		t.Fatalf("RoundTrip() error = %v", err)
-	}
+	require.NoError(t, err)
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		t.Errorf("StatusCode = %d, want %d", resp.StatusCode, http.StatusOK)
-	}
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
 func TestObservabilityWithNilParams(t *testing.T) {
@@ -140,8 +118,6 @@ func TestObservabilityWithNilParams(t *testing.T) {
 
 	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 	resp, err := transport.RoundTrip(req)
-	if err != nil {
-		t.Fatalf("RoundTrip() error = %v", err)
-	}
+	require.NoError(t, err)
 	resp.Body.Close()
 }

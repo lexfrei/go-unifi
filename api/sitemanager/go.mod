@@ -6,7 +6,7 @@ require (
 	github.com/cockroachdb/errors v1.12.0
 	github.com/getkin/kin-openapi v0.133.0
 	github.com/lexfrei/go-unifi/internal v0.0.1
-	github.com/lexfrei/go-unifi/observability v0.0.0
+	github.com/lexfrei/go-unifi/observability v0.0.1
 	github.com/oapi-codegen/runtime v1.1.2
 	golang.org/x/time v0.14.0
 )
@@ -35,5 +35,3 @@ require (
 	golang.org/x/text v0.23.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/lexfrei/go-unifi/observability => ../../observability

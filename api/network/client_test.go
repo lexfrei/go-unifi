@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"sync"
 	"testing"
 	"time"
 
@@ -1574,4 +1575,29 @@ func TestNetworkError(t *testing.T) {
 
 	_, err = client.ListSites(ctx, nil)
 	require.Error(t, err)
+}
+
+func TestConcurrentRequests(t *testing.T) {
+	t.Parallel()
+
+	server := testutil.NewMockServer(t, "/proxy/network/integration/v1/sites", testAPIKey,
+		testdata.LoadFixture(t, "sites/list_success.json"), http.StatusOK)
+	defer server.Close()
+
+	client, err := New(server.URL, testAPIKey)
+	require.NoError(t, err)
+
+	const goroutines = 10
+	var wg sync.WaitGroup
+	wg.Add(goroutines)
+
+	for range goroutines {
+		go func() {
+			defer wg.Done()
+			_, err := client.ListSites(context.Background(), nil)
+			assert.NoError(t, err)
+		}()
+	}
+
+	wg.Wait()
 }

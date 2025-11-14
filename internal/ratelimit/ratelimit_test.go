@@ -2,6 +2,7 @@ package ratelimit
 
 import (
 	"context"
+	"sync"
 	"testing"
 	"time"
 
@@ -158,4 +159,55 @@ func BenchmarkRateLimiterAllow(b *testing.B) {
 	for b.Loop() {
 		limiter.Allow()
 	}
+}
+
+func TestConcurrentAccess(t *testing.T) {
+	t.Parallel()
+
+	limiter := NewRateLimiter(1000) // High rate for fast test
+
+	const goroutines = 10
+	const requestsPerGoroutine = 100
+
+	var wg sync.WaitGroup
+	wg.Add(goroutines)
+
+	for range goroutines {
+		go func() {
+			defer wg.Done()
+			for range requestsPerGoroutine {
+				_ = limiter.Allow()
+			}
+		}()
+	}
+
+	wg.Wait()
+	// If no race detector warnings, test passes
+}
+
+func TestConcurrentWait(t *testing.T) {
+	t.Parallel()
+
+	limiter := NewRateLimiter(6000) // High rate: 100 req/sec for fast test
+
+	const goroutines = 10
+	const requestsPerGoroutine = 10
+
+	ctx := context.Background()
+
+	var wg sync.WaitGroup
+	wg.Add(goroutines)
+
+	for range goroutines {
+		go func() {
+			defer wg.Done()
+			for range requestsPerGoroutine {
+				err := limiter.Wait(ctx)
+				assert.NoError(t, err)
+			}
+		}()
+	}
+
+	wg.Wait()
+	// If no race detector warnings, test passes
 }

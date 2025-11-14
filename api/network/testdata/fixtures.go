@@ -16,12 +16,12 @@ var FS embed.FS
 
 // LoadFixture reads and returns fixture content as string.
 // The path should be relative to testdata directory (e.g., "sites/list_success.json").
-func LoadFixture(t *testing.T, path string) string {
-	t.Helper()
+func LoadFixture(tb testing.TB, path string) string {
+	tb.Helper()
 
 	data, err := FS.ReadFile(filepath.Join(path))
 	if err != nil {
-		t.Fatalf("failed to load fixture %s: %v", path, err)
+		tb.Fatalf("failed to load fixture %s: %v", path, err)
 	}
 
 	return string(data)
@@ -29,11 +29,11 @@ func LoadFixture(t *testing.T, path string) string {
 
 // LoadFixtureJSON reads fixture and unmarshals into provided value.
 // Useful for testing deserialization or when you need structured data.
-func LoadFixtureJSON(t *testing.T, path string, v interface{}) {
-	t.Helper()
+func LoadFixtureJSON(tb testing.TB, path string, v interface{}) {
+	tb.Helper()
 
-	data := LoadFixture(t, path)
+	data := LoadFixture(tb, path)
 	if err := json.Unmarshal([]byte(data), v); err != nil {
-		t.Fatalf("failed to unmarshal fixture %s: %v", path, err)
+		tb.Fatalf("failed to unmarshal fixture %s: %v", path, err)
 	}
 }

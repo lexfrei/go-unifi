@@ -1601,3 +1601,82 @@ func TestConcurrentRequests(t *testing.T) {
 
 	wg.Wait()
 }
+
+// Benchmark tests.
+
+func BenchmarkListSites(b *testing.B) {
+	server := testutil.NewMockServer(b, "/proxy/network/integration/v1/sites", testAPIKey,
+		testdata.LoadFixture(b, "sites/list_success.json"), http.StatusOK)
+	defer server.Close()
+
+	client, _ := New(server.URL, testAPIKey)
+	ctx := context.Background()
+
+	b.ResetTimer()
+	for b.Loop() {
+		_, _ = client.ListSites(ctx, nil)
+	}
+}
+
+func BenchmarkNewClient(b *testing.B) {
+	for b.Loop() {
+		_, _ = New("http://localhost", testAPIKey)
+	}
+}
+
+func BenchmarkListSiteDevices(b *testing.B) {
+	server := testutil.NewMockServer(b, "/proxy/network/integration/v1/sites/"+testSiteID.String()+"/devices", testAPIKey,
+		testdata.LoadFixture(b, "devices/list_success.json"), http.StatusOK)
+	defer server.Close()
+
+	client, _ := New(server.URL, testAPIKey)
+	ctx := context.Background()
+
+	b.ResetTimer()
+	for b.Loop() {
+		_, _ = client.ListSiteDevices(ctx, testSiteID, nil)
+	}
+}
+
+func BenchmarkGetDeviceByID(b *testing.B) {
+	testDeviceID := types.UUID{0x62, 0x04, 0xb5, 0x87, 0x72, 0x15, 0x23, 0x5b, 0xd0, 0x68, 0xf9, 0x6c, 0xa1, 0x2e, 0xab, 0x52}
+	server := testutil.NewMockServer(b, "/proxy/network/integration/v1/sites/"+testSiteID.String()+"/devices/"+testDeviceID.String(), testAPIKey,
+		testdata.LoadFixture(b, "devices/single_device.json"), http.StatusOK)
+	defer server.Close()
+
+	client, _ := New(server.URL, testAPIKey)
+	ctx := context.Background()
+
+	b.ResetTimer()
+	for b.Loop() {
+		_, _ = client.GetDeviceByID(ctx, testSiteID, testDeviceID)
+	}
+}
+
+func BenchmarkListSiteClients(b *testing.B) {
+	server := testutil.NewMockServer(b, "/proxy/network/integration/v1/sites/"+testSiteID.String()+"/clients", testAPIKey,
+		testdata.LoadFixture(b, "clients/list_success.json"), http.StatusOK)
+	defer server.Close()
+
+	client, _ := New(server.URL, testAPIKey)
+	ctx := context.Background()
+
+	b.ResetTimer()
+	for b.Loop() {
+		_, _ = client.ListSiteClients(ctx, testSiteID, nil)
+	}
+}
+
+func BenchmarkListDNSRecords(b *testing.B) {
+	server := testutil.NewMockServer(b, "/proxy/network/v2/api/site/"+testSiteInternal+"/static-dns", testAPIKey,
+		testdata.LoadFixture(b, "dns/list_success.json"), http.StatusOK)
+	defer server.Close()
+
+	client, _ := New(server.URL, testAPIKey)
+	ctx := context.Background()
+
+	b.ResetTimer()
+	for b.Loop() {
+		_, _ = client.ListDNSRecords(ctx, testSiteInternal)
+	}
+}

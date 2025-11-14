@@ -1139,3 +1139,96 @@ func TestConcurrentRequests(t *testing.T) {
 
 	wg.Wait()
 }
+
+// Benchmark tests.
+
+func BenchmarkListHosts(b *testing.B) {
+	server := testutil.NewMockServer(b, "/v1/hosts", testAPIKey,
+		testdata.LoadFixture(b, "hosts/list_success_ucore.json"), http.StatusOK)
+	defer server.Close()
+
+	client, _ := NewWithConfig(&ClientConfig{
+		APIKey:  testAPIKey,
+		BaseURL: server.URL,
+	})
+	ctx := context.Background()
+
+	b.ResetTimer()
+	for b.Loop() {
+		_, _ = client.ListHosts(ctx, nil)
+	}
+}
+
+func BenchmarkNewClient(b *testing.B) {
+	for b.Loop() {
+		_, _ = New(testAPIKey)
+	}
+}
+
+func BenchmarkGetHostByID(b *testing.B) {
+	server := testutil.NewMockServer(b, "/v1/hosts/"+testHostID, testAPIKey,
+		testdata.LoadFixture(b, "hosts/get_ucore.json"), http.StatusOK)
+	defer server.Close()
+
+	client, _ := NewWithConfig(&ClientConfig{
+		APIKey:  testAPIKey,
+		BaseURL: server.URL,
+	})
+	ctx := context.Background()
+
+	b.ResetTimer()
+	for b.Loop() {
+		_, _ = client.GetHostByID(ctx, testHostID)
+	}
+}
+
+func BenchmarkListSites(b *testing.B) {
+	server := testutil.NewMockServer(b, "/v1/sites", testAPIKey,
+		testdata.LoadFixture(b, "sites/list_success.json"), http.StatusOK)
+	defer server.Close()
+
+	client, _ := NewWithConfig(&ClientConfig{
+		APIKey:  testAPIKey,
+		BaseURL: server.URL,
+	})
+	ctx := context.Background()
+
+	b.ResetTimer()
+	for b.Loop() {
+		_, _ = client.ListSites(ctx)
+	}
+}
+
+func BenchmarkListDevices(b *testing.B) {
+	server := testutil.NewMockServer(b, "/v1/devices", testAPIKey,
+		testdata.LoadFixture(b, "devices/list_success.json"), http.StatusOK)
+	defer server.Close()
+
+	client, _ := NewWithConfig(&ClientConfig{
+		APIKey:  testAPIKey,
+		BaseURL: server.URL,
+	})
+	ctx := context.Background()
+
+	b.ResetTimer()
+	for b.Loop() {
+		_, _ = client.ListDevices(ctx, nil)
+	}
+}
+
+func BenchmarkListSDWANConfigs(b *testing.B) {
+	server := testutil.NewMockServer(b, "/ea/sd-wan-configs", testAPIKey,
+		testdata.LoadFixture(b, "sdwan/list_configs.json"), http.StatusOK)
+	defer server.Close()
+
+	client, _ := NewWithConfig(&ClientConfig{
+		APIKey:  testAPIKey,
+		BaseURL: server.URL,
+	})
+	ctx := context.Background()
+
+	b.ResetTimer()
+	for b.Loop() {
+		_, _ = client.ListSDWANConfigs(ctx)
+	}
+}

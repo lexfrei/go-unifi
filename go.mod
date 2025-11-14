@@ -3,7 +3,7 @@ module github.com/lexfrei/go-unifi
 go 1.25.4
 
 require (
-	github.com/lexfrei/go-unifi/api/network v0.0.2
+	github.com/lexfrei/go-unifi/api/network v0.0.3
 	github.com/lexfrei/go-unifi/api/sitemanager v0.0.2
 	github.com/lexfrei/go-unifi/observability v0.0.1
 )

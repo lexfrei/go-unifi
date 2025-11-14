@@ -5,7 +5,7 @@ go 1.25.4
 require (
 	github.com/lexfrei/go-unifi/api/network v0.0.2
 	github.com/lexfrei/go-unifi/api/sitemanager v0.0.2
-	github.com/lexfrei/go-unifi/internal v0.0.1
+	github.com/lexfrei/go-unifi/observability v0.0.0
 )
 
 require (
@@ -22,6 +22,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
+	github.com/lexfrei/go-unifi/internal v0.0.1 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
 	github.com/oapi-codegen/runtime v1.1.2 // indirect
@@ -41,4 +42,5 @@ replace (
 	github.com/lexfrei/go-unifi/api/network => ./api/network
 	github.com/lexfrei/go-unifi/api/sitemanager => ./api/sitemanager
 	github.com/lexfrei/go-unifi/internal => ./internal
+	github.com/lexfrei/go-unifi/observability => ./observability
 )

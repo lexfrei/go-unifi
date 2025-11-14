@@ -3,7 +3,7 @@ package observability_test
 import (
 	"testing"
 
-	"github.com/lexfrei/go-unifi/internal/observability"
+	"github.com/lexfrei/go-unifi/observability"
 )
 
 func TestNoopLogger(t *testing.T) {

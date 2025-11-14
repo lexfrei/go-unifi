@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/cockroachdb/errors"
-	"github.com/lexfrei/go-unifi/internal/observability"
+	"github.com/lexfrei/go-unifi/observability"
 	"golang.org/x/time/rate"
 )
 

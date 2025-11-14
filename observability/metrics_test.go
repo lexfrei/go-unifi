@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/lexfrei/go-unifi/internal/observability"
+	"github.com/lexfrei/go-unifi/observability"
 )
 
 func TestNoopMetricsRecorder(t *testing.T) {

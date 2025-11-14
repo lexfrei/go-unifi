@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/lexfrei/go-unifi/internal/observability"
+	"github.com/lexfrei/go-unifi/observability"
 )
 
 // Observability returns a middleware that logs and records metrics for HTTP requests.

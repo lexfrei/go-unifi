@@ -14,9 +14,9 @@ import (
 
 	"github.com/lexfrei/go-unifi/internal/httpclient"
 	"github.com/lexfrei/go-unifi/internal/middleware"
-	"github.com/lexfrei/go-unifi/internal/observability"
 	"github.com/lexfrei/go-unifi/internal/ratelimit"
 	"github.com/lexfrei/go-unifi/internal/response"
+	"github.com/lexfrei/go-unifi/observability"
 )
 
 const (

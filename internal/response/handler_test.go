@@ -6,6 +6,8 @@ import (
 
 	"github.com/cockroachdb/errors"
 	"github.com/lexfrei/go-unifi/internal/response"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // mockResponse is a test double for API responses.
@@ -32,13 +34,9 @@ func TestHandle(t *testing.T) {
 		data := &mockData{Value: "test"}
 
 		result, err := response.Handle(resp, data, nil, "test error")
-		if err != nil {
-			t.Fatalf("Handle() error = %v, want nil", err)
-		}
+		require.NoError(t, err, "Handle() should not return error")
 
-		if result != data {
-			t.Errorf("Handle() result = %v, want %v", result, data)
-		}
+		assert.Same(t, data, result, "Handle() result mismatch")
 	})
 
 	t.Run("client error", func(t *testing.T) {
@@ -49,13 +47,9 @@ func TestHandle(t *testing.T) {
 		clientErr := errors.New("network error")
 
 		_, err := response.Handle(resp, data, clientErr, "test error")
-		if err == nil {
-			t.Fatal("Handle() error = nil, want error")
-		}
+		require.Error(t, err, "Handle() should return error")
 
-		if !errors.Is(err, clientErr) {
-			t.Errorf("Handle() error should wrap client error")
-		}
+		assert.ErrorIs(t, err, clientErr, "Handle() error should wrap client error")
 	})
 
 	t.Run("wrong status code", func(t *testing.T) {
@@ -65,9 +59,7 @@ func TestHandle(t *testing.T) {
 		data := &mockData{Value: "test"}
 
 		_, err := response.Handle(resp, data, nil, "test error")
-		if err == nil {
-			t.Fatal("Handle() error = nil, want error")
-		}
+		require.Error(t, err, "Handle() should return error")
 	})
 
 	t.Run("nil data", func(t *testing.T) {
@@ -76,9 +68,7 @@ func TestHandle(t *testing.T) {
 		resp := &mockResponse{statusCode: http.StatusOK}
 
 		_, err := response.Handle[mockData](resp, nil, nil, "test error")
-		if err == nil {
-			t.Fatal("Handle() error = nil, want error")
-		}
+		require.Error(t, err, "Handle() should return error")
 	})
 }
 
@@ -92,13 +82,9 @@ func TestHandleWithStatus(t *testing.T) {
 		data := &mockData{Value: "test"}
 
 		result, err := response.HandleWithStatus(resp, data, nil, "test error", http.StatusCreated)
-		if err != nil {
-			t.Fatalf("HandleWithStatus() error = %v, want nil", err)
-		}
+		require.NoError(t, err, "HandleWithStatus() should not return error")
 
-		if result != data {
-			t.Errorf("HandleWithStatus() result = %v, want %v", result, data)
-		}
+		assert.Same(t, data, result, "HandleWithStatus() result mismatch")
 	})
 
 	t.Run("wrong status code", func(t *testing.T) {
@@ -108,9 +94,7 @@ func TestHandleWithStatus(t *testing.T) {
 		data := &mockData{Value: "test"}
 
 		_, err := response.HandleWithStatus(resp, data, nil, "test error", http.StatusCreated)
-		if err == nil {
-			t.Fatal("HandleWithStatus() error = nil, want error")
-		}
+		require.Error(t, err, "HandleWithStatus() should return error")
 	})
 }
 
@@ -123,9 +107,7 @@ func TestHandleNoContent(t *testing.T) {
 		resp := &mockResponse{statusCode: http.StatusOK}
 
 		err := response.HandleNoContent(resp, nil, "test error")
-		if err != nil {
-			t.Fatalf("HandleNoContent() error = %v, want nil", err)
-		}
+		require.NoError(t, err, "HandleNoContent() should not return error")
 	})
 
 	t.Run("client error", func(t *testing.T) {
@@ -135,13 +117,9 @@ func TestHandleNoContent(t *testing.T) {
 		clientErr := errors.New("network error")
 
 		err := response.HandleNoContent(resp, clientErr, "test error")
-		if err == nil {
-			t.Fatal("HandleNoContent() error = nil, want error")
-		}
+		require.Error(t, err, "HandleNoContent() should return error")
 
-		if !errors.Is(err, clientErr) {
-			t.Errorf("HandleNoContent() error should wrap client error")
-		}
+		assert.ErrorIs(t, err, clientErr, "HandleNoContent() error should wrap client error")
 	})
 
 	t.Run("wrong status code", func(t *testing.T) {
@@ -150,9 +128,7 @@ func TestHandleNoContent(t *testing.T) {
 		resp := &mockResponse{statusCode: http.StatusNotFound}
 
 		err := response.HandleNoContent(resp, nil, "test error")
-		if err == nil {
-			t.Fatal("HandleNoContent() error = nil, want error")
-		}
+		require.Error(t, err, "HandleNoContent() should return error")
 	})
 }
 
@@ -165,9 +141,7 @@ func TestHandleNoContentWithStatus(t *testing.T) {
 		resp := &mockResponse{statusCode: http.StatusNoContent}
 
 		err := response.HandleNoContentWithStatus(resp, nil, "test error", http.StatusNoContent)
-		if err != nil {
-			t.Fatalf("HandleNoContentWithStatus() error = %v, want nil", err)
-		}
+		require.NoError(t, err, "HandleNoContentWithStatus() should not return error")
 	})
 
 	t.Run("wrong status code", func(t *testing.T) {
@@ -176,8 +150,6 @@ func TestHandleNoContentWithStatus(t *testing.T) {
 		resp := &mockResponse{statusCode: http.StatusOK}
 
 		err := response.HandleNoContentWithStatus(resp, nil, "test error", http.StatusNoContent)
-		if err == nil {
-			t.Fatal("HandleNoContentWithStatus() error = nil, want error")
-		}
+		require.Error(t, err, "HandleNoContentWithStatus() should return error")
 	})
 }

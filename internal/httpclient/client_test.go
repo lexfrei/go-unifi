@@ -9,24 +9,20 @@ import (
 	"time"
 
 	"github.com/lexfrei/go-unifi/internal/httpclient"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNew(t *testing.T) {
 	t.Parallel()
 
 	client := httpclient.New()
-	if client == nil {
-		t.Fatal("New() returned nil")
-	}
+	require.NotNil(t, client, "New() returned nil")
 
 	httpClient := client.HTTPClient()
-	if httpClient == nil {
-		t.Fatal("HTTPClient() returned nil")
-	}
+	require.NotNil(t, httpClient, "HTTPClient() returned nil")
 
-	if httpClient.Timeout != 30*time.Second {
-		t.Errorf("Default timeout = %v, want %v", httpClient.Timeout, 30*time.Second)
-	}
+	assert.Equal(t, 30*time.Second, httpClient.Timeout, "Default timeout mismatch")
 }
 
 func TestWithTimeout(t *testing.T) {
@@ -35,9 +31,7 @@ func TestWithTimeout(t *testing.T) {
 	timeout := 10 * time.Second
 	client := httpclient.New(httpclient.WithTimeout(timeout))
 
-	if client.HTTPClient().Timeout != timeout {
-		t.Errorf("Timeout = %v, want %v", client.HTTPClient().Timeout, timeout)
-	}
+	assert.Equal(t, timeout, client.HTTPClient().Timeout, "Timeout mismatch")
 }
 
 func TestWithHTTPClient(t *testing.T) {
@@ -49,9 +43,7 @@ func TestWithHTTPClient(t *testing.T) {
 
 	client := httpclient.New(httpclient.WithHTTPClient(customClient))
 
-	if client.HTTPClient() != customClient {
-		t.Error("HTTPClient() did not return the custom client")
-	}
+	assert.Same(t, customClient, client.HTTPClient(), "HTTPClient() did not return the custom client")
 }
 
 func TestWithTransport(t *testing.T) {
@@ -60,9 +52,7 @@ func TestWithTransport(t *testing.T) {
 	customTransport := &http.Transport{}
 	client := httpclient.New(httpclient.WithTransport(customTransport))
 
-	if client.HTTPClient().Transport != customTransport {
-		t.Error("Transport was not set correctly")
-	}
+	assert.Same(t, customTransport, client.HTTPClient().Transport, "Transport was not set correctly")
 }
 
 func TestMiddlewareChaining(t *testing.T) {
@@ -106,9 +96,7 @@ func TestMiddlewareChaining(t *testing.T) {
 	// Make request
 	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 	resp, err := client.Do(req)
-	if err != nil {
-		t.Fatalf("Request failed: %v", err)
-	}
+	require.NoError(t, err, "Request failed")
 	defer resp.Body.Close()
 
 	// Verify order: middleware1 (outer) wraps middleware2 (inner)
@@ -120,15 +108,7 @@ func TestMiddlewareChaining(t *testing.T) {
 		"middleware1-after",
 	}
 
-	if len(order) != len(expectedOrder) {
-		t.Fatalf("Order length = %d, want %d", len(order), len(expectedOrder))
-	}
-
-	for i, want := range expectedOrder {
-		if order[i] != want {
-			t.Errorf("order[%d] = %s, want %s", i, order[i], want)
-		}
-	}
+	assert.Equal(t, expectedOrder, order, "Middleware execution order mismatch")
 }
 
 func TestDo(t *testing.T) {
@@ -144,19 +124,13 @@ func TestDo(t *testing.T) {
 	req, _ := http.NewRequestWithContext(context.Background(), http.MethodGet, server.URL, http.NoBody)
 
 	resp, err := client.Do(req)
-	if err != nil {
-		t.Fatalf("Do() failed: %v", err)
-	}
+	require.NoError(t, err, "Do() failed")
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		t.Errorf("StatusCode = %d, want %d", resp.StatusCode, http.StatusOK)
-	}
+	assert.Equal(t, http.StatusOK, resp.StatusCode, "StatusCode mismatch")
 
 	body, _ := io.ReadAll(resp.Body)
-	if string(body) != "test response" {
-		t.Errorf("Body = %s, want %s", string(body), "test response")
-	}
+	assert.Equal(t, "test response", string(body), "Body mismatch")
 }
 
 // roundTripperFunc is an adapter to use functions as http.RoundTripper.

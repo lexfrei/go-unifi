@@ -1,9 +1,0 @@
-go 1.25.4
-
-use (
-	.
-	./internal
-	./observability
-	./api/sitemanager
-	./api/network
-)

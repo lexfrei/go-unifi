@@ -5,12 +5,14 @@ import (
 	"time"
 
 	"github.com/lexfrei/go-unifi/observability"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNoopMetricsRecorder(t *testing.T) {
 	t.Parallel()
 
 	recorder := observability.NoopMetricsRecorder()
+	require.NotNil(t, recorder)
 
 	// All methods should execute without panicking
 	recorder.RecordHTTPRequest("GET", "/test", 200, time.Second)

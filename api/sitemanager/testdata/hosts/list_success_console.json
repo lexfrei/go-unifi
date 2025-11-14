@@ -1,0 +1,33 @@
+{
+  "data": [
+    {
+      "id": "942A6FCE26520000000008A62C8000000000091C92E70000000067801E31:392959371",
+      "hardwareId": "0d5e371f-5c89-50ab-a732-f2d68bc2acd0",
+      "type": "console",
+      "ipAddress": "203.0.113.2",
+      "owner": true,
+      "isBlocked": false,
+      "lastConnectionStateChange": "2024-04-10T21:08:21.567Z",
+      "registrationTime": "2024-04-10T21:11:53Z",
+      "latestBackupTime": "2024-11-05T18:40:36Z",
+      "userData": {
+        "apps": ["users"],
+        "email": "user@example.com",
+        "fullName": "Example User",
+        "role": "owner",
+        "status": "ACTIVE"
+      },
+      "reportedState": {
+        "hostname": "example-console",
+        "hardware": {
+          "shortname": "UDR7",
+          "firmwareVersion": "4.3.9"
+        },
+        "version": "4.3.87"
+      }
+    }
+  ],
+  "httpStatusCode": 200,
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d",
+  "nextToken": ""
+}

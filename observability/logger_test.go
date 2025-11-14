@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/lexfrei/go-unifi/observability"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNoopLogger(t *testing.T) {
@@ -19,9 +21,7 @@ func TestNoopLogger(t *testing.T) {
 
 	// With should return a logger
 	newLogger := logger.With(observability.Field{Key: "key", Value: "value"})
-	if newLogger == nil {
-		t.Error("With() returned nil")
-	}
+	require.NotNil(t, newLogger)
 
 	// With'd logger should also work
 	newLogger.Info("test with logger")
@@ -60,13 +60,8 @@ func TestField(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			if tt.field.Key != tt.key {
-				t.Errorf("Field.Key = %v, want %v", tt.field.Key, tt.key)
-			}
-
-			if tt.field.Value != tt.value {
-				t.Errorf("Field.Value = %v, want %v", tt.field.Value, tt.value)
-			}
+			assert.Equal(t, tt.key, tt.field.Key)
+			assert.Equal(t, tt.value, tt.field.Value)
 		})
 	}
 }

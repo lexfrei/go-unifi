@@ -1,0 +1,45 @@
+{
+  "data": [
+    {
+      "id": "70A7419783ED0000000006797F060000000006C719490000000062ABD4EA:1261206302",
+      "hardwareId": "e5bf13cd-98a7-5a96-9463-0d65d78cd3a4",
+      "type": "ucore",
+      "ipAddress": "203.0.113.1",
+      "owner": true,
+      "isBlocked": false,
+      "lastConnectionStateChange": "2024-04-16T02:52:54.193Z",
+      "userData": {
+        "apps": ["users"],
+        "consoleGroupMembers": [
+          {
+            "mac": "AABBCCDDEEFF",
+            "role": "UNADOPTED",
+            "roleAttributes": {
+              "applications": {
+                "network": {
+                  "owned": false,
+                  "required": true,
+                  "supported": true
+                }
+              },
+              "candidateRoles": ["PRIMARY"],
+              "connectedState": "CONNECTED",
+              "connectedStateLastChanged": "2024-04-16T02:52:54.193Z"
+            },
+            "sysId": 59925
+          }
+        ],
+        "controllers": ["network", "protect", "access"],
+        "email": "example@ui.com",
+        "fullName": "UniFi User",
+        "localId": "d4eb483d-98a7-438b-abe1-f46628dff73f",
+        "role": "owner",
+        "status": "ACTIVE"
+      },
+      "reportedState": null
+    }
+  ],
+  "httpStatusCode": 200,
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d",
+  "nextToken": "ba8e384e-3308-4236-b344-7357657351ca"
+}

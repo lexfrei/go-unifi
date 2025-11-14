@@ -1,0 +1,28 @@
+{
+  "data": [
+    {
+      "metricType": "5m",
+      "periods": [
+        {
+          "data": {
+            "wan": {
+              "avgLatency": 14,
+              "download_kbps": 1000000,
+              "downtime": 0,
+              "ispAsn": "12345",
+              "ispName": "Example ISP",
+              "maxLatency": 15,
+              "packetLoss": 0,
+              "upload_kbps": 1000000,
+              "uptime": 100
+            }
+          },
+          "metricTime": "2024-11-10T18:55:00Z",
+          "version": "9.4.19"
+        }
+      ]
+    }
+  ],
+  "httpStatusCode": 200,
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d"
+}

@@ -1,0 +1,6 @@
+{
+  "code": "parameter_invalid",
+  "httpStatusCode": 400,
+  "message": "invalid time format: 2024-04-24",
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d"
+}

@@ -1,0 +1,6 @@
+{
+  "_id": "507f1f77bcf86cd799439012",
+  "enabled": true,
+  "description": "test-rule-1",
+  "matching_target": "INTERNET"
+}

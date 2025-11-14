@@ -1,0 +1,21 @@
+{
+  "data": {
+    "id": "70A7419783ED0000000006797F060000000006C719490000000062ABD4EA:1261206302",
+    "hardwareId": "e5bf13cd-98a7-5a96-9463-0d65d78cd3a4",
+    "type": "ucore",
+    "ipAddress": "220.130.137.169",
+    "owner": true,
+    "isBlocked": false,
+    "lastConnectionStateChange": "2024-04-16T02:52:54.193Z",
+    "userData": {
+      "apps": ["users"],
+      "email": "example@ui.com",
+      "fullName": "UniFi User",
+      "role": "owner",
+      "status": "ACTIVE"
+    },
+    "reportedState": null
+  },
+  "httpStatusCode": 200,
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d"
+}

@@ -1,0 +1,55 @@
+{
+  "configurationId": "c212be130585ee93",
+  "features": {
+    "accessPoint": {},
+    "switching": {}
+  },
+  "firmwareUpdatable": false,
+  "firmwareVersion": "4.3.9",
+  "id": "6204b587-7215-235b-d068-f96ca12eab52",
+  "interfaces": {
+    "ports": [
+      {
+        "connector": "RJ45",
+        "idx": 1,
+        "maxSpeedMbps": 2500,
+        "poe": {
+          "enabled": true,
+          "standard": "802.3af",
+          "state": "UP",
+          "type": 1
+        },
+        "speedMbps": 1000,
+        "state": "UP"
+      },
+      {
+        "connector": "RJ45",
+        "idx": 2,
+        "maxSpeedMbps": 2500,
+        "speedMbps": 2500,
+        "state": "UP"
+      }
+    ],
+    "radios": [
+      {
+        "channel": 6,
+        "channelWidthMHz": 20,
+        "frequencyGHz": 2.4,
+        "wlanStandard": "802.11be"
+      },
+      {
+        "channel": 40,
+        "channelWidthMHz": 80,
+        "frequencyGHz": 5,
+        "wlanStandard": "802.11be"
+      }
+    ]
+  },
+  "ipAddress": "10.94.26.13",
+  "macAddress": "aa:bb:cc:99:ea:6b",
+  "model": "UDR7",
+  "name": "Device-1",
+  "provisionedAt": "2025-11-03T21:41:04Z",
+  "state": "ONLINE",
+  "supported": true
+}

@@ -1,0 +1,57 @@
+{
+  "data": [
+    {
+      "siteId": "661de833b6b2463f0c20b319",
+      "hostId": "900A6F00301100000000074A6BA90000000007A3387E0000000063EC9853:123456789",
+      "meta": {
+        "desc": "Default",
+        "gatewayMac": "aa:bb:cc:dd:ee:ff",
+        "name": "default",
+        "timezone": "Asia/Taipei"
+      },
+      "statistics": {
+        "counts": {
+          "criticalNotification": 0,
+          "gatewayDevice": 1,
+          "guestClient": 0,
+          "lanConfiguration": 1,
+          "offlineDevice": 0,
+          "offlineGatewayDevice": 0,
+          "offlineWifiDevice": 0,
+          "offlineWiredDevice": 0,
+          "pendingUpdateDevice": 0,
+          "totalDevice": 1,
+          "wanConfiguration": 2,
+          "wifiClient": 0,
+          "wifiConfiguration": 0,
+          "wifiDevice": 0,
+          "wiredClient": 0,
+          "wiredDevice": 0
+        },
+        "gateway": {
+          "hardwareId": "e5bf13cd-98a7-5a96-9463-0d65d78cd3a4",
+          "inspectionState": "off",
+          "ipsMode": "disabled",
+          "ipsSignature": {
+            "rulesCount": 53031,
+            "type": "ET"
+          },
+          "shortname": "UDMPRO"
+        },
+        "internetIssues": [],
+        "ispInfo": {
+          "name": "Chunghwa Telecom",
+          "organization": "Data Communication Business Group"
+        },
+        "percentages": {
+          "wanUptime": 100
+        }
+      },
+      "permission": "admin",
+      "isOwner": true
+    }
+  ],
+  "httpStatusCode": 200,
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d",
+  "nextToken": "ba8e384e-3308-4236-b344-7357657351ca"
+}

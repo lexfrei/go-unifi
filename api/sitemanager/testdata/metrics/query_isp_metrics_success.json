@@ -1,0 +1,32 @@
+{
+  "data": {
+    "metrics": [
+      {
+        "metricType": "5m",
+        "periods": [
+          {
+            "data": {
+              "wan": {
+                "avgLatency": 1,
+                "download_kbps": 0,
+                "downtime": 0,
+                "ispAsn": "12578",
+                "ispName": "ISP",
+                "maxLatency": 2,
+                "packetLoss": 0,
+                "upload_kbps": 0,
+                "uptime": 100
+              }
+            },
+            "metricTime": "2024-06-30T13:35:00Z",
+            "version": "1"
+          }
+        ],
+        "hostId": "900A6F00301100000000074A6BA90000000007A3387E0000000063EC9853:123456789",
+        "siteId": "661900ae6aec8f548d49fd54"
+      }
+    ]
+  },
+  "httpStatusCode": 200,
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d"
+}

@@ -1,0 +1,11 @@
+{
+  "_id": "6913a4964a990741124a6d94",
+  "enabled": true,
+  "key": "testhost1.local",
+  "port": 0,
+  "priority": 0,
+  "record_type": "A",
+  "ttl": 0,
+  "value": "192.168.100.1",
+  "weight": 0
+}

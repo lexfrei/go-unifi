@@ -1,0 +1,70 @@
+{
+  "data": [
+    {
+      "hostId": "900A6F00301100000000074A6BA90000000007A3387E0000000063EC9853:123456789",
+      "hostName": "unifi.example.com",
+      "devices": [
+        {
+          "id": "AABBCCDDEEFF",
+          "mac": "AABBCCDDEEFF",
+          "name": "USW Flex Mini",
+          "model": "USW Flex Mini",
+          "shortname": "USMINI",
+          "ip": "172.16.10.34",
+          "productLine": "network",
+          "status": "online",
+          "version": "2.1.6",
+          "firmwareStatus": "upToDate",
+          "updateAvailable": null,
+          "isConsole": false,
+          "isManaged": true,
+          "startupTime": "2024-06-19T13:41:43Z",
+          "adoptionTime": "2024-04-22T19:02:31Z",
+          "note": null,
+          "uidb": {
+            "guid": null,
+            "iconId": "7a060fbb-8a8b-471c-9f57-da477ff3e04e",
+            "id": "b13610ef-7e73-4a14-985a-53bb75a62401",
+            "images": {
+              "default": "e3fbf220c145f4301929576039d52d19",
+              "nopadding": "4608b98cfbc13adfb538490b117db81a",
+              "topology": "96c7cd1cb0ba8f00200d7a771136d05f"
+            }
+          }
+        },
+        {
+          "id": "112233445566",
+          "mac": "112233445566",
+          "name": "UniFi Console",
+          "model": "UDR7",
+          "shortname": "UDR7",
+          "ip": "192.168.1.1",
+          "productLine": "network",
+          "status": "online",
+          "version": "4.3.9",
+          "firmwareStatus": "upToDate",
+          "updateAvailable": null,
+          "isConsole": true,
+          "isManaged": true,
+          "startupTime": "2024-10-19T10:07:38Z",
+          "adoptionTime": "2024-08-22T18:34:28Z",
+          "note": null,
+          "uidb": {
+            "guid": "54167124-c67e-1b94-7b83-d6cf5607422e",
+            "iconId": "de18d135-06a1-5654-f233-e8c843840c28",
+            "id": "e06fdc4f-c73f-2124-775b-6ab68813fae6",
+            "images": {
+              "default": "3288444f002474b27c076cfc801d3d0c",
+              "nopadding": "88cb62422549d0014c077c510ae98b19",
+              "topology": "a11d0f6ce02119c83f9cca6e2fe361aa"
+            }
+          }
+        }
+      ],
+      "updatedAt": "2025-06-17T02:45:58Z"
+    }
+  ],
+  "httpStatusCode": 200,
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d",
+  "nextToken": "ba8e384e-3308-4236-b344-7357657351ca"
+}

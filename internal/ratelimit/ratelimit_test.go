@@ -2,10 +2,12 @@ package ratelimit
 
 import (
 	"context"
+	"sync"
 	"testing"
 	"time"
 
-	"github.com/cockroachdb/errors"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestNewRateLimiter(t *testing.T) {
@@ -47,21 +49,15 @@ func TestNewRateLimiter(t *testing.T) {
 			t.Parallel()
 			limiter := NewRateLimiter(tt.requestsPerMinute)
 
-			if limiter == nil {
-				t.Fatal("NewRateLimiter returned nil")
-			}
+			require.NotNil(t, limiter)
 
 			// Check rate
 			gotRate := float64(limiter.Limit())
-			if gotRate != tt.wantRate {
-				t.Errorf("Rate = %v, want %v", gotRate, tt.wantRate)
-			}
+			assert.InDelta(t, tt.wantRate, gotRate, 0.001)
 
 			// Check burst
 			gotBurst := limiter.Burst()
-			if gotBurst != tt.wantBurst {
-				t.Errorf("Burst = %v, want %v", gotBurst, tt.wantBurst)
-			}
+			assert.Equal(t, tt.wantBurst, gotBurst)
 		})
 	}
 }
@@ -76,9 +72,7 @@ func TestRateLimiterAllowsBurst(t *testing.T) {
 	// Should allow burst of 60 requests immediately
 	for i := range 60 {
 		err := limiter.Wait(ctx)
-		if err != nil {
-			t.Fatalf("Request %d failed: %v", i, err)
-		}
+		require.NoError(t, err, "Request %d failed", i)
 	}
 }
 
@@ -92,26 +86,21 @@ func TestRateLimiterThrottles(t *testing.T) {
 	// Exhaust burst
 	for i := range 60 {
 		err := limiter.Wait(ctx)
-		if err != nil {
-			t.Fatalf("Burst request %d failed: %v", i, err)
-		}
+		require.NoError(t, err, "Burst request %d failed", i)
 	}
 
 	// Next request should be throttled
 	start := time.Now()
 	err := limiter.Wait(ctx)
-	if err != nil {
-		t.Fatalf("Throttled request failed: %v", err)
-	}
+	require.NoError(t, err)
 	elapsed := time.Since(start)
 
 	// Should wait approximately 1 second (with some tolerance)
 	minWait := 900 * time.Millisecond
 	maxWait := 1100 * time.Millisecond
 
-	if elapsed < minWait || elapsed > maxWait {
-		t.Errorf("Wait time = %v, want between %v and %v", elapsed, minWait, maxWait)
-	}
+	assert.GreaterOrEqual(t, elapsed, minWait)
+	assert.LessOrEqual(t, elapsed, maxWait)
 }
 
 func TestRateLimiterContextCancellation(t *testing.T) {
@@ -123,20 +112,15 @@ func TestRateLimiterContextCancellation(t *testing.T) {
 
 	// Exhaust burst
 	err := limiter.Wait(ctx)
-	if err != nil {
-		t.Fatalf("First request failed: %v", err)
-	}
+	require.NoError(t, err)
 
 	// Cancel context
 	cancel()
 
 	// Next request should fail with context cancellation
 	err = limiter.Wait(ctx)
-	if err == nil {
-		t.Error("Expected error from cancelled context, got nil")
-	} else if !errors.Is(err, context.Canceled) {
-		t.Errorf("Expected context.Canceled error, got %v", err)
-	}
+	require.Error(t, err)
+	assert.ErrorIs(t, err, context.Canceled)
 }
 
 func TestRateLimiterHighThroughput(t *testing.T) {
@@ -151,9 +135,7 @@ func TestRateLimiterHighThroughput(t *testing.T) {
 	requestCount := 100
 	for i := range requestCount {
 		err := limiter.Wait(ctx)
-		if err != nil {
-			t.Fatalf("Request %d failed: %v", i, err)
-		}
+		require.NoError(t, err, "Request %d failed", i)
 	}
 
 	elapsed := time.Since(start)
@@ -162,9 +144,7 @@ func TestRateLimiterHighThroughput(t *testing.T) {
 	// But with burst capacity of 1000, all should be near-instant
 	maxExpected := 1 * time.Second
 
-	if elapsed > maxExpected {
-		t.Errorf("100 requests took %v, expected less than %v with burst", elapsed, maxExpected)
-	}
+	assert.LessOrEqual(t, elapsed, maxExpected)
 }
 
 func BenchmarkNewRateLimiter(b *testing.B) {
@@ -179,4 +159,55 @@ func BenchmarkRateLimiterAllow(b *testing.B) {
 	for b.Loop() {
 		limiter.Allow()
 	}
+}
+
+func TestConcurrentAccess(t *testing.T) {
+	t.Parallel()
+
+	limiter := NewRateLimiter(1000) // High rate for fast test
+
+	const goroutines = 10
+	const requestsPerGoroutine = 100
+
+	var wg sync.WaitGroup
+	wg.Add(goroutines)
+
+	for range goroutines {
+		go func() {
+			defer wg.Done()
+			for range requestsPerGoroutine {
+				_ = limiter.Allow()
+			}
+		}()
+	}
+
+	wg.Wait()
+	// If no race detector warnings, test passes
+}
+
+func TestConcurrentWait(t *testing.T) {
+	t.Parallel()
+
+	limiter := NewRateLimiter(6000) // High rate: 100 req/sec for fast test
+
+	const goroutines = 10
+	const requestsPerGoroutine = 10
+
+	ctx := context.Background()
+
+	var wg sync.WaitGroup
+	wg.Add(goroutines)
+
+	for range goroutines {
+		go func() {
+			defer wg.Done()
+			for range requestsPerGoroutine {
+				err := limiter.Wait(ctx)
+				assert.NoError(t, err)
+			}
+		}()
+	}
+
+	wg.Wait()
+	// If no race detector warnings, test passes
 }

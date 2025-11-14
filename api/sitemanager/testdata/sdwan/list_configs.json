@@ -1,0 +1,11 @@
+{
+  "data": [
+    {
+      "id": "9304163b-680d-4de8-a7a0-7617e328911d",
+      "name": "SD-WAN test",
+      "type": "sdwan-hbsp"
+    }
+  ],
+  "httpStatusCode": 200,
+  "traceId": "a7dc15e0eb4527142d7823515b15f87d"
+}

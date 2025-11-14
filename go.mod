@@ -5,7 +5,7 @@ go 1.25.4
 require (
 	github.com/lexfrei/go-unifi/api/network v0.0.2
 	github.com/lexfrei/go-unifi/api/sitemanager v0.0.2
-	github.com/lexfrei/go-unifi/observability v0.0.0
+	github.com/lexfrei/go-unifi/observability v0.0.1
 )
 
 require (
@@ -42,5 +42,4 @@ replace (
 	github.com/lexfrei/go-unifi/api/network => ./api/network
 	github.com/lexfrei/go-unifi/api/sitemanager => ./api/sitemanager
 	github.com/lexfrei/go-unifi/internal => ./internal
-	github.com/lexfrei/go-unifi/observability => ./observability
 )

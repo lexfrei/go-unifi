@@ -1051,3 +1051,62 @@ func TestQueryISPMetrics(t *testing.T) {
 		})
 	}
 }
+
+// Edge case tests.
+
+func TestContextTimeout(t *testing.T) {
+	t.Parallel()
+
+	server := testutil.NewMockServerWithHandler(t, http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		time.Sleep(100 * time.Millisecond) // Simulate slow response
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	client, err := NewWithConfig(&ClientConfig{
+		APIKey:  testAPIKey,
+		BaseURL: server.URL,
+	})
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
+	defer cancel()
+
+	_, err = client.ListHosts(ctx, nil)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "context deadline exceeded")
+}
+
+func TestInvalidJSON(t *testing.T) {
+	t.Parallel()
+
+	server := testutil.NewMockServer(t, "/v1/hosts", testAPIKey,
+		"{invalid json", http.StatusOK)
+	defer server.Close()
+
+	client, err := NewWithConfig(&ClientConfig{
+		APIKey:  testAPIKey,
+		BaseURL: server.URL,
+	})
+	require.NoError(t, err)
+
+	_, err = client.ListHosts(context.Background(), nil)
+	require.Error(t, err)
+}
+
+func TestNetworkError(t *testing.T) {
+	t.Parallel()
+
+	// Use invalid URL to trigger connection error
+	client, err := NewWithConfig(&ClientConfig{
+		APIKey:  testAPIKey,
+		BaseURL: "http://localhost:1",
+	})
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+
+	_, err = client.ListHosts(ctx, nil)
+	require.Error(t, err)
+}

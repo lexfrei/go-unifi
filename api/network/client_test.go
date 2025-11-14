@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/lexfrei/go-unifi/api/network/testdata"
 	"github.com/lexfrei/go-unifi/internal/testutil"
@@ -1523,4 +1524,54 @@ func TestDeleteHotspotVoucher(t *testing.T) {
 			require.NoError(t, err)
 		})
 	}
+}
+
+// Edge case tests.
+
+func TestContextTimeout(t *testing.T) {
+	t.Parallel()
+
+	server := testutil.NewMockServerWithHandler(t, http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		time.Sleep(100 * time.Millisecond) // Simulate slow response
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer server.Close()
+
+	client, err := New(server.URL, testAPIKey)
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
+	defer cancel()
+
+	_, err = client.ListSites(ctx, nil)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "context deadline exceeded")
+}
+
+func TestInvalidJSON(t *testing.T) {
+	t.Parallel()
+
+	server := testutil.NewMockServer(t, "/proxy/network/integration/v1/sites", testAPIKey,
+		"{invalid json", http.StatusOK)
+	defer server.Close()
+
+	client, err := New(server.URL, testAPIKey)
+	require.NoError(t, err)
+
+	_, err = client.ListSites(context.Background(), nil)
+	require.Error(t, err)
+}
+
+func TestNetworkError(t *testing.T) {
+	t.Parallel()
+
+	// Use invalid URL to trigger connection error
+	client, err := New("http://localhost:1", testAPIKey)
+	require.NoError(t, err)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+
+	_, err = client.ListSites(ctx, nil)
+	require.Error(t, err)
 }

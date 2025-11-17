@@ -36,6 +36,9 @@ type APIClient struct {
 	client *ClientWithResponses
 }
 
+// Compile-time check to ensure APIClient implements NetworkAPIClient interface.
+var _ NetworkAPIClient = (*APIClient)(nil)
+
 // ClientConfig holds configuration for the Network API client.
 type ClientConfig struct {
 	// ControllerURL is the base URL of the UniFi controller (e.g., "https://unifi.local" or "https://192.168.1.1")

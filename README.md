@@ -96,7 +96,62 @@ go get github.com/lexfrei/go-unifi/api/network@v0.0.1
 - ✅ **Context support** - All operations support cancellation
 - ✅ **Well documented** - Extensive examples and godoc
 
-## 🧪 Testing
+## 🧪 Testing Your Code
+
+The library provides interfaces for all API clients to enable easy mocking in your tests. This allows you to write unit tests without making actual API calls.
+
+### Available Interfaces
+
+- `network.NetworkAPIClient` - Interface for Network API (22 methods)
+- `sitemanager.SiteManagerAPIClient` - Interface for Site Manager API (9 methods)
+
+### Example with gomock
+
+```go
+//go:generate mockgen -destination=mocks/network_client.go -package=mocks github.com/lexfrei/go-unifi/api/network NetworkAPIClient
+
+func TestMyFunction(t *testing.T) {
+    ctrl := gomock.NewController(t)
+    defer ctrl.Finish()
+
+    mockClient := mocks.NewMockNetworkAPIClient(ctrl)
+    mockClient.EXPECT().
+        ListDNSRecords(gomock.Any(), "default").
+        Return([]network.DNSRecord{{Key: "test.example.com"}}, nil)
+
+    // Test your code that uses the interface
+    result := MyFunctionThatUsesDNS(mockClient)
+    assert.Equal(t, "test.example.com", result.FirstRecord())
+}
+```
+
+### Example with testify/mock
+
+```go
+type MockNetworkClient struct {
+    mock.Mock
+}
+
+func (m *MockNetworkClient) ListDNSRecords(ctx context.Context, site network.Site) ([]network.DNSRecord, error) {
+    args := m.Called(ctx, site)
+    return args.Get(0).([]network.DNSRecord), args.Error(1)
+}
+
+func TestWithTestify(t *testing.T) {
+    mockClient := new(MockNetworkClient)
+    mockClient.On("ListDNSRecords", mock.Anything, network.Site("default")).
+        Return([]network.DNSRecord{{Key: "test.example.com"}}, nil)
+
+    // Test your code
+    result := MyFunctionThatUsesDNS(mockClient)
+    assert.Equal(t, "test.example.com", result.FirstRecord())
+    mockClient.AssertExpectations(t)
+}
+```
+
+See [examples/testing/](./examples/testing/) for complete working examples.
+
+## ✅ Validation
 
 Both API clients have been tested and validated against:
 

@@ -42,6 +42,9 @@ type UnifiClient struct {
 	client *ClientWithResponses
 }
 
+// Compile-time check to ensure UnifiClient implements SiteManagerAPIClient interface.
+var _ SiteManagerAPIClient = (*UnifiClient)(nil)
+
 // ClientConfig holds configuration for the Unifi API client.
 type ClientConfig struct {
 	// APIKey is the Unifi API key for authentication

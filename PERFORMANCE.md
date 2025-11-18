@@ -25,14 +25,32 @@ The observability middleware normalizes HTTP paths for metrics (prevents unbound
 ```
 Original (4 separate regex):      55,819 ns/op   13,733 B/op   177 allocs/op
 After precompiling patterns:      30,521 ns/op    1,762 B/op    57 allocs/op
-After combined pattern (current):  6,258 ns/op      955 B/op    33 allocs/op
+After combined pattern:            6,258 ns/op      955 B/op    33 allocs/op
+After sync.Map caching (current):     14 ns/op        0 B/op     0 allocs/op (cache hit)
+                                   2,202 ns/op      414 B/op    15 allocs/op (cache miss)
 ```
 
-**Overall improvement: 8.9x faster, 14.4x less memory, 5.4x fewer allocations**
+**Overall improvement (cache hit): 3,987x faster than original, zero allocations**
 
-The normalization uses 2 regex passes:
-1. Combined pattern for UUIDs, ObjectIDs, and numeric IDs
-2. Site name pattern for `/site/{name}/` → `/site/:site/`
+**Cache performance characteristics:**
+
+```
+Scenario                          Time/op    Memory/op   Allocs/op   Speedup
+100% cache hits (production):      14 ns         0 B        0        156x vs uncached
+100% cache misses (cold start):  2,202 ns       414 B       15        baseline
+80% hits, 20% misses (mixed):      508 ns       101 B        3        4.3x vs uncached
+Concurrent access (8 cores):       2.7 ns         0 B        0        825x vs uncached
+```
+
+**Implementation details:**
+
+- Uses `sync.Map` for thread-safe in-memory caching
+- Fast path for cache hits (zero allocations)
+- Slow path computes normalization and stores in cache
+- Production traffic typically has high cache hit rate (80%+)
+- Two regex passes on cache miss:
+  1. Combined pattern for UUIDs, ObjectIDs, and numeric IDs
+  2. Site name pattern for `/site/{name}/` → `/site/:site/`
 
 ## Resource Management
 
@@ -42,6 +60,71 @@ The normalization uses 2 regex passes:
 - **No reflection in hot paths**: All type conversions are compile-time safe
 - **Reusable HTTP client**: Single client instance with connection pooling
 - **Response body cleanup**: All response bodies properly closed in all code paths
+- **Buffer pooling**: `sync.Pool` for request body buffering in retry middleware
+- **String reuse**: URL.String() computed once per request instead of 3 times
+
+#### Request Body Buffering with sync.Pool
+
+The retry middleware uses `sync.Pool` to reuse byte buffers for request body buffering:
+
+**Benefits:**
+- Reduces allocations for retry scenarios where body needs to be sent multiple times
+- Buffer memory is reused across requests instead of being garbage collected
+- Allocation count remains stable regardless of payload size
+
+**Performance results (various payload sizes):**
+
+```
+Payload Size    Time/op      Memory/op   Allocs/op
+60 B            39.5 μs      5.6 KB      78
+1 KB            40.5 μs      5.7 KB      79
+10 KB           43.4 μs      5.7 KB      79
+100 KB          61.7 μs      5.7 KB      79
+```
+
+**Key observations:**
+- Allocation count stays constant (~78-79) regardless of payload size
+- Memory usage increases only slightly with payload (efficient buffer pooling)
+- Time increases linearly with payload (expected I/O cost)
+
+**Implementation details:**
+- Buffer acquired from pool on request start
+- Buffer reset and reused for body buffering
+- Buffer returned to pool in all code paths (success, error, cancellation)
+- Safe type assertions with nolint directives
+
+#### URL.String() Reuse Optimization
+
+The observability middleware computes `req.URL.String()` once and reuses it:
+
+**Before (3 allocations per request):**
+```go
+t.logger.Debug("http request started",
+    observability.Field{Key: "url", Value: req.URL.String()})  // Allocation 1
+// ...
+t.logger.Error("http request failed",
+    observability.Field{Key: "url", Value: req.URL.String()})  // Allocation 2
+// ...
+fields := []observability.Field{
+    {Key: "url", Value: req.URL.String()},                     // Allocation 3
+}
+```
+
+**After (1 allocation per request):**
+```go
+urlStr := req.URL.String()  // Single allocation
+t.logger.Debug("http request started",
+    observability.Field{Key: "url", Value: urlStr})  // Reuse
+// ...
+t.logger.Error("http request failed",
+    observability.Field{Key: "url", Value: urlStr})  // Reuse
+// ...
+fields := []observability.Field{
+    {Key: "url", Value: urlStr},  // Reuse
+}
+```
+
+**Impact:** Reduces string allocations by 66% in observability middleware
 
 ### Goroutine Management
 

@@ -59,9 +59,10 @@ func (l *customLogger) convertFields(fields []observability.Field) []any {
 
 // customMetricsRecorder implements observability.MetricsRecorder.
 type customMetricsRecorder struct {
-	requestCount int
-	retryCount   int
-	errorCount   int
+	requestCount      int
+	retryCount        int
+	errorCount        int
+	cancellationCount int
 }
 
 func newCustomMetricsRecorder() *customMetricsRecorder {
@@ -87,11 +88,17 @@ func (m *customMetricsRecorder) RecordError(operation, errorType string) {
 	fmt.Printf("[METRICS] Error in %s: %s\n", operation, errorType)
 }
 
+func (m *customMetricsRecorder) RecordContextCancellation(operation string) {
+	m.cancellationCount++
+	fmt.Printf("[METRICS] Context cancellation in %s\n", operation)
+}
+
 func (m *customMetricsRecorder) PrintSummary() {
 	fmt.Println("\n=== Metrics Summary ===")
 	fmt.Printf("Total HTTP Requests: %d\n", m.requestCount)
 	fmt.Printf("Total Retries: %d\n", m.retryCount)
 	fmt.Printf("Total Errors: %d\n", m.errorCount)
+	fmt.Printf("Total Context Cancellations: %d\n", m.cancellationCount)
 }
 
 func main() {

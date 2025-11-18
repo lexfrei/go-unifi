@@ -127,6 +127,10 @@ func (t *retryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 			if resp != nil {
 				resp.Body.Close()
 			}
+
+			// Record context cancellation for monitoring
+			t.metrics.RecordContextCancellation("retry_wait")
+
 			return nil, errors.Wrap(ctx.Err(), "context canceled during retry wait")
 		}
 

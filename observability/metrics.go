@@ -16,6 +16,10 @@ type MetricsRecorder interface {
 
 	// RecordError records an error occurrence.
 	RecordError(operation, errorType string)
+
+	// RecordContextCancellation records a context cancellation event.
+	// This helps track requests that are canceled by the caller (timeouts, explicit cancellation).
+	RecordContextCancellation(operation string)
 }
 
 // noopMetricsRecorder is a no-operation metrics recorder that does nothing.
@@ -33,3 +37,4 @@ func (m *noopMetricsRecorder) RecordHTTPRequest(string, string, int, time.Durati
 func (m *noopMetricsRecorder) RecordRetry(int, string)                              {}
 func (m *noopMetricsRecorder) RecordRateLimit(string, time.Duration)                {}
 func (m *noopMetricsRecorder) RecordError(string, string)                           {}
+func (m *noopMetricsRecorder) RecordContextCancellation(string)                     {}

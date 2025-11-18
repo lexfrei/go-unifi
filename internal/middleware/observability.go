@@ -90,6 +90,8 @@ var (
 	objectIDPattern = regexp.MustCompile(`[0-9a-f]{24}`)
 	// numericIDPattern matches numeric IDs (5+ digits to avoid replacing version numbers).
 	numericIDPattern = regexp.MustCompile(`/\d{5,}(/|$)`)
+	// siteNamePattern matches site names in paths: /site/{name}/ → /site/:site/
+	siteNamePattern = regexp.MustCompile(`/site/[^/]+(/|$)`)
 )
 
 // normalizePath replaces dynamic path segments (UUIDs, ObjectIDs, numeric IDs) with placeholders
@@ -110,8 +112,7 @@ func normalizePath(path string) string {
 	normalized = numericIDPattern.ReplaceAllString(normalized, "/:id$1")
 
 	// Replace site names: /site/{name}/ → /site/:site/
-	// This pattern looks for /site/ followed by non-slash characters followed by / or end of string
-	normalized = regexp.MustCompile(`/site/[^/]+(/|$)`).ReplaceAllString(normalized, "/site/:site$1")
+	normalized = siteNamePattern.ReplaceAllString(normalized, "/site/:site$1")
 
 	return normalized
 }

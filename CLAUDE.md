@@ -1,16 +1,17 @@
-# CLAUDE.md - go-unifi Development Standards
+# CLAUDE.md
 
-This file provides project-specific guidance for Claude Code when working on the go-unifi library.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Project Overview
 
-**go-unifi** is a Pure Go client library for UniFi Site Manager API v1, generated from OpenAPI specification.
+**go-unifi** is a collection of Pure Go client libraries for UniFi APIs, generated from OpenAPI specifications.
 
-- **Language**: Go 1.21+
-- **API Version**: UniFi Site Manager API v1 + Early Access
-- **Code Generation**: oapi-codegen v2.5.1
+- **Language**: Go 1.25+
+- **APIs**: Site Manager API (cloud) + Network API (local controller)
+- **Code Generation**: oapi-codegen v2
 - **Error Handling**: github.com/cockroachdb/errors
-- **Tested Hardware**: UniFi Dream Router (UDR7) running UniFi OS 4.3.87
+- **Architecture**: Multi-module with shared infrastructure
+- **Tested Hardware**: UniFi Dream Router (UDR7), UniFi VMs with various OS/Network versions
 
 ## Core Principles
 
@@ -38,14 +39,14 @@ hardware:
 
 ### 2. OpenAPI-First Development
 
-All API changes MUST start with `openapi.yaml`:
+All API changes MUST start with `openapi.yaml` in the respective API module:
 
-1. Update/add schemas in `openapi.yaml`
-2. Run `make generate` or `$HOME/go/bin/oapi-codegen --config .oapi-codegen.yaml openapi.yaml > generated.go`
+1. Update/add schemas in `api/{sitemanager|network}/openapi.yaml`
+2. Run code generation (see commands below)
 3. Test with real API
 4. Commit both `openapi.yaml` and `generated.go` together
 
-**Never** manually edit `generated.go` - it's auto-generated.
+**Never** manually edit `generated.go` files - they are auto-generated.
 
 ### 3. Real API Testing Required
 
@@ -54,51 +55,103 @@ All API changes MUST start with `openapi.yaml`:
 - Test both success and error cases
 - Verify type correctness with actual API responses
 
-## File Structure
+## Architecture
+
+The repository follows a **multi-module architecture** with shared infrastructure:
 
 ```
 .
-├── openapi.yaml           # OpenAPI 3.0 specification (source of truth)
-├── generated.go           # Generated API client (DO NOT EDIT)
-├── client.go              # Hand-written wrapper with rate limiting & retries
-├── .oapi-codegen.yaml     # Code generation config
-├── Makefile               # Build tasks
-├── examples/              # Example programs
-│   ├── list_hosts/        # List all hosts example
-│   └── get_host/          # Get host by ID example
-└── CLAUDE.md              # This file
+├── api/                   # Public API clients (each is an independent module)
+│   ├── sitemanager/       # Cloud-based Site Manager API
+│   │   ├── openapi.yaml   # OpenAPI spec (source of truth)
+│   │   ├── generated.go   # Generated client (DO NOT EDIT)
+│   │   ├── client.go      # Hand-written wrapper
+│   │   ├── interfaces.go  # Testable interfaces
+│   │   └── .oapi-codegen.yaml
+│   └── network/           # Local Network API
+│       ├── openapi.yaml
+│       ├── generated.go
+│       ├── client.go
+│       ├── interfaces.go
+│       └── .oapi-codegen.yaml
+├── internal/              # Shared infrastructure (not importable externally)
+│   ├── httpclient/        # HTTP client with middleware support
+│   ├── middleware/        # Composable middleware (auth, retry, rate limit, observability, TLS)
+│   ├── ratelimit/         # Token bucket rate limiter
+│   ├── retry/             # Exponential backoff retry logic
+│   ├── response/          # Generic response handlers
+│   └── testutil/          # Testing utilities
+├── observability/         # Public Logger and MetricsRecorder interfaces
+├── examples/              # Working examples for both APIs
+│   ├── sitemanager/
+│   ├── network/
+│   ├── observability/     # Custom logging/metrics integration example
+│   └── testing/           # Mocking examples
+└── cmd/                   # Command-line tools
+    └── test-reality/      # Validate types against real API responses
 ```
+
+### Key Design Principles
+
+1. **Middleware-based architecture**: All HTTP concerns (auth, retry, rate limiting, observability, TLS) are implemented as composable middleware in `internal/middleware/`
+2. **Separation of concerns**: Generated code in `generated.go`, hand-written wrapper in `client.go`, testable interfaces in `interfaces.go`
+3. **Testability**: All API clients expose interfaces (`SiteManagerAPIClient`, `NetworkAPIClient`) for easy mocking
+4. **Dual rate limiting**: Site Manager uses separate limiters for v1 (10k/min) and EA (100/min) endpoints
 
 ## Code Generation
 
-### Configuration (.oapi-codegen.yaml)
+### Configuration
+
+Each API module has `.oapi-codegen.yaml`:
 
 ```yaml
-package: unifi
+package: sitemanager  # or network
 generate:
-  models: true
   client: true
+  models: true
+  embedded-spec: true
+output: generated.go
 output-options:
   skip-prune: true
 ```
 
 ### Regenerating Code
 
-```bash
-# Method 1 (recommended)
-make generate
+**Using go generate (recommended):**
 
-# Method 2 (direct)
-$HOME/go/bin/oapi-codegen --config .oapi-codegen.yaml openapi.yaml > generated.go
+```bash
+# Regenerate specific API
+cd api/sitemanager && go generate
+cd api/network && go generate
+
+# Regenerate all
+go generate ./...
+```
+
+**Direct invocation:**
+
+```bash
+cd api/sitemanager && oapi-codegen -config .oapi-codegen.yaml openapi.yaml
+cd api/network && oapi-codegen -config .oapi-codegen.yaml openapi.yaml
 ```
 
 ### After Generation
 
 Always verify:
 ```bash
-go build .                                    # Must compile
-go run examples/get_host/main.go              # Must work with real API
-grep -c 'map\[string\]interface{}' generated.go  # Should be minimal
+# Must compile
+go build ./...
+
+# Run tests
+go test ./...
+
+# Check type safety (should be minimal)
+grep -c 'map\[string\]interface{}' api/sitemanager/generated.go
+grep -c 'map\[string\]interface{}' api/network/generated.go
+
+# Test with real API
+UNIFI_API_KEY=key go run examples/sitemanager/list_hosts/main.go
+UNIFI_BASE_URL=https://unifi.local UNIFI_API_KEY=key go run examples/network/list_sites/main.go
 ```
 
 ## OpenAPI Schema Guidelines
@@ -141,29 +194,69 @@ format: uuid
 description: Unique identifier...
 ```
 
-## Client Wrapper (client.go)
+## Client Wrappers (client.go)
 
-### Rate Limiting
+Each API module has a hand-written client wrapper that:
+1. Wraps the generated `ClientWithResponses`
+2. Applies middleware (auth, rate limiting, retry, observability, TLS)
+3. Provides high-level methods that handle response unwrapping
+4. Implements the public interface for testability
 
-- **v1 endpoints**: 10,000 requests/minute
-- **EA endpoints**: 100 requests/minute
-- Implemented using `golang.org/x/time/rate`
+### Site Manager Client
 
-### Retry Logic
+```go
+// High-level constructor
+client, err := sitemanager.New("api-key")
 
-Automatically retries:
-- Network errors (connection failures, timeouts)
-- 5xx server errors
-- 429 rate limit errors (respects `Retry-After` header)
+// Custom configuration
+client, err := sitemanager.NewWithConfig(&sitemanager.ClientConfig{
+    APIKey:               "api-key",
+    BaseURL:              "https://api.ui.com",
+    V1RateLimitPerMinute: 10000,
+    EARateLimitPerMinute: 100,
+    MaxRetries:           3,
+    RetryWaitTime:        time.Second,
+    Timeout:              30 * time.Second,
+    Logger:               customLogger,
+    Metrics:              customMetrics,
+})
+```
 
-Strategy:
-- Exponential backoff
-- Default: 3 retries, 1s wait time
-- Configurable via `ClientConfig`
+### Network API Client
+
+```go
+// High-level constructor
+client, err := network.New("https://unifi.local", "api-key")
+
+// Custom configuration with self-signed cert support
+client, err := network.NewWithConfig(&network.ClientConfig{
+    BaseURL:            "https://unifi.local",
+    APIKey:             "api-key",
+    RateLimitPerMinute: 1000,
+    MaxRetries:         3,
+    RetryWaitTime:      time.Second,
+    Timeout:            30 * time.Second,
+    InsecureSkipVerify: true,  // For self-signed certs
+    Logger:             customLogger,
+    Metrics:            customMetrics,
+})
+```
+
+### Middleware Architecture
+
+All HTTP concerns are implemented as composable middleware:
+
+- **Auth middleware**: Adds `X-API-KEY` header
+- **Rate limit middleware**: Token bucket algorithm, path-aware (dual limiters for Site Manager)
+- **Retry middleware**: Exponential backoff for network errors, 5xx, 429
+- **Observability middleware**: Logging and metrics via pluggable interfaces
+- **TLS middleware**: Self-signed certificate support for Network API
+
+Middleware is applied in `internal/httpclient` using reverse order (first middleware is outermost).
 
 ### Error Handling
 
-Use `github.com/cockroachdb/errors`:
+Always use `github.com/cockroachdb/errors`:
 ```go
 // Good
 return nil, errors.Wrap(err, "failed to list hosts")
@@ -173,20 +266,82 @@ return nil, errors.Wrapf(err, "failed to get host %s", id)
 return nil, fmt.Errorf("failed to list hosts: %w", err)
 ```
 
+### Observability
+
+Clients support pluggable logging and metrics via interfaces in `observability/`:
+
+```go
+type Logger interface {
+    Debug(msg string, keysAndValues ...interface{})
+    Info(msg string, keysAndValues ...interface{})
+    Warn(msg string, keysAndValues ...interface{})
+    Error(msg string, keysAndValues ...interface{})
+}
+
+type MetricsRecorder interface {
+    RecordHTTPRequest(method, path string, statusCode int, duration time.Duration, err error)
+    RecordRateLimitWait(duration time.Duration)
+    RecordRetry(attempt int)
+}
+```
+
+See `examples/observability/` for integration examples.
+
 ## Testing Standards
 
-### Manual Testing
+### Automated Testing
 
-Create example programs in `examples/`:
+The codebase has comprehensive test coverage using table-driven tests:
+
+```bash
+# Run all tests
+go test ./...
+
+# Run tests with coverage
+go test -race -coverprofile=coverage.out -covermode=atomic ./...
+
+# View coverage
+go tool cover -html=coverage.out
+
+# Run specific package tests
+go test ./api/sitemanager/...
+go test ./internal/middleware/...
+```
+
+### Testing with Interfaces
+
+All API clients expose interfaces for easy mocking. See `examples/testing/` for complete examples:
+
+**Using gomock:**
+```bash
+go generate ./...  # Generates mocks if configured
+```
+
+**Using testify/mock:**
 ```go
-// examples/test_feature/main.go
+type MockNetworkClient struct {
+    mock.Mock
+}
+
+func (m *MockNetworkClient) ListDNSRecords(ctx context.Context, site network.Site) ([]network.DNSRecord, error) {
+    args := m.Called(ctx, site)
+    return args.Get(0).([]network.DNSRecord), args.Error(1)
+}
+```
+
+### Manual Testing with Real API
+
+Create example programs in `examples/{api}/`:
+
+```go
+// examples/sitemanager/test_feature/main.go
 package main
 
 import (
     "context"
     "log"
     "os"
-    "github.com/lexfrei/go-unifi"
+    "github.com/lexfrei/go-unifi/api/sitemanager"
 )
 
 func main() {
@@ -195,9 +350,7 @@ func main() {
         log.Fatal("UNIFI_API_KEY required")
     }
 
-    client, err := unifi.NewUnifiClient(unifi.ClientConfig{
-        APIKey: apiKey,
-    })
+    client, err := sitemanager.New(apiKey)
     if err != nil {
         log.Fatal(err)
     }
@@ -208,18 +361,33 @@ func main() {
 
 Run:
 ```bash
-UNIFI_API_KEY=your-key go run examples/test_feature/main.go
+# Site Manager API
+UNIFI_API_KEY=your-key go run examples/sitemanager/test_feature/main.go
+
+# Network API
+UNIFI_BASE_URL=https://unifi.local UNIFI_API_KEY=your-key go run examples/network/test_feature/main.go
+```
+
+### Validation Tool
+
+Use `cmd/test-reality` to validate types against real API responses:
+
+```bash
+go run github.com/lexfrei/go-unifi/cmd/test-reality@latest -api-key your-key
 ```
 
 ### Verification Checklist
 
 Before committing API changes:
-- [ ] OpenAPI spec updated
-- [ ] Code regenerated
-- [ ] Compiles without errors
+- [ ] OpenAPI spec updated in correct module
+- [ ] Code regenerated with `go generate`
+- [ ] All tests pass (`go test ./...`)
+- [ ] Compiles without errors (`go build ./...`)
+- [ ] Linters pass (`golangci-lint run ./...`)
 - [ ] Tested with real API
 - [ ] Example program created/updated
 - [ ] Type safety verified (minimal `interface{}`)
+- [ ] Interface updated if new methods added
 
 ## Documentation Standards
 
@@ -254,11 +422,13 @@ Write clear, concise descriptions:
 - Include examples where helpful
 - Explain units for numbers (seconds, bytes, percentage, etc.)
 
-## Common Tasks
+## Common Development Tasks
 
 ### Adding a New Endpoint
 
-1. **Add to openapi.yaml**:
+**Example: Adding endpoint to Site Manager API**
+
+1. **Update OpenAPI spec** in `api/sitemanager/openapi.yaml`:
 ```yaml
 paths:
   /v1/new-endpoint:
@@ -276,7 +446,7 @@ paths:
                 $ref: '#/components/schemas/NewEndpointResponse'
 ```
 
-1. **Add response schema**:
+2. **Add response schema**:
 ```yaml
 components:
   schemas:
@@ -289,33 +459,49 @@ components:
               $ref: '#/components/schemas/NewData'
 ```
 
-1. **Regenerate**: `make generate`
+3. **Regenerate code**:
+```bash
+cd api/sitemanager && go generate
+```
 
-1. **Add wrapper method in client.go**:
+4. **Add wrapper method** in `api/sitemanager/client.go`:
 ```go
 func (c *UnifiClient) GetNewEndpoint(ctx context.Context) (*NewEndpointResponse, error) {
-    resp, err := c.client.GetNewEndpointWithResponse(ctx)
-    if err != nil {
-        return nil, errors.Wrap(err, "failed to get new endpoint")
-    }
-
-    if resp.StatusCode() != http.StatusOK {
-        return nil, errors.Newf("API error: status=%d", resp.StatusCode())
-    }
-
-    if resp.JSON200 == nil {
-        return nil, errors.New("empty response from API")
-    }
-
-    return resp.JSON200, nil
+    return response.Handle200(
+        c.client.GetNewEndpointWithResponse(ctx),
+        "failed to get new endpoint",
+    )
 }
 ```
 
-1. **Create example**: `examples/new_endpoint/main.go`
+5. **Update interface** in `api/sitemanager/interfaces.go`:
+```go
+type SiteManagerAPIClient interface {
+    // ... existing methods
+    GetNewEndpoint(ctx context.Context) (*NewEndpointResponse, error)
+}
+```
 
-1. **Test with real API**
+6. **Create example** in `examples/sitemanager/new_endpoint/main.go`
 
-1. **Commit together**: `git add openapi.yaml generated.go client.go examples/`
+7. **Add test** in `api/sitemanager/client_test.go`
+
+8. **Test with real API**
+
+9. **Commit in logical chunks**:
+```bash
+git add api/sitemanager/openapi.yaml
+git commit --signoff --message "feat(sitemanager): add NewEndpoint schema"
+
+git add api/sitemanager/generated.go
+git commit --signoff --message "feat(sitemanager): regenerate from updated spec"
+
+git add api/sitemanager/client.go api/sitemanager/interfaces.go api/sitemanager/client_test.go
+git commit --signoff --message "feat(sitemanager): add GetNewEndpoint wrapper method"
+
+git add examples/sitemanager/new_endpoint/
+git commit --signoff --message "feat(sitemanager): add example for GetNewEndpoint"
+```
 
 ### Adding Type Definitions
 
@@ -343,15 +529,15 @@ components:
           $ref: '#/components/schemas/NestedType'
 ```
 
-1. **Reference in parent**:
+4. **Reference in parent**:
 ```yaml
 parentField:
   $ref: '#/components/schemas/NewComplexType'
 ```
 
-1. **Regenerate and verify**:
+5. **Regenerate and verify**:
 ```bash
-make generate
+cd api/{sitemanager|network} && go generate
 grep "type NewComplexType" generated.go
 ```
 
@@ -359,64 +545,98 @@ grep "type NewComplexType" generated.go
 
 ### Commit Messages
 
-Follow semantic commit format:
+Follow semantic commit format with API scope:
 ```
-feat(api): add support for network devices endpoint
-fix(client): correct rate limiter token bucket size
-refactor(api): replace map[string]interface{} with typed structures
+feat(sitemanager): add support for SD-WAN status endpoint
+feat(network): add support for DNS records management
+fix(middleware): correct rate limiter token bucket size
+fix(network): handle DELETE requests returning 200 instead of 204
+refactor(sitemanager): replace map[string]interface{} with typed structures
 docs(readme): update tested hardware list
+test(middleware): add retry backoff test cases
 ```
 
 ### Commit Granularity
 
-- **Commit after each logical change**
-- Small focused commits preferred
-- Always use `--signoff`
-- Examples:
-  - "Add OpenAPI schema for X" (just openapi.yaml)
-  - "Regenerate code from updated spec" (generated.go)
-  - "Add client wrapper for X endpoint" (client.go)
-  - "Add example for X" (examples/)
+**CRITICAL: Commit after EACH logical block of work** - do NOT accumulate changes:
+
+- ✅ Good: 4 commits for adding an endpoint (schema → generated → wrapper → example)
+- ❌ Bad: 1 giant commit with all changes
+
+Always use `--signoff`:
+```bash
+git commit --signoff --message "feat(network): add DNS records schema"
+```
 
 ### What to Commit Together
 
-- OpenAPI + generated code: **Together** (they must be in sync)
-- Client wrapper: **Separate** (hand-written code)
-- Examples: **Separate** (can be independent)
-- Tests: **With feature** they test
+**Separate commits for:**
+- OpenAPI schema changes
+- Generated code (regeneration)
+- Client wrapper methods + interfaces + tests
+- Examples
+- Documentation updates
+- Internal infrastructure changes
+
+**Keep in sync:**
+- `openapi.yaml` and `generated.go` should be committed close together (2 sequential commits)
+- `client.go` and `interfaces.go` for new methods
+- Tests with the feature they test
 
 ## Dependencies
 
-### Core
+### Production Dependencies
 
-- `golang.org/x/time/rate` - Rate limiting
-- `github.com/cockroachdb/errors` - Enhanced errors
-- `github.com/oapi-codegen/runtime` - OpenAPI runtime
-- `github.com/oapi-codegen/oapi-codegen/v2` - Code generator (dev tool)
+```
+github.com/cockroachdb/errors       # Enhanced error handling
+github.com/oapi-codegen/runtime     # OpenAPI runtime support
+golang.org/x/time/rate              # Rate limiting
+```
 
-### Adding Dependencies
+### Development Dependencies
 
-Only add dependencies for:
-- Core functionality (rate limiting, error handling)
-- Code generation (oapi-codegen)
-- Testing (if needed)
+```
+github.com/getkin/kin-openapi       # OpenAPI validation
+github.com/stretchr/testify         # Testing utilities
+```
 
-**DO NOT add**:
-- General utilities (implement yourself)
-- Logging libraries (let users choose)
-- HTTP frameworks (stdlib only)
+### Code Generation Tools
+
+```
+github.com/oapi-codegen/oapi-codegen/v2  # Generate code from OpenAPI specs
+```
+
+Install:
+```bash
+go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
+```
+
+### Dependency Policy
+
+**Only add dependencies for:**
+- Core functionality (rate limiting, error handling, OpenAPI runtime)
+- Code generation tools
+- Testing frameworks
+
+**DO NOT add:**
+- General utilities (implement yourself or use stdlib)
+- Logging libraries (users should choose their own, we provide interfaces)
+- HTTP frameworks (stdlib `net/http` only)
+- Heavy frameworks or ORMs
 
 ## API Conventions
 
 ### Pagination
 
-Use `pageSize` and `nextToken` pattern:
+**Site Manager API** uses `pageSize` and `nextToken`:
 ```go
-params := &unifi.ListHostsParams{
-    PageSize:  unifi.PtrString("10"),
-    NextToken: unifi.PtrString(token),
+params := &sitemanager.ListHostsParams{
+    PageSize:  sitemanager.PtrString("10"),
+    NextToken: sitemanager.PtrString(token),
 }
 ```
+
+**Network API** pagination varies by endpoint (some use limit/offset, some don't paginate).
 
 ### Error Responses
 
@@ -448,12 +668,27 @@ SuccessResponse:
       type: string
 ```
 
-## Performance Considerations
+## Performance and Implementation Notes
 
-- **Rate limiter**: Token bucket algorithm, no goroutine per request
-- **Retries**: Exponential backoff prevents thundering herd
-- **Context**: All methods accept `context.Context` for cancellation
-- **Pointers**: Optional fields use pointers (zero allocations for omitted fields)
+### Middleware Performance
+
+- **Rate limiter**: Token bucket algorithm (`golang.org/x/time/rate`), no goroutine per request
+- **Retries**: Exponential backoff with jitter prevents thundering herd
+- **Middleware chaining**: Applied once at client creation, not per request
+- **Context propagation**: All methods accept `context.Context` for cancellation and timeouts
+
+### Memory Efficiency
+
+- **Pointers for optional fields**: Zero allocations for omitted fields in API responses
+- **No reflection in hot path**: All type conversions are compile-time safe
+- **Reusable HTTP client**: Single `*http.Client` instance with connection pooling
+
+### Response Handling
+
+Generic response handlers in `internal/response/`:
+- `Handle200[T]`: For 200 OK responses
+- `Handle204`: For 204 No Content responses
+- Consistent error wrapping across all endpoints
 
 ## Security
 
@@ -469,94 +704,154 @@ SuccessResponse:
 ```bash
 # Verify oapi-codegen is installed
 which oapi-codegen
-$HOME/go/bin/oapi-codegen --version
+oapi-codegen --version
 
 # Re-install if needed
-go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@v2.5.1
+go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
+
+# Verify OpenAPI spec is valid
+cd api/sitemanager && oapi-codegen -config .oapi-codegen.yaml openapi.yaml
 ```
 
 ### Types not matching API response
 
-1. Capture real response: `go run example -v > /tmp/response.json`
-2. Compare with OpenAPI schema
-3. Update schema to match reality
-4. Regenerate: `make generate`
-5. Test again
+1. Capture real response:
+```bash
+UNIFI_API_KEY=key go run examples/sitemanager/endpoint/main.go > /tmp/response.json
+```
+
+2. Compare with OpenAPI schema in `api/{module}/openapi.yaml`
+3. Update schema to match reality (API is source of truth)
+4. Regenerate: `cd api/{module} && go generate`
+5. Test again with real API
 
 ### Rate limiting issues
 
-Check `RateLimitPerMinute` in config:
+**Site Manager:**
+- v1 endpoints: 10,000 req/min
+- EA endpoints: 100 req/min
+
 ```go
-unifi.ClientConfig{
-    APIKey: apiKey,
-    RateLimitPerMinute: 10000,  // v1: 10000, EA: 100
-}
+client, _ := sitemanager.NewWithConfig(&sitemanager.ClientConfig{
+    V1RateLimitPerMinute: 10000,
+    EARateLimitPerMinute: 100,
+})
+```
+
+**Network API:**
+```go
+client, _ := network.NewWithConfig(&network.ClientConfig{
+    RateLimitPerMinute: 1000,
+})
+```
+
+### Self-signed certificate issues (Network API)
+
+```go
+client, _ := network.NewWithConfig(&network.ClientConfig{
+    InsecureSkipVerify: true,  // For self-signed certs
+})
+```
+
+### Test failures
+
+```bash
+# Run specific test with verbose output
+go test -v -run TestSpecificFunction ./api/sitemanager/...
+
+# Check for race conditions
+go test -race ./...
+
+# Update test fixtures if API changed
+# Edit testdata/fixtures.go with new responses
 ```
 
 ## Useful Commands
 
 ```bash
-# Validate OpenAPI spec
-yamllint openapi.yaml
+# Build everything
+go build ./...
 
-# Check generated types
-go doc -all github.com/lexfrei/go-unifi | grep "type.*struct"
+# Run all tests
+go test ./...
 
-# Count map[string]interface{} usage
-grep -c 'map\[string\]interface{}' generated.go
+# Run tests with coverage
+go test -race -coverprofile=coverage.out -covermode=atomic ./...
+go tool cover -html=coverage.out
 
-# Find all exported types
-grep -n '^type [A-Z]' generated.go
+# Run linters (MUST pass before commit)
+golangci-lint run ./...
 
-# Test example
-UNIFI_API_KEY=key go run examples/get_host/main.go
+# Regenerate all code
+go generate ./...
+
+# Regenerate specific API
+cd api/sitemanager && go generate
+cd api/network && go generate
+
+# Check type safety (should be minimal)
+grep -c 'map\[string\]interface{}' api/sitemanager/generated.go
+grep -c 'map\[string\]interface{}' api/network/generated.go
+
+# Find all exported types in an API
+grep -n '^type [A-Z]' api/sitemanager/generated.go | head -20
+
+# Test with real Site Manager API
+UNIFI_API_KEY=your-key go run examples/sitemanager/list_hosts/main.go
+
+# Test with real Network API
+UNIFI_BASE_URL=https://unifi.local UNIFI_API_KEY=your-key go run examples/network/list_sites/main.go
 
 # Build all examples
-for dir in examples/*/; do go build -o /dev/null "$dir"; done
+for dir in examples/*/*/; do echo "Building $dir" && go build -o /dev/null "$dir" || break; done
+
+# Validate types against real API
+go run cmd/test-reality/main.go -api-key your-key
 ```
 
 ## References
 
-- [UniFi Site Manager API Docs](https://developer.ui.com/site-manager-api/gettingstarted)
-- [oapi-codegen Documentation](https://github.com/oapi-codegen/oapi-codegen)
-- [OpenAPI 3.0 Specification](https://spec.openapis.org/oas/v3.0.3)
-- [Go Error Handling Best Practices](https://github.com/cockroachdb/errors)
+### Official Documentation
 
+- [UniFi Site Manager API](https://developer.ui.com/site-manager-api/gettingstarted) - Official cloud API docs
+- [UniFi Network API](https://developer.ui.com/network-api/unifi-network-api) - Official local controller API docs
+- [OpenAPI 3.0 Specification](https://spec.openapis.org/oas/v3.0.3) - OpenAPI spec standard
 
-### Project Structure
+### Tools and Libraries
 
-- **`/api/`** - Публичные API клиенты (sitemanager, protect, access, talk)
-  - Каждый API в своей поддиректории
-  - OpenAPI спецификация, сгенерированный код, клиент
-- **`/internal/`** - Shared infrastructure, недоступен для внешнего импорта
-  - ratelimit - Rate limiting logic
-  - retry - Retry logic with exponential backoff
-- **`/examples/`** - Исполняемые примеры для демонстрации использования
-- **Корень** - go.mod, документация
+- [oapi-codegen](https://github.com/oapi-codegen/oapi-codegen) - OpenAPI to Go code generator
+- [cockroachdb/errors](https://github.com/cockroachdb/errors) - Enhanced error handling
+- [golangci-lint](https://golangci-lint.run/) - Go linters aggregator
 
-### Import Paths
+### Project Documentation
 
-- Site Manager API: `github.com/lexfrei/go-unifi/api/sitemanager`
-- Internal packages: `github.com/lexfrei/go-unifi/internal/*` (только для внутреннего использования)
+- [README.md](README.md) - Project overview and quick start
+- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines
+- [TESTING.md](TESTING.md) - Testing guidelines
+- [RELEASING.md](RELEASING.md) - Release process
 
-### Development Commands
+## Import Paths
 
-Generate code:
-```bash
-cd api/sitemanager && oapi-codegen -config .oapi-codegen.yaml openapi.yaml
+```go
+// Public API clients
+import "github.com/lexfrei/go-unifi/api/sitemanager"
+import "github.com/lexfrei/go-unifi/api/network"
+
+// Observability interfaces (for custom logging/metrics)
+import "github.com/lexfrei/go-unifi/observability"
+
+// Internal packages - DO NOT import from external code
+// These are for internal use only
 ```
 
-Or use go generate:
-```bash
-cd api/sitemanager && go generate
-```
+## Linter Configuration
 
-Run linters:
-```bash
-golangci-lint run ./...
-```
+See `.golangci.yaml` for full configuration. Key settings:
 
-### Versioning
+- **Disabled linters**: `depguard`, `exhaustruct`, `gochecknoglobals`, `canonicalheader` (UniFi uses X-API-KEY)
+- **Function length**: Max 60 lines, 60 statements
+- **Complexity**: Max 15 (gocyclo, cyclop)
+- **Examples and cmd excluded**: Linting is relaxed for example programs
 
-Use Semantic Versioning (semver).
+**CRITICAL**: ALL linting errors MUST be fixed before pushing. There are NO "minor" linting issues.
 

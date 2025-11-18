@@ -90,7 +90,7 @@ var (
 	objectIDPattern = regexp.MustCompile(`[0-9a-f]{24}`)
 	// numericIDPattern matches numeric IDs (5+ digits to avoid replacing version numbers).
 	numericIDPattern = regexp.MustCompile(`/\d{5,}(/|$)`)
-	// siteNamePattern matches site names in paths: /site/{name}/ → /site/:site/
+	// siteNamePattern matches site names in paths: /site/{name}/ → /site/:site/.
 	siteNamePattern = regexp.MustCompile(`/site/[^/]+(/|$)`)
 )
 

@@ -61,6 +61,7 @@ type retryTransport struct {
 	metrics     observability.MetricsRecorder
 }
 
+//nolint:funlen // Retry logic requires comprehensive error handling and observability
 func (t *retryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	ctx := req.Context()
 
@@ -115,9 +116,17 @@ func (t *retryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		waitTime := t.calculateWait(attempt, resp)
 
 		// Wait before retry (respect context cancellation)
+		timer := time.NewTimer(waitTime)
+
 		select {
-		case <-time.After(waitTime):
+		case <-timer.C:
+			// Timer expired, continue to retry
 		case <-ctx.Done():
+			// Stop timer and close response body before returning on context cancellation
+			timer.Stop()
+			if resp != nil {
+				resp.Body.Close()
+			}
 			return nil, errors.Wrap(ctx.Err(), "context canceled during retry wait")
 		}
 

@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"regexp"
 	"time"
 
 	"github.com/lexfrei/go-unifi/observability"
@@ -75,8 +76,42 @@ func (t *observabilityTransport) RoundTrip(req *http.Request) (*http.Response, e
 		t.logger.Debug("http request completed", fields...)
 	}
 
-	// Record metrics
-	t.metrics.RecordHTTPRequest(req.Method, req.URL.Path, resp.StatusCode, duration)
+	// Record metrics with normalized path to avoid unbounded cardinality
+	normalizedPath := normalizePath(req.URL.Path)
+	t.metrics.RecordHTTPRequest(req.Method, normalizedPath, resp.StatusCode, duration)
 
 	return resp, nil
+}
+
+var (
+	// uuidPattern matches UUID format (8-4-4-4-12).
+	uuidPattern = regexp.MustCompile(`[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`)
+	// objectIDPattern matches MongoDB ObjectID (24 hex characters).
+	objectIDPattern = regexp.MustCompile(`[0-9a-f]{24}`)
+	// numericIDPattern matches numeric IDs (5+ digits to avoid replacing version numbers).
+	numericIDPattern = regexp.MustCompile(`/\d{5,}(/|$)`)
+)
+
+// normalizePath replaces dynamic path segments (UUIDs, ObjectIDs, numeric IDs) with placeholders
+// to prevent unbounded cardinality in Prometheus metrics.
+//
+// Examples:
+//   - /api/site/default/dns/record/507f1f77bcf86cd799439011 → /api/site/:site/dns/record/:id
+//   - /api/site/my-site/device/12345678 → /api/site/:site/device/:id
+//   - /proxy/network/v2/api/site/default/setting → /proxy/network/v2/api/site/:site/setting
+func normalizePath(path string) string {
+	// Replace UUIDs with :id
+	normalized := uuidPattern.ReplaceAllString(path, ":id")
+
+	// Replace ObjectIDs with :id
+	normalized = objectIDPattern.ReplaceAllString(normalized, ":id")
+
+	// Replace numeric IDs with :id
+	normalized = numericIDPattern.ReplaceAllString(normalized, "/:id$1")
+
+	// Replace site names: /site/{name}/ → /site/:site/
+	// This pattern looks for /site/ followed by non-slash characters followed by / or end of string
+	normalized = regexp.MustCompile(`/site/[^/]+(/|$)`).ReplaceAllString(normalized, "/site/:site$1")
+
+	return normalized
 }

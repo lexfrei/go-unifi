@@ -56,17 +56,20 @@ func TestRetryResourceCleanupOnCancellation(t *testing.T) {
 	resp, err := client.Do(req)
 
 	// Should fail due to context cancellation
-	assert.Error(t, err)
+	require.Error(t, err)
 	assert.Contains(t, err.Error(), "context")
 
 	// Response should be nil on context cancellation
+	if resp != nil {
+		resp.Body.Close()
+	}
 	assert.Nil(t, resp)
 
 	// Wait a bit for cleanup
 	time.Sleep(100 * time.Millisecond)
 
 	// Verify: at least one request was made
-	assert.Greater(t, requestCount.Load(), int32(0), "should have made at least one request")
+	assert.Positive(t, requestCount.Load(), "should have made at least one request")
 
 	// Verify: all response bodies were closed
 	closedCount := bodiesClosed.Load()
@@ -77,6 +80,8 @@ func TestRetryResourceCleanupOnCancellation(t *testing.T) {
 
 // TestRetryNoGoroutineLeaks verifies that retry middleware doesn't leak goroutines.
 func TestRetryNoGoroutineLeaks(t *testing.T) {
+	t.Parallel()
+
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")
 	}
@@ -97,7 +102,7 @@ func TestRetryNoGoroutineLeaks(t *testing.T) {
 	baselineGoroutines := runtime.NumGoroutine()
 
 	// Make 100 requests with cancellation
-	for i := 0; i < 100; i++ {
+	for range 100 {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Millisecond)
 		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, http.NoBody)
 
@@ -126,6 +131,8 @@ func TestRetryNoGoroutineLeaks(t *testing.T) {
 // TestRetryStressTestConcurrentCancellations stress tests the retry middleware
 // with many concurrent requests that get canceled, verifying no resource leaks.
 func TestRetryStressTestConcurrentCancellations(t *testing.T) {
+	t.Parallel()
+
 	if testing.Short() {
 		t.Skip("skipping stress test in short mode")
 	}
@@ -151,7 +158,7 @@ func TestRetryStressTestConcurrentCancellations(t *testing.T) {
 	var wg sync.WaitGroup
 	wg.Add(numRequests)
 
-	for i := 0; i < numRequests; i++ {
+	for i := range numRequests {
 		go func(index int) {
 			defer wg.Done()
 
@@ -200,7 +207,7 @@ func BenchmarkRetryCancellation(b *testing.B) {
 	})(http.DefaultTransport)
 
 	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Millisecond)
 		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, http.NoBody)
 
@@ -225,6 +232,7 @@ type bodyTrackingTransport struct {
 func (t *bodyTrackingTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	resp, err := t.base.RoundTrip(req)
 	if err != nil {
+		//nolint:wrapcheck // Test helper passes through transport errors unchanged
 		return nil, err
 	}
 
@@ -245,6 +253,7 @@ func (t *bodyTrackingTransport) RoundTrip(req *http.Request) (*http.Response, er
 // trackingReadCloser wraps io.ReadCloser to count closures.
 type trackingReadCloser struct {
 	io.ReadCloser
+
 	bodiesClosed *atomic.Int32
 	closed       atomic.Bool
 }
@@ -253,5 +262,7 @@ func (r *trackingReadCloser) Close() error {
 	if r.closed.CompareAndSwap(false, true) {
 		r.bodiesClosed.Add(1)
 	}
+
+	//nolint:wrapcheck // Test helper delegates close to wrapped ReadCloser
 	return r.ReadCloser.Close()
 }

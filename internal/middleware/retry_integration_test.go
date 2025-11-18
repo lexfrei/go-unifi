@@ -122,8 +122,9 @@ func TestRetryNoGoroutineLeaks(t *testing.T) {
 
 	finalGoroutines := runtime.NumGoroutine()
 
-	// Allow small variance (±5 goroutines) due to test framework overhead
-	assert.InDelta(t, baselineGoroutines, finalGoroutines, 5,
+	// Check for goroutine leaks (final count should not exceed baseline significantly)
+	// Allow up to 5 extra goroutines due to test framework overhead
+	assert.LessOrEqual(t, finalGoroutines, baselineGoroutines+5,
 		"goroutine leak detected (baseline: %d, final: %d)",
 		baselineGoroutines, finalGoroutines)
 }
@@ -189,9 +190,11 @@ func TestRetryStressTestConcurrentCancellations(t *testing.T) {
 	t.Logf("Stress test complete: baseline goroutines=%d, final=%d",
 		baselineGoroutines, finalGoroutines)
 
-	// Verify no significant goroutine leaks (allow some variance for test framework)
-	assert.InDelta(t, baselineGoroutines, finalGoroutines, 10,
-		"no goroutine leaks detected after %d concurrent cancellations", numRequests)
+	// Verify no goroutine leaks (final count should not exceed baseline significantly)
+	// Allow up to 10 extra goroutines due to test framework and concurrent operations
+	assert.LessOrEqual(t, finalGoroutines, baselineGoroutines+10,
+		"goroutine leak detected after %d concurrent cancellations (baseline: %d, final: %d)",
+		numRequests, baselineGoroutines, finalGoroutines)
 }
 
 // BenchmarkRetryCancellation benchmarks the retry middleware with context cancellation.

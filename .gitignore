@@ -11,6 +11,7 @@ examples/*/*/[!.]*
 !examples/*/*/*.go
 !examples/*/*/*.mod
 !examples/*/*/*.sum
+!examples/*/*/README.md
 
 # Tool binaries
 cmd/*/test-reality

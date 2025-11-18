@@ -5,12 +5,21 @@ import (
 	"bytes"
 	"io"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/cockroachdb/errors"
 	"github.com/lexfrei/go-unifi/internal/retry"
 	"github.com/lexfrei/go-unifi/observability"
 )
+
+// bodyBufferPool is a pool of bytes.Buffer for reusing memory when buffering request bodies.
+// This significantly reduces allocations and GC pressure, especially for large payloads.
+var bodyBufferPool = sync.Pool{
+	New: func() any {
+		return new(bytes.Buffer)
+	},
+}
 
 // RetryConfig configures the retry middleware.
 type RetryConfig struct {
@@ -61,18 +70,26 @@ type retryTransport struct {
 	metrics     observability.MetricsRecorder
 }
 
+//nolint:funlen,gocyclo,cyclop // Retry logic requires comprehensive error handling and observability
 func (t *retryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 	ctx := req.Context()
 
-	// Read and buffer request body for retries
+	// Read and buffer request body for retries using pooled buffer
 	var bodyBytes []byte
+	var buf *bytes.Buffer
 	if req.Body != nil {
-		var err error
-		bodyBytes, err = io.ReadAll(req.Body)
+		//nolint:forcetypeassert // Pool only contains *bytes.Buffer, type assertion is safe
+		buf = bodyBufferPool.Get().(*bytes.Buffer)
+		buf.Reset()
+
+		_, err := io.Copy(buf, req.Body)
 		req.Body.Close()
 		if err != nil {
+			bodyBufferPool.Put(buf)
 			return nil, errors.Wrap(err, "failed to read request body")
 		}
+
+		bodyBytes = buf.Bytes()
 	}
 
 	var lastErr error
@@ -89,6 +106,10 @@ func (t *retryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 		// Success case
 		if err == nil && !retry.ShouldRetry(resp.StatusCode) {
+			// Return buffer to pool before returning
+			if buf != nil {
+				bodyBufferPool.Put(buf)
+			}
 			return resp, nil
 		}
 
@@ -115,9 +136,26 @@ func (t *retryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		waitTime := t.calculateWait(attempt, resp)
 
 		// Wait before retry (respect context cancellation)
+		timer := time.NewTimer(waitTime)
+
 		select {
-		case <-time.After(waitTime):
+		case <-timer.C:
+			// Timer expired, continue to retry
 		case <-ctx.Done():
+			// Stop timer and close response body before returning on context cancellation
+			timer.Stop()
+			if resp != nil {
+				resp.Body.Close()
+			}
+
+			// Return buffer to pool before returning
+			if buf != nil {
+				bodyBufferPool.Put(buf)
+			}
+
+			// Record context cancellation for monitoring
+			t.metrics.RecordContextCancellation("retry_wait")
+
 			return nil, errors.Wrap(ctx.Err(), "context canceled during retry wait")
 		}
 
@@ -125,6 +163,11 @@ func (t *retryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 		if resp != nil {
 			resp.Body.Close()
 		}
+	}
+
+	// Return buffer to pool before returning
+	if buf != nil {
+		bodyBufferPool.Put(buf)
 	}
 
 	// All retries exhausted

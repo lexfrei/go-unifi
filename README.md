@@ -85,6 +85,7 @@ go get github.com/lexfrei/go-unifi/api/network@v0.0.1
 - [Site Manager Examples](./examples/sitemanager/) - Cloud API usage
 - [Network API Examples](./examples/network/) - Local controller usage
 - [Observability Example](./examples/observability/) - Custom logging and metrics integration
+- [pprof Monitoring Example](./examples/observability/pprof_monitoring/) - Production performance monitoring
 
 ## ✨ Features
 
@@ -92,8 +93,9 @@ go get github.com/lexfrei/go-unifi/api/network@v0.0.1
 - ✅ **Rate limiting** - Automatic with configurable limits
 - ✅ **Retry logic** - Exponential backoff for failures
 - ✅ **Observability** - Pluggable logging and metrics (see [example](./examples/observability/))
+- ✅ **Performance monitoring** - pprof integration and [production profiling guide](./examples/observability/pprof_monitoring/)
 - ✅ **Error handling** - Using `github.com/cockroachdb/errors`
-- ✅ **Context support** - All operations support cancellation
+- ✅ **Context support** - All operations support cancellation with clean resource cleanup
 - ✅ **Well documented** - Extensive examples and godoc
 
 ## 🧪 Testing Your Code
@@ -219,6 +221,10 @@ See [cmd/test-reality/README.md](./cmd/test-reality/README.md) for details.
 ```bash
 golangci-lint run ./...
 ```
+
+### Performance Testing
+
+See [PERFORMANCE.md](./PERFORMANCE.md) for detailed performance characteristics, benchmarking, and profiling guides.
 
 ## 📚 API Documentation
 

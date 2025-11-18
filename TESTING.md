@@ -45,3 +45,94 @@ Do NOT write tests for:
 - Arbitrary coverage percentage goals
 
 Coverage is NOT a goal. It increases when we add features, decreases when we remove dead code. Both are acceptable.
+
+## Integration Tests
+
+Integration tests verify resource management and cleanup behavior, especially under stress conditions:
+
+### Context Cancellation Tests
+
+Located in `internal/middleware/retry_integration_test.go`, these tests verify:
+
+- Response bodies are closed when context is canceled
+- No goroutine leaks occur during request cancellation
+- Timers are properly stopped on cancellation
+- Resource cleanup works under concurrent stress
+
+**Running integration tests:**
+
+```bash
+# Run all integration tests (may take longer)
+go test ./internal/middleware/...
+
+# Skip integration tests in short mode
+go test -short ./...
+```
+
+**Stress tests:**
+
+- `TestRetryStressTestConcurrentCancellations` - 500 concurrent requests with random cancellation
+- `TestRetryNoGoroutineLeaks` - 100 requests checking for goroutine leaks
+
+These tests verify the fixes for memory/resource leaks on context cancellation.
+
+## Performance Testing
+
+### Benchmarks
+
+Run benchmarks to measure performance:
+
+```bash
+# Run all benchmarks
+go test -bench=. -benchmem ./...
+
+# Run specific benchmark
+go test -bench=BenchmarkNormalizePath -benchmem ./internal/middleware/
+
+# Compare before/after optimization
+go test -bench=. -benchmem ./internal/middleware/ > new.txt
+# Compare with: benchstat old.txt new.txt
+```
+
+### Race Detection
+
+Always run tests with race detector before committing:
+
+```bash
+# Detect race conditions
+go test -race ./...
+
+# Race detection with coverage
+go test -race -coverprofile=coverage.out ./...
+```
+
+### Memory Profiling
+
+Use pprof for memory leak detection:
+
+```bash
+# Generate memory profile
+go test -memprofile=mem.prof -bench=. ./internal/middleware/
+
+# Analyze profile
+go tool pprof mem.prof
+
+# In pprof shell:
+# top      - show top allocators
+# list     - show source code
+# web      - visualize (requires graphviz)
+```
+
+### CPU Profiling
+
+Profile CPU usage:
+
+```bash
+# Generate CPU profile
+go test -cpuprofile=cpu.prof -bench=. ./internal/middleware/
+
+# Analyze profile
+go tool pprof cpu.prof
+```
+
+See `examples/observability/pprof_monitoring/` for production profiling guide.

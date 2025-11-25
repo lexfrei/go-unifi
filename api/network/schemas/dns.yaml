@@ -1,0 +1,106 @@
+# DNS-related schemas
+
+DNSRecord:
+  type: object
+  required:
+    - _id
+    - enabled
+    - key
+    - record_type
+    - value
+  properties:
+    _id:
+      type: string
+      description: Unique identifier for the DNS record
+      example: 68e04e991056cd46ea9edcd4
+    enabled:
+      type: boolean
+      description: Whether the DNS record is enabled
+      example: true
+    key:
+      type: string
+      description: DNS record name (hostname or domain)
+      example: "*.example.local"
+    record_type:
+      type: string
+      description: DNS record type
+      enum:
+        - A
+        - AAAA
+        - CNAME
+        - MX
+        - NS
+        - SRV
+        - TXT
+      example: A
+    value:
+      type: string
+      description: DNS record value (IP address, target hostname, etc.)
+      example: 192.168.1.100
+    ttl:
+      type: integer
+      description: Time to live in seconds (0 = default)
+      default: 0
+      example: 0
+    priority:
+      type: integer
+      description: Priority for MX and SRV records
+      example: 0
+    weight:
+      type: integer
+      description: Weight for SRV records
+      example: 0
+    port:
+      type: integer
+      description: Port number for SRV records
+      example: 0
+
+DNSRecordInput:
+  type: object
+  required:
+    - key
+    - record_type
+    - value
+  properties:
+    enabled:
+      type: boolean
+      description: Whether the DNS record should be enabled
+      default: true
+      example: true
+    key:
+      type: string
+      description: DNS record name (hostname or domain)
+      example: "api.example.com"
+    record_type:
+      type: string
+      description: DNS record type
+      enum:
+        - A
+        - AAAA
+        - CNAME
+        - MX
+        - NS
+        - SRV
+        - TXT
+      example: A
+    value:
+      type: string
+      description: DNS record value (IP address, target hostname, etc.)
+      example: 192.168.1.100
+    ttl:
+      type: integer
+      description: Time to live in seconds (0 = default)
+      default: 0
+      example: 0
+    priority:
+      type: integer
+      description: Priority for MX and SRV records
+      example: 10
+    weight:
+      type: integer
+      description: Weight for SRV records
+      example: 5
+    port:
+      type: integer
+      description: Port number for SRV records
+      example: 443

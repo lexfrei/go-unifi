@@ -1,0 +1,246 @@
+# Network configuration schemas (VLANs, subnets)
+
+NetworkConfig:
+  type: object
+  description: Network/VLAN configuration
+  properties:
+    _id:
+      type: string
+      description: Unique identifier
+      example: "507f1f77bcf86cd799439011"
+    name:
+      type: string
+      description: Network name
+      example: "Default"
+    site_id:
+      type: string
+      description: Site ID
+      example: "507f1f77bcf86cd799439012"
+    enabled:
+      type: boolean
+      description: Whether network is enabled
+      example: true
+    purpose:
+      type: string
+      description: Network purpose
+      enum:
+        - corporate
+        - guest
+        - wan
+        - vlan-only
+        - remote-user-vpn
+        - site-vpn
+      example: corporate
+    networkgroup:
+      type: string
+      description: Network group
+      enum:
+        - LAN
+        - WAN
+        - WAN2
+      example: LAN
+    vlan:
+      type: integer
+      description: VLAN ID (null for untagged)
+      example: 10
+    vlan_enabled:
+      type: boolean
+      description: Whether VLAN tagging is enabled
+      example: true
+    ip_subnet:
+      type: string
+      description: IP subnet in CIDR notation
+      example: "192.168.1.0/24"
+    gateway_ip:
+      type: string
+      description: Gateway IP address
+      example: "192.168.1.1"
+    gateway_type:
+      type: string
+      description: Gateway type
+      enum:
+        - default
+        - none
+      example: default
+    dhcpd_enabled:
+      type: boolean
+      description: DHCP server enabled
+      example: true
+    dhcpd_start:
+      type: string
+      description: DHCP range start
+      example: "192.168.1.100"
+    dhcpd_stop:
+      type: string
+      description: DHCP range end
+      example: "192.168.1.254"
+    dhcpd_leasetime:
+      type: integer
+      description: DHCP lease time in seconds
+      example: 86400
+    dhcpd_dns_enabled:
+      type: boolean
+      description: Provide DNS via DHCP
+      example: true
+    dhcpd_dns_1:
+      type: string
+      description: Primary DNS server
+      example: "192.168.1.1"
+    dhcpd_dns_2:
+      type: string
+      description: Secondary DNS server
+      example: "8.8.8.8"
+    dhcpd_gateway_enabled:
+      type: boolean
+      description: Provide gateway via DHCP
+      example: true
+    dhcpd_ntp_enabled:
+      type: boolean
+      description: Provide NTP via DHCP
+      example: false
+    dhcpd_ntp_1:
+      type: string
+      description: Primary NTP server
+      example: ""
+    domain_name:
+      type: string
+      description: Domain name for this network
+      example: "local"
+    igmp_snooping:
+      type: boolean
+      description: IGMP snooping enabled
+      example: false
+    mdns_enabled:
+      type: boolean
+      description: mDNS enabled
+      example: false
+    upnp_lan_enabled:
+      type: boolean
+      description: UPnP enabled on LAN
+      example: false
+    nat_outbound_ip_addresses:
+      type: array
+      description: NAT outbound IP addresses
+      items:
+        type: string
+      example: []
+    dhcp_relay_enabled:
+      type: boolean
+      description: DHCP relay enabled
+      example: false
+    dhcpd_boot_enabled:
+      type: boolean
+      description: DHCP boot options enabled (PXE)
+      example: false
+    dhcpd_boot_filename:
+      type: string
+      description: PXE boot filename
+      example: ""
+    dhcpd_boot_server:
+      type: string
+      description: PXE boot server
+      example: ""
+    ipv6_interface_type:
+      type: string
+      description: IPv6 interface type
+      enum:
+        - none
+        - static
+        - pd
+      example: none
+    ipv6_pd_interface:
+      type: string
+      description: IPv6 prefix delegation interface
+      example: ""
+    ipv6_ra_enabled:
+      type: boolean
+      description: IPv6 router advertisements enabled
+      example: false
+    internet_access_enabled:
+      type: boolean
+      description: Internet access enabled for this network
+      example: true
+
+NetworkConfigInput:
+  type: object
+  description: Input for creating/updating network configuration
+  required:
+    - name
+    - purpose
+  properties:
+    name:
+      type: string
+      description: Network name
+      example: "IoT Network"
+    purpose:
+      type: string
+      description: Network purpose
+      enum:
+        - corporate
+        - guest
+        - vlan-only
+      example: corporate
+    vlan:
+      type: integer
+      description: VLAN ID
+      minimum: 1
+      maximum: 4094
+      example: 100
+    vlan_enabled:
+      type: boolean
+      description: Enable VLAN tagging
+      default: true
+      example: true
+    ip_subnet:
+      type: string
+      description: IP subnet in CIDR notation
+      example: "192.168.100.0/24"
+    dhcpd_enabled:
+      type: boolean
+      description: Enable DHCP server
+      default: true
+      example: true
+    dhcpd_start:
+      type: string
+      description: DHCP range start
+      example: "192.168.100.100"
+    dhcpd_stop:
+      type: string
+      description: DHCP range end
+      example: "192.168.100.254"
+    dhcpd_leasetime:
+      type: integer
+      description: DHCP lease time in seconds
+      default: 86400
+      example: 86400
+    igmp_snooping:
+      type: boolean
+      description: Enable IGMP snooping
+      default: false
+      example: false
+    internet_access_enabled:
+      type: boolean
+      description: Allow internet access
+      default: true
+      example: true
+
+DHCPReservation:
+  type: object
+  description: DHCP static reservation
+  properties:
+    mac:
+      type: string
+      description: Client MAC address
+      example: "00:11:22:33:44:55"
+    fixed_ip:
+      type: string
+      description: Reserved IP address
+      example: "192.168.1.50"
+    name:
+      type: string
+      description: Reservation name/hostname
+      example: "my-server"
+    network_id:
+      type: string
+      description: Network ID for this reservation
+      example: "507f1f77bcf86cd799439011"

@@ -1,0 +1,291 @@
+# Firewall-related schemas
+
+FirewallPolicy:
+  type: object
+  required:
+    - _id
+    - action
+    - enabled
+    - name
+  properties:
+    _id:
+      type: string
+      description: Unique identifier for the firewall policy
+      example: 68a496708e604379be63f81368a496708e604379be63f8132147483647
+    action:
+      type: string
+      description: Action to take when traffic matches this policy
+      enum:
+        - ALLOW
+        - BLOCK
+        - DROP
+        - REJECT
+      example: ALLOW
+    enabled:
+      type: boolean
+      description: Whether the policy is enabled
+      example: true
+    name:
+      type: string
+      description: Name of the firewall policy
+      example: Allow All Traffic
+    description:
+      type: string
+      description: Policy description
+      example: ""
+    predefined:
+      type: boolean
+      description: Whether this is a predefined system policy (cannot be modified)
+      example: true
+    index:
+      type: integer
+      description: Priority index of the policy (lower = higher priority)
+      example: 2147483647
+    short_id:
+      type: integer
+      description: Short ID for the policy
+      example: 1
+    protocol:
+      type: string
+      description: Protocol to match
+      enum:
+        - all
+        - tcp
+        - udp
+        - tcp_udp
+        - icmp
+        - icmpv6
+      example: all
+    logging:
+      type: boolean
+      description: Whether to log matching traffic
+      example: false
+    ip_version:
+      type: string
+      description: IP version to match
+      enum:
+        - IPV4
+        - IPV6
+        - BOTH
+      example: BOTH
+    connection_state_type:
+      type: string
+      description: Connection state matching type
+      enum:
+        - ALL
+        - NEW
+        - RESPOND_ONLY
+        - CUSTOM
+      example: ALL
+    connection_states:
+      type: array
+      description: Connection states to match (when type is CUSTOM)
+      items:
+        type: string
+        enum:
+          - NEW
+          - ESTABLISHED
+          - RELATED
+          - INVALID
+      example: []
+    match_ip_sec:
+      type: boolean
+      description: Match IPSec traffic
+      example: false
+    match_opposite_protocol:
+      type: boolean
+      description: Match opposite protocol
+      example: false
+    create_allow_respond:
+      type: boolean
+      description: Automatically create allow respond rule
+      example: true
+    icmp_typename:
+      type: string
+      description: ICMP type name
+      example: ANY
+    icmp_v6_typename:
+      type: string
+      description: ICMPv6 type name
+      example: ANY
+    origin_id:
+      type: string
+      description: Origin rule ID (for auto-generated rules)
+      example: 68a496718e604379be63f854
+    origin_type:
+      type: string
+      description: Origin type (for auto-generated rules)
+      example: port_forward
+    source:
+      $ref: '#/FirewallPolicyEndpoint'
+    destination:
+      $ref: '#/FirewallPolicyEndpoint'
+    schedule:
+      $ref: '#/FirewallSchedule'
+
+FirewallPolicyEndpoint:
+  type: object
+  description: Source or destination matching configuration
+  properties:
+    zone_id:
+      type: string
+      description: Zone ID to match
+      example: 68a496708e604379be63f813
+    matching_target:
+      type: string
+      description: What to match
+      enum:
+        - ANY
+        - CLIENT
+        - IP
+        - PORT
+        - NETWORK
+      example: ANY
+    matching_target_type:
+      type: string
+      description: Target type for specific matching
+      enum:
+        - ANY
+        - SPECIFIC
+      example: ANY
+    client_macs:
+      type: array
+      description: Client MACs to match
+      items:
+        type: string
+      example:
+        - "b4:ed:d5:06:c2:66"
+    ips:
+      type: array
+      description: IP addresses/networks to match
+      items:
+        type: string
+      example:
+        - "192.168.1.100"
+    port:
+      type: string
+      description: Port or port range to match
+      example: "25565"
+    ports:
+      type: array
+      description: Multiple ports to match
+      items:
+        type: string
+    port_matching_type:
+      type: string
+      description: Port matching type
+      enum:
+        - ANY
+        - SPECIFIC
+      example: ANY
+    match_opposite_ports:
+      type: boolean
+      description: Match opposite ports
+      example: false
+    match_opposite_ips:
+      type: boolean
+      description: Match opposite IPs
+      example: false
+    _class:
+      type: string
+      description: Internal class type
+      example: SOURCE_ANY
+
+FirewallSchedule:
+  type: object
+  description: Schedule configuration for the rule
+  properties:
+    mode:
+      type: string
+      description: Schedule mode
+      enum:
+        - ALWAYS
+        - CUSTOM
+      example: ALWAYS
+    repeat_on_days:
+      type: array
+      description: Days to repeat (for CUSTOM mode)
+      items:
+        type: string
+        enum:
+          - MON
+          - TUE
+          - WED
+          - THU
+          - FRI
+          - SAT
+          - SUN
+      example: []
+    time_range_start:
+      type: string
+      description: Start time (HH:MM)
+      example: "09:00"
+    time_range_end:
+      type: string
+      description: End time (HH:MM)
+      example: "17:00"
+    all_day:
+      type: boolean
+      description: All day schedule
+      example: false
+
+FirewallPolicyInput:
+  type: object
+  required:
+    - action
+    - enabled
+    - name
+  properties:
+    action:
+      type: string
+      description: Action to take when traffic matches this policy
+      enum:
+        - ALLOW
+        - BLOCK
+        - DROP
+        - REJECT
+      example: ALLOW
+    enabled:
+      type: boolean
+      description: Whether the policy is enabled
+      example: true
+    name:
+      type: string
+      description: Name of the firewall policy
+      example: My Custom Policy
+    description:
+      type: string
+      description: Policy description
+      example: "Custom rule for specific traffic"
+    protocol:
+      type: string
+      description: Protocol to match
+      enum:
+        - all
+        - tcp
+        - udp
+        - tcp_udp
+        - icmp
+        - icmpv6
+      default: all
+      example: all
+    logging:
+      type: boolean
+      description: Whether to log matching traffic
+      default: false
+      example: false
+    ip_version:
+      type: string
+      description: IP version to match
+      enum:
+        - IPV4
+        - IPV6
+        - BOTH
+      default: BOTH
+      example: BOTH
+    source:
+      $ref: '#/FirewallPolicyEndpoint'
+    destination:
+      $ref: '#/FirewallPolicyEndpoint'
+    schedule:
+      $ref: '#/FirewallSchedule'

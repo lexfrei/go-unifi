@@ -1,0 +1,244 @@
+# Topology and network graph schemas
+
+TopologyResponse:
+  type: object
+  description: Network topology graph response
+  properties:
+    nodes:
+      type: array
+      description: Network nodes (devices, clients)
+      items:
+        $ref: '#/TopologyNode'
+    edges:
+      type: array
+      description: Connections between nodes
+      items:
+        $ref: '#/TopologyEdge'
+
+TopologyNode:
+  type: object
+  description: A node in the network topology
+  properties:
+    id:
+      type: string
+      description: Unique node identifier
+      example: "507f1f77bcf86cd799439011"
+    type:
+      type: string
+      description: Node type
+      enum:
+        - gateway
+        - switch
+        - ap
+        - client
+        - wan
+      example: gateway
+    name:
+      type: string
+      description: Node display name
+      example: "Main Router"
+    mac:
+      type: string
+      description: MAC address
+      example: "00:11:22:33:44:55"
+    ip:
+      type: string
+      description: IP address
+      example: "192.168.1.1"
+    model:
+      type: string
+      description: Device model
+      example: "UDR7"
+    status:
+      type: string
+      description: Node status
+      enum:
+        - online
+        - offline
+        - pending
+      example: online
+    uplink_mac:
+      type: string
+      description: MAC of uplink device
+      example: "00:11:22:33:44:66"
+    depth:
+      type: integer
+      description: Depth in network tree (0 = WAN/root)
+      example: 1
+
+TopologyEdge:
+  type: object
+  description: A connection between two nodes
+  properties:
+    from:
+      type: string
+      description: Source node ID
+      example: "507f1f77bcf86cd799439011"
+    to:
+      type: string
+      description: Target node ID
+      example: "507f1f77bcf86cd799439012"
+    type:
+      type: string
+      description: Connection type
+      enum:
+        - wired
+        - wireless
+        - uplink
+        - wan
+      example: wired
+    port_from:
+      type: integer
+      description: Source port number
+      example: 1
+    port_to:
+      type: integer
+      description: Target port number
+      example: 1
+    speed:
+      type: integer
+      description: Link speed in Mbps
+      example: 1000
+
+NetworkMap:
+  type: object
+  description: Visual network map data
+  properties:
+    devices:
+      type: array
+      items:
+        $ref: '#/NetworkMapDevice'
+    links:
+      type: array
+      items:
+        $ref: '#/NetworkMapLink'
+
+NetworkMapDevice:
+  type: object
+  properties:
+    _id:
+      type: string
+      description: Device ID
+      example: "507f1f77bcf86cd799439011"
+    mac:
+      type: string
+      description: MAC address
+      example: "00:11:22:33:44:55"
+    name:
+      type: string
+      description: Device name
+      example: "Main Switch"
+    type:
+      type: string
+      description: Device type
+      example: "usw"
+    x:
+      type: number
+      description: X coordinate on map
+      example: 100.5
+    y:
+      type: number
+      description: Y coordinate on map
+      example: 200.3
+    icon:
+      type: string
+      description: Icon identifier
+      example: "switch"
+
+NetworkMapLink:
+  type: object
+  properties:
+    from:
+      type: string
+      description: Source device ID
+      example: "507f1f77bcf86cd799439011"
+    to:
+      type: string
+      description: Target device ID
+      example: "507f1f77bcf86cd799439012"
+    type:
+      type: string
+      description: Link type
+      enum:
+        - ethernet
+        - wireless
+        - sfp
+      example: ethernet
+    speed:
+      type: integer
+      description: Link speed in Mbps
+      example: 1000
+    status:
+      type: string
+      description: Link status
+      enum:
+        - up
+        - down
+      example: up
+
+# Analytics schemas
+AnalyticsReport:
+  type: object
+  description: Analytics report data
+  properties:
+    period:
+      type: string
+      description: Report period
+      enum:
+        - hourly
+        - daily
+        - weekly
+        - monthly
+      example: daily
+    start_time:
+      type: integer
+      description: Report start timestamp
+      example: 1700000000
+    end_time:
+      type: integer
+      description: Report end timestamp
+      example: 1700086400
+    data:
+      type: array
+      items:
+        $ref: '#/AnalyticsDataPoint'
+
+AnalyticsDataPoint:
+  type: object
+  properties:
+    time:
+      type: integer
+      description: Data point timestamp
+      example: 1700000000
+    wan_rx_bytes:
+      type: integer
+      description: WAN received bytes
+      example: 1073741824
+    wan_tx_bytes:
+      type: integer
+      description: WAN transmitted bytes
+      example: 536870912
+    lan_rx_bytes:
+      type: integer
+      description: LAN received bytes
+      example: 2147483648
+    lan_tx_bytes:
+      type: integer
+      description: LAN transmitted bytes
+      example: 1073741824
+    wlan_rx_bytes:
+      type: integer
+      description: WLAN received bytes
+      example: 1073741824
+    wlan_tx_bytes:
+      type: integer
+      description: WLAN transmitted bytes
+      example: 536870912
+    num_sta:
+      type: integer
+      description: Number of stations
+      example: 25
+    num_user:
+      type: integer
+      description: Number of users
+      example: 20

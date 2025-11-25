@@ -1,0 +1,263 @@
+# Traffic and statistics schemas
+
+TrafficStats:
+  type: object
+  description: Traffic statistics for a time period
+  properties:
+    time:
+      type: integer
+      description: Unix timestamp for this data point
+      example: 1700000000
+    rx_bytes:
+      type: integer
+      description: Received bytes
+      example: 1048576
+    tx_bytes:
+      type: integer
+      description: Transmitted bytes
+      example: 524288
+    rx_packets:
+      type: integer
+      description: Received packets
+      example: 10000
+    tx_packets:
+      type: integer
+      description: Transmitted packets
+      example: 8000
+
+DailyStats:
+  type: object
+  description: Daily traffic statistics
+  properties:
+    time:
+      type: integer
+      description: Unix timestamp for start of day
+      example: 1700000000
+    rx_bytes:
+      type: integer
+      description: Total received bytes for the day
+      example: 10485760
+    tx_bytes:
+      type: integer
+      description: Total transmitted bytes for the day
+      example: 5242880
+    wan_rx_bytes:
+      type: integer
+      description: WAN received bytes
+      example: 10485760
+    wan_tx_bytes:
+      type: integer
+      description: WAN transmitted bytes
+      example: 5242880
+    num_sta:
+      type: integer
+      description: Number of stations/clients
+      example: 10
+
+HourlyStats:
+  type: object
+  description: Hourly traffic statistics
+  properties:
+    time:
+      type: integer
+      description: Unix timestamp for start of hour
+      example: 1700000000
+    rx_bytes:
+      type: integer
+      description: Received bytes in this hour
+      example: 1048576
+    tx_bytes:
+      type: integer
+      description: Transmitted bytes in this hour
+      example: 524288
+
+LatencyStats:
+  type: object
+  description: Network latency statistics
+  properties:
+    avg_latency:
+      type: number
+      description: Average latency in milliseconds
+      example: 15.5
+    min_latency:
+      type: number
+      description: Minimum latency in milliseconds
+      example: 5.2
+    max_latency:
+      type: number
+      description: Maximum latency in milliseconds
+      example: 45.8
+    packet_loss:
+      type: number
+      description: Packet loss percentage
+      example: 0.1
+    time:
+      type: integer
+      description: Unix timestamp
+      example: 1700000000
+
+SpeedTestResult:
+  type: object
+  description: Internet speed test result
+  properties:
+    _id:
+      type: string
+      description: Unique identifier
+      example: "507f1f77bcf86cd799439011"
+    time:
+      type: integer
+      description: Unix timestamp when test was performed
+      example: 1700000000
+    download:
+      type: number
+      description: Download speed in Mbps
+      example: 940.5
+    upload:
+      type: number
+      description: Upload speed in Mbps
+      example: 450.2
+    latency:
+      type: integer
+      description: Latency in milliseconds
+      example: 12
+    server:
+      type: string
+      description: Speed test server used
+      example: "Speedtest Server - City"
+    isp:
+      type: string
+      description: ISP name
+      example: "Internet Service Provider"
+
+HealthMetrics:
+  type: object
+  description: Overall network health metrics
+  properties:
+    wan:
+      $ref: '#/WANHealth'
+    lan:
+      $ref: '#/LANHealth'
+    wlan:
+      $ref: '#/WLANHealth'
+    vpn:
+      $ref: '#/VPNHealth'
+
+WANHealth:
+  type: object
+  description: WAN health metrics
+  properties:
+    status:
+      type: string
+      description: WAN status
+      enum:
+        - ok
+        - warning
+        - error
+        - unknown
+      example: ok
+    num_gw:
+      type: integer
+      description: Number of gateways
+      example: 1
+    num_adopted:
+      type: integer
+      description: Number of adopted gateways
+      example: 1
+    rx_bytes:
+      type: integer
+      description: Total WAN received bytes
+      example: 1073741824
+    tx_bytes:
+      type: integer
+      description: Total WAN transmitted bytes
+      example: 536870912
+
+LANHealth:
+  type: object
+  description: LAN health metrics
+  properties:
+    status:
+      type: string
+      description: LAN status
+      enum:
+        - ok
+        - warning
+        - error
+        - unknown
+      example: ok
+    num_sw:
+      type: integer
+      description: Number of switches
+      example: 2
+    num_adopted:
+      type: integer
+      description: Number of adopted switches
+      example: 2
+    num_user:
+      type: integer
+      description: Number of wired users
+      example: 10
+    rx_bytes:
+      type: integer
+      description: Total LAN received bytes
+      example: 2147483648
+    tx_bytes:
+      type: integer
+      description: Total LAN transmitted bytes
+      example: 1073741824
+
+WLANHealth:
+  type: object
+  description: WLAN health metrics
+  properties:
+    status:
+      type: string
+      description: WLAN status
+      enum:
+        - ok
+        - warning
+        - error
+        - unknown
+      example: ok
+    num_ap:
+      type: integer
+      description: Number of access points
+      example: 3
+    num_adopted:
+      type: integer
+      description: Number of adopted APs
+      example: 3
+    num_user:
+      type: integer
+      description: Number of wireless users
+      example: 25
+    rx_bytes:
+      type: integer
+      description: Total WLAN received bytes
+      example: 1073741824
+    tx_bytes:
+      type: integer
+      description: Total WLAN transmitted bytes
+      example: 536870912
+
+VPNHealth:
+  type: object
+  description: VPN health metrics
+  properties:
+    status:
+      type: string
+      description: VPN status
+      enum:
+        - ok
+        - warning
+        - error
+        - unknown
+      example: ok
+    num_vpn:
+      type: integer
+      description: Number of VPN connections
+      example: 1
+    num_connected:
+      type: integer
+      description: Number of connected VPNs
+      example: 1

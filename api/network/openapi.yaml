@@ -657,6 +657,85 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # Topology API (v2)
+  /v2/api/site/{site}/topology:
+    get:
+      summary: Get network topology
+      description: |
+        Retrieves the network topology graph showing connections between devices and clients.
+
+        Returns vertices (devices and clients) and edges (connections between them).
+        This is a read-only endpoint.
+      operationId: getTopology
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with network topology
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Topology'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Device API (v2)
+  /v2/api/site/{site}/device:
+    get:
+      summary: List all devices (v2)
+      description: |
+        Retrieves all devices across all UniFi applications (Network, Protect, Access, etc.).
+
+        Returns devices grouped by application type. This is a read-only endpoint.
+      operationId: listAllDevices
+      tags:
+        - Devices
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with all devices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllDevicesResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Active Clients API (v2)
+  /v2/api/site/{site}/clients/active:
+    get:
+      summary: List active clients
+      description: |
+        Retrieves all currently connected clients with detailed connection information.
+
+        Includes WiFi signal strength, traffic statistics, and device fingerprinting.
+        This is a read-only endpoint.
+      operationId: listActiveClients
+      tags:
+        - Clients
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with active clients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ActiveClient'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   # Analytics API (v2)
   /v2/api/site/{site}/aggregated-dashboard:
     get:
@@ -964,7 +1043,7 @@ components:
         name:
           type: string
           description: Display name of the device
-          example: LexFrei's home
+          example: My Network Device
         model:
           type: string
           description: Device model identifier
@@ -976,7 +1055,7 @@ components:
         ipAddress:
           type: string
           description: IP address of the device
-          example: 217.78.182.161
+          example: 192.168.1.1
         state:
           type: string
           description: Current operational state
@@ -1037,7 +1116,7 @@ components:
         name:
           type: string
           description: Display name of the device
-          example: LexFrei's home
+          example: My Network Device
         model:
           type: string
           description: Device model identifier
@@ -1053,7 +1132,7 @@ components:
         ipAddress:
           type: string
           description: IP address of the device
-          example: 217.78.182.161
+          example: 192.168.1.1
         state:
           type: string
           description: Current operational state
@@ -1260,7 +1339,7 @@ components:
         name:
           type: string
           description: Display name or hostname of the client
-          example: truenas 05:8d
+          example: server-01
         connectedAt:
           type: string
           format: date-time
@@ -1269,11 +1348,11 @@ components:
         ipAddress:
           type: string
           description: IP address assigned to the client
-          example: 172.16.10.19
+          example: 192.168.1.100
         macAddress:
           type: string
           description: MAC address of the client
-          example: "80:af:ca:ad:05:8d"
+          example: "00:11:22:33:44:55"
         uplinkDeviceId:
           type: string
           format: uuid
@@ -1450,7 +1529,7 @@ components:
         key:
           type: string
           description: DNS record name (hostname or domain)
-          example: "*.home.lex.la"
+          example: "*.example.local"
         record_type:
           type: string
           description: DNS record type
@@ -1466,7 +1545,7 @@ components:
         value:
           type: string
           description: DNS record value (IP address, target hostname, etc.)
-          example: 172.16.100.250
+          example: 192.168.1.100
         ttl:
           type: integer
           description: Time to live in seconds (0 = default)
@@ -1834,3 +1913,419 @@ components:
                   packet_loss:
                     type: boolean
                     description: Whether packet loss occurred
+
+    # V2 API - Active Client
+    ActiveClient:
+      type: object
+      description: Active client with full connection details
+      properties:
+        id:
+          type: string
+          description: Client identifier (usually MAC)
+          example: "00:11:22:33:44:55"
+        mac:
+          type: string
+          description: MAC address
+          example: "00:11:22:33:44:55"
+        ip:
+          type: string
+          description: IP address
+          example: "192.168.1.100"
+        hostname:
+          type: string
+          description: Client hostname
+          example: client-device
+        display_name:
+          type: string
+          description: Display name
+          example: "Client Device"
+        oui:
+          type: string
+          description: Manufacturer from OUI lookup
+          example: "Example Manufacturer Inc."
+        type:
+          type: string
+          description: Connection type
+          enum:
+            - WIRED
+            - WIRELESS
+          example: WIRELESS
+        is_wired:
+          type: boolean
+          description: Whether client is wired
+          example: false
+        is_guest:
+          type: boolean
+          description: Whether client is on guest network
+          example: false
+        status:
+          type: string
+          description: Client status
+          enum:
+            - online
+            - offline
+          example: online
+        blocked:
+          type: boolean
+          description: Whether client is blocked
+          example: false
+        network_id:
+          type: string
+          description: Network ID
+          example: "507f1f77bcf86cd799439011"
+        network_name:
+          type: string
+          description: Network name
+          example: Default
+        site_id:
+          type: string
+          description: Site ID
+          example: "507f1f77bcf86cd799439012"
+        first_seen:
+          type: integer
+          description: Unix timestamp when first seen
+          example: 1700000000
+        last_seen:
+          type: integer
+          description: Unix timestamp when last seen
+          example: 1700086400
+        uptime:
+          type: integer
+          description: Connection uptime in seconds
+          example: 3600
+        ap_mac:
+          type: string
+          description: Connected AP MAC address
+          example: "00:11:22:33:44:66"
+        essid:
+          type: string
+          description: SSID name
+          example: "MyNetwork"
+        channel:
+          type: integer
+          description: WiFi channel
+          example: 6
+        radio:
+          type: string
+          description: Radio band
+          enum:
+            - ng
+            - na
+            - 6e
+          example: ng
+        signal:
+          type: integer
+          description: Signal strength in dBm
+          example: -65
+        rssi:
+          type: integer
+          description: RSSI value
+          example: 35
+        noise:
+          type: integer
+          description: Noise floor in dBm
+          example: -95
+        rx_bytes:
+          type: integer
+          description: Total received bytes
+          example: 1048576
+        tx_bytes:
+          type: integer
+          description: Total transmitted bytes
+          example: 524288
+        rx_rate:
+          type: integer
+          description: Current RX rate in bps
+          example: 144400
+        tx_rate:
+          type: integer
+          description: Current TX rate in bps
+          example: 144400
+
+    # V2 API - All Devices Response
+    AllDevicesResponse:
+      type: object
+      description: Response containing devices grouped by UniFi application
+      properties:
+        network_devices:
+          type: array
+          description: Network devices (switches, APs, gateways)
+          items:
+            $ref: '#/components/schemas/NetworkDevice'
+        protect_devices:
+          type: array
+          description: Protect cameras and NVRs
+          items:
+            type: object
+            additionalProperties: true
+        access_devices:
+          type: array
+          description: Access control devices
+          items:
+            type: object
+            additionalProperties: true
+        talk_devices:
+          type: array
+          description: Talk/intercom devices
+          items:
+            type: object
+            additionalProperties: true
+        connect_devices:
+          type: array
+          description: Connect EV chargers
+          items:
+            type: object
+            additionalProperties: true
+
+    NetworkDevice:
+      type: object
+      description: A network device with full details from v2 API
+      properties:
+        _id:
+          type: string
+          description: Internal MongoDB ID
+          example: 6807e7c7a17d11646def67fb
+        mac:
+          type: string
+          description: MAC address
+          example: "70:a7:41:c1:85:75"
+        ip:
+          type: string
+          description: IP address
+          example: "192.168.1.10"
+        name:
+          type: string
+          description: Device name
+          example: USW Flex Mini
+        model:
+          type: string
+          description: Model identifier
+          example: USMINI
+        type:
+          type: string
+          description: Device type
+          enum:
+            - uap
+            - usw
+            - ugw
+            - udm
+            - uxg
+          example: usw
+        version:
+          type: string
+          description: Firmware version
+          example: "2.1.6.762"
+        adopted:
+          type: boolean
+          description: Whether device is adopted
+          example: true
+        state:
+          type: integer
+          description: Device state (1=connected, 0=disconnected)
+          example: 1
+        uptime:
+          type: integer
+          description: Uptime in seconds
+          example: 114336
+        last_seen:
+          type: integer
+          description: Unix timestamp of last communication
+          example: 1764038001
+        upgradable:
+          type: boolean
+          description: Whether firmware upgrade is available
+          example: false
+        num_sta:
+          type: integer
+          description: Number of connected stations/clients
+          example: 4
+        satisfaction:
+          type: integer
+          description: Experience score (-1 if N/A)
+          example: -1
+        is_access_point:
+          type: boolean
+          description: Whether device is an access point
+          example: false
+        port_table:
+          type: array
+          description: Port status and statistics
+          items:
+            $ref: '#/components/schemas/NetworkDevicePort'
+        uplink:
+          $ref: '#/components/schemas/NetworkDeviceUplink'
+
+    NetworkDevicePort:
+      type: object
+      properties:
+        port_idx:
+          type: integer
+          description: Port index (1-based)
+          example: 1
+        media:
+          type: string
+          description: Port media type
+          example: GE
+        speed:
+          type: integer
+          description: Current speed in Mbps
+          example: 1000
+        up:
+          type: boolean
+          description: Whether port is up
+          example: true
+        full_duplex:
+          type: boolean
+          description: Full duplex mode
+          example: true
+        is_uplink:
+          type: boolean
+          description: Whether this is an uplink port
+          example: true
+        rx_bytes:
+          type: integer
+          description: Total received bytes
+          example: 373591446254
+        tx_bytes:
+          type: integer
+          description: Total transmitted bytes
+          example: 175115371738
+
+    NetworkDeviceUplink:
+      type: object
+      description: Uplink connection information
+      properties:
+        type:
+          type: string
+          description: Uplink type
+          enum:
+            - wire
+            - wireless
+          example: wire
+        name:
+          type: string
+          description: Interface name
+          example: eth0
+        mac:
+          type: string
+          description: Device MAC
+          example: "70:a7:41:c1:85:75"
+        uplink_mac:
+          type: string
+          description: Uplink device MAC
+          example: "94:2a:6f:ce:26:52"
+        uplink_device_name:
+          type: string
+          description: Uplink device name
+          example: Main Router
+        speed:
+          type: integer
+          description: Link speed in Mbps
+          example: 1000
+
+    # V2 API - Topology
+    Topology:
+      type: object
+      description: Network topology graph
+      properties:
+        vertices:
+          type: array
+          description: Network nodes (devices and clients)
+          items:
+            $ref: '#/components/schemas/TopologyVertex'
+        edges:
+          type: array
+          description: Connections between nodes
+          items:
+            $ref: '#/components/schemas/TopologyEdge'
+
+    TopologyVertex:
+      type: object
+      description: A node in the network topology
+      properties:
+        mac:
+          type: string
+          description: MAC address
+          example: "00:11:22:33:44:55"
+        name:
+          type: string
+          description: Node display name
+          example: "Server 01"
+        type:
+          type: string
+          description: Node type
+          enum:
+            - CLIENT
+            - NETWORK_DEVICE
+          example: CLIENT
+        unifiDevice:
+          type: boolean
+          description: Whether this is a UniFi device
+          example: false
+        allowedInVisualProgramming:
+          type: boolean
+          description: Whether allowed in visual programming
+          example: false
+
+    TopologyEdge:
+      type: object
+      description: A connection between two nodes
+      properties:
+        uplinkMac:
+          type: string
+          description: Uplink device MAC address
+          example: "00:11:22:33:44:55"
+        downlinkMac:
+          type: string
+          description: Downlink device/client MAC address
+          example: "00:11:22:33:44:66"
+        type:
+          type: string
+          description: Connection type
+          enum:
+            - WIRED
+            - WIRELESS
+          example: WIRED
+        networkId:
+          type: string
+          description: Network ID
+          example: "507f1f77bcf86cd799439011"
+        channel:
+          type: integer
+          description: WiFi channel (for wireless connections)
+          example: 6
+        essid:
+          type: string
+          description: SSID name (for wireless connections)
+          example: "MyNetwork"
+        radioBand:
+          type: string
+          description: Radio band (ng=2.4GHz, na=5GHz, 6e=6GHz)
+          example: ng
+        protocol:
+          type: string
+          description: WiFi protocol (g, n, ac, ax, etc.)
+          example: ax
+        experienceScore:
+          type: integer
+          description: Connection experience score (0-100)
+          example: 95
+        rateMbps:
+          type: integer
+          description: Connection rate in Mbps (for wired)
+          example: 1000
+        duplex:
+          type: string
+          description: Duplex mode (for wired)
+          enum:
+            - FULL_DUPLEX
+            - HALF_DUPLEX
+          example: FULL_DUPLEX
+        uplinkPortNumber:
+          type: integer
+          description: Uplink port number (for wired)
+          example: 1
+        downlinkPortNumber:
+          type: integer
+          description: Downlink port number (for wired)
+          example: 1

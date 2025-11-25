@@ -1,0 +1,124 @@
+# Port forwarding schemas
+
+PortForward:
+  type: object
+  description: Port forwarding rule
+  properties:
+    _id:
+      type: string
+      description: Unique identifier
+      example: "507f1f77bcf86cd799439011"
+    name:
+      type: string
+      description: Rule name
+      example: "Web Server"
+    site_id:
+      type: string
+      description: Site ID
+      example: "507f1f77bcf86cd799439012"
+    enabled:
+      type: boolean
+      description: Whether rule is enabled
+      example: true
+    src:
+      type: string
+      description: Source (any or specific)
+      enum:
+        - any
+        - limited
+      example: any
+    dst_port:
+      type: string
+      description: Destination port or range
+      example: "80"
+    fwd:
+      type: string
+      description: Forward to IP address
+      example: "192.168.1.100"
+    fwd_port:
+      type: string
+      description: Forward to port
+      example: "8080"
+    proto:
+      type: string
+      description: Protocol
+      enum:
+        - tcp
+        - udp
+        - tcp_udp
+      example: tcp
+    log:
+      type: boolean
+      description: Enable logging
+      example: false
+    pfwd_interface:
+      type: string
+      description: Interface for port forward
+      enum:
+        - wan
+        - wan2
+        - both
+      example: wan
+
+PortForwardInput:
+  type: object
+  description: Input for creating/updating port forward
+  required:
+    - name
+    - dst_port
+    - fwd
+    - fwd_port
+    - proto
+  properties:
+    name:
+      type: string
+      description: Rule name
+      example: "SSH Server"
+    enabled:
+      type: boolean
+      description: Enable rule
+      default: true
+      example: true
+    src:
+      type: string
+      description: Source restriction
+      enum:
+        - any
+        - limited
+      default: any
+      example: any
+    dst_port:
+      type: string
+      description: External port or range (e.g., "22" or "8000-8100")
+      example: "2222"
+    fwd:
+      type: string
+      description: Internal IP address
+      example: "192.168.1.50"
+    fwd_port:
+      type: string
+      description: Internal port
+      example: "22"
+    proto:
+      type: string
+      description: Protocol
+      enum:
+        - tcp
+        - udp
+        - tcp_udp
+      default: tcp_udp
+      example: tcp
+    log:
+      type: boolean
+      description: Enable logging
+      default: false
+      example: false
+    pfwd_interface:
+      type: string
+      description: WAN interface
+      enum:
+        - wan
+        - wan2
+        - both
+      default: wan
+      example: wan

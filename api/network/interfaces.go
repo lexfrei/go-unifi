@@ -119,4 +119,19 @@ type NetworkAPIClient interface { //nolint:interfacebloat // This interface mirr
 
 	// GetAggregatedDashboard retrieves aggregated dashboard statistics.
 	GetAggregatedDashboard(ctx context.Context, site Site, params *GetAggregatedDashboardParams) (*AggregatedDashboard, error)
+
+	// Topology operations (v2 API)
+
+	// GetTopology retrieves the network topology graph for a site.
+	GetTopology(ctx context.Context, site Site) (*Topology, error)
+
+	// Active clients operations (v2 API)
+
+	// ListActiveClients retrieves all currently connected clients with detailed connection information.
+	ListActiveClients(ctx context.Context, site Site) ([]ActiveClient, error)
+
+	// All devices operations (v2 API)
+
+	// ListAllDevices retrieves all devices across all UniFi applications for a site.
+	ListAllDevices(ctx context.Context, site Site) (*AllDevicesResponse, error)
 }

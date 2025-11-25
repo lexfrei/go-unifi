@@ -1,0 +1,57 @@
+# Common schemas used across multiple API endpoints
+PaginatedResponse:
+  type: object
+  required:
+    - offset
+    - limit
+    - count
+    - totalCount
+    - data
+  properties:
+    offset:
+      type: integer
+      description: Number of items skipped
+      example: 0
+    limit:
+      type: integer
+      description: Maximum number of items per page
+      example: 25
+    count:
+      type: integer
+      description: Number of items in current response
+      example: 1
+    totalCount:
+      type: integer
+      description: Total number of items available
+      example: 1
+
+ErrorResponse:
+  type: object
+  required:
+    - statusCode
+    - statusName
+    - message
+    - timestamp
+    - requestPath
+  properties:
+    statusCode:
+      type: integer
+      description: HTTP status code
+      example: 404
+    statusName:
+      type: string
+      description: HTTP status name
+      example: NOT_FOUND
+    message:
+      type: string
+      description: Human-readable error message
+      example: "No endpoint GET /integration/v1/sites/invalid-id"
+    timestamp:
+      type: string
+      format: date-time
+      description: Timestamp when the error occurred (RFC3339 format)
+      example: "2025-11-11T16:00:00Z"
+    requestPath:
+      type: string
+      description: The request path that caused the error
+      example: /integration/v1/sites/invalid-id

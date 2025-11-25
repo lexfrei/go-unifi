@@ -26,6 +26,25 @@ const (
 	ApiKeyAuthScopes = "ApiKeyAuth.Scopes"
 )
 
+// Defines values for ActiveClientRadio.
+const (
+	N6e ActiveClientRadio = "6e"
+	Na  ActiveClientRadio = "na"
+	Ng  ActiveClientRadio = "ng"
+)
+
+// Defines values for ActiveClientStatus.
+const (
+	Offline ActiveClientStatus = "offline"
+	Online  ActiveClientStatus = "online"
+)
+
+// Defines values for ActiveClientType.
+const (
+	ActiveClientTypeWIRED    ActiveClientType = "WIRED"
+	ActiveClientTypeWIRELESS ActiveClientType = "WIRELESS"
+)
+
 // Defines values for ClientAccessType.
 const (
 	BLOCKED    ClientAccessType = "BLOCKED"
@@ -35,8 +54,8 @@ const (
 
 // Defines values for ClientListItemType.
 const (
-	WIRED    ClientListItemType = "WIRED"
-	WIRELESS ClientListItemType = "WIRELESS"
+	ClientListItemTypeWIRED    ClientListItemType = "WIRED"
+	ClientListItemTypeWIRELESS ClientListItemType = "WIRELESS"
 )
 
 // Defines values for DNSRecordRecordType.
@@ -128,6 +147,21 @@ const (
 	VALIDONE   HotspotVoucherStatus = "VALID_ONE"
 )
 
+// Defines values for NetworkDeviceType.
+const (
+	Uap NetworkDeviceType = "uap"
+	Udm NetworkDeviceType = "udm"
+	Ugw NetworkDeviceType = "ugw"
+	Usw NetworkDeviceType = "usw"
+	Uxg NetworkDeviceType = "uxg"
+)
+
+// Defines values for NetworkDeviceUplinkType.
+const (
+	Wire     NetworkDeviceUplinkType = "wire"
+	Wireless NetworkDeviceUplinkType = "wireless"
+)
+
 // Defines values for PoEStandard.
 const (
 	N8023af PoEStandard = "802.3af"
@@ -181,6 +215,24 @@ const (
 	N80211n  RadioWlanStandard = "802.11n"
 )
 
+// Defines values for TopologyEdgeDuplex.
+const (
+	FULLDUPLEX TopologyEdgeDuplex = "FULL_DUPLEX"
+	HALFDUPLEX TopologyEdgeDuplex = "HALF_DUPLEX"
+)
+
+// Defines values for TopologyEdgeType.
+const (
+	WIRED    TopologyEdgeType = "WIRED"
+	WIRELESS TopologyEdgeType = "WIRELESS"
+)
+
+// Defines values for TopologyVertexType.
+const (
+	TopologyVertexTypeCLIENT        TopologyVertexType = "CLIENT"
+	TopologyVertexTypeNETWORKDEVICE TopologyVertexType = "NETWORK_DEVICE"
+)
+
 // Defines values for TrafficRuleMatchingTarget.
 const (
 	TrafficRuleMatchingTargetCLIENT   TrafficRuleMatchingTarget = "CLIENT"
@@ -191,11 +243,107 @@ const (
 
 // Defines values for TrafficRuleInputMatchingTarget.
 const (
-	TrafficRuleInputMatchingTargetCLIENT   TrafficRuleInputMatchingTarget = "CLIENT"
-	TrafficRuleInputMatchingTargetINTERNET TrafficRuleInputMatchingTarget = "INTERNET"
-	TrafficRuleInputMatchingTargetNETWORK  TrafficRuleInputMatchingTarget = "NETWORK"
-	TrafficRuleInputMatchingTargetREGION   TrafficRuleInputMatchingTarget = "REGION"
+	CLIENT   TrafficRuleInputMatchingTarget = "CLIENT"
+	INTERNET TrafficRuleInputMatchingTarget = "INTERNET"
+	NETWORK  TrafficRuleInputMatchingTarget = "NETWORK"
+	REGION   TrafficRuleInputMatchingTarget = "REGION"
 )
+
+// ActiveClient Active client with full connection details
+type ActiveClient struct {
+	// ApMac Connected AP MAC address
+	ApMac *string `json:"ap_mac,omitempty"`
+
+	// Blocked Whether client is blocked
+	Blocked *bool `json:"blocked,omitempty"`
+
+	// Channel WiFi channel
+	Channel *int `json:"channel,omitempty"`
+
+	// DisplayName Display name
+	DisplayName *string `json:"display_name,omitempty"`
+
+	// Essid SSID name
+	Essid *string `json:"essid,omitempty"`
+
+	// FirstSeen Unix timestamp when first seen
+	FirstSeen *int `json:"first_seen,omitempty"`
+
+	// Hostname Client hostname
+	Hostname *string `json:"hostname,omitempty"`
+
+	// Id Client identifier (usually MAC)
+	Id *string `json:"id,omitempty"`
+
+	// Ip IP address
+	Ip *string `json:"ip,omitempty"`
+
+	// IsGuest Whether client is on guest network
+	IsGuest *bool `json:"is_guest,omitempty"`
+
+	// IsWired Whether client is wired
+	IsWired *bool `json:"is_wired,omitempty"`
+
+	// LastSeen Unix timestamp when last seen
+	LastSeen *int `json:"last_seen,omitempty"`
+
+	// Mac MAC address
+	Mac *string `json:"mac,omitempty"`
+
+	// NetworkId Network ID
+	NetworkId *string `json:"network_id,omitempty"`
+
+	// NetworkName Network name
+	NetworkName *string `json:"network_name,omitempty"`
+
+	// Noise Noise floor in dBm
+	Noise *int `json:"noise,omitempty"`
+
+	// Oui Manufacturer from OUI lookup
+	Oui *string `json:"oui,omitempty"`
+
+	// Radio Radio band
+	Radio *ActiveClientRadio `json:"radio,omitempty"`
+
+	// Rssi RSSI value
+	Rssi *int `json:"rssi,omitempty"`
+
+	// RxBytes Total received bytes
+	RxBytes *int `json:"rx_bytes,omitempty"`
+
+	// RxRate Current RX rate in bps
+	RxRate *int `json:"rx_rate,omitempty"`
+
+	// Signal Signal strength in dBm
+	Signal *int `json:"signal,omitempty"`
+
+	// SiteId Site ID
+	SiteId *string `json:"site_id,omitempty"`
+
+	// Status Client status
+	Status *ActiveClientStatus `json:"status,omitempty"`
+
+	// TxBytes Total transmitted bytes
+	TxBytes *int `json:"tx_bytes,omitempty"`
+
+	// TxRate Current TX rate in bps
+	TxRate *int `json:"tx_rate,omitempty"`
+
+	// Type Connection type
+	Type *ActiveClientType `json:"type,omitempty"`
+
+	// Uptime Connection uptime in seconds
+	Uptime *int `json:"uptime,omitempty"`
+}
+
+// ActiveClientRadio Radio band
+type ActiveClientRadio string
+
+// ActiveClientStatus Client status
+type ActiveClientStatus string
+
+// ActiveClientType Connection type
+type ActiveClientType string
 
 // AggregatedDashboard Aggregated dashboard statistics and analytics
 type AggregatedDashboard struct {
@@ -261,6 +409,24 @@ type AggregatedDashboard struct {
 		// Summary Technology usage summary
 		Summary *[]map[string]interface{} `json:"summary,omitempty"`
 	} `json:"wifi_technology,omitempty"`
+}
+
+// AllDevicesResponse Response containing devices grouped by UniFi application
+type AllDevicesResponse struct {
+	// AccessDevices Access control devices
+	AccessDevices *[]map[string]interface{} `json:"access_devices,omitempty"`
+
+	// ConnectDevices Connect EV chargers
+	ConnectDevices *[]map[string]interface{} `json:"connect_devices,omitempty"`
+
+	// NetworkDevices Network devices (switches, APs, gateways)
+	NetworkDevices *[]NetworkDevice `json:"network_devices,omitempty"`
+
+	// ProtectDevices Protect cameras and NVRs
+	ProtectDevices *[]map[string]interface{} `json:"protect_devices,omitempty"`
+
+	// TalkDevices Talk/intercom devices
+	TalkDevices *[]map[string]interface{} `json:"talk_devices,omitempty"`
 }
 
 // ClientAccess defines model for ClientAccess.
@@ -670,6 +836,114 @@ type HotspotVouchersResponse struct {
 // NetworkClient defines model for NetworkClient.
 type NetworkClient = ClientListItem
 
+// NetworkDevice A network device with full details from v2 API
+type NetworkDevice struct {
+	// UnderscoreId Internal MongoDB ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// Adopted Whether device is adopted
+	Adopted *bool `json:"adopted,omitempty"`
+
+	// Ip IP address
+	Ip *string `json:"ip,omitempty"`
+
+	// IsAccessPoint Whether device is an access point
+	IsAccessPoint *bool `json:"is_access_point,omitempty"`
+
+	// LastSeen Unix timestamp of last communication
+	LastSeen *int `json:"last_seen,omitempty"`
+
+	// Mac MAC address
+	Mac *string `json:"mac,omitempty"`
+
+	// Model Model identifier
+	Model *string `json:"model,omitempty"`
+
+	// Name Device name
+	Name *string `json:"name,omitempty"`
+
+	// NumSta Number of connected stations/clients
+	NumSta *int `json:"num_sta,omitempty"`
+
+	// PortTable Port status and statistics
+	PortTable *[]NetworkDevicePort `json:"port_table,omitempty"`
+
+	// Satisfaction Experience score (-1 if N/A)
+	Satisfaction *int `json:"satisfaction,omitempty"`
+
+	// State Device state (1=connected, 0=disconnected)
+	State *int `json:"state,omitempty"`
+
+	// Type Device type
+	Type *NetworkDeviceType `json:"type,omitempty"`
+
+	// Upgradable Whether firmware upgrade is available
+	Upgradable *bool `json:"upgradable,omitempty"`
+
+	// Uplink Uplink connection information
+	Uplink *NetworkDeviceUplink `json:"uplink,omitempty"`
+
+	// Uptime Uptime in seconds
+	Uptime *int `json:"uptime,omitempty"`
+
+	// Version Firmware version
+	Version *string `json:"version,omitempty"`
+}
+
+// NetworkDeviceType Device type
+type NetworkDeviceType string
+
+// NetworkDevicePort defines model for NetworkDevicePort.
+type NetworkDevicePort struct {
+	// FullDuplex Full duplex mode
+	FullDuplex *bool `json:"full_duplex,omitempty"`
+
+	// IsUplink Whether this is an uplink port
+	IsUplink *bool `json:"is_uplink,omitempty"`
+
+	// Media Port media type
+	Media *string `json:"media,omitempty"`
+
+	// PortIdx Port index (1-based)
+	PortIdx *int `json:"port_idx,omitempty"`
+
+	// RxBytes Total received bytes
+	RxBytes *int `json:"rx_bytes,omitempty"`
+
+	// Speed Current speed in Mbps
+	Speed *int `json:"speed,omitempty"`
+
+	// TxBytes Total transmitted bytes
+	TxBytes *int `json:"tx_bytes,omitempty"`
+
+	// Up Whether port is up
+	Up *bool `json:"up,omitempty"`
+}
+
+// NetworkDeviceUplink Uplink connection information
+type NetworkDeviceUplink struct {
+	// Mac Device MAC
+	Mac *string `json:"mac,omitempty"`
+
+	// Name Interface name
+	Name *string `json:"name,omitempty"`
+
+	// Speed Link speed in Mbps
+	Speed *int `json:"speed,omitempty"`
+
+	// Type Uplink type
+	Type *NetworkDeviceUplinkType `json:"type,omitempty"`
+
+	// UplinkDeviceName Uplink device name
+	UplinkDeviceName *string `json:"uplink_device_name,omitempty"`
+
+	// UplinkMac Uplink device MAC
+	UplinkMac *string `json:"uplink_mac,omitempty"`
+}
+
+// NetworkDeviceUplinkType Uplink type
+type NetworkDeviceUplinkType string
+
 // PaginatedResponse defines model for PaginatedResponse.
 type PaginatedResponse struct {
 	// Count Number of items in current response
@@ -784,6 +1058,84 @@ type SitesResponse struct {
 	// TotalCount Total number of items available
 	TotalCount int `json:"totalCount"`
 }
+
+// Topology Network topology graph
+type Topology struct {
+	// Edges Connections between nodes
+	Edges *[]TopologyEdge `json:"edges,omitempty"`
+
+	// Vertices Network nodes (devices and clients)
+	Vertices *[]TopologyVertex `json:"vertices,omitempty"`
+}
+
+// TopologyEdge A connection between two nodes
+type TopologyEdge struct {
+	// Channel WiFi channel (for wireless connections)
+	Channel *int `json:"channel,omitempty"`
+
+	// DownlinkMac Downlink device/client MAC address
+	DownlinkMac *string `json:"downlinkMac,omitempty"`
+
+	// DownlinkPortNumber Downlink port number (for wired)
+	DownlinkPortNumber *int `json:"downlinkPortNumber,omitempty"`
+
+	// Duplex Duplex mode (for wired)
+	Duplex *TopologyEdgeDuplex `json:"duplex,omitempty"`
+
+	// Essid SSID name (for wireless connections)
+	Essid *string `json:"essid,omitempty"`
+
+	// ExperienceScore Connection experience score (0-100)
+	ExperienceScore *int `json:"experienceScore,omitempty"`
+
+	// NetworkId Network ID
+	NetworkId *string `json:"networkId,omitempty"`
+
+	// Protocol WiFi protocol (g, n, ac, ax, etc.)
+	Protocol *string `json:"protocol,omitempty"`
+
+	// RadioBand Radio band (ng=2.4GHz, na=5GHz, 6e=6GHz)
+	RadioBand *string `json:"radioBand,omitempty"`
+
+	// RateMbps Connection rate in Mbps (for wired)
+	RateMbps *int `json:"rateMbps,omitempty"`
+
+	// Type Connection type
+	Type *TopologyEdgeType `json:"type,omitempty"`
+
+	// UplinkMac Uplink device MAC address
+	UplinkMac *string `json:"uplinkMac,omitempty"`
+
+	// UplinkPortNumber Uplink port number (for wired)
+	UplinkPortNumber *int `json:"uplinkPortNumber,omitempty"`
+}
+
+// TopologyEdgeDuplex Duplex mode (for wired)
+type TopologyEdgeDuplex string
+
+// TopologyEdgeType Connection type
+type TopologyEdgeType string
+
+// TopologyVertex A node in the network topology
+type TopologyVertex struct {
+	// AllowedInVisualProgramming Whether allowed in visual programming
+	AllowedInVisualProgramming *bool `json:"allowedInVisualProgramming,omitempty"`
+
+	// Mac MAC address
+	Mac *string `json:"mac,omitempty"`
+
+	// Name Node display name
+	Name *string `json:"name,omitempty"`
+
+	// Type Node type
+	Type *TopologyVertexType `json:"type,omitempty"`
+
+	// UnifiDevice Whether this is a UniFi device
+	UnifiDevice *bool `json:"unifiDevice,omitempty"`
+}
+
+// TopologyVertexType Node type
+type TopologyVertexType string
 
 // TrafficRule defines model for TrafficRule.
 type TrafficRule struct {
@@ -1046,6 +1398,12 @@ type ClientInterface interface {
 	// GetAggregatedDashboard request
 	GetAggregatedDashboard(ctx context.Context, site Site, params *GetAggregatedDashboardParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListActiveClients request
+	ListActiveClients(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListAllDevices request
+	ListAllDevices(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListFirewallPolicies request
 	ListFirewallPolicies(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -1077,6 +1435,9 @@ type ClientInterface interface {
 	UpdateDNSRecordWithBody(ctx context.Context, site Site, recordId RecordId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	UpdateDNSRecord(ctx context.Context, site Site, recordId RecordId, body UpdateDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetTopology request
+	GetTopology(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListTrafficRules request
 	ListTrafficRules(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1227,6 +1588,30 @@ func (c *Client) GetAggregatedDashboard(ctx context.Context, site Site, params *
 	return c.Client.Do(req)
 }
 
+func (c *Client) ListActiveClients(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListActiveClientsRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListAllDevices(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListAllDevicesRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) ListFirewallPolicies(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListFirewallPoliciesRequest(c.Server, site)
 	if err != nil {
@@ -1361,6 +1746,18 @@ func (c *Client) UpdateDNSRecordWithBody(ctx context.Context, site Site, recordI
 
 func (c *Client) UpdateDNSRecord(ctx context.Context, site Site, recordId RecordId, body UpdateDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateDNSRecordRequest(c.Server, site, recordId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetTopology(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTopologyRequest(c.Server, site)
 	if err != nil {
 		return nil, err
 	}
@@ -1991,6 +2388,74 @@ func NewGetAggregatedDashboardRequest(server string, site Site, params *GetAggre
 	return req, nil
 }
 
+// NewListActiveClientsRequest generates requests for ListActiveClients
+func NewListActiveClientsRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/clients/active", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListAllDevicesRequest generates requests for ListAllDevices
+func NewListAllDevicesRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/device", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewListFirewallPoliciesRequest generates requests for ListFirewallPolicies
 func NewListFirewallPoliciesRequest(server string, site Site) (*http.Request, error) {
 	var err error
@@ -2343,6 +2808,40 @@ func NewUpdateDNSRecordRequestWithBody(server string, site Site, recordId Record
 	return req, nil
 }
 
+// NewGetTopologyRequest generates requests for GetTopology
+func NewGetTopologyRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/topology", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewListTrafficRulesRequest generates requests for ListTrafficRules
 func NewListTrafficRulesRequest(server string, site Site) (*http.Request, error) {
 	var err error
@@ -2594,6 +3093,12 @@ type ClientWithResponsesInterface interface {
 	// GetAggregatedDashboardWithResponse request
 	GetAggregatedDashboardWithResponse(ctx context.Context, site Site, params *GetAggregatedDashboardParams, reqEditors ...RequestEditorFn) (*GetAggregatedDashboardResponse, error)
 
+	// ListActiveClientsWithResponse request
+	ListActiveClientsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListActiveClientsResponse, error)
+
+	// ListAllDevicesWithResponse request
+	ListAllDevicesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListAllDevicesResponse, error)
+
 	// ListFirewallPoliciesWithResponse request
 	ListFirewallPoliciesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListFirewallPoliciesResponse, error)
 
@@ -2625,6 +3130,9 @@ type ClientWithResponsesInterface interface {
 	UpdateDNSRecordWithBodyWithResponse(ctx context.Context, site Site, recordId RecordId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateDNSRecordResponse, error)
 
 	UpdateDNSRecordWithResponse(ctx context.Context, site Site, recordId RecordId, body UpdateDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDNSRecordResponse, error)
+
+	// GetTopologyWithResponse request
+	GetTopologyWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetTopologyResponse, error)
 
 	// ListTrafficRulesWithResponse request
 	ListTrafficRulesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListTrafficRulesResponse, error)
@@ -2883,6 +3391,54 @@ func (r GetAggregatedDashboardResponse) StatusCode() int {
 	return 0
 }
 
+type ListActiveClientsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]ActiveClient
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListActiveClientsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListActiveClientsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListAllDevicesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *AllDevicesResponse
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListAllDevicesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListAllDevicesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type ListFirewallPoliciesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -3071,6 +3627,30 @@ func (r UpdateDNSRecordResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r UpdateDNSRecordResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetTopologyResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *Topology
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTopologyResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTopologyResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3272,6 +3852,24 @@ func (c *ClientWithResponses) GetAggregatedDashboardWithResponse(ctx context.Con
 	return ParseGetAggregatedDashboardResponse(rsp)
 }
 
+// ListActiveClientsWithResponse request returning *ListActiveClientsResponse
+func (c *ClientWithResponses) ListActiveClientsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListActiveClientsResponse, error) {
+	rsp, err := c.ListActiveClients(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListActiveClientsResponse(rsp)
+}
+
+// ListAllDevicesWithResponse request returning *ListAllDevicesResponse
+func (c *ClientWithResponses) ListAllDevicesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListAllDevicesResponse, error) {
+	rsp, err := c.ListAllDevices(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListAllDevicesResponse(rsp)
+}
+
 // ListFirewallPoliciesWithResponse request returning *ListFirewallPoliciesResponse
 func (c *ClientWithResponses) ListFirewallPoliciesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListFirewallPoliciesResponse, error) {
 	rsp, err := c.ListFirewallPolicies(ctx, site, reqEditors...)
@@ -3374,6 +3972,15 @@ func (c *ClientWithResponses) UpdateDNSRecordWithResponse(ctx context.Context, s
 		return nil, err
 	}
 	return ParseUpdateDNSRecordResponse(rsp)
+}
+
+// GetTopologyWithResponse request returning *GetTopologyResponse
+func (c *ClientWithResponses) GetTopologyWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetTopologyResponse, error) {
+	rsp, err := c.GetTopology(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTopologyResponse(rsp)
 }
 
 // ListTrafficRulesWithResponse request returning *ListTrafficRulesResponse
@@ -3828,6 +4435,86 @@ func ParseGetAggregatedDashboardResponse(rsp *http.Response) (*GetAggregatedDash
 	return response, nil
 }
 
+// ParseListActiveClientsResponse parses an HTTP response from a ListActiveClientsWithResponse call
+func ParseListActiveClientsResponse(rsp *http.Response) (*ListActiveClientsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListActiveClientsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []ActiveClient
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListAllDevicesResponse parses an HTTP response from a ListAllDevicesWithResponse call
+func ParseListAllDevicesResponse(rsp *http.Response) (*ListAllDevicesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListAllDevicesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AllDevicesResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseListFirewallPoliciesResponse parses an HTTP response from a ListFirewallPoliciesWithResponse call
 func ParseListFirewallPoliciesResponse(rsp *http.Response) (*ListFirewallPoliciesResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -4162,6 +4849,46 @@ func ParseUpdateDNSRecordResponse(rsp *http.Response) (*UpdateDNSRecordResponse,
 	return response, nil
 }
 
+// ParseGetTopologyResponse parses an HTTP response from a GetTopologyWithResponse call
+func ParseGetTopologyResponse(rsp *http.Response) (*GetTopologyResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTopologyResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Topology
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseListTrafficRulesResponse parses an HTTP response from a ListTrafficRulesWithResponse call
 func ParseListTrafficRulesResponse(rsp *http.Response) (*ListTrafficRulesResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -4332,133 +5059,165 @@ func ParseUpdateTrafficRuleResponse(rsp *http.Response) (*UpdateTrafficRuleRespo
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

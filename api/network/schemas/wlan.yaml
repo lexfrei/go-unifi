@@ -1,0 +1,266 @@
+# WLAN configuration schemas
+
+WLANConfig:
+  type: object
+  description: Wireless network configuration
+  properties:
+    _id:
+      type: string
+      description: Unique identifier
+      example: "507f1f77bcf86cd799439011"
+    name:
+      type: string
+      description: SSID name
+      example: "MyNetwork"
+    site_id:
+      type: string
+      description: Site ID
+      example: "507f1f77bcf86cd799439012"
+    enabled:
+      type: boolean
+      description: Whether WLAN is enabled
+      example: true
+    security:
+      type: string
+      description: Security protocol
+      enum:
+        - open
+        - wep
+        - wpapsk
+        - wpaeap
+        - wpa3
+      example: wpapsk
+    wpa_mode:
+      type: string
+      description: WPA mode
+      enum:
+        - wpa2
+        - wpa3
+        - wpa2wpa3
+      example: wpa2
+    wpa_enc:
+      type: string
+      description: WPA encryption
+      enum:
+        - ccmp
+        - gcmp
+        - auto
+      example: ccmp
+    x_passphrase:
+      type: string
+      description: WiFi password (write-only)
+      example: ""
+    is_guest:
+      type: boolean
+      description: Whether this is a guest network
+      example: false
+    networkconf_id:
+      type: string
+      description: Associated network configuration ID
+      example: "507f1f77bcf86cd799439013"
+    usergroup_id:
+      type: string
+      description: User group ID
+      example: "507f1f77bcf86cd799439014"
+    ap_group_ids:
+      type: array
+      description: AP group IDs where this WLAN is active
+      items:
+        type: string
+      example:
+        - "507f1f77bcf86cd799439015"
+    wlan_band:
+      type: string
+      description: Radio bands for this WLAN
+      enum:
+        - 2g
+        - 5g
+        - 6g
+        - both
+        - all
+      example: both
+    hide_ssid:
+      type: boolean
+      description: Hide SSID from broadcast
+      example: false
+    vlan:
+      type: integer
+      description: VLAN ID for this WLAN
+      example: 1
+    vlan_enabled:
+      type: boolean
+      description: Whether VLAN is enabled
+      example: false
+    uapsd_enabled:
+      type: boolean
+      description: U-APSD (power save) enabled
+      example: true
+    fast_roaming_enabled:
+      type: boolean
+      description: 802.11r fast roaming enabled
+      example: false
+    pmf_mode:
+      type: string
+      description: Protected Management Frames mode
+      enum:
+        - disabled
+        - optional
+        - required
+      example: optional
+    group_rekey:
+      type: integer
+      description: Group rekey interval in seconds
+      example: 3600
+    dtim_mode:
+      type: string
+      description: DTIM mode
+      enum:
+        - default
+        - custom
+      example: default
+    dtim_ng:
+      type: integer
+      description: DTIM period for 2.4GHz
+      example: 1
+    dtim_na:
+      type: integer
+      description: DTIM period for 5GHz
+      example: 3
+    minrate_ng_enabled:
+      type: boolean
+      description: Minimum rate control for 2.4GHz
+      example: false
+    minrate_ng_data_rate_kbps:
+      type: integer
+      description: Minimum data rate for 2.4GHz in Kbps
+      example: 1000
+    minrate_na_enabled:
+      type: boolean
+      description: Minimum rate control for 5GHz
+      example: false
+    minrate_na_data_rate_kbps:
+      type: integer
+      description: Minimum data rate for 5GHz in Kbps
+      example: 6000
+    mac_filter_enabled:
+      type: boolean
+      description: MAC filter enabled
+      example: false
+    mac_filter_policy:
+      type: string
+      description: MAC filter policy
+      enum:
+        - allow
+        - deny
+      example: deny
+    mac_filter_list:
+      type: array
+      description: MAC filter list
+      items:
+        type: string
+      example: []
+    radius_das_enabled:
+      type: boolean
+      description: RADIUS Dynamic Authorization enabled
+      example: false
+    schedule_enabled:
+      type: boolean
+      description: Schedule enabled
+      example: false
+    schedule:
+      type: array
+      description: Schedule configuration
+      items:
+        type: string
+      example: []
+    l2_isolation:
+      type: boolean
+      description: L2 client isolation
+      example: false
+    proxy_arp:
+      type: boolean
+      description: Proxy ARP enabled
+      example: false
+    bss_transition:
+      type: boolean
+      description: 802.11v BSS transition enabled
+      example: true
+    rrm_enabled:
+      type: boolean
+      description: 802.11k RRM enabled
+      example: false
+    optimize_iot_wifi_connectivity:
+      type: boolean
+      description: Optimize for IoT devices
+      example: false
+
+WLANConfigInput:
+  type: object
+  description: Input for creating/updating WLAN
+  required:
+    - name
+    - security
+  properties:
+    name:
+      type: string
+      description: SSID name
+      example: "GuestNetwork"
+    enabled:
+      type: boolean
+      description: Enable WLAN
+      default: true
+      example: true
+    security:
+      type: string
+      description: Security protocol
+      enum:
+        - open
+        - wpapsk
+        - wpaeap
+        - wpa3
+      example: wpapsk
+    wpa_mode:
+      type: string
+      description: WPA mode
+      enum:
+        - wpa2
+        - wpa3
+        - wpa2wpa3
+      default: wpa2
+      example: wpa2
+    x_passphrase:
+      type: string
+      description: WiFi password
+      minLength: 8
+      maxLength: 63
+      example: "securepassword123"
+    is_guest:
+      type: boolean
+      description: Guest network
+      default: false
+      example: false
+    networkconf_id:
+      type: string
+      description: Associated network ID
+      example: "507f1f77bcf86cd799439013"
+    wlan_band:
+      type: string
+      description: Radio bands
+      enum:
+        - 2g
+        - 5g
+        - 6g
+        - both
+        - all
+      default: both
+      example: both
+    hide_ssid:
+      type: boolean
+      description: Hide SSID
+      default: false
+      example: false
+    fast_roaming_enabled:
+      type: boolean
+      description: Enable 802.11r
+      default: false
+      example: false

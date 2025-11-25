@@ -1,0 +1,31 @@
+# Site-related schemas
+SitesResponse:
+  allOf:
+    - $ref: './_common.yaml#/PaginatedResponse'
+    - type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/SiteListItem'
+
+SiteListItem:
+  type: object
+  required:
+    - id
+    - internalReference
+    - name
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique identifier for the site
+      example: 88f7af54-98f8-306a-a1c7-c9349722b1f6
+    internalReference:
+      type: string
+      description: Internal reference name used in UniFi controller URLs
+      example: default
+    name:
+      type: string
+      description: Display name of the site
+      example: Default

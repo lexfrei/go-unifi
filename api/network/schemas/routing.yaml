@@ -1,0 +1,226 @@
+# Routing configuration schemas
+
+StaticRoute:
+  type: object
+  description: Static route configuration
+  properties:
+    _id:
+      type: string
+      description: Unique identifier
+      example: "507f1f77bcf86cd799439011"
+    name:
+      type: string
+      description: Route name
+      example: "VPN Route"
+    site_id:
+      type: string
+      description: Site ID
+      example: "507f1f77bcf86cd799439012"
+    enabled:
+      type: boolean
+      description: Whether route is enabled
+      example: true
+    type:
+      type: string
+      description: Route type
+      enum:
+        - nexthop-route
+        - interface-route
+        - blackhole
+      example: nexthop-route
+    static_route_network:
+      type: string
+      description: Destination network in CIDR notation
+      example: "10.0.0.0/8"
+    static_route_nexthop:
+      type: string
+      description: Next hop IP address
+      example: "192.168.1.254"
+    static_route_interface:
+      type: string
+      description: Interface name (for interface routes)
+      example: "eth0"
+    static_route_distance:
+      type: integer
+      description: Administrative distance
+      default: 1
+      example: 1
+
+StaticRouteInput:
+  type: object
+  description: Input for creating/updating static route
+  required:
+    - name
+    - type
+    - static_route_network
+  properties:
+    name:
+      type: string
+      description: Route name
+      example: "Office Network"
+    enabled:
+      type: boolean
+      description: Enable route
+      default: true
+      example: true
+    type:
+      type: string
+      description: Route type
+      enum:
+        - nexthop-route
+        - interface-route
+        - blackhole
+      example: nexthop-route
+    static_route_network:
+      type: string
+      description: Destination network
+      example: "10.10.0.0/16"
+    static_route_nexthop:
+      type: string
+      description: Next hop IP (required for nexthop-route)
+      example: "192.168.1.254"
+    static_route_interface:
+      type: string
+      description: Interface (required for interface-route)
+      example: ""
+    static_route_distance:
+      type: integer
+      description: Administrative distance
+      default: 1
+      minimum: 1
+      maximum: 255
+      example: 1
+
+PolicyRoute:
+  type: object
+  description: Policy-based routing rule
+  properties:
+    _id:
+      type: string
+      description: Unique identifier
+      example: "507f1f77bcf86cd799439011"
+    name:
+      type: string
+      description: Rule name
+      example: "Force WAN2"
+    site_id:
+      type: string
+      description: Site ID
+      example: "507f1f77bcf86cd799439012"
+    enabled:
+      type: boolean
+      description: Whether rule is enabled
+      example: true
+    target_devices:
+      type: array
+      description: Target device MACs
+      items:
+        type: string
+      example:
+        - "00:11:22:33:44:55"
+    target_network:
+      type: string
+      description: Target network ID
+      example: "507f1f77bcf86cd799439013"
+    matching_target:
+      type: string
+      description: What to match
+      enum:
+        - INTERNET
+        - NETWORK
+        - IP
+        - DOMAIN
+        - REGION
+      example: INTERNET
+    interface:
+      type: string
+      description: Target interface
+      enum:
+        - wan
+        - wan2
+        - vpn
+      example: wan2
+
+WANConfig:
+  type: object
+  description: WAN interface configuration
+  properties:
+    _id:
+      type: string
+      description: Unique identifier
+      example: "507f1f77bcf86cd799439011"
+    ifname:
+      type: string
+      description: Interface name
+      example: "eth0"
+    name:
+      type: string
+      description: Display name
+      example: "WAN"
+    wan_type:
+      type: string
+      description: WAN type
+      enum:
+        - dhcp
+        - static
+        - pppoe
+      example: dhcp
+    wan_ip:
+      type: string
+      description: Static IP address
+      example: ""
+    wan_netmask:
+      type: string
+      description: Subnet mask
+      example: ""
+    wan_gateway:
+      type: string
+      description: Gateway IP
+      example: ""
+    wan_dns1:
+      type: string
+      description: Primary DNS
+      example: ""
+    wan_dns2:
+      type: string
+      description: Secondary DNS
+      example: ""
+    wan_pppoe_username:
+      type: string
+      description: PPPoE username
+      example: ""
+    wan_vlan_enabled:
+      type: boolean
+      description: VLAN tagging enabled
+      example: false
+    wan_vlan:
+      type: integer
+      description: VLAN ID
+      example: 0
+    wan_egress_qos:
+      type: string
+      description: Egress QoS priority
+      example: ""
+    wan_load_balance_type:
+      type: string
+      description: Load balance type
+      enum:
+        - failover-only
+        - weighted
+      example: failover-only
+    wan_load_balance_weight:
+      type: integer
+      description: Load balance weight
+      example: 50
+    wan_smartq_enabled:
+      type: boolean
+      description: Smart Queue enabled
+      example: false
+    wan_smartq_down_rate:
+      type: integer
+      description: Smart Queue download rate (Mbps)
+      example: 0
+    wan_smartq_up_rate:
+      type: integer
+      description: Smart Queue upload rate (Mbps)
+      example: 0

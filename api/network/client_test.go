@@ -1139,7 +1139,7 @@ func TestCreateTrafficRule(t *testing.T) {
 			desc := testRuleName
 			input := &TrafficRuleInput{
 				Enabled:        true,
-				MatchingTarget: TrafficRuleInputMatchingTargetINTERNET,
+				MatchingTarget: INTERNET,
 				Description:    &desc,
 			}
 
@@ -1212,7 +1212,7 @@ func TestUpdateTrafficRule(t *testing.T) {
 			desc := testRuleName
 			input := &TrafficRuleInput{
 				Enabled:        true,
-				MatchingTarget: TrafficRuleInputMatchingTargetINTERNET,
+				MatchingTarget: INTERNET,
 				Description:    &desc,
 			}
 

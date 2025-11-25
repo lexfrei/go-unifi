@@ -424,3 +424,40 @@ func (c *APIClient) GetAggregatedDashboard(ctx context.Context, site Site, param
 	//nolint:wrapcheck // response.Handle wraps errors internally
 	return response.Handle(resp, data, err, "failed to get aggregated dashboard for site "+site)
 }
+
+// GetTopology retrieves the network topology graph for a site.
+func (c *APIClient) GetTopology(ctx context.Context, site Site) (*Topology, error) {
+	resp, err := c.client.GetTopologyWithResponse(ctx, site)
+	var data *Topology
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to get topology for site "+site)
+}
+
+// ListActiveClients retrieves all currently connected clients with detailed connection information.
+func (c *APIClient) ListActiveClients(ctx context.Context, site Site) ([]ActiveClient, error) {
+	resp, err := c.client.ListActiveClientsWithResponse(ctx, site)
+	var dataPtr *[]ActiveClient
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list active clients for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListAllDevices retrieves all devices across all UniFi applications for a site.
+func (c *APIClient) ListAllDevices(ctx context.Context, site Site) (*AllDevicesResponse, error) {
+	resp, err := c.client.ListAllDevicesWithResponse(ctx, site)
+	var data *AllDevicesResponse
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to list all devices for site "+site)
+}

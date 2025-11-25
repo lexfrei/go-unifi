@@ -1,0 +1,239 @@
+# Hotspot and guest network schemas
+
+Hotspot:
+  type: object
+  description: Hotspot/guest portal configuration
+  properties:
+    _id:
+      type: string
+      description: Unique identifier
+      example: "507f1f77bcf86cd799439011"
+    name:
+      type: string
+      description: Hotspot name
+      example: "Guest Portal"
+    site_id:
+      type: string
+      description: Site ID
+      example: "507f1f77bcf86cd799439012"
+    enabled:
+      type: boolean
+      description: Whether hotspot is enabled
+      example: true
+    auth:
+      type: string
+      description: Authentication type
+      enum:
+        - none
+        - password
+        - voucher
+        - radius
+        - external
+      example: voucher
+    redirect_enabled:
+      type: boolean
+      description: Redirect to URL after authentication
+      example: false
+    redirect_url:
+      type: string
+      description: URL to redirect after authentication
+      example: "https://example.com/welcome"
+    portal_customization:
+      $ref: '#/PortalCustomization'
+
+PortalCustomization:
+  type: object
+  description: Guest portal customization settings
+  properties:
+    title:
+      type: string
+      description: Portal title
+      example: "Welcome to Guest WiFi"
+    welcome_text:
+      type: string
+      description: Welcome message
+      example: "Please enter your credentials"
+    success_text:
+      type: string
+      description: Success message
+      example: "You are now connected"
+    template:
+      type: string
+      description: Portal template
+      enum:
+        - default
+        - custom
+      example: default
+    logo:
+      type: string
+      description: Logo URL or base64
+      example: ""
+    background_color:
+      type: string
+      description: Background color (hex)
+      example: "#ffffff"
+
+Voucher:
+  type: object
+  description: Guest network voucher
+  properties:
+    _id:
+      type: string
+      description: Unique identifier
+      example: "507f1f77bcf86cd799439011"
+    code:
+      type: string
+      description: Voucher code
+      example: "12345-67890"
+    create_time:
+      type: integer
+      description: Creation timestamp
+      example: 1700000000
+    duration:
+      type: integer
+      description: Duration in minutes
+      example: 1440
+    quota:
+      type: integer
+      description: Usage quota (0 = unlimited)
+      example: 1
+    used:
+      type: integer
+      description: Times used
+      example: 0
+    qos_overwrite:
+      type: boolean
+      description: Override QoS settings
+      example: false
+    qos_rate_max_up:
+      type: integer
+      description: Max upload rate in Kbps
+      example: 10000
+    qos_rate_max_down:
+      type: integer
+      description: Max download rate in Kbps
+      example: 50000
+    qos_usage_quota:
+      type: integer
+      description: Data quota in MB (0 = unlimited)
+      example: 0
+    note:
+      type: string
+      description: Admin note
+      example: "Event voucher"
+    status:
+      type: string
+      description: Voucher status
+      enum:
+        - VALID_ONE
+        - VALID_MULTI
+        - USED
+        - EXPIRED
+      example: VALID_ONE
+    admin_name:
+      type: string
+      description: Admin who created voucher
+      example: "admin"
+
+VoucherInput:
+  type: object
+  description: Input for creating vouchers
+  required:
+    - count
+    - duration
+  properties:
+    count:
+      type: integer
+      description: Number of vouchers to create
+      minimum: 1
+      maximum: 10000
+      example: 10
+    duration:
+      type: integer
+      description: Duration in minutes
+      example: 1440
+    quota:
+      type: integer
+      description: Usage quota (0 = unlimited, 1 = single use, >1 = multi-use)
+      default: 1
+      example: 1
+    qos_overwrite:
+      type: boolean
+      description: Override QoS settings
+      default: false
+      example: false
+    qos_rate_max_up:
+      type: integer
+      description: Max upload rate in Kbps
+      example: 10000
+    qos_rate_max_down:
+      type: integer
+      description: Max download rate in Kbps
+      example: 50000
+    qos_usage_quota:
+      type: integer
+      description: Data quota in MB (0 = unlimited)
+      default: 0
+      example: 0
+    note:
+      type: string
+      description: Admin note
+      example: "Conference vouchers"
+
+GuestAuthorization:
+  type: object
+  description: Guest authorization record
+  properties:
+    _id:
+      type: string
+      description: Unique identifier
+      example: "507f1f77bcf86cd799439011"
+    mac:
+      type: string
+      description: Guest MAC address
+      example: "00:11:22:33:44:55"
+    start:
+      type: integer
+      description: Authorization start timestamp
+      example: 1700000000
+    end:
+      type: integer
+      description: Authorization end timestamp
+      example: 1700086400
+    expired:
+      type: boolean
+      description: Whether authorization expired
+      example: false
+    authorized_by:
+      type: string
+      description: Authorization method
+      enum:
+        - voucher
+        - password
+        - admin
+        - radius
+      example: voucher
+    voucher_id:
+      type: string
+      description: Voucher ID if authorized by voucher
+      example: "507f1f77bcf86cd799439012"
+    qos_rate_max_up:
+      type: integer
+      description: Max upload rate in Kbps
+      example: 10000
+    qos_rate_max_down:
+      type: integer
+      description: Max download rate in Kbps
+      example: 50000
+    qos_usage_quota:
+      type: integer
+      description: Data quota in bytes
+      example: 0
+    rx_bytes:
+      type: integer
+      description: Total received bytes
+      example: 104857600
+    tx_bytes:
+      type: integer
+      description: Total transmitted bytes
+      example: 52428800

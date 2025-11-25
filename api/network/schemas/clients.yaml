@@ -1,0 +1,453 @@
+# Client-related schemas
+
+# Integration API v1 responses
+ClientsResponse:
+  allOf:
+    - $ref: './_common.yaml#/PaginatedResponse'
+    - type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/ClientListItem'
+
+ClientListItem:
+  type: object
+  required:
+    - type
+    - id
+    - name
+    - connectedAt
+    - ipAddress
+    - macAddress
+    - uplinkDeviceId
+    - access
+  properties:
+    type:
+      type: string
+      description: Connection type
+      enum:
+        - WIRED
+        - WIRELESS
+      example: WIRED
+    id:
+      type: string
+      format: uuid
+      description: Unique identifier for the client
+      example: f95a0eb4-ddf9-3f41-942c-1793ac30d4c9
+    name:
+      type: string
+      description: Display name or hostname of the client
+      example: server-01
+    connectedAt:
+      type: string
+      format: date-time
+      description: Timestamp when client connected (RFC3339 format)
+      example: "2025-10-19T10:09:31Z"
+    ipAddress:
+      type: string
+      description: IP address assigned to the client
+      example: 192.168.1.100
+    macAddress:
+      type: string
+      description: MAC address of the client
+      example: "00:11:22:33:44:55"
+    uplinkDeviceId:
+      type: string
+      format: uuid
+      description: ID of the device this client is connected to
+      example: 71cb254a-b068-39f9-9138-0fbf8fe11cac
+    access:
+      $ref: '#/ClientAccess'
+
+NetworkClient:
+  allOf:
+    - $ref: '#/ClientListItem'
+
+ClientAccess:
+  type: object
+  required:
+    - type
+  properties:
+    type:
+      type: string
+      description: Access control type
+      enum:
+        - DEFAULT
+        - RESTRICTED
+        - BLOCKED
+      example: DEFAULT
+
+# V2 API - Active Client (detailed)
+ActiveClient:
+  type: object
+  description: Active client with full connection details
+  properties:
+    id:
+      type: string
+      description: Client identifier (usually MAC)
+      example: "00:11:22:33:44:55"
+    mac:
+      type: string
+      description: MAC address
+      example: "00:11:22:33:44:55"
+    ip:
+      type: string
+      description: IP address
+      example: "192.168.1.100"
+    hostname:
+      type: string
+      description: Client hostname
+      example: client-device
+    display_name:
+      type: string
+      description: Display name
+      example: "Client Device"
+    oui:
+      type: string
+      description: Manufacturer from OUI lookup
+      example: "Example Manufacturer Inc."
+    model_name:
+      type: string
+      description: Detected device model
+      example: "Smart Device"
+    type:
+      type: string
+      description: Connection type
+      enum:
+        - WIRED
+        - WIRELESS
+      example: WIRELESS
+    is_wired:
+      type: boolean
+      description: Whether client is wired
+      example: false
+    is_guest:
+      type: boolean
+      description: Whether client is on guest network
+      example: false
+    status:
+      type: string
+      description: Client status
+      enum:
+        - online
+        - offline
+      example: online
+    blocked:
+      type: boolean
+      description: Whether client is blocked
+      example: false
+
+    # Network info
+    network_id:
+      type: string
+      description: Network ID
+      example: "507f1f77bcf86cd799439011"
+    network_name:
+      type: string
+      description: Network name
+      example: Default
+    site_id:
+      type: string
+      description: Site ID
+      example: "507f1f77bcf86cd799439012"
+    usergroup_id:
+      type: string
+      description: User group ID
+      example: ""
+    wlanconf_id:
+      type: string
+      description: WLAN configuration ID
+      example: "507f1f77bcf86cd799439013"
+
+    # Timestamps
+    first_seen:
+      type: integer
+      description: Unix timestamp when first seen
+      example: 1700000000
+    last_seen:
+      type: integer
+      description: Unix timestamp when last seen
+      example: 1700086400
+    assoc_time:
+      type: integer
+      description: Unix timestamp of association
+      example: 1700080000
+    latest_assoc_time:
+      type: integer
+      description: Unix timestamp of latest association
+      example: 1700086400
+    uptime:
+      type: integer
+      description: Connection uptime in seconds
+      example: 3600
+
+    # Wireless details (only for WiFi clients)
+    ap_mac:
+      type: string
+      description: Connected AP MAC address
+      example: "00:11:22:33:44:66"
+    bssid:
+      type: string
+      description: BSSID
+      example: "00:11:22:33:44:67"
+    essid:
+      type: string
+      description: SSID name
+      example: "MyNetwork"
+    channel:
+      type: integer
+      description: WiFi channel
+      example: 6
+    channel_width:
+      type: string
+      description: Channel width
+      example: "40"
+    radio:
+      type: string
+      description: Radio band
+      enum:
+        - ng
+        - na
+        - 6e
+      example: ng
+    radio_name:
+      type: string
+      description: Radio interface name
+      example: wifi0
+    radio_proto:
+      type: string
+      description: WiFi protocol
+      example: ng
+    last_radio:
+      type: string
+      description: Last connected radio
+      example: ng
+    mimo:
+      type: string
+      description: MIMO configuration
+      example: MIMO_2x2
+    is_mlo:
+      type: boolean
+      description: Multi-link operation enabled
+      example: false
+
+    # Signal quality
+    signal:
+      type: integer
+      description: Signal strength in dBm
+      example: -65
+    rssi:
+      type: integer
+      description: RSSI value
+      example: 35
+    noise:
+      type: integer
+      description: Noise floor in dBm
+      example: -95
+    ccq:
+      type: integer
+      description: Client Connection Quality
+      example: 80
+    wifi_experience_score:
+      type: integer
+      description: WiFi experience score (0-100)
+      example: 85
+    wifi_experience_average:
+      type: integer
+      description: Average WiFi experience score
+      example: 82
+
+    # Traffic statistics
+    rx_bytes:
+      type: integer
+      description: Total received bytes
+      example: 1048576
+    tx_bytes:
+      type: integer
+      description: Total transmitted bytes
+      example: 524288
+    rx_packets:
+      type: integer
+      description: Total received packets
+      example: 10000
+    tx_packets:
+      type: integer
+      description: Total transmitted packets
+      example: 8000
+    rx_rate:
+      type: integer
+      description: Current RX rate in bps
+      example: 144400
+    tx_rate:
+      type: integer
+      description: Current TX rate in bps
+      example: 144400
+    "rx_bytes-r":
+      type: integer
+      description: RX bytes rate
+      example: 1024
+    "tx_bytes-r":
+      type: integer
+      description: TX bytes rate
+      example: 512
+
+    # Retries and errors
+    wifi_tx_attempts:
+      type: integer
+      description: Total TX attempts
+      example: 8500
+    wifi_tx_retries_percentage:
+      type: number
+      description: TX retry percentage
+      example: 2.5
+    rate_imbalance:
+      type: integer
+      description: Rate imbalance
+      example: 0
+    anomalies:
+      type: integer
+      description: Number of anomalies detected
+      example: 0
+
+    # Uplink info
+    uplink_mac:
+      type: string
+      description: Uplink device MAC
+      example: "00:11:22:33:44:66"
+    last_uplink_mac:
+      type: string
+      description: Last uplink MAC
+      example: "00:11:22:33:44:66"
+    last_uplink_name:
+      type: string
+      description: Last uplink device name
+      example: "Access Point 1"
+
+    # Device fingerprint
+    fingerprint:
+      $ref: '#/ClientFingerprint'
+
+    # IPv6
+    last_ipv6:
+      type: array
+      description: IPv6 addresses
+      items:
+        type: string
+      example:
+        - "fe80::1"
+        - "2001:db8::1"
+    ipv4_lease_expiration_timestamp_seconds:
+      type: integer
+      description: DHCP lease expiration timestamp
+      example: 1700172800
+
+    # Misc flags
+    noted:
+      type: boolean
+      description: Whether client is noted
+      example: false
+    powersave_enabled:
+      type: boolean
+      description: Power save mode enabled
+      example: true
+    use_fixedip:
+      type: boolean
+      description: Using fixed IP
+      example: false
+    local_dns_record_enabled:
+      type: boolean
+      description: Local DNS record enabled
+      example: false
+    virtual_network_override_enabled:
+      type: boolean
+      description: Virtual network override enabled
+      example: false
+    is_allowed_in_visual_programming:
+      type: boolean
+      description: Allowed in visual programming
+      example: true
+    unifi_device:
+      type: boolean
+      description: Is a UniFi device
+      example: false
+
+    # IDs
+    user_id:
+      type: string
+      description: User ID in database
+      example: "507f1f77bcf86cd799439014"
+
+    # Tags
+    tags:
+      type: array
+      description: Client tags
+      items:
+        type: string
+      example:
+        - connected_client
+        - connected_wireless_client
+
+    # Idle
+    idletime:
+      type: integer
+      description: Idle time in seconds
+      example: 30
+    dhcpend_time:
+      type: integer
+      description: DHCP end time
+      example: 86400
+
+    # TX MCS
+    tx_mcs_index:
+      type: integer
+      description: TX MCS index (-1 if not available)
+      example: 7
+
+    # Network member groups
+    network_members_group_ids:
+      type: array
+      description: Network member group IDs
+      items:
+        type: string
+
+ClientFingerprint:
+  type: object
+  description: Device fingerprinting information
+  properties:
+    dev_cat:
+      type: integer
+      description: Device category ID
+      example: 1
+    dev_family:
+      type: integer
+      description: Device family ID
+      example: 1
+    dev_vendor:
+      type: integer
+      description: Device vendor ID
+      example: 1
+    dev_id:
+      type: integer
+      description: Device ID
+      example: 1
+    computed_dev_id:
+      type: integer
+      description: Computed device ID
+      example: 1
+    computed_engine:
+      type: integer
+      description: Computed engine version
+      example: 0
+    os_name:
+      type: integer
+      description: OS name ID
+      example: 1
+    confidence:
+      type: integer
+      description: Fingerprint confidence (0-100)
+      example: 85
+    has_override:
+      type: boolean
+      description: Whether fingerprint is overridden
+      example: false

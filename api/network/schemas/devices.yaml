@@ -1,0 +1,716 @@
+# Device-related schemas
+
+# Integration API v1 responses
+DevicesResponse:
+  allOf:
+    - $ref: './_common.yaml#/PaginatedResponse'
+    - type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/DeviceListItem'
+
+DeviceListItem:
+  type: object
+  required:
+    - id
+    - name
+    - model
+    - macAddress
+    - ipAddress
+    - state
+    - features
+    - interfaces
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique identifier for the device
+      example: 71cb254a-b068-39f9-9138-0fbf8fe11cac
+    name:
+      type: string
+      description: Display name of the device
+      example: My Network Device
+    model:
+      type: string
+      description: Device model identifier
+      example: UDR7
+    macAddress:
+      type: string
+      description: MAC address of the device
+      example: "94:2a:6f:ce:26:52"
+    ipAddress:
+      type: string
+      description: IP address of the device
+      example: 217.78.182.161
+    state:
+      type: string
+      description: Current operational state
+      enum:
+        - ONLINE
+        - OFFLINE
+        - UPGRADING
+        - PROVISIONING
+      example: ONLINE
+    features:
+      type: array
+      description: List of features supported by this device
+      items:
+        type: string
+        enum:
+          - switching
+          - accessPoint
+          - routing
+          - gateway
+      example:
+        - switching
+        - accessPoint
+    interfaces:
+      type: array
+      description: Types of network interfaces available
+      items:
+        type: string
+        enum:
+          - ports
+          - radios
+          - wan
+      example:
+        - ports
+        - radios
+
+Device:
+  type: object
+  required:
+    - id
+    - name
+    - model
+    - supported
+    - macAddress
+    - ipAddress
+    - state
+    - firmwareVersion
+    - firmwareUpdatable
+    - provisionedAt
+    - configurationId
+    - features
+    - interfaces
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique identifier for the device
+      example: 71cb254a-b068-39f9-9138-0fbf8fe11cac
+    name:
+      type: string
+      description: Display name of the device
+      example: My Network Device
+    model:
+      type: string
+      description: Device model identifier
+      example: UDR7
+    supported:
+      type: boolean
+      description: Whether this device is officially supported
+      example: true
+    macAddress:
+      type: string
+      description: MAC address of the device
+      example: "94:2a:6f:ce:26:52"
+    ipAddress:
+      type: string
+      description: IP address of the device
+      example: 217.78.182.161
+    state:
+      type: string
+      description: Current operational state
+      enum:
+        - ONLINE
+        - OFFLINE
+        - UPGRADING
+        - PROVISIONING
+      example: ONLINE
+    firmwareVersion:
+      type: string
+      description: Current firmware version
+      example: 4.3.9
+    firmwareUpdatable:
+      type: boolean
+      description: Whether firmware update is available
+      example: false
+    provisionedAt:
+      type: string
+      format: date-time
+      description: Timestamp when device was provisioned (RFC3339 format)
+      example: "2025-11-03T21:41:04Z"
+    configurationId:
+      type: string
+      description: Current configuration identifier
+      example: c212be130585ee93
+    features:
+      type: object
+      description: Feature-specific configuration and capabilities
+      additionalProperties:
+        type: object
+      example:
+        switching: {}
+        accessPoint: {}
+    interfaces:
+      $ref: '#/DeviceInterfaces'
+
+DeviceInterfaces:
+  type: object
+  description: Network interfaces available on the device
+  properties:
+    ports:
+      type: array
+      description: Physical ethernet ports
+      items:
+        $ref: '#/Port'
+    radios:
+      type: array
+      description: Wireless radio interfaces
+      items:
+        $ref: '#/Radio'
+
+Port:
+  type: object
+  required:
+    - idx
+    - state
+    - connector
+    - maxSpeedMbps
+    - speedMbps
+  properties:
+    idx:
+      type: integer
+      description: Port index number (1-based)
+      example: 1
+    state:
+      type: string
+      description: Current port state
+      enum:
+        - UP
+        - DOWN
+      example: UP
+    connector:
+      type: string
+      description: Physical connector type
+      enum:
+        - RJ45
+        - SFPPLUS
+        - SFP
+      example: RJ45
+    maxSpeedMbps:
+      type: integer
+      description: Maximum supported speed in Mbps
+      example: 2500
+    speedMbps:
+      type: integer
+      description: Current negotiated speed in Mbps
+      example: 1000
+    poe:
+      $ref: '#/PoE'
+
+PoE:
+  type: object
+  description: Power over Ethernet configuration and status
+  required:
+    - standard
+    - type
+    - enabled
+    - state
+  properties:
+    standard:
+      type: string
+      description: PoE standard supported
+      enum:
+        - 802.3af
+        - 802.3at
+        - 802.3bt
+      example: 802.3af
+    type:
+      type: integer
+      description: PoE type number
+      example: 1
+    enabled:
+      type: boolean
+      description: Whether PoE is enabled on this port
+      example: true
+    state:
+      type: string
+      description: Current PoE state
+      enum:
+        - UP
+        - DOWN
+        - DISABLED
+      example: UP
+
+Radio:
+  type: object
+  required:
+    - wlanStandard
+    - frequencyGHz
+    - channelWidthMHz
+    - channel
+  properties:
+    wlanStandard:
+      type: string
+      description: WiFi standard supported
+      enum:
+        - 802.11a
+        - 802.11b
+        - 802.11g
+        - 802.11n
+        - 802.11ac
+        - 802.11ax
+        - 802.11be
+      example: 802.11be
+    frequencyGHz:
+      type: number
+      format: float
+      description: Operating frequency in GHz
+      enum:
+        - 2.4
+        - 5
+        - 6
+      example: 2.4
+    channelWidthMHz:
+      type: integer
+      description: Channel width in MHz
+      enum:
+        - 20
+        - 40
+        - 80
+        - 160
+      example: 20
+    channel:
+      type: integer
+      description: WiFi channel number
+      example: 6
+
+# V2 API - All Devices Response
+AllDevicesResponse:
+  type: object
+  description: Response containing devices grouped by UniFi application
+  properties:
+    network_devices:
+      type: array
+      description: Network devices (switches, APs, gateways)
+      items:
+        $ref: '#/NetworkDevice'
+    protect_devices:
+      type: array
+      description: Protect cameras and NVRs
+      items:
+        type: object
+        additionalProperties: true
+    access_devices:
+      type: array
+      description: Access control devices
+      items:
+        type: object
+        additionalProperties: true
+    talk_devices:
+      type: array
+      description: Talk/intercom devices
+      items:
+        type: object
+        additionalProperties: true
+    connect_devices:
+      type: array
+      description: Connect EV chargers
+      items:
+        type: object
+        additionalProperties: true
+    led_devices:
+      type: array
+      description: LED lighting devices
+      items:
+        type: object
+        additionalProperties: true
+    drive_devices:
+      type: array
+      description: Drive storage devices
+      items:
+        type: object
+        additionalProperties: true
+    apollo_devices:
+      type: array
+      description: Apollo devices
+      items:
+        type: object
+        additionalProperties: true
+    unmanaged_devices:
+      type: array
+      description: Unmanaged/discovered devices
+      items:
+        type: object
+        additionalProperties: true
+
+NetworkDevice:
+  type: object
+  description: A network device with full details from v2 API
+  properties:
+    _id:
+      type: string
+      description: Internal MongoDB ID
+      example: 6807e7c7a17d11646def67fb
+    mac:
+      type: string
+      description: MAC address
+      example: "70:a7:41:c1:85:75"
+    ip:
+      type: string
+      description: IP address
+      example: "192.168.1.10"
+    name:
+      type: string
+      description: Device name
+      example: USW Flex Mini
+    model:
+      type: string
+      description: Model identifier
+      example: USMINI
+    type:
+      type: string
+      description: Device type
+      enum:
+        - uap
+        - usw
+        - ugw
+        - udm
+        - uxg
+      example: usw
+    version:
+      type: string
+      description: Firmware version
+      example: "2.1.6.762"
+    displayable_version:
+      type: string
+      description: Human-readable firmware version
+      example: "2.1.6"
+    adopted:
+      type: boolean
+      description: Whether device is adopted
+      example: true
+    state:
+      type: integer
+      description: Device state (1=connected, 0=disconnected)
+      example: 1
+    uptime:
+      type: integer
+      description: Uptime in seconds
+      example: 114336
+    last_seen:
+      type: integer
+      description: Unix timestamp of last communication
+      example: 1764038001
+    upgradable:
+      type: boolean
+      description: Whether firmware upgrade is available
+      example: false
+    num_sta:
+      type: integer
+      description: Number of connected stations/clients
+      example: 4
+    satisfaction:
+      type: integer
+      description: Experience score (-1 if N/A)
+      example: -1
+    product_line:
+      type: string
+      description: Product line
+      example: NETWORK
+    is_access_point:
+      type: boolean
+      description: Whether device is an access point
+      example: false
+    port_table:
+      type: array
+      description: Port status and statistics
+      items:
+        $ref: '#/NetworkDevicePort'
+    radio_table:
+      type: array
+      description: Radio configuration (APs only)
+      items:
+        $ref: '#/NetworkDeviceRadio'
+    radio_table_stats:
+      type: array
+      description: Radio statistics (APs only)
+      items:
+        $ref: '#/NetworkDeviceRadioStats'
+    vap_table:
+      type: array
+      description: Virtual AP table (APs only)
+      items:
+        $ref: '#/NetworkDeviceVAP'
+    uplink:
+      $ref: '#/NetworkDeviceUplink'
+    sys_stats:
+      $ref: '#/NetworkDeviceSysStats'
+    system-stats:
+      $ref: '#/NetworkDeviceSystemStats'
+    tags:
+      type: array
+      description: Device tags
+      items:
+        type: string
+      example:
+        - connection_type_wired_device
+
+NetworkDevicePort:
+  type: object
+  properties:
+    port_idx:
+      type: integer
+      description: Port index (1-based)
+      example: 1
+    media:
+      type: string
+      description: Port media type
+      example: GE
+    speed:
+      type: integer
+      description: Current speed in Mbps
+      example: 1000
+    up:
+      type: boolean
+      description: Whether port is up
+      example: true
+    full_duplex:
+      type: boolean
+      description: Full duplex mode
+      example: true
+    is_uplink:
+      type: boolean
+      description: Whether this is an uplink port
+      example: true
+    rx_bytes:
+      type: integer
+      description: Total received bytes
+      example: 373591446254
+    tx_bytes:
+      type: integer
+      description: Total transmitted bytes
+      example: 175115371738
+    rx_packets:
+      type: integer
+      description: Total received packets
+      example: 297385694
+    tx_packets:
+      type: integer
+      description: Total transmitted packets
+      example: 179926960
+    poe_enable:
+      type: boolean
+      description: Whether PoE is enabled
+      example: false
+    port_poe:
+      type: boolean
+      description: Whether port supports PoE
+      example: false
+
+NetworkDeviceRadio:
+  type: object
+  properties:
+    name:
+      type: string
+      description: Radio name
+      example: wifi0
+    radio:
+      type: string
+      description: Radio band
+      enum:
+        - ng
+        - na
+        - 6e
+      example: ng
+    channel:
+      type: integer
+      description: Current channel
+      example: 9
+    ht:
+      type: integer
+      description: Channel width (20/40/80/160)
+      example: 40
+    tx_power_mode:
+      type: string
+      description: TX power mode
+      example: auto
+    is_11ax:
+      type: boolean
+      description: WiFi 6 capable
+      example: true
+    is_11be:
+      type: boolean
+      description: WiFi 7 capable
+      example: false
+
+NetworkDeviceRadioStats:
+  type: object
+  properties:
+    name:
+      type: string
+      description: Radio name
+      example: wifi0
+    radio:
+      type: string
+      description: Radio band
+      example: ng
+    channel:
+      type: integer
+      description: Current channel
+      example: 9
+    tx_power:
+      type: integer
+      description: TX power in dBm
+      example: 16
+    num_sta:
+      type: integer
+      description: Number of stations on this radio
+      example: 0
+    cu_total:
+      type: integer
+      description: Total channel utilization percentage
+      example: 40
+    cu_self_tx:
+      type: integer
+      description: Self TX channel utilization
+      example: 12
+    cu_self_rx:
+      type: integer
+      description: Self RX channel utilization
+      example: 0
+    satisfaction:
+      type: integer
+      description: Radio satisfaction score
+      example: 99
+
+NetworkDeviceVAP:
+  type: object
+  description: Virtual Access Point (SSID on a radio)
+  properties:
+    name:
+      type: string
+      description: VAP name
+      example: wifi0ap0
+    essid:
+      type: string
+      description: SSID name
+      example: "MyNetwork"
+    bssid:
+      type: string
+      description: BSSID
+      example: "ac:8b:a9:3c:12:5e"
+    radio:
+      type: string
+      description: Radio band
+      example: ng
+    channel:
+      type: integer
+      description: Channel number
+      example: 9
+    bw:
+      type: integer
+      description: Channel width
+      example: 40
+    num_sta:
+      type: integer
+      description: Number of connected clients
+      example: 1
+    rx_bytes:
+      type: integer
+      description: Total received bytes
+      example: 1479848498
+    tx_bytes:
+      type: integer
+      description: Total transmitted bytes
+      example: 7084984940
+    tx_power:
+      type: integer
+      description: TX power in dBm
+      example: 16
+    is_guest:
+      type: boolean
+      description: Whether this is a guest network
+      example: false
+
+NetworkDeviceUplink:
+  type: object
+  description: Uplink connection information
+  properties:
+    type:
+      type: string
+      description: Uplink type
+      enum:
+        - wire
+        - wireless
+      example: wire
+    name:
+      type: string
+      description: Interface name
+      example: eth0
+    mac:
+      type: string
+      description: Device MAC
+      example: "70:a7:41:c1:85:75"
+    uplink_mac:
+      type: string
+      description: Uplink device MAC
+      example: "94:2a:6f:ce:26:52"
+    uplink_device_name:
+      type: string
+      description: Uplink device name
+      example: My Network Device
+    uplink_remote_port:
+      type: integer
+      description: Remote port index
+      example: 2
+    speed:
+      type: integer
+      description: Link speed in Mbps
+      example: 1000
+
+NetworkDeviceSysStats:
+  type: object
+  description: System statistics
+  properties:
+    loadavg_1:
+      type: number
+      description: 1-minute load average
+      example: 0.0
+    loadavg_5:
+      type: number
+      description: 5-minute load average
+      example: 0.0
+    loadavg_15:
+      type: number
+      description: 15-minute load average
+      example: 0.0
+    mem_total:
+      type: integer
+      description: Total memory in bytes
+      example: 0
+    mem_used:
+      type: integer
+      description: Used memory in bytes
+      example: 0
+
+NetworkDeviceSystemStats:
+  type: object
+  description: System statistics (alternate format)
+  properties:
+    cpu:
+      type: number
+      description: CPU usage percentage
+      example: 3.1
+    mem:
+      type: number
+      description: Memory usage percentage
+      example: 78.3
+    uptime:
+      type: integer
+      description: Uptime in seconds
+      example: 0

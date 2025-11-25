@@ -49,3 +49,6 @@ coverage.out
 # Documentation downloads
 *.html
 docs/
+
+# Investigation/research directory
+dig/

@@ -775,6 +775,1430 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # Firewall Zones API (v2)
+  /v2/api/site/{site}/firewall/zone:
+    get:
+      summary: List firewall zones
+      description: |
+        Retrieves all firewall zones configured for the specified site.
+
+        Zones include: Internal, External, Gateway, VPN, Hotspot, DMZ.
+        Each zone contains associated network IDs.
+      operationId: listFirewallZones
+      tags:
+        - Firewall
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with list of firewall zones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FirewallZone'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/firewall/zone-matrix:
+    get:
+      summary: Get firewall zone matrix
+      description: |
+        Retrieves the firewall zone-to-zone policy matrix.
+
+        Shows which actions (allow_all, block_all, return_traffic) apply
+        between each pair of zones, with policy counts.
+      operationId: getFirewallZoneMatrix
+      tags:
+        - Firewall
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with zone matrix
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FirewallZoneMatrixEntry'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Speedtest API (v2)
+  /v2/api/site/{site}/speedtest/latest:
+    get:
+      summary: Get latest speedtest results
+      description: |
+        Retrieves the most recent speedtest results including download/upload
+        speeds, latency, and WAN interface information.
+      operationId: getLatestSpeedtest
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with latest speedtest
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpeedtestLatest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # DHCP Leases API (v2)
+  /v2/api/site/{site}/active-leases:
+    get:
+      summary: List active DHCP leases
+      description: |
+        Retrieves all active DHCP leases with detailed client information
+        including device fingerprinting, connection type, and network assignment.
+      operationId: listActiveDHCPLeases
+      tags:
+        - Clients
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with DHCP leases
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DHCPLeasesResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ISP Status API (v2)
+  /v2/api/site/{site}/isp/health:
+    get:
+      summary: Get ISP health status
+      description: |
+        Retrieves ISP connection health including latency, packet loss,
+        and connectivity status for all WAN interfaces.
+      operationId: getISPHealth
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with ISP health data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ISPHealth'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/isp/health/compact:
+    get:
+      summary: Get compact ISP health status
+      description: |
+        Retrieves a compact summary of ISP health status.
+      operationId: getISPHealthCompact
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with compact ISP health
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ISPHealthCompact'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Active Client Details API (v2)
+  /v2/api/site/{site}/clients/active/{clientMac}:
+    get:
+      summary: Get active client details by MAC
+      description: |
+        Retrieves detailed information about a specific active client by MAC address.
+        Includes WiFi experience metrics, fingerprint data, connection details, and traffic statistics.
+      operationId: getActiveClientByMac
+      tags:
+        - Clients
+      parameters:
+        - $ref: '#/components/parameters/Site'
+        - $ref: '#/components/parameters/ClientMac'
+      responses:
+        '200':
+          description: Successful response with client details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActiveClientDetails'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # WiFi Statistics API (v2)
+  /v2/api/site/{site}/wifi-stats/aps:
+    get:
+      summary: Get WiFi AP statistics
+      description: |
+        Retrieves WiFi statistics for all access points including client counts,
+        signal averages, satisfaction scores, and traffic distribution.
+        Requires time range parameters.
+      operationId: getWiFiStatsAPs
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+        - name: interval
+          in: query
+          required: true
+          description: Statistics interval granularity
+          schema:
+            type: string
+            enum:
+              - hourly
+              - daily
+            example: hourly
+        - name: start
+          in: query
+          required: true
+          description: Start time in Unix milliseconds
+          schema:
+            type: integer
+            format: int64
+            example: 1764000000000
+        - name: end
+          in: query
+          required: true
+          description: End time in Unix milliseconds
+          schema:
+            type: integer
+            format: int64
+            example: 1764086400000
+      responses:
+        '200':
+          description: Successful response with AP statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WiFiStatsAPsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # System Log API (v2)
+  /v2/api/site/{site}/system-log/all:
+    post:
+      summary: Get all system logs
+      description: |
+        Retrieves system logs with optional filtering. Send empty JSON body `{}`
+        for default pagination or include filter parameters.
+        Logs are returned in reverse chronological order.
+      operationId: getSystemLogs
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemLogRequest'
+      responses:
+        '200':
+          description: Successful response with system logs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemLogResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ISP Status API (v2)
+  /v2/api/site/{site}/isp/status:
+    get:
+      summary: Get ISP status with detailed metrics
+      description: |
+        Retrieves comprehensive ISP status including speedtest history,
+        uplink statistics, latency metrics, and connection warnings.
+      operationId: getISPStatus
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with ISP status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ISPStatus'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Client History API (v2)
+  /v2/api/site/{site}/clients/history:
+    get:
+      summary: Get client connection history
+      description: |
+        Retrieves historical information about clients that have connected to the network.
+        Includes clients that are currently offline.
+      operationId: listClientHistory
+      tags:
+        - Clients
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with client history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ClientHistoryEntry'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Speedtest History API (v2)
+  /v2/api/site/{site}/speedtest:
+    get:
+      summary: Get speedtest history
+      description: |
+        Retrieves historical speedtest results for all WAN interfaces.
+      operationId: listSpeedtestHistory
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with speedtest history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpeedtestHistoryResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/speedtest/latest-per-wan:
+    get:
+      summary: Get latest speedtest per WAN
+      description: |
+        Retrieves the latest speedtest result for each WAN interface,
+        including cron schedule and provider capabilities.
+      operationId: getSpeedtestLatestPerWan
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with latest speedtest per WAN
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SpeedtestLatestPerWanResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # VPN Connections API (v2)
+  /v2/api/site/{site}/vpn/connections:
+    get:
+      summary: List VPN connections
+      description: |
+        Retrieves all VPN connections (site-to-site, client VPN, etc.).
+      operationId: listVPNConnections
+      tags:
+        - Traffic
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with VPN connections
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VPNConnectionsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Traffic Routes API (v2)
+  /v2/api/site/{site}/trafficroutes:
+    get:
+      summary: List traffic routes
+      description: |
+        Retrieves all traffic routes (policy-based routing rules).
+      operationId: listTrafficRoutes
+      tags:
+        - Traffic
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with traffic routes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrafficRoute'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # NAT Rules API (v2)
+  /v2/api/site/{site}/nat:
+    get:
+      summary: List NAT rules
+      description: |
+        Retrieves all NAT (port forwarding) rules configured on the site.
+      operationId: listNATRules
+      tags:
+        - Firewall
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with NAT rules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NATRule'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Alerts API (v2)
+  /v2/api/site/{site}/alert:
+    get:
+      summary: List alerts
+      description: |
+        Retrieves all alerts for the site.
+      operationId: listAlerts
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with alerts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AlertsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Warnings API (v2)
+  /v2/api/site/{site}/warnings:
+    get:
+      summary: List warnings
+      description: |
+        Retrieves security warnings including rogue clients and DHCP servers.
+      operationId: listWarnings
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with warnings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WarningsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # AP Groups API (v2)
+  /v2/api/site/{site}/apgroups:
+    get:
+      summary: List AP groups
+      description: |
+        Retrieves all access point groups for the site.
+      operationId: listAPGroups
+      tags:
+        - Devices
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with AP groups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/APGroup'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # RADIUS Profiles API (v2)
+  /v2/api/site/{site}/radius/profiles:
+    get:
+      summary: List RADIUS profiles
+      description: |
+        Retrieves all RADIUS authentication profiles.
+      operationId: listRADIUSProfiles
+      tags:
+        - Clients
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with RADIUS profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RADIUSProfile'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # IPS Alerts API (v2)
+  /v2/api/site/{site}/ips_alerts:
+    get:
+      summary: List IPS alerts
+      description: |
+        Retrieves intrusion prevention system alerts.
+      operationId: listIPSAlerts
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with IPS alerts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IPSAlertsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Content Filtering API (v2)
+  /v2/api/site/{site}/content-filtering:
+    get:
+      summary: List content filtering rules
+      description: |
+        Retrieves content filtering rules for the site.
+      operationId: listContentFilteringRules
+      tags:
+        - Firewall
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with content filtering rules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ContentFilteringRule'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/content-filtering/categories:
+    get:
+      summary: List content filtering categories
+      description: |
+        Retrieves all available content filtering categories.
+      operationId: listContentFilteringCategories
+      tags:
+        - Firewall
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: Category name
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # WiFi Connectivity API (v2)
+  /v2/api/site/{site}/wifi-connectivity:
+    get:
+      summary: Get WiFi connectivity statistics
+      description: |
+        Retrieves WiFi connection attempts and latency statistics.
+      operationId: getWiFiConnectivity
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with WiFi connectivity stats
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WiFiConnectivity'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # WLAN Capabilities API (v2)
+  /v2/api/site/{site}/wlan-capabilities:
+    get:
+      summary: Get WLAN capabilities
+      description: |
+        Retrieves WLAN capabilities like 6GHz and WPA3 support.
+      operationId: getWLANCapabilities
+      tags:
+        - Devices
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with WLAN capabilities
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WLANCapabilities'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Features API (v2)
+  /v2/api/site/{site}/features:
+    get:
+      summary: List supported features
+      description: |
+        Retrieves list of features supported by the controller.
+      operationId: listFeatures
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with features list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: Feature name
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Teleport API (v2)
+  /v2/api/site/{site}/teleport/invitation-history:
+    get:
+      summary: List teleport invitation history
+      description: |
+        Retrieves teleport invitation history with connected clients.
+      operationId: listTeleportInvitationHistory
+      tags:
+        - Clients
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with invitation history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeleportInvitationHistoryResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Notifications API (v2)
+  /v2/api/site/{site}/notifications:
+    get:
+      summary: List notifications
+      description: |
+        Retrieves notifications for the site.
+      operationId: listNotifications
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ACL Rules API (v2)
+  /v2/api/site/{site}/acl-rules:
+    get:
+      summary: List ACL rules
+      description: |
+        Retrieves access control list rules.
+      operationId: listACLRules
+      tags:
+        - Firewall
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with ACL rules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ACLRule'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # RADIUS Users API (v2)
+  /v2/api/site/{site}/radius/users:
+    get:
+      summary: List RADIUS users
+      description: |
+        Retrieves RADIUS users.
+      operationId: listRADIUSUsers
+      tags:
+        - Clients
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with RADIUS users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RADIUSUser'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Hotspot Info API (v2)
+  /v2/api/site/{site}/hotspot/info:
+    get:
+      summary: Get hotspot info
+      description: |
+        Retrieves hotspot configuration status.
+      operationId: getHotspotInfo
+      tags:
+        - Hotspot
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with hotspot info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HotspotInfo'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Clients Traffic Control API (v2)
+  /v2/api/site/{site}/clients/traffic-control:
+    get:
+      summary: Get clients traffic control
+      description: |
+        Retrieves traffic rule counts applied to clients.
+      operationId: getClientsTrafficControl
+      tags:
+        - Clients
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with traffic control data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientsTrafficControl'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # WireGuard API (v2)
+  /v2/api/site/{site}/wireguard/users:
+    get:
+      summary: List WireGuard VPN users
+      description: |
+        Retrieves all WireGuard VPN users configured on the site.
+      operationId: listWireGuardUsers
+      tags:
+        - VPN
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with WireGuard users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WireGuardUser'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/wireguard/users/existing-subnets:
+    get:
+      summary: Get existing WireGuard subnets
+      description: |
+        Retrieves subnets already in use by WireGuard configurations.
+      operationId: getWireGuardExistingSubnets
+      tags:
+        - VPN
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with existing subnets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WireGuardSubnets'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # VPN Client Connections API (v2)
+  /v2/api/site/{site}/vpn/client-connections:
+    get:
+      summary: List VPN client connections
+      description: |
+        Retrieves all VPN client connections (remote access clients).
+      operationId: listVPNClientConnections
+      tags:
+        - VPN
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with VPN client connections
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VPNConnectionsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # BGP API (v2)
+  /v2/api/site/{site}/bgp/config:
+    get:
+      summary: Get BGP configuration
+      description: |
+        Retrieves BGP routing configuration.
+      operationId: getBGPConfig
+      tags:
+        - Routing
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with BGP config
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BGPConfig'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/bgp/config/all:
+    get:
+      summary: Get all BGP configurations
+      description: |
+        Retrieves all BGP configurations across all devices.
+      operationId: getAllBGPConfig
+      tags:
+        - Routing
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with all BGP configs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BGPConfig'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # OSPF API (v2)
+  /v2/api/site/{site}/ospf/router:
+    get:
+      summary: List OSPF routers
+      description: |
+        Retrieves OSPF router configurations.
+      operationId: listOSPFRouters
+      tags:
+        - Routing
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with OSPF routers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OSPFRouter'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/ospf/neighbors:
+    get:
+      summary: List OSPF neighbors
+      description: |
+        Retrieves OSPF neighbor relationships.
+      operationId: listOSPFNeighbors
+      tags:
+        - Routing
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with OSPF neighbors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/OSPFNeighbor'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # QoS Rules API (v2)
+  /v2/api/site/{site}/qos-rules:
+    get:
+      summary: List QoS rules
+      description: |
+        Retrieves Quality of Service rules.
+      operationId: listQoSRules
+      tags:
+        - Firewall
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with QoS rules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/QoSRule'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # WAN SLA API (v2)
+  /v2/api/site/{site}/wan-slas:
+    get:
+      summary: List WAN SLAs
+      description: |
+        Retrieves WAN Service Level Agreement configurations.
+      operationId: listWANSLAs
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with WAN SLAs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WANSLA'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Described Features API (v2)
+  /v2/api/site/{site}/described-features:
+    get:
+      summary: List described features
+      description: |
+        Retrieves detailed list of features with their availability and limitations.
+      operationId: listDescribedFeatures
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with described features
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DescribedFeature'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Vendor IDs API (v2)
+  /v2/api/site/{site}/vendor-ids:
+    get:
+      summary: List vendor IDs
+      description: |
+        Retrieves list of known UniFi device vendor MAC address prefixes.
+      operationId: listVendorIDs
+      tags:
+        - Devices
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with vendor IDs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  description: MAC address prefix (OUI)
+                  example: "94:2a:6f"
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Gateway Engine Features API (v2)
+  /v2/api/site/{site}/gateway-engine/features:
+    get:
+      summary: Get gateway engine features
+      description: |
+        Retrieves status of gateway engine features and their utilization.
+      operationId: getGatewayEngineFeatures
+      tags:
+        - Gateway
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with gateway engine features
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GatewayEngineFeature'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Gateway Engine Most Active Networks API (v2)
+  /v2/api/site/{site}/gateway-engine/most-active-networks:
+    get:
+      summary: Get most active networks
+      description: |
+        Retrieves list of most active networks by client count.
+      operationId: getGatewayEngineMostActiveNetworks
+      tags:
+        - Gateway
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with most active networks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MostActiveNetwork'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Gateway Engine Utilization API (v2)
+  /v2/api/site/{site}/gateway-engine/utilization:
+    get:
+      summary: Get gateway engine utilization
+      description: |
+        Retrieves CPU and memory utilization of the gateway.
+      operationId: getGatewayEngineUtilization
+      tags:
+        - Gateway
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with gateway utilization
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GatewayEngineUtilization'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Hotspot Clients API (v2)
+  /v2/api/site/{site}/hotspot/clients:
+    get:
+      summary: List hotspot clients
+      description: |
+        Retrieves all clients connected via hotspot or regular network.
+      operationId: listHotspotClients
+      tags:
+        - Clients
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with hotspot clients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/HotspotClient'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Loop Detection Info API (v2)
+  /v2/api/site/{site}/loop-detection/info:
+    get:
+      summary: Get loop detection info
+      description: |
+        Retrieves information about detected network loops.
+      operationId: getLoopDetectionInfo
+      tags:
+        - Network
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with loop detection info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoopDetectionInfo'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Port Profiles Defaults API (v2)
+  /v2/api/site/{site}/port-profiles/defaults:
+    get:
+      summary: Get port profile defaults
+      description: |
+        Retrieves default port profile configuration.
+      operationId: getPortProfileDefaults
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with port profile defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortProfileDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # SSL Inspection Categories API (v2)
+  /v2/api/site/{site}/ssl-inspection/categories:
+    get:
+      summary: List SSL inspection categories
+      description: |
+        Retrieves available SSL inspection content categories.
+      operationId: listSSLInspectionCategories
+      tags:
+        - Security
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with SSL inspection categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SSLInspectionCategory'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # SSL Inspection Profiles API (v2)
+  /v2/api/site/{site}/ssl-inspection/profiles:
+    get:
+      summary: List SSL inspection profiles
+      description: |
+        Retrieves SSL inspection profile configurations.
+      operationId: listSSLInspectionProfiles
+      tags:
+        - Security
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with SSL inspection profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SSLInspectionProfile'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # LAN Enriched Configuration API (v2)
+  /v2/api/site/{site}/lan/enriched-configuration:
+    get:
+      summary: Get LAN enriched configuration
+      description: |
+        Retrieves enriched LAN network configurations with details and statistics.
+      operationId: getLANEnrichedConfiguration
+      tags:
+        - Network
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with LAN configurations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/LANEnrichedConfiguration'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # WAN Enriched Configuration API (v2)
+  /v2/api/site/{site}/wan/enriched-configuration:
+    get:
+      summary: Get WAN enriched configuration
+      description: |
+        Retrieves enriched WAN network configurations with details and statistics.
+      operationId: getWANEnrichedConfiguration
+      tags:
+        - Network
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with WAN configurations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WANEnrichedConfiguration'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Score API (v2)
+  /v2/api/site/{site}/score:
+    get:
+      summary: Get network score
+      description: |
+        Retrieves overall network health score and subscores.
+      operationId: getNetworkScore
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with network score
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkScore'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Static DNS Devices API (v2)
+  /v2/api/site/{site}/static-dns/devices:
+    get:
+      summary: List static DNS device mappings
+      description: |
+        Retrieves device mappings that can be used for static DNS.
+      operationId: listStaticDNSDevices
+      tags:
+        - DNS
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with static DNS devices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StaticDNSDevice'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Teleport Token API (v2)
+  /v2/api/site/{site}/teleport/token:
+    get:
+      summary: Get teleport tokens
+      description: |
+        Retrieves Teleport VPN tokens with pagination.
+      operationId: getTeleportTokens
+      tags:
+        - VPN
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with teleport tokens
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeleportTokenResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # WiFiMan API (v2)
+  /v2/api/site/{site}/wifiman:
+    get:
+      summary: Get WiFiMan data
+      description: |
+        Retrieves WiFiMan diagnostic data for connected clients.
+      operationId: getWiFiManData
+      tags:
+        - WiFi
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with WiFiMan data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WiFiManEntry'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -880,6 +2304,18 @@ components:
       schema:
         type: string
       example: 507f1f77bcf86cd799439011
+
+    ClientMac:
+      name: clientMac
+      in: path
+      required: true
+      description: |
+        The MAC address of the client device.
+        Format: colon-separated hex pairs (e.g., 36:e9:55:9b:9a:a7)
+      schema:
+        type: string
+        pattern: '^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$'
+      example: "36:e9:55:9b:9a:a7"
 
   responses:
     Unauthorized:
@@ -2329,3 +3765,2928 @@ components:
           type: integer
           description: Downlink port number (for wired)
           example: 1
+
+    # Firewall Zones
+    FirewallZone:
+      type: object
+      description: A firewall zone grouping networks
+      required:
+        - _id
+        - name
+        - zone_key
+      properties:
+        _id:
+          type: string
+          description: Unique identifier
+          example: "68a496708e604379be63f813"
+        name:
+          type: string
+          description: Zone display name
+          example: Internal
+        zone_key:
+          type: string
+          description: Zone key identifier
+          enum:
+            - internal
+            - external
+            - gateway
+            - vpn
+            - hotspot
+            - dmz
+          example: internal
+        default_zone:
+          type: boolean
+          description: Whether this is a default system zone
+          example: true
+        attr_no_edit:
+          type: boolean
+          description: Whether zone attributes cannot be edited
+          example: false
+        network_ids:
+          type: array
+          description: Network IDs associated with this zone
+          items:
+            type: string
+          example:
+            - "66c784195302e23512334eb4"
+
+    FirewallZoneMatrixEntry:
+      type: object
+      description: Zone-to-zone policy matrix entry
+      required:
+        - _id
+        - name
+        - zone_key
+        - data
+      properties:
+        _id:
+          type: string
+          description: Source zone ID
+          example: "68a496708e604379be63f813"
+        name:
+          type: string
+          description: Source zone name
+          example: Internal
+        zone_key:
+          type: string
+          description: Source zone key
+          example: internal
+        data:
+          type: array
+          description: Policy data for each destination zone
+          items:
+            $ref: '#/components/schemas/ZoneMatrixData'
+
+    ZoneMatrixData:
+      type: object
+      description: Policy data between two zones
+      properties:
+        _id:
+          type: string
+          description: Destination zone ID
+          example: "68a496708e604379be63f814"
+        action:
+          type: string
+          description: Default action between zones
+          nullable: true
+          enum:
+            - allow_all
+            - block_all
+            - return_traffic
+          example: allow_all
+        policy_count:
+          type: integer
+          description: Number of policies between zones
+          example: 1
+
+    # Speedtest
+    SpeedtestLatest:
+      type: object
+      description: Latest speedtest results and schedule
+      properties:
+        cron_schedule:
+          type: string
+          description: Cron expression for automatic speedtests
+          example: "0 5 * * *"
+        latest:
+          $ref: '#/components/schemas/SpeedtestResult'
+
+    SpeedtestResult:
+      type: object
+      description: Single speedtest result
+      properties:
+        id:
+          type: string
+          description: Speedtest ID
+          example: "69251ba66fcfc41f6da5aefd"
+        download_mbps:
+          type: integer
+          description: Download speed in Mbps
+          example: 884
+        upload_mbps:
+          type: integer
+          description: Upload speed in Mbps
+          example: 847
+        latency_ms:
+          type: integer
+          description: Latency in milliseconds
+          example: 5
+        time:
+          type: integer
+          description: Unix timestamp in milliseconds
+          example: 1764039581000
+        interface_name:
+          type: string
+          description: WAN interface name
+          example: ppp0
+        network_conf_id:
+          type: string
+          description: Network configuration ID
+          example: "66c784195302e23512334eb3"
+        wan_networkgroup:
+          type: string
+          description: WAN network group name
+          example: WAN
+        wan_provider_capabilities:
+          $ref: '#/components/schemas/WANProviderCapabilities'
+
+    WANProviderCapabilities:
+      type: object
+      description: ISP-advertised capabilities
+      properties:
+        download_kilobits_per_second:
+          type: integer
+          description: Max download in kbps
+          example: 1000000
+        upload_kilobits_per_second:
+          type: integer
+          description: Max upload in kbps
+          example: 1000000
+
+    # DHCP Leases
+    DHCPLeasesResponse:
+      type: object
+      description: DHCP leases response
+      properties:
+        dhcp_lease_info:
+          type: array
+          description: List of DHCP leases
+          items:
+            $ref: '#/components/schemas/DHCPLease'
+
+    DHCPLease:
+      type: object
+      description: A DHCP lease entry
+      properties:
+        mac:
+          type: string
+          description: Client MAC address
+          example: "04:99:b9:66:89:a3"
+        ip:
+          type: string
+          description: Assigned IP address
+          example: "172.16.10.40"
+        hostname:
+          type: string
+          description: Client hostname
+          example: "iPhone"
+        display_name:
+          type: string
+          description: Display name
+          example: "iPhone 9a:a7"
+        client_type:
+          type: string
+          description: Connection type
+          enum:
+            - WIRED
+            - WIRELESS
+          example: WIRELESS
+        status:
+          type: string
+          description: Client status
+          enum:
+            - online
+            - offline
+          example: online
+        network_id:
+          type: string
+          description: Network ID
+          example: "66c784195302e23512334eb4"
+        lease_expiration_time:
+          type: integer
+          description: Lease expiration Unix timestamp (0 = static)
+          example: 1764150530
+        use_fixedip:
+          type: boolean
+          description: Whether using fixed IP
+          example: false
+        fixed_ip:
+          type: string
+          description: Fixed IP if configured
+          example: "172.16.101.1"
+        local_dns_record:
+          type: string
+          description: Local DNS record name
+          example: "server.home.local"
+        oui:
+          type: string
+          description: Manufacturer from OUI lookup
+          example: "Apple, Inc."
+        name:
+          type: string
+          description: Custom name if set
+        fingerprint:
+          $ref: '#/components/schemas/DeviceFingerprint'
+        device_type:
+          type: string
+          description: UniFi device type (for UniFi devices)
+          enum:
+            - uap
+            - usw
+            - ugw
+        model:
+          type: string
+          description: Device model (for UniFi devices)
+          example: UAP6MP
+        state:
+          type: string
+          description: Device state (for UniFi devices)
+          example: CONNECTED
+
+    DeviceFingerprint:
+      type: object
+      description: Device fingerprint information
+      properties:
+        dev_cat:
+          type: integer
+          description: Device category ID
+          example: 44
+        dev_family:
+          type: integer
+          description: Device family ID
+          example: 9
+        dev_id:
+          type: integer
+          description: Device ID
+          example: 2859
+        dev_vendor:
+          type: integer
+          description: Vendor ID
+          example: 320
+        os_name:
+          type: integer
+          description: OS name ID
+          example: 24
+        os_class:
+          type: integer
+          description: OS class ID
+        confidence:
+          type: integer
+          description: Confidence level (0-100)
+          example: 100
+        computed_dev_id:
+          type: integer
+          description: Computed device ID
+        computed_engine:
+          type: integer
+          description: Fingerprint engine used
+        has_override:
+          type: boolean
+          description: Whether fingerprint was overridden
+          example: false
+        dev_id_override:
+          type: integer
+          description: Overridden device ID if any
+
+    # ISP Health
+    ISPHealth:
+      type: object
+      description: ISP health status with historical stats
+      properties:
+        health_stats:
+          type: array
+          description: Historical health statistics
+          items:
+            $ref: '#/components/schemas/ISPHealthStat'
+
+    ISPHealthStat:
+      type: object
+      description: ISP health stat entry
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: Unix timestamp in milliseconds
+          example: 1764071400000
+        failover_wan_active:
+          type: boolean
+          description: Whether failover WAN is active
+          example: false
+        wan2_failover_active:
+          type: boolean
+          description: Whether WAN2 failover is active
+          example: false
+        wan_downtime:
+          type: boolean
+          description: Whether WAN is down
+          example: false
+        high_latency:
+          type: boolean
+          description: Whether high latency detected
+          example: false
+        packet_loss:
+          type: boolean
+          description: Whether packet loss detected
+          example: false
+
+    ISPHealthCompact:
+      type: object
+      description: Compact ISP health summary with periods
+      properties:
+        periods:
+          type: array
+          description: Health periods
+          items:
+            type: object
+            additionalProperties: true
+
+    # Active Client Details (v2 API)
+    ActiveClientDetails:
+      type: object
+      description: Detailed information about an active client
+      properties:
+        id:
+          type: string
+          description: Client identifier (same as MAC)
+          example: "36:e9:55:9b:9a:a7"
+        mac:
+          type: string
+          description: MAC address
+          example: "36:e9:55:9b:9a:a7"
+        ip:
+          type: string
+          description: IP address
+          example: "172.16.10.143"
+        hostname:
+          type: string
+          description: Client hostname
+          example: iPhone
+        display_name:
+          type: string
+          description: Display name
+          example: "iPhone 9a:a7"
+        model_name:
+          type: string
+          description: Device model name (from fingerprint)
+          example: "Apple iPhone 11 Pro"
+        oui:
+          type: string
+          description: Manufacturer from OUI lookup
+        status:
+          type: string
+          description: Connection status
+          enum:
+            - online
+            - offline
+          example: online
+        type:
+          type: string
+          description: Connection type
+          enum:
+            - WIRELESS
+            - WIRED
+          example: WIRELESS
+        is_wired:
+          type: boolean
+          description: Whether client is wired
+          example: false
+        is_guest:
+          type: boolean
+          description: Whether client is on guest network
+          example: false
+        is_mlo:
+          type: boolean
+          description: Whether using Multi-Link Operation (WiFi 7)
+          example: false
+        blocked:
+          type: boolean
+          description: Whether client is blocked
+          example: false
+        noted:
+          type: boolean
+          description: Whether client is noted/starred
+          example: false
+        # Network identifiers
+        network_id:
+          type: string
+          description: Network ID
+          example: "66c784195302e23512334eb4"
+        network_name:
+          type: string
+          description: Network name
+          example: Default
+        site_id:
+          type: string
+          description: Site ID
+          example: "66c784155302e23512334e9b"
+        user_id:
+          type: string
+          description: User ID
+          example: "689c5cc8d46ec26456f433c5"
+        usergroup_id:
+          type: string
+          description: User group ID
+        wlanconf_id:
+          type: string
+          description: WLAN configuration ID
+          example: "66c784a65302e23512334ec7"
+        network_members_group_ids:
+          type: array
+          description: Network member group IDs
+          items:
+            type: string
+        # WiFi connection details
+        ap_mac:
+          type: string
+          description: Access point MAC address
+          example: "94:2a:6f:ce:26:52"
+        bssid:
+          type: string
+          description: BSSID
+          example: "94:2a:6f:ce:26:58"
+        essid:
+          type: string
+          description: SSID name
+          example: "f@lex.la"
+        channel:
+          type: integer
+          description: WiFi channel
+          example: 44
+        channel_width:
+          type: string
+          description: Channel width
+          example: "80"
+        radio:
+          type: string
+          description: Radio band (na=5GHz, ng=2.4GHz)
+          example: na
+        last_radio:
+          type: string
+          description: Last used radio band
+          example: na
+        radio_name:
+          type: string
+          description: Radio interface name
+          example: wifi1
+        radio_proto:
+          type: string
+          description: WiFi protocol
+          enum:
+            - a
+            - b
+            - g
+            - n
+            - ac
+            - ax
+            - be
+          example: ax
+        mimo:
+          type: string
+          description: MIMO configuration
+          example: MIMO_2
+        # Signal quality
+        signal:
+          type: integer
+          description: Signal strength in dBm
+          example: -57
+        rssi:
+          type: integer
+          description: RSSI value
+          example: 36
+        noise:
+          type: integer
+          description: Noise floor in dBm
+          example: -93
+        ccq:
+          type: integer
+          description: Client Connection Quality (0-1000)
+          example: 933
+        # WiFi experience
+        wifi_experience_score:
+          type: integer
+          description: Current WiFi experience score (0-100)
+          example: 99
+        wifi_experience_average:
+          type: integer
+          description: Average WiFi experience score
+          example: 98
+        wifi_tx_attempts:
+          type: integer
+          description: Total TX attempts
+          example: 250652
+        wifi_tx_retries_percentage:
+          type: number
+          format: float
+          description: TX retry percentage
+          example: 9.7
+        satisfaction:
+          type: integer
+          description: Satisfaction score (legacy)
+        anomalies:
+          type: integer
+          description: Number of detected anomalies
+          example: 0
+        # Traffic statistics
+        rx_bytes:
+          type: integer
+          format: int64
+          description: Total received bytes
+          example: 1029984838
+        tx_bytes:
+          type: integer
+          format: int64
+          description: Total transmitted bytes
+          example: 472635464
+        rx_bytes-r:
+          type: integer
+          description: Recent received bytes rate
+          example: 430
+        tx_bytes-r:
+          type: integer
+          description: Recent transmitted bytes rate
+          example: 1651
+        rx_packets:
+          type: integer
+          format: int64
+          description: Total received packets
+          example: 1035276
+        tx_packets:
+          type: integer
+          format: int64
+          description: Total transmitted packets
+          example: 713482
+        rx_rate:
+          type: integer
+          description: RX rate in Kbps
+          example: 720600
+        tx_rate:
+          type: integer
+          description: TX rate in Kbps
+          example: 720600
+        tx_mcs_index:
+          type: integer
+          description: TX MCS index (-1 if N/A)
+          example: -1
+        rate_imbalance:
+          type: integer
+          description: Rate imbalance indicator
+          example: 0
+        # Timestamps
+        first_seen:
+          type: integer
+          format: int64
+          description: First seen Unix timestamp
+          example: 1755077832
+        last_seen:
+          type: integer
+          format: int64
+          description: Last seen Unix timestamp
+          example: 1764072754
+        assoc_time:
+          type: integer
+          format: int64
+          description: Association time Unix timestamp
+          example: 1763914030
+        latest_assoc_time:
+          type: integer
+          format: int64
+          description: Latest association Unix timestamp
+          example: 1764072754
+        dhcpend_time:
+          type: integer
+          description: DHCP lease end time (0 if not applicable)
+          example: 0
+        uptime:
+          type: integer
+          description: Connection uptime in seconds
+          example: 158724
+        idletime:
+          type: integer
+          description: Idle time in seconds
+          example: 8
+        roam_count:
+          type: integer
+          description: Number of roaming events
+          example: 9
+        # Uplink info
+        uplink_mac:
+          type: string
+          description: Uplink device MAC
+          example: "94:2a:6f:ce:26:52"
+        last_uplink_mac:
+          type: string
+          description: Last uplink device MAC
+          example: "94:2a:6f:ce:26:52"
+        last_uplink_name:
+          type: string
+          description: Last uplink device name
+          example: "LexFrei's home"
+        gw_mac:
+          type: string
+          description: Gateway MAC address
+          example: "94:2a:6f:ce:26:52"
+        # IPv6
+        last_ipv6:
+          type: array
+          description: Last known IPv6 addresses
+          items:
+            type: string
+          example:
+            - "fe80::10ad:2423:75e7:2355"
+            - "fd90:7b94:751d:4549:4f9:4282:6dc8:a98f"
+        # Device fingerprint
+        fingerprint:
+          $ref: '#/components/schemas/DeviceFingerprint'
+        # Settings
+        use_fixedip:
+          type: boolean
+          description: Whether using fixed IP
+          example: false
+        local_dns_record_enabled:
+          type: boolean
+          description: Whether local DNS record is enabled
+          example: false
+        powersave_enabled:
+          type: boolean
+          description: Whether power save mode is enabled
+          example: true
+        virtual_network_override_enabled:
+          type: boolean
+          description: Whether virtual network override is enabled
+          example: false
+        is_allowed_in_visual_programming:
+          type: boolean
+          description: Whether allowed in visual programming
+          example: true
+        unifi_device:
+          type: boolean
+          description: Whether this is a UniFi device
+          example: false
+        tags:
+          type: array
+          description: Client tags
+          items:
+            type: string
+          example:
+            - connected_client
+            - connected_wireless_client
+
+    # WiFi AP Statistics
+    WiFiStatsAPsResponse:
+      type: object
+      description: WiFi statistics for all access points
+      properties:
+        ap_details:
+          type: array
+          description: Statistics per access point
+          items:
+            $ref: '#/components/schemas/WiFiStatsAP'
+
+    WiFiStatsAP:
+      type: object
+      description: Statistics for a single access point
+      properties:
+        device_mac:
+          type: string
+          description: Access point MAC address
+          example: "94:2a:6f:ce:26:52"
+        clients_count:
+          type: integer
+          description: Number of connected clients
+          example: 7
+        satisfaction_avg:
+          type: integer
+          description: Average satisfaction score (0-100)
+          example: 99
+        signal_avg:
+          type: integer
+          description: Average signal strength in dBm
+          example: -51
+        weakest_clients_signal_avg:
+          type: integer
+          description: Average signal of weakest clients in dBm
+          example: -61
+        phy_rate_max:
+          type: integer
+          description: Maximum PHY rate in Kbps
+          example: 1201000
+        phy_rate_most_common:
+          type: integer
+          description: Most common PHY rate in Kbps
+          example: 0
+        roams_count:
+          type: integer
+          description: Number of roaming events
+          example: 4
+        tx_retries_percentage:
+          type: number
+          format: float
+          description: TX retry percentage
+          example: 7.5
+        total_traffic_percentage:
+          type: number
+          format: float
+          description: Percentage of total network traffic
+          example: 98.5
+
+    # System Log
+    SystemLogRequest:
+      type: object
+      description: |
+        Request body for system logs. Send empty object `{}` for default pagination.
+      properties:
+        page_number:
+          type: integer
+          description: Page number (0-indexed)
+          default: 0
+          example: 0
+        page_size:
+          type: integer
+          description: Number of entries per page
+          default: 50
+          example: 50
+
+    SystemLogResponse:
+      type: object
+      description: Paginated system log response
+      properties:
+        data:
+          type: array
+          description: Log entries
+          items:
+            $ref: '#/components/schemas/SystemLogEntry'
+        page_number:
+          type: integer
+          description: Current page number (0-indexed)
+          example: 0
+        total_element_count:
+          type: integer
+          description: Total number of log entries
+          example: 3291
+        total_page_count:
+          type: integer
+          description: Total number of pages
+          example: 66
+
+    SystemLogEntry:
+      type: object
+      description: A system log entry
+      properties:
+        _id:
+          type: string
+          description: Log entry ID
+          example: "674a8c2f5302e23512d4f123"
+        datetime:
+          type: string
+          format: date-time
+          description: Log entry timestamp in ISO 8601 format
+          example: "2025-11-25T10:30:00Z"
+        time:
+          type: integer
+          format: int64
+          description: Unix timestamp in milliseconds
+          example: 1764072600000
+        key:
+          type: string
+          description: Log event key/type
+          example: "EVT_WU_Connected"
+        msg:
+          type: string
+          description: Human-readable log message
+          example: "User[36:e9:55:9b:9a:a7] has connected to AP[94:2a:6f:ce:26:52]"
+        subsystem:
+          type: string
+          description: System subsystem
+          enum:
+            - wlan
+            - lan
+            - wan
+            - system
+            - vpn
+            - firewall
+          example: wlan
+        is_admin:
+          type: boolean
+          description: Whether this is an admin activity
+          example: false
+        is_negative:
+          type: boolean
+          description: Whether this is a negative/error event
+          example: false
+        # Optional context fields
+        user:
+          type: string
+          description: Related user/client MAC
+          example: "36:e9:55:9b:9a:a7"
+        ap:
+          type: string
+          description: Related AP MAC
+          example: "94:2a:6f:ce:26:52"
+        ap_name:
+          type: string
+          description: AP name
+          example: "LexFrei's home"
+        ssid:
+          type: string
+          description: Related SSID
+          example: "f@lex.la"
+        network:
+          type: string
+          description: Related network name
+          example: Default
+        channel:
+          type: integer
+          description: WiFi channel
+          example: 44
+        hostname:
+          type: string
+          description: Client hostname
+          example: iPhone
+
+    # ISP Status (comprehensive)
+    ISPStatus:
+      type: object
+      description: Comprehensive ISP status with metrics and history
+      properties:
+        ping_server:
+          type: string
+          description: Server used for latency measurements
+          example: "ping.ui.com"
+        latency_max:
+          type: integer
+          description: Maximum latency observed in ms
+          example: 47
+        connection_warnings:
+          $ref: '#/components/schemas/ISPConnectionWarnings'
+        internet_alerts:
+          $ref: '#/components/schemas/ISPInternetAlerts'
+        speedtest_historical:
+          type: array
+          description: Historical speedtest results
+          items:
+            $ref: '#/components/schemas/SpeedtestHistoricalEntry'
+        uplink_status:
+          $ref: '#/components/schemas/ISPUplinkStatus'
+
+    ISPConnectionWarnings:
+      type: object
+      description: Connection warning events
+      properties:
+        downtimes:
+          type: array
+          description: Downtime events
+          items:
+            type: object
+            additionalProperties: true
+        high_latencies:
+          type: array
+          description: High latency events
+          items:
+            type: object
+            additionalProperties: true
+        packet_loss:
+          type: array
+          description: Packet loss events
+          items:
+            type: object
+            additionalProperties: true
+
+    ISPInternetAlerts:
+      type: object
+      description: Paginated internet alerts
+      properties:
+        data:
+          type: array
+          description: Alert entries
+          items:
+            type: object
+            additionalProperties: true
+        page_number:
+          type: integer
+          example: 0
+        total_element_count:
+          type: integer
+          example: 0
+        total_page_count:
+          type: integer
+          example: 0
+
+    SpeedtestHistoricalEntry:
+      type: object
+      description: Historical speedtest result
+      properties:
+        id:
+          type: string
+          description: Speedtest ID
+          example: "691d32706fcfc41f6d9dcf5e"
+        interface_name:
+          type: string
+          description: WAN interface name
+          example: ppp0
+        wan_networkgroup:
+          type: string
+          description: WAN network group
+          example: WAN
+        time:
+          type: integer
+          format: int64
+          description: Test time in Unix milliseconds
+          example: 1763521130000
+        download_mbps:
+          type: integer
+          description: Download speed in Mbps
+          example: 783
+        upload_mbps:
+          type: integer
+          description: Upload speed in Mbps
+          example: 752
+        latency_ms:
+          type: integer
+          description: Latency in ms
+          example: 16
+
+    ISPUplinkStatus:
+      type: object
+      description: Uplink status and statistics
+      properties:
+        latency_threshold:
+          type: integer
+          description: Latency threshold for warnings in ms
+          example: 32
+        received_bytes:
+          type: integer
+          format: int64
+          description: Total received bytes
+          example: 24868870964
+        statistics:
+          type: array
+          description: Time-series uplink statistics
+          items:
+            $ref: '#/components/schemas/UplinkStatisticsEntry'
+
+    UplinkStatisticsEntry:
+      type: object
+      description: Uplink statistics for a time interval
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: Timestamp in Unix milliseconds
+          example: 1763985300000
+        downtime:
+          type: boolean
+          description: Whether downtime was detected
+          example: false
+        latency:
+          type: integer
+          description: Average latency in ms
+          example: 17
+        latency_max:
+          type: integer
+          description: Maximum latency in ms
+          example: 20
+        received_bytes_rate_avg:
+          type: integer
+          description: Average received bytes rate
+          example: 172267
+        transmitted_bytes_rate_avg:
+          type: integer
+          description: Average transmitted bytes rate
+          example: 6359175
+
+    # Client History Entry
+    ClientHistoryEntry:
+      type: object
+      description: Historical client connection information
+      properties:
+        id:
+          type: string
+          description: Client ID (MAC address)
+          example: "54:8c:a0:f8:bc:67"
+        mac:
+          type: string
+          description: MAC address
+          example: "54:8c:a0:f8:bc:67"
+        hostname:
+          type: string
+          description: Client hostname
+          example: "DESKTOP-7T43I8I"
+        display_name:
+          type: string
+          description: Display name
+          example: "DESKTOP-7T43I8I bc:67"
+        model_name:
+          type: string
+          description: Device model name
+          example: "Generic Laptop"
+        oui:
+          type: string
+          description: Manufacturer from OUI lookup
+          example: "Liteon Technology Corporation"
+        status:
+          type: string
+          description: Current status
+          enum:
+            - online
+            - offline
+          example: offline
+        type:
+          type: string
+          description: Connection type
+          enum:
+            - WIRELESS
+            - WIRED
+          example: WIRELESS
+        is_wired:
+          type: boolean
+          description: Whether client is wired
+          example: false
+        is_guest:
+          type: boolean
+          description: Whether on guest network
+          example: false
+        is_mlo:
+          type: boolean
+          description: Whether using MLO
+          example: false
+        blocked:
+          type: boolean
+          description: Whether client is blocked
+          example: false
+        noted:
+          type: boolean
+          description: Whether client is noted
+          example: false
+        # Network info
+        last_ip:
+          type: string
+          description: Last known IP address
+          example: "172.16.10.52"
+        last_ipv6:
+          type: array
+          description: Last known IPv6 addresses
+          items:
+            type: string
+        last_connection_network_id:
+          type: string
+          description: Last connected network ID
+          example: "66c784195302e23512334eb4"
+        last_connection_network_name:
+          type: string
+          description: Last connected network name
+          example: Default
+        site_id:
+          type: string
+          description: Site ID
+          example: "66c784155302e23512334e9b"
+        user_id:
+          type: string
+          description: User ID
+          example: "691b87626fcfc41f6d9b6ed6"
+        usergroup_id:
+          type: string
+          description: User group ID
+        wlanconf_id:
+          type: string
+          description: WLAN configuration ID
+          example: "66c784a65302e23512334ec7"
+        network_members_group_ids:
+          type: array
+          description: Network member group IDs
+          items:
+            type: string
+        tags:
+          type: array
+          description: Client tags
+          items:
+            type: string
+        # WiFi details
+        last_radio:
+          type: string
+          description: Last used radio band
+          example: ng
+        channel:
+          type: integer
+          description: Last channel (0 if offline)
+          example: 0
+        last_uplink_mac:
+          type: string
+          description: Last uplink device MAC
+          example: "ac:8b:a9:3c:12:5d"
+        last_uplink_name:
+          type: string
+          description: Last uplink device name
+          example: "U6 Pro"
+        uplink_mac:
+          type: string
+          description: Current uplink MAC (empty if offline)
+        # Timestamps
+        first_seen:
+          type: integer
+          format: int64
+          description: First seen Unix timestamp
+          example: 1763411809
+        last_seen:
+          type: integer
+          format: int64
+          description: Last seen Unix timestamp
+          example: 1764035824
+        ipv4_lease_expiration_timestamp_seconds:
+          type: integer
+          format: int64
+          description: IPv4 lease expiration timestamp
+          example: 1764110149
+        # Settings
+        use_fixedip:
+          type: boolean
+          description: Whether using fixed IP
+          example: false
+        virtual_network_override_enabled:
+          type: boolean
+          description: Whether virtual network override enabled
+          example: false
+        local_dns_record_enabled:
+          type: boolean
+          description: Whether local DNS record enabled
+          example: false
+        is_allowed_in_visual_programming:
+          type: boolean
+          description: Whether allowed in visual programming
+          example: true
+        unifi_device:
+          type: boolean
+          description: Whether UniFi device
+          example: false
+        # Fingerprint
+        fingerprint:
+          $ref: '#/components/schemas/DeviceFingerprint'
+
+    # Speedtest History
+    SpeedtestHistoryResponse:
+      type: object
+      description: Speedtest history response
+      properties:
+        data:
+          type: array
+          description: Historical speedtest results
+          items:
+            $ref: '#/components/schemas/SpeedtestResult'
+
+    SpeedtestLatestPerWanResponse:
+      type: object
+      description: Latest speedtest per WAN interface
+      properties:
+        cron_schedule:
+          type: string
+          description: Cron schedule for automatic speedtests
+          example: "0 5 * * *"
+        data:
+          type: array
+          description: Latest speedtest per WAN
+          items:
+            $ref: '#/components/schemas/SpeedtestLatestPerWan'
+
+    SpeedtestLatestPerWan:
+      type: object
+      description: Latest speedtest for a WAN interface
+      properties:
+        id:
+          type: string
+          description: Speedtest ID
+          example: "69251ba66fcfc41f6da5aefd"
+        interface_name:
+          type: string
+          description: WAN interface name
+          example: ppp0
+        wan_networkgroup:
+          type: string
+          description: WAN network group
+          example: WAN
+        network_conf_id:
+          type: string
+          description: Network configuration ID
+          example: "66c784195302e23512334eb3"
+        time:
+          type: integer
+          format: int64
+          description: Test timestamp in Unix milliseconds
+          example: 1764039581000
+        download_mbps:
+          type: integer
+          description: Download speed in Mbps
+          example: 884
+        upload_mbps:
+          type: integer
+          description: Upload speed in Mbps
+          example: 847
+        latency_ms:
+          type: integer
+          description: Latency in ms
+          example: 5
+        wan_provider_capabilities:
+          $ref: '#/components/schemas/WANProviderCapabilities'
+
+    # VPN Connections
+    VPNConnectionsResponse:
+      type: object
+      description: VPN connections response
+      properties:
+        connections:
+          type: array
+          description: List of VPN connections
+          items:
+            $ref: '#/components/schemas/VPNConnection'
+
+    VPNConnection:
+      type: object
+      description: A VPN connection
+      properties:
+        _id:
+          type: string
+          description: Connection ID
+        name:
+          type: string
+          description: Connection name
+        vpn_type:
+          type: string
+          description: VPN type
+          enum:
+            - site-to-site
+            - client-vpn
+            - wireguard
+            - openvpn
+        status:
+          type: string
+          description: Connection status
+          enum:
+            - connected
+            - disconnected
+            - connecting
+        remote_ip:
+          type: string
+          description: Remote IP address
+        local_ip:
+          type: string
+          description: Local IP address
+        uptime:
+          type: integer
+          description: Connection uptime in seconds
+
+    # Traffic Routes
+    TrafficRoute:
+      type: object
+      description: A traffic route (policy-based routing rule)
+      properties:
+        _id:
+          type: string
+          description: Route ID
+        name:
+          type: string
+          description: Route name
+        enabled:
+          type: boolean
+          description: Whether route is enabled
+          example: true
+        matching_target:
+          type: string
+          description: Traffic matching target
+          enum:
+            - INTERNET
+            - DOMAIN
+            - IP
+            - REGION
+        network_id:
+          type: string
+          description: Source network ID
+        domains:
+          type: array
+          description: Target domains (for DOMAIN matching)
+          items:
+            type: string
+        ip_addresses:
+          type: array
+          description: Target IP addresses (for IP matching)
+          items:
+            type: string
+        ip_ranges:
+          type: array
+          description: Target IP ranges (for IP matching)
+          items:
+            type: string
+        regions:
+          type: array
+          description: Target regions (for REGION matching)
+          items:
+            type: string
+        target_device:
+          type: string
+          description: Target device/interface
+          enum:
+            - WAN
+            - WAN2
+
+    # NAT Rules
+    NATRule:
+      type: object
+      description: A NAT (port forwarding) rule
+      properties:
+        _id:
+          type: string
+          description: Rule ID
+        name:
+          type: string
+          description: Rule name
+        enabled:
+          type: boolean
+          description: Whether rule is enabled
+        protocol:
+          type: string
+          description: Protocol
+          enum:
+            - tcp
+            - udp
+            - tcp_udp
+        src_address:
+          type: string
+          description: Source address
+        dst_port:
+          type: string
+          description: Destination port
+        fwd:
+          type: string
+          description: Forward to IP address
+        fwd_port:
+          type: string
+          description: Forward to port
+
+    # Alerts
+    AlertsResponse:
+      type: object
+      description: Alerts response
+      properties:
+        data:
+          type: array
+          description: List of alerts
+          items:
+            $ref: '#/components/schemas/Alert'
+
+    Alert:
+      type: object
+      description: An alert entry
+      properties:
+        id:
+          type: string
+          description: Alert ID
+        category:
+          type: string
+          description: Alert category
+          example: SYSTEM
+        event:
+          type: string
+          description: Event type
+          example: ADMIN_ACCESS
+        key:
+          type: string
+          description: Alert key
+        message:
+          type: string
+          description: Human-readable message
+        message_raw:
+          type: string
+          description: Raw message template
+        severity:
+          type: string
+          description: Alert severity
+          enum:
+            - LOW
+            - MEDIUM
+            - HIGH
+            - CRITICAL
+        status:
+          type: string
+          description: Alert status
+          enum:
+            - NEW
+            - READ
+            - ARCHIVED
+        subcategory:
+          type: string
+          description: Alert subcategory
+        target:
+          type: string
+          description: Target type
+        timestamp:
+          type: integer
+          format: int64
+          description: Alert timestamp in Unix milliseconds
+        title_raw:
+          type: string
+          description: Raw title template
+        show_on_dashboard:
+          type: boolean
+          description: Whether to show on dashboard
+        parameters:
+          type: object
+          description: Alert parameters
+          additionalProperties: true
+
+    # Warnings
+    WarningsResponse:
+      type: object
+      description: Security warnings response
+      properties:
+        rogue_clients:
+          type: array
+          description: Rogue client warnings
+          items:
+            type: object
+            additionalProperties: true
+        rogue_dhcps:
+          type: array
+          description: Rogue DHCP server warnings
+          items:
+            type: object
+            additionalProperties: true
+        missing_windows_defender_firewall_rules:
+          type: array
+          description: Missing Windows Defender firewall rules
+          items:
+            type: object
+            additionalProperties: true
+
+    # AP Groups
+    APGroup:
+      type: object
+      description: An access point group
+      properties:
+        _id:
+          type: string
+          description: Group ID
+        name:
+          type: string
+          description: Group name
+          example: All APs
+        attr_hidden_id:
+          type: string
+          description: Hidden attribute ID
+        attr_no_delete:
+          type: boolean
+          description: Whether group cannot be deleted
+        for_wlanconf:
+          type: boolean
+          description: Used for WLAN configuration
+        device_macs:
+          type: array
+          description: MAC addresses of devices in group
+          items:
+            type: string
+
+    # RADIUS Profiles
+    RADIUSProfile:
+      type: object
+      description: A RADIUS authentication profile
+      properties:
+        _id:
+          type: string
+          description: Profile ID
+        name:
+          type: string
+          description: Profile name
+          example: Default
+        attr_hidden_id:
+          type: string
+          description: Hidden attribute ID
+        attr_no_delete:
+          type: boolean
+          description: Whether profile cannot be deleted
+        attr_no_edit:
+          type: boolean
+          description: Whether profile cannot be edited
+        accounting_enabled:
+          type: boolean
+          description: Whether accounting is enabled
+        interim_update_enabled:
+          type: boolean
+          description: Whether interim updates are enabled
+        vlan_enabled:
+          type: boolean
+          description: Whether VLAN support is enabled
+        auth_servers:
+          type: array
+          description: Authentication servers
+          items:
+            $ref: '#/components/schemas/RADIUSServer'
+        acct_servers:
+          type: array
+          description: Accounting servers
+          items:
+            $ref: '#/components/schemas/RADIUSServer'
+
+    RADIUSServer:
+      type: object
+      description: A RADIUS server configuration
+      properties:
+        ip:
+          type: string
+          description: Server IP address
+          example: 192.168.1.1
+        port:
+          type: integer
+          description: Server port
+          example: 1812
+        x_secret:
+          type: string
+          description: Shared secret
+
+    # IPS Alerts
+    IPSAlertsResponse:
+      type: object
+      description: IPS alerts response
+      properties:
+        data:
+          type: array
+          description: List of IPS alerts
+          items:
+            $ref: '#/components/schemas/IPSAlert'
+
+    IPSAlert:
+      type: object
+      description: An IPS alert entry
+      properties:
+        id:
+          type: string
+          description: Alert ID
+        signature_id:
+          type: integer
+          description: Signature ID
+        signature_name:
+          type: string
+          description: Signature name
+        category:
+          type: string
+          description: Alert category
+        severity:
+          type: string
+          description: Alert severity
+        timestamp:
+          type: integer
+          format: int64
+          description: Alert timestamp
+        src_ip:
+          type: string
+          description: Source IP
+        dst_ip:
+          type: string
+          description: Destination IP
+        src_port:
+          type: integer
+          description: Source port
+        dst_port:
+          type: integer
+          description: Destination port
+        protocol:
+          type: string
+          description: Protocol
+
+    # Content Filtering
+    ContentFilteringRule:
+      type: object
+      description: A content filtering rule
+      properties:
+        _id:
+          type: string
+          description: Rule ID
+        name:
+          type: string
+          description: Rule name
+        enabled:
+          type: boolean
+          description: Whether rule is enabled
+        categories:
+          type: array
+          description: Blocked categories
+          items:
+            type: string
+
+    # WiFi Connectivity
+    WiFiConnectivity:
+      type: object
+      description: WiFi connectivity statistics
+      properties:
+        attempts:
+          $ref: '#/components/schemas/WiFiConnectivityAttempts'
+        latencies:
+          $ref: '#/components/schemas/WiFiConnectivityLatencies'
+        total_clients:
+          type: integer
+          description: Total number of clients
+        event_groups:
+          type: array
+          description: Connection event groups
+          items:
+            type: object
+            additionalProperties: true
+
+    WiFiConnectivityAttempts:
+      type: object
+      description: WiFi connection attempt statistics
+      properties:
+        total_attempts:
+          type: integer
+          description: Total connection attempts
+        failed_client_connections:
+          type: integer
+          description: Failed connections
+        success_ratio:
+          type: number
+          format: float
+          description: Success ratio percentage
+        association_ratio:
+          type: number
+          format: float
+          description: Association success ratio
+        authentication_ratio:
+          type: number
+          format: float
+          description: Authentication success ratio
+        dhcp_ratio:
+          type: number
+          format: float
+          description: DHCP success ratio
+        dns_ratio:
+          type: number
+          format: float
+          description: DNS success ratio
+
+    WiFiConnectivityLatencies:
+      type: object
+      description: WiFi latency statistics
+      properties:
+        total_latency:
+          type: integer
+          description: Total latency in microseconds
+        association_latency:
+          type: integer
+          description: Association latency
+        authentication_latency:
+          type: integer
+          description: Authentication latency
+        dhcp_latency:
+          type: integer
+          description: DHCP latency
+        traffic_latency:
+          type: integer
+          description: Traffic latency
+
+    # WLAN Capabilities
+    WLANCapabilities:
+      type: object
+      description: WLAN capabilities
+      properties:
+        6ghz_band_supported:
+          type: boolean
+          description: Whether 6GHz band is supported
+        wpa3_supported:
+          type: boolean
+          description: Whether WPA3 is supported
+
+    # Teleport
+    TeleportInvitationHistoryResponse:
+      type: object
+      description: Teleport invitation history response
+      properties:
+        data:
+          type: array
+          description: Invitation history entries
+          items:
+            $ref: '#/components/schemas/TeleportInvitation'
+        page_number:
+          type: integer
+          description: Current page number
+        total_page_count:
+          type: integer
+          description: Total pages
+        total_element_count:
+          type: integer
+          description: Total elements
+
+    TeleportInvitation:
+      type: object
+      description: A teleport invitation
+      properties:
+        invitation_token_id:
+          type: string
+          description: Invitation token ID
+        invitation_url:
+          type: string
+          description: Invitation URL
+        invitation_status:
+          type: string
+          description: Invitation status
+          enum:
+            - pending
+            - accepted
+            - expired
+        creation_timestamp:
+          type: integer
+          format: int64
+          description: Creation timestamp
+        token_id:
+          type: string
+          description: Token ID
+        client:
+          $ref: '#/components/schemas/TeleportClient'
+
+    TeleportClient:
+      type: object
+      description: A teleport client
+      properties:
+        id:
+          type: string
+          description: Client ID
+        external_client_id:
+          type: string
+          description: External client ID
+        name:
+          type: string
+          description: Client name
+        display_name:
+          type: string
+          description: Display name
+        ip:
+          type: string
+          description: Client IP
+        status:
+          type: string
+          description: Client status
+        type:
+          type: string
+          description: Client type
+        site_id:
+          type: string
+          description: Site ID
+        network_id:
+          type: string
+          description: Network ID
+        token_id:
+          type: string
+          description: Token ID
+        assoc_time:
+          type: integer
+          format: int64
+          description: Association time
+        last_seen:
+          type: integer
+          format: int64
+          description: Last seen timestamp
+
+    # Notifications
+    Notification:
+      type: object
+      description: A notification entry
+      properties:
+        id:
+          type: string
+          description: Notification ID
+        type:
+          type: string
+          description: Notification type
+        message:
+          type: string
+          description: Message
+        timestamp:
+          type: integer
+          format: int64
+          description: Timestamp
+        read:
+          type: boolean
+          description: Whether notification is read
+
+    # ACL Rules
+    ACLRule:
+      type: object
+      description: An ACL rule
+      properties:
+        _id:
+          type: string
+          description: Rule ID
+        name:
+          type: string
+          description: Rule name
+        enabled:
+          type: boolean
+          description: Whether rule is enabled
+        action:
+          type: string
+          description: Rule action
+          enum:
+            - allow
+            - deny
+        src_address:
+          type: string
+          description: Source address
+        dst_address:
+          type: string
+          description: Destination address
+
+    # RADIUS Users
+    RADIUSUser:
+      type: object
+      description: A RADIUS user
+      properties:
+        _id:
+          type: string
+          description: User ID
+        name:
+          type: string
+          description: Username
+        vlan:
+          type: integer
+          description: VLAN ID
+        tunnel_type:
+          type: integer
+          description: Tunnel type
+        tunnel_medium_type:
+          type: integer
+          description: Tunnel medium type
+
+    # Hotspot Info
+    HotspotInfo:
+      type: object
+      description: Hotspot configuration info
+      properties:
+        show_hotspot_manager:
+          type: boolean
+          description: Whether hotspot manager is shown
+
+    # Clients Traffic Control
+    ClientsTrafficControl:
+      type: object
+      description: Clients traffic control data
+      properties:
+        applied_traffic_rule_count:
+          type: object
+          description: Traffic rule counts per client MAC
+          additionalProperties:
+            type: integer
+
+    # WireGuard
+    WireGuardUser:
+      type: object
+      description: A WireGuard VPN user
+      properties:
+        _id:
+          type: string
+          description: User ID
+        name:
+          type: string
+          description: User name
+        enabled:
+          type: boolean
+          description: Whether user is enabled
+        public_key:
+          type: string
+          description: User's public key
+        tunnel_ip:
+          type: string
+          description: Assigned tunnel IP
+        network_id:
+          type: string
+          description: Associated network ID
+
+    WireGuardSubnets:
+      type: object
+      description: WireGuard existing subnets
+      properties:
+        subnets:
+          type: array
+          description: List of subnets in use
+          items:
+            type: string
+
+    # BGP
+    BGPConfig:
+      type: object
+      description: BGP configuration
+      properties:
+        _id:
+          type: string
+          description: Config ID
+        device_mac:
+          type: string
+          description: Device MAC address
+        enabled:
+          type: boolean
+          description: Whether BGP is enabled
+        local_as:
+          type: integer
+          description: Local AS number
+        router_id:
+          type: string
+          description: BGP router ID
+        neighbors:
+          type: array
+          description: BGP neighbors
+          items:
+            $ref: '#/components/schemas/BGPNeighbor'
+
+    BGPNeighbor:
+      type: object
+      description: A BGP neighbor
+      properties:
+        ip:
+          type: string
+          description: Neighbor IP address
+        remote_as:
+          type: integer
+          description: Remote AS number
+        description:
+          type: string
+          description: Neighbor description
+
+    # OSPF
+    OSPFRouter:
+      type: object
+      description: OSPF router configuration
+      properties:
+        _id:
+          type: string
+          description: Router ID
+        device_mac:
+          type: string
+          description: Device MAC address
+        enabled:
+          type: boolean
+          description: Whether OSPF is enabled
+        router_id:
+          type: string
+          description: OSPF router ID
+        areas:
+          type: array
+          description: OSPF areas
+          items:
+            type: string
+
+    OSPFNeighbor:
+      type: object
+      description: An OSPF neighbor
+      properties:
+        neighbor_id:
+          type: string
+          description: Neighbor router ID
+        ip:
+          type: string
+          description: Neighbor IP address
+        state:
+          type: string
+          description: Neighbor state
+          enum:
+            - DOWN
+            - INIT
+            - 2WAY
+            - EXSTART
+            - EXCHANGE
+            - LOADING
+            - FULL
+        interface:
+          type: string
+          description: Interface name
+
+    # QoS
+    QoSRule:
+      type: object
+      description: A QoS rule
+      properties:
+        _id:
+          type: string
+          description: Rule ID
+        name:
+          type: string
+          description: Rule name
+        enabled:
+          type: boolean
+          description: Whether rule is enabled
+        bandwidth_limit:
+          type: integer
+          description: Bandwidth limit in Kbps
+        direction:
+          type: string
+          description: Traffic direction
+          enum:
+            - upload
+            - download
+            - both
+
+    # WAN SLA
+    WANSLA:
+      type: object
+      description: WAN SLA configuration
+      properties:
+        _id:
+          type: string
+          description: SLA ID
+        name:
+          type: string
+          description: SLA name
+        enabled:
+          type: boolean
+          description: Whether SLA is enabled
+        target_latency_ms:
+          type: integer
+          description: Target latency in milliseconds
+        target_packet_loss_percent:
+          type: number
+          format: float
+          description: Target packet loss percentage
+
+    # Described Feature
+    DescribedFeature:
+      type: object
+      description: A described feature with availability status
+      properties:
+        name:
+          type: string
+          description: Feature name
+        feature_exists:
+          type: boolean
+          description: Whether feature exists/is available
+        enabled:
+          type: boolean
+          description: Whether feature is enabled
+        limitations:
+          type: array
+          description: Feature limitations
+          items:
+            $ref: '#/components/schemas/FeatureLimitation'
+
+    FeatureLimitation:
+      type: object
+      description: A feature limitation
+      properties:
+        key:
+          type: string
+          description: Limitation key
+        device_macs:
+          type: array
+          description: MAC addresses of affected devices
+          items:
+            type: string
+
+    # Gateway Engine Feature
+    GatewayEngineFeature:
+      type: object
+      description: Gateway engine feature status
+      properties:
+        type:
+          type: string
+          description: Feature type
+        enabled:
+          type: boolean
+          description: Whether feature is enabled
+        supported:
+          type: boolean
+          description: Whether feature is supported
+        usage_in_percent:
+          type: number
+          format: float
+          description: Feature utilization percentage
+
+    # Most Active Network
+    MostActiveNetwork:
+      type: object
+      description: Most active network by client count
+      properties:
+        id:
+          type: string
+          description: Network ID
+        name:
+          type: string
+          description: Network name
+        type:
+          type: string
+          description: Network type
+          enum:
+            - NETWORK
+            - TELEPORT
+        subnet:
+          type: string
+          description: Network subnet
+        number_of_active_clients:
+          type: integer
+          description: Number of active clients
+
+    # Gateway Engine Utilization
+    GatewayEngineUtilization:
+      type: object
+      description: Gateway CPU and memory utilization
+      properties:
+        cpu_utilization_percent:
+          type: number
+          format: float
+          description: Current CPU utilization percentage
+        memory_utilization_percent:
+          type: number
+          format: float
+          description: Current memory utilization percentage
+        memory_utilization_in_bytes:
+          type: integer
+          format: int64
+          description: Memory usage in bytes
+        memory_total_in_bytes:
+          type: integer
+          format: int64
+          description: Total memory in bytes
+        data_points:
+          type: array
+          description: Historical data points
+          items:
+            $ref: '#/components/schemas/UtilizationDataPoint'
+
+    UtilizationDataPoint:
+      type: object
+      description: A utilization data point
+      properties:
+        timestamp_milliseconds:
+          type: integer
+          format: int64
+          description: Timestamp in milliseconds
+        cpu_utilization_percent:
+          type: number
+          format: float
+          description: CPU utilization at this point
+        memory_utilization_percent:
+          type: number
+          format: float
+          description: Memory utilization at this point
+
+    # Hotspot Client
+    HotspotClient:
+      type: object
+      description: A client connected to the network
+      properties:
+        id:
+          type: string
+          description: Client ID (MAC address)
+        mac:
+          type: string
+          description: MAC address
+        ip:
+          type: string
+          description: IP address
+        hostname:
+          type: string
+          description: Hostname
+        display_name:
+          type: string
+          description: Display name
+        oui:
+          type: string
+          description: OUI vendor name
+        type:
+          type: string
+          description: Connection type
+          enum:
+            - WIRELESS
+            - WIRED
+        status:
+          type: string
+          description: Client status
+          enum:
+            - online
+            - offline
+        is_guest:
+          type: boolean
+          description: Whether client is a guest
+        is_wired:
+          type: boolean
+          description: Whether client is wired
+        blocked:
+          type: boolean
+          description: Whether client is blocked
+        noted:
+          type: boolean
+          description: Whether client is noted
+        uptime:
+          type: integer
+          description: Uptime in seconds
+        rx_bytes-r:
+          type: integer
+          description: Receive bytes rate
+        tx_bytes-r:
+          type: integer
+          description: Transmit bytes rate
+        wifi_experience_score:
+          type: integer
+          description: WiFi experience score (0-100)
+        uplink_mac:
+          type: string
+          description: Uplink device MAC
+        sw_port:
+          type: integer
+          description: Switch port (for wired clients)
+        site_id:
+          type: string
+          description: Site ID
+        fingerprint:
+          $ref: '#/components/schemas/ClientFingerprint'
+
+    ClientFingerprint:
+      type: object
+      description: Client device fingerprint
+      properties:
+        dev_id:
+          type: integer
+          description: Device ID
+        dev_cat:
+          type: integer
+          description: Device category
+        dev_family:
+          type: integer
+          description: Device family
+        dev_vendor:
+          type: integer
+          description: Device vendor
+        os_name:
+          type: integer
+          description: OS name ID
+        os_class:
+          type: integer
+          description: OS class
+        confidence:
+          type: integer
+          description: Fingerprint confidence
+        has_override:
+          type: boolean
+          description: Whether fingerprint has override
+        dev_id_override:
+          type: integer
+          description: Device ID override
+        computed_dev_id:
+          type: integer
+          description: Computed device ID
+        computed_engine:
+          type: integer
+          description: Computed engine
+
+    # Loop Detection Info
+    LoopDetectionInfo:
+      type: object
+      description: Loop detection status
+      properties:
+        keepalive_detected_loop_devices:
+          type: array
+          description: Devices with keepalive-detected loops
+          items:
+            type: string
+        stp_detected_loop_devices:
+          type: array
+          description: Devices with STP-detected loops
+          items:
+            type: string
+
+    # Port Profile Defaults
+    PortProfileDefaults:
+      type: object
+      description: Default port profile configuration
+      properties:
+        autoneg:
+          type: boolean
+          description: Auto-negotiation enabled
+        dot1x_ctrl:
+          type: string
+          description: 802.1X control mode
+        egress_rate_limit_kbps:
+          type: integer
+          description: Egress rate limit in Kbps
+        egress_rate_limit_kbps_enabled:
+          type: boolean
+          description: Egress rate limit enabled
+        flow_control_enabled:
+          type: boolean
+          description: Flow control enabled
+        isolation:
+          type: boolean
+          description: Port isolation enabled
+        lldpmed_enabled:
+          type: boolean
+          description: LLDP-MED enabled
+        lldpmed_notify_enabled:
+          type: boolean
+          description: LLDP-MED notify enabled
+        op_mode:
+          type: string
+          description: Operation mode
+        poe_mode:
+          type: string
+          description: PoE mode
+        port_keepalive_enabled:
+          type: boolean
+          description: Port keepalive enabled
+        stormctrl_bcast_enabled:
+          type: boolean
+          description: Broadcast storm control enabled
+        stormctrl_bcast_rate:
+          type: integer
+          description: Broadcast storm control rate
+        stormctrl_mcast_enabled:
+          type: boolean
+          description: Multicast storm control enabled
+        stormctrl_mcast_rate:
+          type: integer
+          description: Multicast storm control rate
+        stormctrl_ucast_enabled:
+          type: boolean
+          description: Unicast storm control enabled
+        stormctrl_ucast_rate:
+          type: integer
+          description: Unicast storm control rate
+        stp_port_mode:
+          type: boolean
+          description: STP port mode enabled
+        tagged_vlan_mgmt:
+          type: string
+          description: Tagged VLAN management mode
+        voice_networkconf_id:
+          type: string
+          description: Voice network config ID
+
+    # SSL Inspection Category
+    SSLInspectionCategory:
+      type: object
+      description: SSL inspection content category
+      properties:
+        id:
+          type: string
+          description: Category ID
+        name:
+          type: string
+          description: Category name
+
+    # SSL Inspection Profile
+    SSLInspectionProfile:
+      type: object
+      description: SSL inspection profile
+      properties:
+        _id:
+          type: string
+          description: Profile ID
+        name:
+          type: string
+          description: Profile name
+        enabled:
+          type: boolean
+          description: Whether profile is enabled
+        default_profile:
+          type: boolean
+          description: Whether this is the default profile
+        inspect_domains:
+          type: string
+          description: Domain inspection mode
+          enum:
+            - all
+            - specific
+            - none
+        block_website_types:
+          type: array
+          description: Website types to block
+          items:
+            type: string
+        include_domains:
+          type: array
+          description: Domains to include
+          items:
+            type: string
+        exclude_domains:
+          type: array
+          description: Domains to exclude
+          items:
+            type: string
+        include_application_ids:
+          type: array
+          description: Application IDs to include
+          items:
+            type: string
+        filters:
+          type: array
+          description: Content filters
+          items:
+            type: string
+        target_network_ids:
+          type: array
+          description: Target network IDs
+          items:
+            type: string
+        target_network_ids_all:
+          type: boolean
+          description: Apply to all networks
+        target_protocols:
+          type: array
+          description: Target protocols
+          items:
+            type: string
+        target_protocols_all:
+          type: boolean
+          description: Apply to all protocols
+        target_traffic_all:
+          type: boolean
+          description: Apply to all traffic
+        exclude_apple_domains:
+          type: boolean
+          description: Exclude Apple domains
+        exclude_microsoft_domains:
+          type: boolean
+          description: Exclude Microsoft domains
+        exclude_ubiquiti_domains:
+          type: boolean
+          description: Exclude Ubiquiti domains
+        exclude_forced_validation:
+          type: boolean
+          description: Exclude forced validation
+        invalid:
+          type: boolean
+          description: Whether profile is invalid
+        invalid_reason:
+          type: array
+          description: Reasons for invalidity
+          items:
+            type: string
+
+    # LAN Enriched Configuration
+    LANEnrichedConfiguration:
+      type: object
+      description: Enriched LAN network configuration
+      properties:
+        configuration:
+          $ref: '#/components/schemas/LANConfiguration'
+        details:
+          $ref: '#/components/schemas/LANDetails'
+        statistics:
+          $ref: '#/components/schemas/LANStatistics'
+
+    LANConfiguration:
+      type: object
+      description: LAN network configuration
+      properties:
+        _id:
+          type: string
+          description: Network ID
+        name:
+          type: string
+          description: Network name
+        site_id:
+          type: string
+          description: Site ID
+        purpose:
+          type: string
+          description: Network purpose
+        enabled:
+          type: boolean
+          description: Whether network is enabled
+        networkgroup:
+          type: string
+          description: Network group
+        ip_subnet:
+          type: string
+          description: IP subnet in CIDR notation
+        domain_name:
+          type: string
+          description: Domain name
+        is_nat:
+          type: boolean
+          description: Whether NAT is enabled
+        vlan_enabled:
+          type: boolean
+          description: Whether VLAN is enabled
+        dhcpd_enabled:
+          type: boolean
+          description: DHCP server enabled
+        dhcpd_start:
+          type: string
+          description: DHCP range start
+        dhcpd_stop:
+          type: string
+          description: DHCP range stop
+        dhcpd_leasetime:
+          type: integer
+          description: DHCP lease time in seconds
+        dhcpd_dns_enabled:
+          type: boolean
+          description: DHCP DNS enabled
+        dhcpd_dns_1:
+          type: string
+          description: Primary DNS server
+        dhcpd_dns_2:
+          type: string
+          description: Secondary DNS server
+        dhcpd_dns_3:
+          type: string
+          description: Tertiary DNS server
+        ipv6_enabled:
+          type: boolean
+          description: IPv6 enabled
+        ipv6_interface_type:
+          type: string
+          description: IPv6 interface type
+        internet_access_enabled:
+          type: boolean
+          description: Internet access enabled
+        gateway_type:
+          type: string
+          description: Gateway type
+        firewall_zone_id:
+          type: string
+          description: Firewall zone ID
+        attr_no_delete:
+          type: boolean
+          description: Cannot be deleted
+        attr_hidden_id:
+          type: string
+          description: Hidden ID attribute
+        setting_preference:
+          type: string
+          description: Setting preference mode
+
+    LANDetails:
+      type: object
+      description: LAN network details
+      properties:
+        creation_timestamp:
+          type: integer
+          format: int64
+          description: Creation timestamp
+        gateway_interface_name:
+          type: string
+          description: Gateway interface name
+        gateway_mac:
+          type: string
+          description: Gateway MAC address
+
+    LANStatistics:
+      type: object
+      description: LAN network statistics
+      properties:
+        dhcp_active_leases:
+          type: integer
+          description: Active DHCP leases
+        dhcp_excluded_ips_count:
+          type: integer
+          description: Excluded IPs count
+        dhcp_max_leases:
+          type: integer
+          description: Maximum DHCP leases
+
+    # WAN Enriched Configuration
+    WANEnrichedConfiguration:
+      type: object
+      description: Enriched WAN network configuration
+      properties:
+        configuration:
+          $ref: '#/components/schemas/WANConfiguration'
+        details:
+          $ref: '#/components/schemas/WANDetails'
+        statistics:
+          $ref: '#/components/schemas/WANStatistics'
+
+    WANConfiguration:
+      type: object
+      description: WAN network configuration
+      properties:
+        _id:
+          type: string
+          description: Network ID
+        name:
+          type: string
+          description: Network name
+        purpose:
+          type: string
+          description: Network purpose
+        wan_networkgroup:
+          type: string
+          description: WAN network group
+        wan_type:
+          type: string
+          description: WAN type
+          enum:
+            - dhcp
+            - static
+            - pppoe
+        wan_type_v6:
+          type: string
+          description: WAN IPv6 type
+        wan_vlan_enabled:
+          type: boolean
+          description: WAN VLAN enabled
+        wan_dns_preference:
+          type: string
+          description: DNS preference
+        wan_dns1:
+          type: string
+          description: Primary WAN DNS
+        wan_dns2:
+          type: string
+          description: Secondary WAN DNS
+        wan_provider_capabilities:
+          $ref: '#/components/schemas/WANProviderCapabilities'
+        wan_load_balance_type:
+          type: string
+          description: Load balance type
+        wan_load_balance_weight:
+          type: integer
+          description: Load balance weight
+        wan_failover_priority:
+          type: integer
+          description: Failover priority
+        wan_smartq_enabled:
+          type: boolean
+          description: Smart Queue enabled
+        wan_magic_enabled:
+          type: boolean
+          description: WAN Magic enabled
+        wan_username:
+          type: string
+          description: PPPoE username
+        mac_override_enabled:
+          type: boolean
+          description: MAC override enabled
+        igmp_proxy_upstream:
+          type: boolean
+          description: IGMP proxy upstream enabled
+        attr_no_delete:
+          type: boolean
+          description: Cannot be deleted
+        attr_hidden_id:
+          type: string
+          description: Hidden ID attribute
+        setting_preference:
+          type: string
+          description: Setting preference mode
+
+    WANDetails:
+      type: object
+      description: WAN network details
+      properties:
+        creation_timestamp:
+          type: integer
+          format: int64
+          description: Creation timestamp
+        service_provider:
+          $ref: '#/components/schemas/ServiceProviderInfo'
+
+    ServiceProviderInfo:
+      type: object
+      description: Service provider information
+      properties:
+        name:
+          type: string
+          description: Provider name
+        city:
+          type: string
+          description: Provider city
+
+    WANStatistics:
+      type: object
+      description: WAN network statistics
+      properties:
+        uptime_percentage:
+          type: number
+          format: float
+          description: Uptime percentage
+        peak_usage:
+          $ref: '#/components/schemas/WANPeakUsage'
+
+    WANPeakUsage:
+      type: object
+      description: WAN peak usage statistics
+      properties:
+        download_percentage:
+          type: number
+          format: float
+          description: Download peak percentage
+        upload_percentage:
+          type: number
+          format: float
+          description: Upload peak percentage
+        max_rx_bytes-r:
+          type: integer
+          description: Max receive bytes rate
+        max_tx_bytes-r:
+          type: integer
+          description: Max transmit bytes rate
+
+    # Network Score
+    NetworkScore:
+      type: object
+      description: Network health score
+      properties:
+        overall_score:
+          type: string
+          description: Overall score grade
+        network_performance_score:
+          type: string
+          description: Performance score
+        network_performance_design:
+          type: string
+          description: Design score
+        network_performance_updates:
+          type: string
+          description: Updates score
+        network_security_hardening:
+          type: string
+          description: Security hardening score
+        network_security_logging:
+          type: string
+          description: Security logging score
+        network_security_vulnerability:
+          type: string
+          description: Vulnerability score
+        subscores:
+          type: array
+          description: Detailed subscores
+          items:
+            $ref: '#/components/schemas/NetworkSubscore'
+
+    NetworkSubscore:
+      type: object
+      description: A network subscore
+      properties:
+        id:
+          type: string
+          description: Subscore ID
+        category:
+          type: string
+          description: Score category
+        subcategory:
+          type: string
+          description: Score subcategory
+        score:
+          type: integer
+          description: Score value
+
+    # Static DNS Device
+    StaticDNSDevice:
+      type: object
+      description: A device for static DNS mapping
+      properties:
+        name:
+          type: string
+          description: Device name
+        hostname:
+          type: string
+          description: Hostname
+        ip_address:
+          type: string
+          description: IP address
+        mac_address:
+          type: string
+          description: MAC address
+
+    # Teleport Token Response
+    TeleportTokenResponse:
+      type: object
+      description: Teleport token pagination response
+      properties:
+        data:
+          type: array
+          description: Token data
+          items:
+            type: object
+        page_number:
+          type: integer
+          description: Current page number
+        total_page_count:
+          type: integer
+          description: Total pages
+        total_element_count:
+          type: integer
+          description: Total elements
+
+    # WiFiMan Entry
+    WiFiManEntry:
+      type: object
+      description: WiFiMan diagnostic entry
+      properties:
+        id:
+          type: string
+          description: Entry ID
+        report_timestamp:
+          type: integer
+          format: int64
+          description: Report timestamp
+        client_mac:
+          type: string
+          description: Client MAC address
+        client_name:
+          type: string
+          description: Client name
+        client_model:
+          type: string
+          description: Client device model
+        client_signal:
+          type: integer
+          description: Client signal strength
+        client_wifi_experience:
+          type: integer
+          description: WiFi experience score
+        client_link_download_rate_kbps:
+          type: integer
+          description: Download link rate in Kbps
+        client_link_upload_rate_kbps:
+          type: integer
+          description: Upload link rate in Kbps
+        client_icon_device_id:
+          type: integer
+          description: Client icon device ID
+        client_icon_engine_id:
+          type: integer
+          description: Client icon engine ID
+        device_mac:
+          type: string
+          description: AP MAC address
+        device_name:
+          type: string
+          description: AP name
+        device_model:
+          type: string
+          description: AP model
+        wlan_essid:
+          type: string
+          description: WLAN ESSID
+        wlan_band:
+          type: string
+          description: WiFi band
+          enum:
+            - 2g
+            - 5g
+            - 6g
+        wlan_channel:
+          type: integer
+          description: WiFi channel
+        wlan_channel_width:
+          type: integer
+          description: Channel width in MHz
+        public_ip:
+          type: string
+          description: Public IP address
+        isp_name:
+          type: string
+          description: ISP name
+        speed_tests:
+          type: array
+          description: Speed test results
+          items:
+            $ref: '#/components/schemas/WiFiManSpeedTest'
+        uplink_devices:
+          type: array
+          description: Uplink devices
+          items:
+            $ref: '#/components/schemas/WiFiManUplinkDevice'
+
+    WiFiManSpeedTest:
+      type: object
+      description: WiFiMan speed test result
+      properties:
+        type:
+          type: string
+          description: Test type
+        endpoint:
+          type: string
+          description: Test endpoint
+        mac:
+          type: string
+          description: Device MAC
+        download_speed_bytes:
+          type: integer
+          description: Download speed in bytes/s
+        upload_speed_bytes:
+          type: integer
+          description: Upload speed in bytes/s
+
+    WiFiManUplinkDevice:
+      type: object
+      description: WiFiMan uplink device
+      properties:
+        mac:
+          type: string
+          description: Device MAC
+        model:
+          type: string
+          description: Device model
+        experience:
+          type: integer
+          description: Experience score
+        number_of_clients:
+          type: integer
+          description: Number of clients
+        wireless_uplink:
+          type: boolean
+          description: Whether uplink is wireless

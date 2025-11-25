@@ -134,4 +134,250 @@ type NetworkAPIClient interface { //nolint:interfacebloat // This interface mirr
 
 	// ListAllDevices retrieves all devices across all UniFi applications for a site.
 	ListAllDevices(ctx context.Context, site Site) (*AllDevicesResponse, error)
+
+	// Client details operations (v2 API)
+
+	// GetActiveClientByMac retrieves detailed information about a specific active client by MAC address.
+	GetActiveClientByMac(ctx context.Context, site Site, clientMac ClientMac) (*ActiveClientDetails, error)
+
+	// WiFi statistics operations (v2 API)
+
+	// GetWiFiStatsAPs retrieves WiFi statistics for all access points within a time range.
+	GetWiFiStatsAPs(ctx context.Context, site Site, params *GetWiFiStatsAPsParams) (*WiFiStatsAPsResponse, error)
+
+	// System logs operations (v2 API)
+
+	// GetSystemLogs retrieves paginated system logs.
+	GetSystemLogs(ctx context.Context, site Site, request *SystemLogRequest) (*SystemLogResponse, error)
+
+	// Firewall zones operations (v2 API)
+
+	// ListFirewallZones retrieves all firewall zones for a site.
+	ListFirewallZones(ctx context.Context, site Site) ([]FirewallZone, error)
+
+	// GetFirewallZoneMatrix retrieves the firewall zone policy matrix for a site.
+	GetFirewallZoneMatrix(ctx context.Context, site Site) ([]FirewallZoneMatrixEntry, error)
+
+	// ISP status operations (v2 API)
+
+	// GetISPStatus retrieves comprehensive ISP status with metrics and history.
+	GetISPStatus(ctx context.Context, site Site) (*ISPStatus, error)
+
+	// Client history operations (v2 API)
+
+	// ListClientHistory retrieves historical client connection information.
+	ListClientHistory(ctx context.Context, site Site) ([]ClientHistoryEntry, error)
+
+	// Speedtest operations (v2 API)
+
+	// ListSpeedtestHistory retrieves historical speedtest results.
+	ListSpeedtestHistory(ctx context.Context, site Site) (*SpeedtestHistoryResponse, error)
+
+	// GetSpeedtestLatestPerWan retrieves the latest speedtest per WAN interface.
+	GetSpeedtestLatestPerWan(ctx context.Context, site Site) (*SpeedtestLatestPerWanResponse, error)
+
+	// VPN operations (v2 API)
+
+	// ListVPNConnections retrieves all VPN connections.
+	ListVPNConnections(ctx context.Context, site Site) ([]VPNConnection, error)
+
+	// Traffic routes operations (v2 API)
+
+	// ListTrafficRoutes retrieves all traffic routes.
+	ListTrafficRoutes(ctx context.Context, site Site) ([]TrafficRoute, error)
+
+	// DHCP leases operations (v2 API)
+
+	// ListActiveDHCPLeases retrieves all active DHCP leases with device fingerprint information.
+	ListActiveDHCPLeases(ctx context.Context, site Site) (*DHCPLeasesResponse, error)
+
+	// ISP health operations (v2 API)
+
+	// GetISPHealth retrieves ISP health status with historical stats.
+	GetISPHealth(ctx context.Context, site Site) (*ISPHealth, error)
+
+	// GetISPHealthCompact retrieves compact ISP health status.
+	GetISPHealthCompact(ctx context.Context, site Site) (*ISPHealthCompact, error)
+
+	// NAT rules operations (v2 API)
+
+	// ListNATRules retrieves all NAT (port forwarding) rules.
+	ListNATRules(ctx context.Context, site Site) ([]NATRule, error)
+
+	// Alerts and warnings operations (v2 API)
+
+	// ListAlerts retrieves all alerts for the site.
+	ListAlerts(ctx context.Context, site Site) (*AlertsResponse, error)
+
+	// ListWarnings retrieves security warnings for the site.
+	ListWarnings(ctx context.Context, site Site) (*WarningsResponse, error)
+
+	// ListIPSAlerts retrieves intrusion prevention system alerts.
+	ListIPSAlerts(ctx context.Context, site Site) (*IPSAlertsResponse, error)
+
+	// Device groups operations (v2 API)
+
+	// ListAPGroups retrieves all access point groups.
+	ListAPGroups(ctx context.Context, site Site) ([]APGroup, error)
+
+	// RADIUS operations (v2 API)
+
+	// ListRADIUSProfiles retrieves all RADIUS authentication profiles.
+	ListRADIUSProfiles(ctx context.Context, site Site) ([]RADIUSProfile, error)
+
+	// ListRADIUSUsers retrieves RADIUS users.
+	ListRADIUSUsers(ctx context.Context, site Site) ([]RADIUSUser, error)
+
+	// Content filtering operations (v2 API)
+
+	// ListContentFilteringRules retrieves content filtering rules for the site.
+	ListContentFilteringRules(ctx context.Context, site Site) ([]ContentFilteringRule, error)
+
+	// ListContentFilteringCategories retrieves all available content filtering categories.
+	ListContentFilteringCategories(ctx context.Context, site Site) ([]string, error)
+
+	// WiFi operations (v2 API)
+
+	// GetWiFiConnectivity retrieves WiFi connection attempts and latency statistics.
+	GetWiFiConnectivity(ctx context.Context, site Site) (*WiFiConnectivity, error)
+
+	// GetWLANCapabilities retrieves WLAN capabilities like 6GHz and WPA3 support.
+	GetWLANCapabilities(ctx context.Context, site Site) (*WLANCapabilities, error)
+
+	// Features operations (v2 API)
+
+	// ListFeatures retrieves list of features supported by the controller.
+	ListFeatures(ctx context.Context, site Site) ([]string, error)
+
+	// Teleport operations (v2 API)
+
+	// ListTeleportInvitationHistory retrieves teleport invitation history.
+	ListTeleportInvitationHistory(ctx context.Context, site Site) (*TeleportInvitationHistoryResponse, error)
+
+	// Notifications operations (v2 API)
+
+	// ListNotifications retrieves notifications for the site.
+	ListNotifications(ctx context.Context, site Site) ([]Notification, error)
+
+	// ACL operations (v2 API)
+
+	// ListACLRules retrieves access control list rules.
+	ListACLRules(ctx context.Context, site Site) ([]ACLRule, error)
+
+	// Hotspot operations (v2 API)
+
+	// GetHotspotInfo retrieves hotspot configuration status.
+	GetHotspotInfo(ctx context.Context, site Site) (*HotspotInfo, error)
+
+	// Client traffic operations (v2 API)
+
+	// GetClientsTrafficControl retrieves traffic rule counts applied to clients.
+	GetClientsTrafficControl(ctx context.Context, site Site) (*ClientsTrafficControl, error)
+
+	// WireGuard operations (v2 API)
+
+	// ListWireGuardUsers retrieves all WireGuard VPN users.
+	ListWireGuardUsers(ctx context.Context, site Site) ([]WireGuardUser, error)
+
+	// GetWireGuardExistingSubnets retrieves subnets already in use by WireGuard.
+	GetWireGuardExistingSubnets(ctx context.Context, site Site) (*WireGuardSubnets, error)
+
+	// ListVPNClientConnections retrieves all VPN client connections.
+	ListVPNClientConnections(ctx context.Context, site Site) ([]VPNConnection, error)
+
+	// BGP operations (v2 API)
+
+	// GetBGPConfig retrieves BGP routing configuration.
+	GetBGPConfig(ctx context.Context, site Site) ([]BGPConfig, error)
+
+	// GetAllBGPConfig retrieves all BGP configurations across all devices.
+	GetAllBGPConfig(ctx context.Context, site Site) ([]BGPConfig, error)
+
+	// OSPF operations (v2 API)
+
+	// ListOSPFRouters retrieves OSPF router configurations.
+	ListOSPFRouters(ctx context.Context, site Site) ([]OSPFRouter, error)
+
+	// ListOSPFNeighbors retrieves OSPF neighbor relationships.
+	ListOSPFNeighbors(ctx context.Context, site Site) ([]OSPFNeighbor, error)
+
+	// QoS operations (v2 API)
+
+	// ListQoSRules retrieves Quality of Service rules.
+	ListQoSRules(ctx context.Context, site Site) ([]QoSRule, error)
+
+	// WAN SLA operations (v2 API)
+
+	// ListWANSLAs retrieves WAN Service Level Agreement configurations.
+	ListWANSLAs(ctx context.Context, site Site) ([]WANSLA, error)
+
+	// Feature discovery operations (v2 API)
+
+	// ListDescribedFeatures retrieves detailed list of features with availability and limitations.
+	ListDescribedFeatures(ctx context.Context, site Site) ([]DescribedFeature, error)
+
+	// ListVendorIDs retrieves list of known UniFi device vendor MAC address prefixes.
+	ListVendorIDs(ctx context.Context, site Site) ([]string, error)
+
+	// Gateway engine operations (v2 API)
+
+	// GetGatewayEngineFeatures retrieves status of gateway engine features and their utilization.
+	GetGatewayEngineFeatures(ctx context.Context, site Site) ([]GatewayEngineFeature, error)
+
+	// GetGatewayEngineMostActiveNetworks retrieves list of most active networks by client count.
+	GetGatewayEngineMostActiveNetworks(ctx context.Context, site Site) ([]MostActiveNetwork, error)
+
+	// GetGatewayEngineUtilization retrieves CPU and memory utilization of the gateway.
+	GetGatewayEngineUtilization(ctx context.Context, site Site) (*GatewayEngineUtilization, error)
+
+	// Hotspot client operations (v2 API)
+
+	// ListHotspotClients retrieves all clients connected via hotspot or regular network.
+	ListHotspotClients(ctx context.Context, site Site) ([]HotspotClient, error)
+
+	// Network diagnostics (v2 API)
+
+	// GetLoopDetectionInfo retrieves information about detected network loops.
+	GetLoopDetectionInfo(ctx context.Context, site Site) (*LoopDetectionInfo, error)
+
+	// Port profile operations (v2 API)
+
+	// GetPortProfileDefaults retrieves default port profile configuration.
+	GetPortProfileDefaults(ctx context.Context, site Site) (*PortProfileDefaults, error)
+
+	// SSL inspection operations (v2 API)
+
+	// ListSSLInspectionCategories retrieves available SSL inspection content categories.
+	ListSSLInspectionCategories(ctx context.Context, site Site) ([]SSLInspectionCategory, error)
+
+	// ListSSLInspectionProfiles retrieves SSL inspection profile configurations.
+	ListSSLInspectionProfiles(ctx context.Context, site Site) ([]SSLInspectionProfile, error)
+
+	// Network configuration operations (v2 API)
+
+	// GetLANEnrichedConfiguration retrieves enriched LAN network configurations.
+	GetLANEnrichedConfiguration(ctx context.Context, site Site) ([]LANEnrichedConfiguration, error)
+
+	// GetWANEnrichedConfiguration retrieves enriched WAN network configurations.
+	GetWANEnrichedConfiguration(ctx context.Context, site Site) ([]WANEnrichedConfiguration, error)
+
+	// Network score operations (v2 API)
+
+	// GetNetworkScore retrieves overall network health score and subscores.
+	GetNetworkScore(ctx context.Context, site Site) (*NetworkScore, error)
+
+	// Static DNS operations (v2 API)
+
+	// ListStaticDNSDevices retrieves device mappings for static DNS.
+	ListStaticDNSDevices(ctx context.Context, site Site) ([]StaticDNSDevice, error)
+
+	// Teleport operations (v2 API)
+
+	// GetTeleportTokens retrieves Teleport VPN tokens.
+	GetTeleportTokens(ctx context.Context, site Site) (*TeleportTokenResponse, error)
+
+	// WiFiMan operations (v2 API)
+
+	// GetWiFiManData retrieves WiFiMan diagnostic data for connected clients.
+	GetWiFiManData(ctx context.Context, site Site) ([]WiFiManEntry, error)
 }

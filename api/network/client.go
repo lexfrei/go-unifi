@@ -461,3 +461,780 @@ func (c *APIClient) ListAllDevices(ctx context.Context, site Site) (*AllDevicesR
 	//nolint:wrapcheck // response.Handle wraps errors internally
 	return response.Handle(resp, data, err, "failed to list all devices for site "+site)
 }
+
+// GetActiveClientByMac retrieves detailed information about a specific active client by MAC address.
+func (c *APIClient) GetActiveClientByMac(ctx context.Context, site Site, clientMac ClientMac) (*ActiveClientDetails, error) {
+	resp, err := c.client.GetActiveClientByMacWithResponse(ctx, site, clientMac)
+	var data *ActiveClientDetails
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, fmt.Sprintf("failed to get active client %s in site %s", clientMac, site))
+}
+
+// GetWiFiStatsAPs retrieves WiFi statistics for all access points within a time range.
+func (c *APIClient) GetWiFiStatsAPs(ctx context.Context, site Site, params *GetWiFiStatsAPsParams) (*WiFiStatsAPsResponse, error) {
+	resp, err := c.client.GetWiFiStatsAPsWithResponse(ctx, site, params)
+	var data *WiFiStatsAPsResponse
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to get WiFi AP stats for site "+site)
+}
+
+// GetSystemLogs retrieves paginated system logs.
+func (c *APIClient) GetSystemLogs(ctx context.Context, site Site, request *SystemLogRequest) (*SystemLogResponse, error) {
+	if request == nil {
+		request = &SystemLogRequest{}
+	}
+	resp, err := c.client.GetSystemLogsWithResponse(ctx, site, *request)
+	var data *SystemLogResponse
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to get system logs for site "+site)
+}
+
+// ListFirewallZones retrieves all firewall zones for a site.
+func (c *APIClient) ListFirewallZones(ctx context.Context, site Site) ([]FirewallZone, error) {
+	resp, err := c.client.ListFirewallZonesWithResponse(ctx, site)
+	var dataPtr *[]FirewallZone
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list firewall zones for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetFirewallZoneMatrix retrieves the firewall zone policy matrix for a site.
+func (c *APIClient) GetFirewallZoneMatrix(ctx context.Context, site Site) ([]FirewallZoneMatrixEntry, error) {
+	resp, err := c.client.GetFirewallZoneMatrixWithResponse(ctx, site)
+	var dataPtr *[]FirewallZoneMatrixEntry
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get firewall zone matrix for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetISPStatus retrieves comprehensive ISP status with metrics and history.
+func (c *APIClient) GetISPStatus(ctx context.Context, site Site) (*ISPStatus, error) {
+	resp, err := c.client.GetISPStatusWithResponse(ctx, site)
+	var data *ISPStatus
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to get ISP status for site "+site)
+}
+
+// ListClientHistory retrieves historical client connection information.
+func (c *APIClient) ListClientHistory(ctx context.Context, site Site) ([]ClientHistoryEntry, error) {
+	resp, err := c.client.ListClientHistoryWithResponse(ctx, site)
+	var dataPtr *[]ClientHistoryEntry
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list client history for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListSpeedtestHistory retrieves historical speedtest results.
+func (c *APIClient) ListSpeedtestHistory(ctx context.Context, site Site) (*SpeedtestHistoryResponse, error) {
+	resp, err := c.client.ListSpeedtestHistoryWithResponse(ctx, site)
+	var data *SpeedtestHistoryResponse
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to list speedtest history for site "+site)
+}
+
+// GetSpeedtestLatestPerWan retrieves the latest speedtest per WAN interface.
+func (c *APIClient) GetSpeedtestLatestPerWan(ctx context.Context, site Site) (*SpeedtestLatestPerWanResponse, error) {
+	resp, err := c.client.GetSpeedtestLatestPerWanWithResponse(ctx, site)
+	var data *SpeedtestLatestPerWanResponse
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to get latest speedtest per WAN for site "+site)
+}
+
+// ListVPNConnections retrieves all VPN connections.
+func (c *APIClient) ListVPNConnections(ctx context.Context, site Site) ([]VPNConnection, error) {
+	resp, err := c.client.ListVPNConnectionsWithResponse(ctx, site)
+	var data *VPNConnectionsResponse
+	if resp != nil {
+		data = resp.JSON200
+	}
+	result, err := response.Handle(resp, data, err, "failed to list VPN connections for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	if result.Connections == nil {
+		return []VPNConnection{}, nil
+	}
+	return *result.Connections, nil
+}
+
+// ListTrafficRoutes retrieves all traffic routes.
+func (c *APIClient) ListTrafficRoutes(ctx context.Context, site Site) ([]TrafficRoute, error) {
+	resp, err := c.client.ListTrafficRoutesWithResponse(ctx, site)
+	var dataPtr *[]TrafficRoute
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list traffic routes for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListActiveDHCPLeases retrieves all active DHCP leases with device fingerprint information.
+func (c *APIClient) ListActiveDHCPLeases(ctx context.Context, site Site) (*DHCPLeasesResponse, error) {
+	resp, err := c.client.ListActiveDHCPLeasesWithResponse(ctx, site)
+	var data *DHCPLeasesResponse
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to list DHCP leases for site "+site)
+}
+
+// GetISPHealth retrieves ISP health status with historical stats.
+func (c *APIClient) GetISPHealth(ctx context.Context, site Site) (*ISPHealth, error) {
+	resp, err := c.client.GetISPHealthWithResponse(ctx, site)
+	var data *ISPHealth
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to get ISP health for site "+site)
+}
+
+// GetISPHealthCompact retrieves compact ISP health status.
+func (c *APIClient) GetISPHealthCompact(ctx context.Context, site Site) (*ISPHealthCompact, error) {
+	resp, err := c.client.GetISPHealthCompactWithResponse(ctx, site)
+	var data *ISPHealthCompact
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to get compact ISP health for site "+site)
+}
+
+// ListNATRules retrieves all NAT (port forwarding) rules.
+func (c *APIClient) ListNATRules(ctx context.Context, site Site) ([]NATRule, error) {
+	resp, err := c.client.ListNATRulesWithResponse(ctx, site)
+	var dataPtr *[]NATRule
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list NAT rules for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListAlerts retrieves all alerts for the site.
+func (c *APIClient) ListAlerts(ctx context.Context, site Site) (*AlertsResponse, error) {
+	resp, err := c.client.ListAlertsWithResponse(ctx, site)
+	var data *AlertsResponse
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to list alerts for site "+site)
+}
+
+// ListWarnings retrieves security warnings for the site.
+func (c *APIClient) ListWarnings(ctx context.Context, site Site) (*WarningsResponse, error) {
+	resp, err := c.client.ListWarningsWithResponse(ctx, site)
+	var data *WarningsResponse
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to list warnings for site "+site)
+}
+
+// ListAPGroups retrieves all access point groups.
+func (c *APIClient) ListAPGroups(ctx context.Context, site Site) ([]APGroup, error) {
+	resp, err := c.client.ListAPGroupsWithResponse(ctx, site)
+	var dataPtr *[]APGroup
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list AP groups for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListRADIUSProfiles retrieves all RADIUS authentication profiles.
+func (c *APIClient) ListRADIUSProfiles(ctx context.Context, site Site) ([]RADIUSProfile, error) {
+	resp, err := c.client.ListRADIUSProfilesWithResponse(ctx, site)
+	var dataPtr *[]RADIUSProfile
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list RADIUS profiles for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListIPSAlerts retrieves intrusion prevention system alerts.
+func (c *APIClient) ListIPSAlerts(ctx context.Context, site Site) (*IPSAlertsResponse, error) {
+	resp, err := c.client.ListIPSAlertsWithResponse(ctx, site)
+	var data *IPSAlertsResponse
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to list IPS alerts for site "+site)
+}
+
+// ListContentFilteringRules retrieves content filtering rules for the site.
+func (c *APIClient) ListContentFilteringRules(ctx context.Context, site Site) ([]ContentFilteringRule, error) {
+	resp, err := c.client.ListContentFilteringRulesWithResponse(ctx, site)
+	var dataPtr *[]ContentFilteringRule
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list content filtering rules for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListContentFilteringCategories retrieves all available content filtering categories.
+func (c *APIClient) ListContentFilteringCategories(ctx context.Context, site Site) ([]string, error) {
+	resp, err := c.client.ListContentFilteringCategoriesWithResponse(ctx, site)
+	var dataPtr *[]string
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list content filtering categories for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetWiFiConnectivity retrieves WiFi connection attempts and latency statistics.
+func (c *APIClient) GetWiFiConnectivity(ctx context.Context, site Site) (*WiFiConnectivity, error) {
+	resp, err := c.client.GetWiFiConnectivityWithResponse(ctx, site)
+	var data *WiFiConnectivity
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to get WiFi connectivity for site "+site)
+}
+
+// GetWLANCapabilities retrieves WLAN capabilities like 6GHz and WPA3 support.
+func (c *APIClient) GetWLANCapabilities(ctx context.Context, site Site) (*WLANCapabilities, error) {
+	resp, err := c.client.GetWLANCapabilitiesWithResponse(ctx, site)
+	var data *WLANCapabilities
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to get WLAN capabilities for site "+site)
+}
+
+// ListFeatures retrieves list of features supported by the controller.
+func (c *APIClient) ListFeatures(ctx context.Context, site Site) ([]string, error) {
+	resp, err := c.client.ListFeaturesWithResponse(ctx, site)
+	var dataPtr *[]string
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list features for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListTeleportInvitationHistory retrieves teleport invitation history.
+func (c *APIClient) ListTeleportInvitationHistory(ctx context.Context, site Site) (*TeleportInvitationHistoryResponse, error) {
+	resp, err := c.client.ListTeleportInvitationHistoryWithResponse(ctx, site)
+	var data *TeleportInvitationHistoryResponse
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to list teleport invitation history for site "+site)
+}
+
+// ListNotifications retrieves notifications for the site.
+func (c *APIClient) ListNotifications(ctx context.Context, site Site) ([]Notification, error) {
+	resp, err := c.client.ListNotificationsWithResponse(ctx, site)
+	var dataPtr *[]Notification
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list notifications for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListACLRules retrieves access control list rules.
+func (c *APIClient) ListACLRules(ctx context.Context, site Site) ([]ACLRule, error) {
+	resp, err := c.client.ListACLRulesWithResponse(ctx, site)
+	var dataPtr *[]ACLRule
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list ACL rules for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListRADIUSUsers retrieves RADIUS users.
+func (c *APIClient) ListRADIUSUsers(ctx context.Context, site Site) ([]RADIUSUser, error) {
+	resp, err := c.client.ListRADIUSUsersWithResponse(ctx, site)
+	var dataPtr *[]RADIUSUser
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list RADIUS users for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetHotspotInfo retrieves hotspot configuration status.
+func (c *APIClient) GetHotspotInfo(ctx context.Context, site Site) (*HotspotInfo, error) {
+	resp, err := c.client.GetHotspotInfoWithResponse(ctx, site)
+	var data *HotspotInfo
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to get hotspot info for site "+site)
+}
+
+// GetClientsTrafficControl retrieves traffic rule counts applied to clients.
+func (c *APIClient) GetClientsTrafficControl(ctx context.Context, site Site) (*ClientsTrafficControl, error) {
+	resp, err := c.client.GetClientsTrafficControlWithResponse(ctx, site)
+	var data *ClientsTrafficControl
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to get clients traffic control for site "+site)
+}
+
+// ListWireGuardUsers retrieves all WireGuard VPN users.
+func (c *APIClient) ListWireGuardUsers(ctx context.Context, site Site) ([]WireGuardUser, error) {
+	resp, err := c.client.ListWireGuardUsersWithResponse(ctx, site)
+	var dataPtr *[]WireGuardUser
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list WireGuard users for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetWireGuardExistingSubnets retrieves subnets already in use by WireGuard.
+func (c *APIClient) GetWireGuardExistingSubnets(ctx context.Context, site Site) (*WireGuardSubnets, error) {
+	resp, err := c.client.GetWireGuardExistingSubnetsWithResponse(ctx, site)
+	var data *WireGuardSubnets
+	if resp != nil {
+		data = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, data, err, "failed to get WireGuard subnets for site "+site)
+}
+
+// ListVPNClientConnections retrieves all VPN client connections.
+func (c *APIClient) ListVPNClientConnections(ctx context.Context, site Site) ([]VPNConnection, error) {
+	resp, err := c.client.ListVPNClientConnectionsWithResponse(ctx, site)
+	var data *VPNConnectionsResponse
+	if resp != nil {
+		data = resp.JSON200
+	}
+	result, err := response.Handle(resp, data, err, "failed to list VPN client connections for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	if result.Connections == nil {
+		return []VPNConnection{}, nil
+	}
+	return *result.Connections, nil
+}
+
+// GetBGPConfig retrieves BGP routing configuration.
+func (c *APIClient) GetBGPConfig(ctx context.Context, site Site) ([]BGPConfig, error) {
+	resp, err := c.client.GetBGPConfigWithResponse(ctx, site)
+	var dataPtr *[]BGPConfig
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get BGP config for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetAllBGPConfig retrieves all BGP configurations across all devices.
+func (c *APIClient) GetAllBGPConfig(ctx context.Context, site Site) ([]BGPConfig, error) {
+	resp, err := c.client.GetAllBGPConfigWithResponse(ctx, site)
+	var dataPtr *[]BGPConfig
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get all BGP configs for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListOSPFRouters retrieves OSPF router configurations.
+func (c *APIClient) ListOSPFRouters(ctx context.Context, site Site) ([]OSPFRouter, error) {
+	resp, err := c.client.ListOSPFRoutersWithResponse(ctx, site)
+	var dataPtr *[]OSPFRouter
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list OSPF routers for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListOSPFNeighbors retrieves OSPF neighbor relationships.
+func (c *APIClient) ListOSPFNeighbors(ctx context.Context, site Site) ([]OSPFNeighbor, error) {
+	resp, err := c.client.ListOSPFNeighborsWithResponse(ctx, site)
+	var dataPtr *[]OSPFNeighbor
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list OSPF neighbors for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListQoSRules retrieves Quality of Service rules.
+func (c *APIClient) ListQoSRules(ctx context.Context, site Site) ([]QoSRule, error) {
+	resp, err := c.client.ListQoSRulesWithResponse(ctx, site)
+	var dataPtr *[]QoSRule
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list QoS rules for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListWANSLAs retrieves WAN Service Level Agreement configurations.
+func (c *APIClient) ListWANSLAs(ctx context.Context, site Site) ([]WANSLA, error) {
+	resp, err := c.client.ListWANSLAsWithResponse(ctx, site)
+	var dataPtr *[]WANSLA
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list WAN SLAs for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListDescribedFeatures retrieves detailed list of features with availability and limitations.
+func (c *APIClient) ListDescribedFeatures(ctx context.Context, site Site) ([]DescribedFeature, error) {
+	resp, err := c.client.ListDescribedFeaturesWithResponse(ctx, site)
+	var dataPtr *[]DescribedFeature
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list described features for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListVendorIDs retrieves list of known UniFi device vendor MAC address prefixes.
+func (c *APIClient) ListVendorIDs(ctx context.Context, site Site) ([]string, error) {
+	resp, err := c.client.ListVendorIDsWithResponse(ctx, site)
+	var dataPtr *[]string
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list vendor IDs for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetGatewayEngineFeatures retrieves status of gateway engine features and their utilization.
+func (c *APIClient) GetGatewayEngineFeatures(ctx context.Context, site Site) ([]GatewayEngineFeature, error) {
+	resp, err := c.client.GetGatewayEngineFeaturesWithResponse(ctx, site)
+	var dataPtr *[]GatewayEngineFeature
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get gateway engine features for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetGatewayEngineMostActiveNetworks retrieves list of most active networks by client count.
+func (c *APIClient) GetGatewayEngineMostActiveNetworks(ctx context.Context, site Site) ([]MostActiveNetwork, error) {
+	resp, err := c.client.GetGatewayEngineMostActiveNetworksWithResponse(ctx, site)
+	var dataPtr *[]MostActiveNetwork
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get most active networks for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetGatewayEngineUtilization retrieves CPU and memory utilization of the gateway.
+func (c *APIClient) GetGatewayEngineUtilization(ctx context.Context, site Site) (*GatewayEngineUtilization, error) {
+	resp, err := c.client.GetGatewayEngineUtilizationWithResponse(ctx, site)
+	var dataPtr *GatewayEngineUtilization
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get gateway utilization for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// ListHotspotClients retrieves all clients connected via hotspot or regular network.
+func (c *APIClient) ListHotspotClients(ctx context.Context, site Site) ([]HotspotClient, error) {
+	resp, err := c.client.ListHotspotClientsWithResponse(ctx, site)
+	var dataPtr *[]HotspotClient
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list hotspot clients for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetLoopDetectionInfo retrieves information about detected network loops.
+func (c *APIClient) GetLoopDetectionInfo(ctx context.Context, site Site) (*LoopDetectionInfo, error) {
+	resp, err := c.client.GetLoopDetectionInfoWithResponse(ctx, site)
+	var dataPtr *LoopDetectionInfo
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get loop detection info for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetPortProfileDefaults retrieves default port profile configuration.
+func (c *APIClient) GetPortProfileDefaults(ctx context.Context, site Site) (*PortProfileDefaults, error) {
+	resp, err := c.client.GetPortProfileDefaultsWithResponse(ctx, site)
+	var dataPtr *PortProfileDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get port profile defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// ListSSLInspectionCategories retrieves available SSL inspection content categories.
+func (c *APIClient) ListSSLInspectionCategories(ctx context.Context, site Site) ([]SSLInspectionCategory, error) {
+	resp, err := c.client.ListSSLInspectionCategoriesWithResponse(ctx, site)
+	var dataPtr *[]SSLInspectionCategory
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list SSL inspection categories for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListSSLInspectionProfiles retrieves SSL inspection profile configurations.
+func (c *APIClient) ListSSLInspectionProfiles(ctx context.Context, site Site) ([]SSLInspectionProfile, error) {
+	resp, err := c.client.ListSSLInspectionProfilesWithResponse(ctx, site)
+	var dataPtr *[]SSLInspectionProfile
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list SSL inspection profiles for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetLANEnrichedConfiguration retrieves enriched LAN network configurations.
+func (c *APIClient) GetLANEnrichedConfiguration(ctx context.Context, site Site) ([]LANEnrichedConfiguration, error) {
+	resp, err := c.client.GetLANEnrichedConfigurationWithResponse(ctx, site)
+	var dataPtr *[]LANEnrichedConfiguration
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get LAN enriched configuration for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetWANEnrichedConfiguration retrieves enriched WAN network configurations.
+func (c *APIClient) GetWANEnrichedConfiguration(ctx context.Context, site Site) ([]WANEnrichedConfiguration, error) {
+	resp, err := c.client.GetWANEnrichedConfigurationWithResponse(ctx, site)
+	var dataPtr *[]WANEnrichedConfiguration
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get WAN enriched configuration for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetNetworkScore retrieves overall network health score and subscores.
+func (c *APIClient) GetNetworkScore(ctx context.Context, site Site) (*NetworkScore, error) {
+	resp, err := c.client.GetNetworkScoreWithResponse(ctx, site)
+	var dataPtr *NetworkScore
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get network score for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// ListStaticDNSDevices retrieves device mappings for static DNS.
+func (c *APIClient) ListStaticDNSDevices(ctx context.Context, site Site) ([]StaticDNSDevice, error) {
+	resp, err := c.client.ListStaticDNSDevicesWithResponse(ctx, site)
+	var dataPtr *[]StaticDNSDevice
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list static DNS devices for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetTeleportTokens retrieves Teleport VPN tokens.
+func (c *APIClient) GetTeleportTokens(ctx context.Context, site Site) (*TeleportTokenResponse, error) {
+	resp, err := c.client.GetTeleportTokensWithResponse(ctx, site)
+	var dataPtr *TeleportTokenResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get teleport tokens for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetWiFiManData retrieves WiFiMan diagnostic data for connected clients.
+func (c *APIClient) GetWiFiManData(ctx context.Context, site Site) ([]WiFiManEntry, error) {
+	resp, err := c.client.GetWiFiManDataWithResponse(ctx, site)
+	var dataPtr *[]WiFiManEntry
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get WiFiMan data for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}

@@ -26,6 +26,12 @@ const (
 	ApiKeyAuthScopes = "ApiKeyAuth.Scopes"
 )
 
+// Defines values for ACLRuleAction.
+const (
+	Allow ACLRuleAction = "allow"
+	Deny  ACLRuleAction = "deny"
+)
+
 // Defines values for ActiveClientRadio.
 const (
 	N6e ActiveClientRadio = "6e"
@@ -35,14 +41,52 @@ const (
 
 // Defines values for ActiveClientStatus.
 const (
-	Offline ActiveClientStatus = "offline"
-	Online  ActiveClientStatus = "online"
+	ActiveClientStatusOffline ActiveClientStatus = "offline"
+	ActiveClientStatusOnline  ActiveClientStatus = "online"
 )
 
 // Defines values for ActiveClientType.
 const (
 	ActiveClientTypeWIRED    ActiveClientType = "WIRED"
 	ActiveClientTypeWIRELESS ActiveClientType = "WIRELESS"
+)
+
+// Defines values for ActiveClientDetailsRadioProto.
+const (
+	ActiveClientDetailsRadioProtoA  ActiveClientDetailsRadioProto = "a"
+	ActiveClientDetailsRadioProtoAc ActiveClientDetailsRadioProto = "ac"
+	ActiveClientDetailsRadioProtoAx ActiveClientDetailsRadioProto = "ax"
+	ActiveClientDetailsRadioProtoB  ActiveClientDetailsRadioProto = "b"
+	ActiveClientDetailsRadioProtoBe ActiveClientDetailsRadioProto = "be"
+	ActiveClientDetailsRadioProtoG  ActiveClientDetailsRadioProto = "g"
+	ActiveClientDetailsRadioProtoN  ActiveClientDetailsRadioProto = "n"
+)
+
+// Defines values for ActiveClientDetailsStatus.
+const (
+	ActiveClientDetailsStatusOffline ActiveClientDetailsStatus = "offline"
+	ActiveClientDetailsStatusOnline  ActiveClientDetailsStatus = "online"
+)
+
+// Defines values for ActiveClientDetailsType.
+const (
+	ActiveClientDetailsTypeWIRED    ActiveClientDetailsType = "WIRED"
+	ActiveClientDetailsTypeWIRELESS ActiveClientDetailsType = "WIRELESS"
+)
+
+// Defines values for AlertSeverity.
+const (
+	CRITICAL AlertSeverity = "CRITICAL"
+	HIGH     AlertSeverity = "HIGH"
+	LOW      AlertSeverity = "LOW"
+	MEDIUM   AlertSeverity = "MEDIUM"
+)
+
+// Defines values for AlertStatus.
+const (
+	ARCHIVED AlertStatus = "ARCHIVED"
+	NEW      AlertStatus = "NEW"
+	READ     AlertStatus = "READ"
 )
 
 // Defines values for ClientAccessType.
@@ -52,10 +96,41 @@ const (
 	RESTRICTED ClientAccessType = "RESTRICTED"
 )
 
+// Defines values for ClientHistoryEntryStatus.
+const (
+	ClientHistoryEntryStatusOffline ClientHistoryEntryStatus = "offline"
+	ClientHistoryEntryStatusOnline  ClientHistoryEntryStatus = "online"
+)
+
+// Defines values for ClientHistoryEntryType.
+const (
+	ClientHistoryEntryTypeWIRED    ClientHistoryEntryType = "WIRED"
+	ClientHistoryEntryTypeWIRELESS ClientHistoryEntryType = "WIRELESS"
+)
+
 // Defines values for ClientListItemType.
 const (
 	ClientListItemTypeWIRED    ClientListItemType = "WIRED"
 	ClientListItemTypeWIRELESS ClientListItemType = "WIRELESS"
+)
+
+// Defines values for DHCPLeaseClientType.
+const (
+	DHCPLeaseClientTypeWIRED    DHCPLeaseClientType = "WIRED"
+	DHCPLeaseClientTypeWIRELESS DHCPLeaseClientType = "WIRELESS"
+)
+
+// Defines values for DHCPLeaseDeviceType.
+const (
+	DHCPLeaseDeviceTypeUap DHCPLeaseDeviceType = "uap"
+	DHCPLeaseDeviceTypeUgw DHCPLeaseDeviceType = "ugw"
+	DHCPLeaseDeviceTypeUsw DHCPLeaseDeviceType = "usw"
+)
+
+// Defines values for DHCPLeaseStatus.
+const (
+	DHCPLeaseStatusOffline DHCPLeaseStatus = "offline"
+	DHCPLeaseStatusOnline  DHCPLeaseStatus = "online"
 )
 
 // Defines values for DNSRecordRecordType.
@@ -71,13 +146,13 @@ const (
 
 // Defines values for DNSRecordInputRecordType.
 const (
-	DNSRecordInputRecordTypeA     DNSRecordInputRecordType = "A"
-	DNSRecordInputRecordTypeAAAA  DNSRecordInputRecordType = "AAAA"
-	DNSRecordInputRecordTypeCNAME DNSRecordInputRecordType = "CNAME"
-	DNSRecordInputRecordTypeMX    DNSRecordInputRecordType = "MX"
-	DNSRecordInputRecordTypeNS    DNSRecordInputRecordType = "NS"
-	DNSRecordInputRecordTypeSRV   DNSRecordInputRecordType = "SRV"
-	DNSRecordInputRecordTypeTXT   DNSRecordInputRecordType = "TXT"
+	A     DNSRecordInputRecordType = "A"
+	AAAA  DNSRecordInputRecordType = "AAAA"
+	CNAME DNSRecordInputRecordType = "CNAME"
+	MX    DNSRecordInputRecordType = "MX"
+	NS    DNSRecordInputRecordType = "NS"
+	SRV   DNSRecordInputRecordType = "SRV"
+	TXT   DNSRecordInputRecordType = "TXT"
 )
 
 // Defines values for DeviceState.
@@ -90,17 +165,17 @@ const (
 
 // Defines values for DeviceListItemFeatures.
 const (
-	AccessPoint DeviceListItemFeatures = "accessPoint"
-	Gateway     DeviceListItemFeatures = "gateway"
-	Routing     DeviceListItemFeatures = "routing"
-	Switching   DeviceListItemFeatures = "switching"
+	DeviceListItemFeaturesAccessPoint DeviceListItemFeatures = "accessPoint"
+	DeviceListItemFeaturesGateway     DeviceListItemFeatures = "gateway"
+	DeviceListItemFeaturesRouting     DeviceListItemFeatures = "routing"
+	DeviceListItemFeaturesSwitching   DeviceListItemFeatures = "switching"
 )
 
 // Defines values for DeviceListItemInterfaces.
 const (
-	Ports  DeviceListItemInterfaces = "ports"
-	Radios DeviceListItemInterfaces = "radios"
-	Wan    DeviceListItemInterfaces = "wan"
+	DeviceListItemInterfacesPorts  DeviceListItemInterfaces = "ports"
+	DeviceListItemInterfacesRadios DeviceListItemInterfaces = "radios"
+	DeviceListItemInterfacesWan    DeviceListItemInterfaces = "wan"
 )
 
 // Defines values for DeviceListItemState.
@@ -139,6 +214,28 @@ const (
 	FirewallPolicyInputIpVersionIPV6 FirewallPolicyInputIpVersion = "IPV6"
 )
 
+// Defines values for FirewallZoneZoneKey.
+const (
+	FirewallZoneZoneKeyDmz      FirewallZoneZoneKey = "dmz"
+	FirewallZoneZoneKeyExternal FirewallZoneZoneKey = "external"
+	FirewallZoneZoneKeyGateway  FirewallZoneZoneKey = "gateway"
+	FirewallZoneZoneKeyHotspot  FirewallZoneZoneKey = "hotspot"
+	FirewallZoneZoneKeyInternal FirewallZoneZoneKey = "internal"
+	FirewallZoneZoneKeyVpn      FirewallZoneZoneKey = "vpn"
+)
+
+// Defines values for HotspotClientStatus.
+const (
+	Offline HotspotClientStatus = "offline"
+	Online  HotspotClientStatus = "online"
+)
+
+// Defines values for HotspotClientType.
+const (
+	HotspotClientTypeWIRED    HotspotClientType = "WIRED"
+	HotspotClientTypeWIRELESS HotspotClientType = "WIRELESS"
+)
+
 // Defines values for HotspotVoucherStatus.
 const (
 	EXPIRED    HotspotVoucherStatus = "EXPIRED"
@@ -147,19 +244,43 @@ const (
 	VALIDONE   HotspotVoucherStatus = "VALID_ONE"
 )
 
+// Defines values for MostActiveNetworkType.
+const (
+	MostActiveNetworkTypeNETWORK  MostActiveNetworkType = "NETWORK"
+	MostActiveNetworkTypeTELEPORT MostActiveNetworkType = "TELEPORT"
+)
+
+// Defines values for NATRuleProtocol.
+const (
+	Tcp    NATRuleProtocol = "tcp"
+	TcpUdp NATRuleProtocol = "tcp_udp"
+	Udp    NATRuleProtocol = "udp"
+)
+
 // Defines values for NetworkDeviceType.
 const (
-	Uap NetworkDeviceType = "uap"
-	Udm NetworkDeviceType = "udm"
-	Ugw NetworkDeviceType = "ugw"
-	Usw NetworkDeviceType = "usw"
-	Uxg NetworkDeviceType = "uxg"
+	NetworkDeviceTypeUap NetworkDeviceType = "uap"
+	NetworkDeviceTypeUdm NetworkDeviceType = "udm"
+	NetworkDeviceTypeUgw NetworkDeviceType = "ugw"
+	NetworkDeviceTypeUsw NetworkDeviceType = "usw"
+	NetworkDeviceTypeUxg NetworkDeviceType = "uxg"
 )
 
 // Defines values for NetworkDeviceUplinkType.
 const (
 	Wire     NetworkDeviceUplinkType = "wire"
 	Wireless NetworkDeviceUplinkType = "wireless"
+)
+
+// Defines values for OSPFNeighborState.
+const (
+	OSPFNeighborStateDOWN     OSPFNeighborState = "DOWN"
+	OSPFNeighborStateEXCHANGE OSPFNeighborState = "EXCHANGE"
+	OSPFNeighborStateEXSTART  OSPFNeighborState = "EXSTART"
+	OSPFNeighborStateFULL     OSPFNeighborState = "FULL"
+	OSPFNeighborStateINIT     OSPFNeighborState = "INIT"
+	OSPFNeighborStateLOADING  OSPFNeighborState = "LOADING"
+	OSPFNeighborStateN2WAY    OSPFNeighborState = "2WAY"
 )
 
 // Defines values for PoEStandard.
@@ -185,8 +306,15 @@ const (
 
 // Defines values for PortState.
 const (
-	PortStateDOWN PortState = "DOWN"
-	PortStateUP   PortState = "UP"
+	DOWN PortState = "DOWN"
+	UP   PortState = "UP"
+)
+
+// Defines values for QoSRuleDirection.
+const (
+	Both     QoSRuleDirection = "both"
+	Download QoSRuleDirection = "download"
+	Upload   QoSRuleDirection = "upload"
 )
 
 // Defines values for RadioChannelWidthMHz.
@@ -215,6 +343,30 @@ const (
 	N80211n  RadioWlanStandard = "802.11n"
 )
 
+// Defines values for SSLInspectionProfileInspectDomains.
+const (
+	All      SSLInspectionProfileInspectDomains = "all"
+	None     SSLInspectionProfileInspectDomains = "none"
+	Specific SSLInspectionProfileInspectDomains = "specific"
+)
+
+// Defines values for SystemLogEntrySubsystem.
+const (
+	SystemLogEntrySubsystemFirewall SystemLogEntrySubsystem = "firewall"
+	SystemLogEntrySubsystemLan      SystemLogEntrySubsystem = "lan"
+	SystemLogEntrySubsystemSystem   SystemLogEntrySubsystem = "system"
+	SystemLogEntrySubsystemVpn      SystemLogEntrySubsystem = "vpn"
+	SystemLogEntrySubsystemWan      SystemLogEntrySubsystem = "wan"
+	SystemLogEntrySubsystemWlan     SystemLogEntrySubsystem = "wlan"
+)
+
+// Defines values for TeleportInvitationInvitationStatus.
+const (
+	Accepted TeleportInvitationInvitationStatus = "accepted"
+	Expired  TeleportInvitationInvitationStatus = "expired"
+	Pending  TeleportInvitationInvitationStatus = "pending"
+)
+
 // Defines values for TopologyEdgeDuplex.
 const (
 	FULLDUPLEX TopologyEdgeDuplex = "FULL_DUPLEX"
@@ -233,6 +385,20 @@ const (
 	TopologyVertexTypeNETWORKDEVICE TopologyVertexType = "NETWORK_DEVICE"
 )
 
+// Defines values for TrafficRouteMatchingTarget.
+const (
+	DOMAIN   TrafficRouteMatchingTarget = "DOMAIN"
+	INTERNET TrafficRouteMatchingTarget = "INTERNET"
+	IP       TrafficRouteMatchingTarget = "IP"
+	REGION   TrafficRouteMatchingTarget = "REGION"
+)
+
+// Defines values for TrafficRouteTargetDevice.
+const (
+	WAN  TrafficRouteTargetDevice = "WAN"
+	WAN2 TrafficRouteTargetDevice = "WAN2"
+)
+
 // Defines values for TrafficRuleMatchingTarget.
 const (
 	TrafficRuleMatchingTargetCLIENT   TrafficRuleMatchingTarget = "CLIENT"
@@ -243,11 +409,98 @@ const (
 
 // Defines values for TrafficRuleInputMatchingTarget.
 const (
-	CLIENT   TrafficRuleInputMatchingTarget = "CLIENT"
-	INTERNET TrafficRuleInputMatchingTarget = "INTERNET"
-	NETWORK  TrafficRuleInputMatchingTarget = "NETWORK"
-	REGION   TrafficRuleInputMatchingTarget = "REGION"
+	TrafficRuleInputMatchingTargetCLIENT   TrafficRuleInputMatchingTarget = "CLIENT"
+	TrafficRuleInputMatchingTargetINTERNET TrafficRuleInputMatchingTarget = "INTERNET"
+	TrafficRuleInputMatchingTargetNETWORK  TrafficRuleInputMatchingTarget = "NETWORK"
+	TrafficRuleInputMatchingTargetREGION   TrafficRuleInputMatchingTarget = "REGION"
 )
+
+// Defines values for VPNConnectionStatus.
+const (
+	Connected    VPNConnectionStatus = "connected"
+	Connecting   VPNConnectionStatus = "connecting"
+	Disconnected VPNConnectionStatus = "disconnected"
+)
+
+// Defines values for VPNConnectionVpnType.
+const (
+	ClientVpn  VPNConnectionVpnType = "client-vpn"
+	Openvpn    VPNConnectionVpnType = "openvpn"
+	SiteToSite VPNConnectionVpnType = "site-to-site"
+	Wireguard  VPNConnectionVpnType = "wireguard"
+)
+
+// Defines values for WANConfigurationWanType.
+const (
+	Dhcp   WANConfigurationWanType = "dhcp"
+	Pppoe  WANConfigurationWanType = "pppoe"
+	Static WANConfigurationWanType = "static"
+)
+
+// Defines values for WiFiManEntryWlanBand.
+const (
+	N2g WiFiManEntryWlanBand = "2g"
+	N5g WiFiManEntryWlanBand = "5g"
+	N6g WiFiManEntryWlanBand = "6g"
+)
+
+// Defines values for ZoneMatrixDataAction.
+const (
+	AllowAll      ZoneMatrixDataAction = "allow_all"
+	BlockAll      ZoneMatrixDataAction = "block_all"
+	ReturnTraffic ZoneMatrixDataAction = "return_traffic"
+)
+
+// Defines values for GetWiFiStatsAPsParamsInterval.
+const (
+	Daily  GetWiFiStatsAPsParamsInterval = "daily"
+	Hourly GetWiFiStatsAPsParamsInterval = "hourly"
+)
+
+// ACLRule An ACL rule
+type ACLRule struct {
+	// UnderscoreId Rule ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// Action Rule action
+	Action *ACLRuleAction `json:"action,omitempty"`
+
+	// DstAddress Destination address
+	DstAddress *string `json:"dst_address,omitempty"`
+
+	// Enabled Whether rule is enabled
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// Name Rule name
+	Name *string `json:"name,omitempty"`
+
+	// SrcAddress Source address
+	SrcAddress *string `json:"src_address,omitempty"`
+}
+
+// ACLRuleAction Rule action
+type ACLRuleAction string
+
+// APGroup An access point group
+type APGroup struct {
+	// UnderscoreId Group ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// AttrHiddenId Hidden attribute ID
+	AttrHiddenId *string `json:"attr_hidden_id,omitempty"`
+
+	// AttrNoDelete Whether group cannot be deleted
+	AttrNoDelete *bool `json:"attr_no_delete,omitempty"`
+
+	// DeviceMacs MAC addresses of devices in group
+	DeviceMacs *[]string `json:"device_macs,omitempty"`
+
+	// ForWlanconf Used for WLAN configuration
+	ForWlanconf *bool `json:"for_wlanconf,omitempty"`
+
+	// Name Group name
+	Name *string `json:"name,omitempty"`
+}
 
 // ActiveClient Active client with full connection details
 type ActiveClient struct {
@@ -345,6 +598,234 @@ type ActiveClientStatus string
 // ActiveClientType Connection type
 type ActiveClientType string
 
+// ActiveClientDetails Detailed information about an active client
+type ActiveClientDetails struct {
+	// Anomalies Number of detected anomalies
+	Anomalies *int `json:"anomalies,omitempty"`
+
+	// ApMac Access point MAC address
+	ApMac *string `json:"ap_mac,omitempty"`
+
+	// AssocTime Association time Unix timestamp
+	AssocTime *int64 `json:"assoc_time,omitempty"`
+
+	// Blocked Whether client is blocked
+	Blocked *bool `json:"blocked,omitempty"`
+
+	// Bssid BSSID
+	Bssid *string `json:"bssid,omitempty"`
+
+	// Ccq Client Connection Quality (0-1000)
+	Ccq *int `json:"ccq,omitempty"`
+
+	// Channel WiFi channel
+	Channel *int `json:"channel,omitempty"`
+
+	// ChannelWidth Channel width
+	ChannelWidth *string `json:"channel_width,omitempty"`
+
+	// DhcpendTime DHCP lease end time (0 if not applicable)
+	DhcpendTime *int `json:"dhcpend_time,omitempty"`
+
+	// DisplayName Display name
+	DisplayName *string `json:"display_name,omitempty"`
+
+	// Essid SSID name
+	Essid *string `json:"essid,omitempty"`
+
+	// Fingerprint Device fingerprint information
+	Fingerprint *DeviceFingerprint `json:"fingerprint,omitempty"`
+
+	// FirstSeen First seen Unix timestamp
+	FirstSeen *int64 `json:"first_seen,omitempty"`
+
+	// GwMac Gateway MAC address
+	GwMac *string `json:"gw_mac,omitempty"`
+
+	// Hostname Client hostname
+	Hostname *string `json:"hostname,omitempty"`
+
+	// Id Client identifier (same as MAC)
+	Id *string `json:"id,omitempty"`
+
+	// Idletime Idle time in seconds
+	Idletime *int `json:"idletime,omitempty"`
+
+	// Ip IP address
+	Ip *string `json:"ip,omitempty"`
+
+	// IsAllowedInVisualProgramming Whether allowed in visual programming
+	IsAllowedInVisualProgramming *bool `json:"is_allowed_in_visual_programming,omitempty"`
+
+	// IsGuest Whether client is on guest network
+	IsGuest *bool `json:"is_guest,omitempty"`
+
+	// IsMlo Whether using Multi-Link Operation (WiFi 7)
+	IsMlo *bool `json:"is_mlo,omitempty"`
+
+	// IsWired Whether client is wired
+	IsWired *bool `json:"is_wired,omitempty"`
+
+	// LastIpv6 Last known IPv6 addresses
+	LastIpv6 *[]string `json:"last_ipv6,omitempty"`
+
+	// LastRadio Last used radio band
+	LastRadio *string `json:"last_radio,omitempty"`
+
+	// LastSeen Last seen Unix timestamp
+	LastSeen *int64 `json:"last_seen,omitempty"`
+
+	// LastUplinkMac Last uplink device MAC
+	LastUplinkMac *string `json:"last_uplink_mac,omitempty"`
+
+	// LastUplinkName Last uplink device name
+	LastUplinkName *string `json:"last_uplink_name,omitempty"`
+
+	// LatestAssocTime Latest association Unix timestamp
+	LatestAssocTime *int64 `json:"latest_assoc_time,omitempty"`
+
+	// LocalDnsRecordEnabled Whether local DNS record is enabled
+	LocalDnsRecordEnabled *bool `json:"local_dns_record_enabled,omitempty"`
+
+	// Mac MAC address
+	Mac *string `json:"mac,omitempty"`
+
+	// Mimo MIMO configuration
+	Mimo *string `json:"mimo,omitempty"`
+
+	// ModelName Device model name (from fingerprint)
+	ModelName *string `json:"model_name,omitempty"`
+
+	// NetworkId Network ID
+	NetworkId *string `json:"network_id,omitempty"`
+
+	// NetworkMembersGroupIds Network member group IDs
+	NetworkMembersGroupIds *[]string `json:"network_members_group_ids,omitempty"`
+
+	// NetworkName Network name
+	NetworkName *string `json:"network_name,omitempty"`
+
+	// Noise Noise floor in dBm
+	Noise *int `json:"noise,omitempty"`
+
+	// Noted Whether client is noted/starred
+	Noted *bool `json:"noted,omitempty"`
+
+	// Oui Manufacturer from OUI lookup
+	Oui *string `json:"oui,omitempty"`
+
+	// PowersaveEnabled Whether power save mode is enabled
+	PowersaveEnabled *bool `json:"powersave_enabled,omitempty"`
+
+	// Radio Radio band (na=5GHz, ng=2.4GHz)
+	Radio *string `json:"radio,omitempty"`
+
+	// RadioName Radio interface name
+	RadioName *string `json:"radio_name,omitempty"`
+
+	// RadioProto WiFi protocol
+	RadioProto *ActiveClientDetailsRadioProto `json:"radio_proto,omitempty"`
+
+	// RateImbalance Rate imbalance indicator
+	RateImbalance *int `json:"rate_imbalance,omitempty"`
+
+	// RoamCount Number of roaming events
+	RoamCount *int `json:"roam_count,omitempty"`
+
+	// Rssi RSSI value
+	Rssi *int `json:"rssi,omitempty"`
+
+	// RxBytes Total received bytes
+	RxBytes *int64 `json:"rx_bytes,omitempty"`
+
+	// RxBytesR Recent received bytes rate
+	RxBytesR *int `json:"rx_bytes-r,omitempty"`
+
+	// RxPackets Total received packets
+	RxPackets *int64 `json:"rx_packets,omitempty"`
+
+	// RxRate RX rate in Kbps
+	RxRate *int `json:"rx_rate,omitempty"`
+
+	// Satisfaction Satisfaction score (legacy)
+	Satisfaction *int `json:"satisfaction,omitempty"`
+
+	// Signal Signal strength in dBm
+	Signal *int `json:"signal,omitempty"`
+
+	// SiteId Site ID
+	SiteId *string `json:"site_id,omitempty"`
+
+	// Status Connection status
+	Status *ActiveClientDetailsStatus `json:"status,omitempty"`
+
+	// Tags Client tags
+	Tags *[]string `json:"tags,omitempty"`
+
+	// TxBytes Total transmitted bytes
+	TxBytes *int64 `json:"tx_bytes,omitempty"`
+
+	// TxBytesR Recent transmitted bytes rate
+	TxBytesR *int `json:"tx_bytes-r,omitempty"`
+
+	// TxMcsIndex TX MCS index (-1 if N/A)
+	TxMcsIndex *int `json:"tx_mcs_index,omitempty"`
+
+	// TxPackets Total transmitted packets
+	TxPackets *int64 `json:"tx_packets,omitempty"`
+
+	// TxRate TX rate in Kbps
+	TxRate *int `json:"tx_rate,omitempty"`
+
+	// Type Connection type
+	Type *ActiveClientDetailsType `json:"type,omitempty"`
+
+	// UnifiDevice Whether this is a UniFi device
+	UnifiDevice *bool `json:"unifi_device,omitempty"`
+
+	// UplinkMac Uplink device MAC
+	UplinkMac *string `json:"uplink_mac,omitempty"`
+
+	// Uptime Connection uptime in seconds
+	Uptime *int `json:"uptime,omitempty"`
+
+	// UseFixedip Whether using fixed IP
+	UseFixedip *bool `json:"use_fixedip,omitempty"`
+
+	// UserId User ID
+	UserId *string `json:"user_id,omitempty"`
+
+	// UsergroupId User group ID
+	UsergroupId *string `json:"usergroup_id,omitempty"`
+
+	// VirtualNetworkOverrideEnabled Whether virtual network override is enabled
+	VirtualNetworkOverrideEnabled *bool `json:"virtual_network_override_enabled,omitempty"`
+
+	// WifiExperienceAverage Average WiFi experience score
+	WifiExperienceAverage *int `json:"wifi_experience_average,omitempty"`
+
+	// WifiExperienceScore Current WiFi experience score (0-100)
+	WifiExperienceScore *int `json:"wifi_experience_score,omitempty"`
+
+	// WifiTxAttempts Total TX attempts
+	WifiTxAttempts *int `json:"wifi_tx_attempts,omitempty"`
+
+	// WifiTxRetriesPercentage TX retry percentage
+	WifiTxRetriesPercentage *float32 `json:"wifi_tx_retries_percentage,omitempty"`
+
+	// WlanconfId WLAN configuration ID
+	WlanconfId *string `json:"wlanconf_id,omitempty"`
+}
+
+// ActiveClientDetailsRadioProto WiFi protocol
+type ActiveClientDetailsRadioProto string
+
+// ActiveClientDetailsStatus Connection status
+type ActiveClientDetailsStatus string
+
+// ActiveClientDetailsType Connection type
+type ActiveClientDetailsType string
+
 // AggregatedDashboard Aggregated dashboard statistics and analytics
 type AggregatedDashboard struct {
 	// DashboardMeta Metadata about the dashboard view
@@ -411,6 +892,63 @@ type AggregatedDashboard struct {
 	} `json:"wifi_technology,omitempty"`
 }
 
+// Alert An alert entry
+type Alert struct {
+	// Category Alert category
+	Category *string `json:"category,omitempty"`
+
+	// Event Event type
+	Event *string `json:"event,omitempty"`
+
+	// Id Alert ID
+	Id *string `json:"id,omitempty"`
+
+	// Key Alert key
+	Key *string `json:"key,omitempty"`
+
+	// Message Human-readable message
+	Message *string `json:"message,omitempty"`
+
+	// MessageRaw Raw message template
+	MessageRaw *string `json:"message_raw,omitempty"`
+
+	// Parameters Alert parameters
+	Parameters *map[string]interface{} `json:"parameters,omitempty"`
+
+	// Severity Alert severity
+	Severity *AlertSeverity `json:"severity,omitempty"`
+
+	// ShowOnDashboard Whether to show on dashboard
+	ShowOnDashboard *bool `json:"show_on_dashboard,omitempty"`
+
+	// Status Alert status
+	Status *AlertStatus `json:"status,omitempty"`
+
+	// Subcategory Alert subcategory
+	Subcategory *string `json:"subcategory,omitempty"`
+
+	// Target Target type
+	Target *string `json:"target,omitempty"`
+
+	// Timestamp Alert timestamp in Unix milliseconds
+	Timestamp *int64 `json:"timestamp,omitempty"`
+
+	// TitleRaw Raw title template
+	TitleRaw *string `json:"title_raw,omitempty"`
+}
+
+// AlertSeverity Alert severity
+type AlertSeverity string
+
+// AlertStatus Alert status
+type AlertStatus string
+
+// AlertsResponse Alerts response
+type AlertsResponse struct {
+	// Data List of alerts
+	Data *[]Alert `json:"data,omitempty"`
+}
+
 // AllDevicesResponse Response containing devices grouped by UniFi application
 type AllDevicesResponse struct {
 	// AccessDevices Access control devices
@@ -429,6 +967,39 @@ type AllDevicesResponse struct {
 	TalkDevices *[]map[string]interface{} `json:"talk_devices,omitempty"`
 }
 
+// BGPConfig BGP configuration
+type BGPConfig struct {
+	// UnderscoreId Config ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// DeviceMac Device MAC address
+	DeviceMac *string `json:"device_mac,omitempty"`
+
+	// Enabled Whether BGP is enabled
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// LocalAs Local AS number
+	LocalAs *int `json:"local_as,omitempty"`
+
+	// Neighbors BGP neighbors
+	Neighbors *[]BGPNeighbor `json:"neighbors,omitempty"`
+
+	// RouterId BGP router ID
+	RouterId *string `json:"router_id,omitempty"`
+}
+
+// BGPNeighbor A BGP neighbor
+type BGPNeighbor struct {
+	// Description Neighbor description
+	Description *string `json:"description,omitempty"`
+
+	// Ip Neighbor IP address
+	Ip *string `json:"ip,omitempty"`
+
+	// RemoteAs Remote AS number
+	RemoteAs *int `json:"remote_as,omitempty"`
+}
+
 // ClientAccess defines model for ClientAccess.
 type ClientAccess struct {
 	// Type Access control type
@@ -437,6 +1008,162 @@ type ClientAccess struct {
 
 // ClientAccessType Access control type
 type ClientAccessType string
+
+// ClientFingerprint Client device fingerprint
+type ClientFingerprint struct {
+	// ComputedDevId Computed device ID
+	ComputedDevId *int `json:"computed_dev_id,omitempty"`
+
+	// ComputedEngine Computed engine
+	ComputedEngine *int `json:"computed_engine,omitempty"`
+
+	// Confidence Fingerprint confidence
+	Confidence *int `json:"confidence,omitempty"`
+
+	// DevCat Device category
+	DevCat *int `json:"dev_cat,omitempty"`
+
+	// DevFamily Device family
+	DevFamily *int `json:"dev_family,omitempty"`
+
+	// DevId Device ID
+	DevId *int `json:"dev_id,omitempty"`
+
+	// DevIdOverride Device ID override
+	DevIdOverride *int `json:"dev_id_override,omitempty"`
+
+	// DevVendor Device vendor
+	DevVendor *int `json:"dev_vendor,omitempty"`
+
+	// HasOverride Whether fingerprint has override
+	HasOverride *bool `json:"has_override,omitempty"`
+
+	// OsClass OS class
+	OsClass *int `json:"os_class,omitempty"`
+
+	// OsName OS name ID
+	OsName *int `json:"os_name,omitempty"`
+}
+
+// ClientHistoryEntry Historical client connection information
+type ClientHistoryEntry struct {
+	// Blocked Whether client is blocked
+	Blocked *bool `json:"blocked,omitempty"`
+
+	// Channel Last channel (0 if offline)
+	Channel *int `json:"channel,omitempty"`
+
+	// DisplayName Display name
+	DisplayName *string `json:"display_name,omitempty"`
+
+	// Fingerprint Device fingerprint information
+	Fingerprint *DeviceFingerprint `json:"fingerprint,omitempty"`
+
+	// FirstSeen First seen Unix timestamp
+	FirstSeen *int64 `json:"first_seen,omitempty"`
+
+	// Hostname Client hostname
+	Hostname *string `json:"hostname,omitempty"`
+
+	// Id Client ID (MAC address)
+	Id *string `json:"id,omitempty"`
+
+	// Ipv4LeaseExpirationTimestampSeconds IPv4 lease expiration timestamp
+	Ipv4LeaseExpirationTimestampSeconds *int64 `json:"ipv4_lease_expiration_timestamp_seconds,omitempty"`
+
+	// IsAllowedInVisualProgramming Whether allowed in visual programming
+	IsAllowedInVisualProgramming *bool `json:"is_allowed_in_visual_programming,omitempty"`
+
+	// IsGuest Whether on guest network
+	IsGuest *bool `json:"is_guest,omitempty"`
+
+	// IsMlo Whether using MLO
+	IsMlo *bool `json:"is_mlo,omitempty"`
+
+	// IsWired Whether client is wired
+	IsWired *bool `json:"is_wired,omitempty"`
+
+	// LastConnectionNetworkId Last connected network ID
+	LastConnectionNetworkId *string `json:"last_connection_network_id,omitempty"`
+
+	// LastConnectionNetworkName Last connected network name
+	LastConnectionNetworkName *string `json:"last_connection_network_name,omitempty"`
+
+	// LastIp Last known IP address
+	LastIp *string `json:"last_ip,omitempty"`
+
+	// LastIpv6 Last known IPv6 addresses
+	LastIpv6 *[]string `json:"last_ipv6,omitempty"`
+
+	// LastRadio Last used radio band
+	LastRadio *string `json:"last_radio,omitempty"`
+
+	// LastSeen Last seen Unix timestamp
+	LastSeen *int64 `json:"last_seen,omitempty"`
+
+	// LastUplinkMac Last uplink device MAC
+	LastUplinkMac *string `json:"last_uplink_mac,omitempty"`
+
+	// LastUplinkName Last uplink device name
+	LastUplinkName *string `json:"last_uplink_name,omitempty"`
+
+	// LocalDnsRecordEnabled Whether local DNS record enabled
+	LocalDnsRecordEnabled *bool `json:"local_dns_record_enabled,omitempty"`
+
+	// Mac MAC address
+	Mac *string `json:"mac,omitempty"`
+
+	// ModelName Device model name
+	ModelName *string `json:"model_name,omitempty"`
+
+	// NetworkMembersGroupIds Network member group IDs
+	NetworkMembersGroupIds *[]string `json:"network_members_group_ids,omitempty"`
+
+	// Noted Whether client is noted
+	Noted *bool `json:"noted,omitempty"`
+
+	// Oui Manufacturer from OUI lookup
+	Oui *string `json:"oui,omitempty"`
+
+	// SiteId Site ID
+	SiteId *string `json:"site_id,omitempty"`
+
+	// Status Current status
+	Status *ClientHistoryEntryStatus `json:"status,omitempty"`
+
+	// Tags Client tags
+	Tags *[]string `json:"tags,omitempty"`
+
+	// Type Connection type
+	Type *ClientHistoryEntryType `json:"type,omitempty"`
+
+	// UnifiDevice Whether UniFi device
+	UnifiDevice *bool `json:"unifi_device,omitempty"`
+
+	// UplinkMac Current uplink MAC (empty if offline)
+	UplinkMac *string `json:"uplink_mac,omitempty"`
+
+	// UseFixedip Whether using fixed IP
+	UseFixedip *bool `json:"use_fixedip,omitempty"`
+
+	// UserId User ID
+	UserId *string `json:"user_id,omitempty"`
+
+	// UsergroupId User group ID
+	UsergroupId *string `json:"usergroup_id,omitempty"`
+
+	// VirtualNetworkOverrideEnabled Whether virtual network override enabled
+	VirtualNetworkOverrideEnabled *bool `json:"virtual_network_override_enabled,omitempty"`
+
+	// WlanconfId WLAN configuration ID
+	WlanconfId *string `json:"wlanconf_id,omitempty"`
+}
+
+// ClientHistoryEntryStatus Current status
+type ClientHistoryEntryStatus string
+
+// ClientHistoryEntryType Connection type
+type ClientHistoryEntryType string
 
 // ClientListItem defines model for ClientListItem.
 type ClientListItem struct {
@@ -483,6 +1210,27 @@ type ClientsResponse struct {
 	TotalCount int `json:"totalCount"`
 }
 
+// ClientsTrafficControl Clients traffic control data
+type ClientsTrafficControl struct {
+	// AppliedTrafficRuleCount Traffic rule counts per client MAC
+	AppliedTrafficRuleCount *map[string]int `json:"applied_traffic_rule_count,omitempty"`
+}
+
+// ContentFilteringRule A content filtering rule
+type ContentFilteringRule struct {
+	// UnderscoreId Rule ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// Categories Blocked categories
+	Categories *[]string `json:"categories,omitempty"`
+
+	// Enabled Whether rule is enabled
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// Name Rule name
+	Name *string `json:"name,omitempty"`
+}
+
 // CreateVouchersRequest defines model for CreateVouchersRequest.
 type CreateVouchersRequest struct {
 	// Bytes Total data quota in MB (0 = unlimited)
@@ -514,6 +1262,75 @@ type CreateVouchersRequest struct {
 
 	// Up Upload bandwidth limit in Kbps (legacy, use qos_rate_max_up)
 	Up *int `json:"up,omitempty"`
+}
+
+// DHCPLease A DHCP lease entry
+type DHCPLease struct {
+	// ClientType Connection type
+	ClientType *DHCPLeaseClientType `json:"client_type,omitempty"`
+
+	// DeviceType UniFi device type (for UniFi devices)
+	DeviceType *DHCPLeaseDeviceType `json:"device_type,omitempty"`
+
+	// DisplayName Display name
+	DisplayName *string `json:"display_name,omitempty"`
+
+	// Fingerprint Device fingerprint information
+	Fingerprint *DeviceFingerprint `json:"fingerprint,omitempty"`
+
+	// FixedIp Fixed IP if configured
+	FixedIp *string `json:"fixed_ip,omitempty"`
+
+	// Hostname Client hostname
+	Hostname *string `json:"hostname,omitempty"`
+
+	// Ip Assigned IP address
+	Ip *string `json:"ip,omitempty"`
+
+	// LeaseExpirationTime Lease expiration Unix timestamp (0 = static)
+	LeaseExpirationTime *int `json:"lease_expiration_time,omitempty"`
+
+	// LocalDnsRecord Local DNS record name
+	LocalDnsRecord *string `json:"local_dns_record,omitempty"`
+
+	// Mac Client MAC address
+	Mac *string `json:"mac,omitempty"`
+
+	// Model Device model (for UniFi devices)
+	Model *string `json:"model,omitempty"`
+
+	// Name Custom name if set
+	Name *string `json:"name,omitempty"`
+
+	// NetworkId Network ID
+	NetworkId *string `json:"network_id,omitempty"`
+
+	// Oui Manufacturer from OUI lookup
+	Oui *string `json:"oui,omitempty"`
+
+	// State Device state (for UniFi devices)
+	State *string `json:"state,omitempty"`
+
+	// Status Client status
+	Status *DHCPLeaseStatus `json:"status,omitempty"`
+
+	// UseFixedip Whether using fixed IP
+	UseFixedip *bool `json:"use_fixedip,omitempty"`
+}
+
+// DHCPLeaseClientType Connection type
+type DHCPLeaseClientType string
+
+// DHCPLeaseDeviceType UniFi device type (for UniFi devices)
+type DHCPLeaseDeviceType string
+
+// DHCPLeaseStatus Client status
+type DHCPLeaseStatus string
+
+// DHCPLeasesResponse DHCP leases response
+type DHCPLeasesResponse struct {
+	// DhcpLeaseInfo List of DHCP leases
+	DhcpLeaseInfo *[]DHCPLease `json:"dhcp_lease_info,omitempty"`
 }
 
 // DNSRecord defines model for DNSRecord.
@@ -579,6 +1396,21 @@ type DNSRecordInput struct {
 // DNSRecordInputRecordType DNS record type
 type DNSRecordInputRecordType string
 
+// DescribedFeature A described feature with availability status
+type DescribedFeature struct {
+	// Enabled Whether feature is enabled
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// FeatureExists Whether feature exists/is available
+	FeatureExists *bool `json:"feature_exists,omitempty"`
+
+	// Limitations Feature limitations
+	Limitations *[]FeatureLimitation `json:"limitations,omitempty"`
+
+	// Name Feature name
+	Name *string `json:"name,omitempty"`
+}
+
 // Device defines model for Device.
 type Device struct {
 	// ConfigurationId Current configuration identifier
@@ -623,6 +1455,42 @@ type Device struct {
 
 // DeviceState Current operational state
 type DeviceState string
+
+// DeviceFingerprint Device fingerprint information
+type DeviceFingerprint struct {
+	// ComputedDevId Computed device ID
+	ComputedDevId *int `json:"computed_dev_id,omitempty"`
+
+	// ComputedEngine Fingerprint engine used
+	ComputedEngine *int `json:"computed_engine,omitempty"`
+
+	// Confidence Confidence level (0-100)
+	Confidence *int `json:"confidence,omitempty"`
+
+	// DevCat Device category ID
+	DevCat *int `json:"dev_cat,omitempty"`
+
+	// DevFamily Device family ID
+	DevFamily *int `json:"dev_family,omitempty"`
+
+	// DevId Device ID
+	DevId *int `json:"dev_id,omitempty"`
+
+	// DevIdOverride Overridden device ID if any
+	DevIdOverride *int `json:"dev_id_override,omitempty"`
+
+	// DevVendor Vendor ID
+	DevVendor *int `json:"dev_vendor,omitempty"`
+
+	// HasOverride Whether fingerprint was overridden
+	HasOverride *bool `json:"has_override,omitempty"`
+
+	// OsClass OS class ID
+	OsClass *int `json:"os_class,omitempty"`
+
+	// OsName OS name ID
+	OsName *int `json:"os_name,omitempty"`
+}
 
 // DeviceInterfaces Network interfaces available on the device
 type DeviceInterfaces struct {
@@ -703,6 +1571,15 @@ type ErrorResponse struct {
 	Timestamp time.Time `json:"timestamp"`
 }
 
+// FeatureLimitation A feature limitation
+type FeatureLimitation struct {
+	// DeviceMacs MAC addresses of affected devices
+	DeviceMacs *[]string `json:"device_macs,omitempty"`
+
+	// Key Limitation key
+	Key *string `json:"key,omitempty"`
+}
+
 // FirewallPolicy defines model for FirewallPolicy.
 type FirewallPolicy struct {
 	// UnderscoreId Unique identifier for the firewall policy
@@ -775,6 +1652,153 @@ type FirewallPolicyInputAction string
 // FirewallPolicyInputIpVersion IP version to match
 type FirewallPolicyInputIpVersion string
 
+// FirewallZone A firewall zone grouping networks
+type FirewallZone struct {
+	// UnderscoreId Unique identifier
+	UnderscoreId string `json:"_id"`
+
+	// AttrNoEdit Whether zone attributes cannot be edited
+	AttrNoEdit *bool `json:"attr_no_edit,omitempty"`
+
+	// DefaultZone Whether this is a default system zone
+	DefaultZone *bool `json:"default_zone,omitempty"`
+
+	// Name Zone display name
+	Name string `json:"name"`
+
+	// NetworkIds Network IDs associated with this zone
+	NetworkIds *[]string `json:"network_ids,omitempty"`
+
+	// ZoneKey Zone key identifier
+	ZoneKey FirewallZoneZoneKey `json:"zone_key"`
+}
+
+// FirewallZoneZoneKey Zone key identifier
+type FirewallZoneZoneKey string
+
+// FirewallZoneMatrixEntry Zone-to-zone policy matrix entry
+type FirewallZoneMatrixEntry struct {
+	// UnderscoreId Source zone ID
+	UnderscoreId string `json:"_id"`
+
+	// Data Policy data for each destination zone
+	Data []ZoneMatrixData `json:"data"`
+
+	// Name Source zone name
+	Name string `json:"name"`
+
+	// ZoneKey Source zone key
+	ZoneKey string `json:"zone_key"`
+}
+
+// GatewayEngineFeature Gateway engine feature status
+type GatewayEngineFeature struct {
+	// Enabled Whether feature is enabled
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// Supported Whether feature is supported
+	Supported *bool `json:"supported,omitempty"`
+
+	// Type Feature type
+	Type *string `json:"type,omitempty"`
+
+	// UsageInPercent Feature utilization percentage
+	UsageInPercent *float32 `json:"usage_in_percent,omitempty"`
+}
+
+// GatewayEngineUtilization Gateway CPU and memory utilization
+type GatewayEngineUtilization struct {
+	// CpuUtilizationPercent Current CPU utilization percentage
+	CpuUtilizationPercent *float32 `json:"cpu_utilization_percent,omitempty"`
+
+	// DataPoints Historical data points
+	DataPoints *[]UtilizationDataPoint `json:"data_points,omitempty"`
+
+	// MemoryTotalInBytes Total memory in bytes
+	MemoryTotalInBytes *int64 `json:"memory_total_in_bytes,omitempty"`
+
+	// MemoryUtilizationInBytes Memory usage in bytes
+	MemoryUtilizationInBytes *int64 `json:"memory_utilization_in_bytes,omitempty"`
+
+	// MemoryUtilizationPercent Current memory utilization percentage
+	MemoryUtilizationPercent *float32 `json:"memory_utilization_percent,omitempty"`
+}
+
+// HotspotClient A client connected to the network
+type HotspotClient struct {
+	// Blocked Whether client is blocked
+	Blocked *bool `json:"blocked,omitempty"`
+
+	// DisplayName Display name
+	DisplayName *string `json:"display_name,omitempty"`
+
+	// Fingerprint Client device fingerprint
+	Fingerprint *ClientFingerprint `json:"fingerprint,omitempty"`
+
+	// Hostname Hostname
+	Hostname *string `json:"hostname,omitempty"`
+
+	// Id Client ID (MAC address)
+	Id *string `json:"id,omitempty"`
+
+	// Ip IP address
+	Ip *string `json:"ip,omitempty"`
+
+	// IsGuest Whether client is a guest
+	IsGuest *bool `json:"is_guest,omitempty"`
+
+	// IsWired Whether client is wired
+	IsWired *bool `json:"is_wired,omitempty"`
+
+	// Mac MAC address
+	Mac *string `json:"mac,omitempty"`
+
+	// Noted Whether client is noted
+	Noted *bool `json:"noted,omitempty"`
+
+	// Oui OUI vendor name
+	Oui *string `json:"oui,omitempty"`
+
+	// RxBytesR Receive bytes rate
+	RxBytesR *int `json:"rx_bytes-r,omitempty"`
+
+	// SiteId Site ID
+	SiteId *string `json:"site_id,omitempty"`
+
+	// Status Client status
+	Status *HotspotClientStatus `json:"status,omitempty"`
+
+	// SwPort Switch port (for wired clients)
+	SwPort *int `json:"sw_port,omitempty"`
+
+	// TxBytesR Transmit bytes rate
+	TxBytesR *int `json:"tx_bytes-r,omitempty"`
+
+	// Type Connection type
+	Type *HotspotClientType `json:"type,omitempty"`
+
+	// UplinkMac Uplink device MAC
+	UplinkMac *string `json:"uplink_mac,omitempty"`
+
+	// Uptime Uptime in seconds
+	Uptime *int `json:"uptime,omitempty"`
+
+	// WifiExperienceScore WiFi experience score (0-100)
+	WifiExperienceScore *int `json:"wifi_experience_score,omitempty"`
+}
+
+// HotspotClientStatus Client status
+type HotspotClientStatus string
+
+// HotspotClientType Connection type
+type HotspotClientType string
+
+// HotspotInfo Hotspot configuration info
+type HotspotInfo struct {
+	// ShowHotspotManager Whether hotspot manager is shown
+	ShowHotspotManager *bool `json:"show_hotspot_manager,omitempty"`
+}
+
 // HotspotVoucher defines model for HotspotVoucher.
 type HotspotVoucher struct {
 	// UnderscoreId Unique identifier for the voucher
@@ -832,6 +1856,312 @@ type HotspotVouchersResponse struct {
 	// TotalCount Total number of items available
 	TotalCount int `json:"totalCount"`
 }
+
+// IPSAlert An IPS alert entry
+type IPSAlert struct {
+	// Category Alert category
+	Category *string `json:"category,omitempty"`
+
+	// DstIp Destination IP
+	DstIp *string `json:"dst_ip,omitempty"`
+
+	// DstPort Destination port
+	DstPort *int `json:"dst_port,omitempty"`
+
+	// Id Alert ID
+	Id *string `json:"id,omitempty"`
+
+	// Protocol Protocol
+	Protocol *string `json:"protocol,omitempty"`
+
+	// Severity Alert severity
+	Severity *string `json:"severity,omitempty"`
+
+	// SignatureId Signature ID
+	SignatureId *int `json:"signature_id,omitempty"`
+
+	// SignatureName Signature name
+	SignatureName *string `json:"signature_name,omitempty"`
+
+	// SrcIp Source IP
+	SrcIp *string `json:"src_ip,omitempty"`
+
+	// SrcPort Source port
+	SrcPort *int `json:"src_port,omitempty"`
+
+	// Timestamp Alert timestamp
+	Timestamp *int64 `json:"timestamp,omitempty"`
+}
+
+// IPSAlertsResponse IPS alerts response
+type IPSAlertsResponse struct {
+	// Data List of IPS alerts
+	Data *[]IPSAlert `json:"data,omitempty"`
+}
+
+// ISPConnectionWarnings Connection warning events
+type ISPConnectionWarnings struct {
+	// Downtimes Downtime events
+	Downtimes *[]map[string]interface{} `json:"downtimes,omitempty"`
+
+	// HighLatencies High latency events
+	HighLatencies *[]map[string]interface{} `json:"high_latencies,omitempty"`
+
+	// PacketLoss Packet loss events
+	PacketLoss *[]map[string]interface{} `json:"packet_loss,omitempty"`
+}
+
+// ISPHealth ISP health status with historical stats
+type ISPHealth struct {
+	// HealthStats Historical health statistics
+	HealthStats *[]ISPHealthStat `json:"health_stats,omitempty"`
+}
+
+// ISPHealthCompact Compact ISP health summary with periods
+type ISPHealthCompact struct {
+	// Periods Health periods
+	Periods *[]map[string]interface{} `json:"periods,omitempty"`
+}
+
+// ISPHealthStat ISP health stat entry
+type ISPHealthStat struct {
+	// FailoverWanActive Whether failover WAN is active
+	FailoverWanActive *bool `json:"failover_wan_active,omitempty"`
+
+	// HighLatency Whether high latency detected
+	HighLatency *bool `json:"high_latency,omitempty"`
+
+	// PacketLoss Whether packet loss detected
+	PacketLoss *bool `json:"packet_loss,omitempty"`
+
+	// Timestamp Unix timestamp in milliseconds
+	Timestamp *int64 `json:"timestamp,omitempty"`
+
+	// Wan2FailoverActive Whether WAN2 failover is active
+	Wan2FailoverActive *bool `json:"wan2_failover_active,omitempty"`
+
+	// WanDowntime Whether WAN is down
+	WanDowntime *bool `json:"wan_downtime,omitempty"`
+}
+
+// ISPInternetAlerts Paginated internet alerts
+type ISPInternetAlerts struct {
+	// Data Alert entries
+	Data              *[]map[string]interface{} `json:"data,omitempty"`
+	PageNumber        *int                      `json:"page_number,omitempty"`
+	TotalElementCount *int                      `json:"total_element_count,omitempty"`
+	TotalPageCount    *int                      `json:"total_page_count,omitempty"`
+}
+
+// ISPStatus Comprehensive ISP status with metrics and history
+type ISPStatus struct {
+	// ConnectionWarnings Connection warning events
+	ConnectionWarnings *ISPConnectionWarnings `json:"connection_warnings,omitempty"`
+
+	// InternetAlerts Paginated internet alerts
+	InternetAlerts *ISPInternetAlerts `json:"internet_alerts,omitempty"`
+
+	// LatencyMax Maximum latency observed in ms
+	LatencyMax *int `json:"latency_max,omitempty"`
+
+	// PingServer Server used for latency measurements
+	PingServer *string `json:"ping_server,omitempty"`
+
+	// SpeedtestHistorical Historical speedtest results
+	SpeedtestHistorical *[]SpeedtestHistoricalEntry `json:"speedtest_historical,omitempty"`
+
+	// UplinkStatus Uplink status and statistics
+	UplinkStatus *ISPUplinkStatus `json:"uplink_status,omitempty"`
+}
+
+// ISPUplinkStatus Uplink status and statistics
+type ISPUplinkStatus struct {
+	// LatencyThreshold Latency threshold for warnings in ms
+	LatencyThreshold *int `json:"latency_threshold,omitempty"`
+
+	// ReceivedBytes Total received bytes
+	ReceivedBytes *int64 `json:"received_bytes,omitempty"`
+
+	// Statistics Time-series uplink statistics
+	Statistics *[]UplinkStatisticsEntry `json:"statistics,omitempty"`
+}
+
+// LANConfiguration LAN network configuration
+type LANConfiguration struct {
+	// UnderscoreId Network ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// AttrHiddenId Hidden ID attribute
+	AttrHiddenId *string `json:"attr_hidden_id,omitempty"`
+
+	// AttrNoDelete Cannot be deleted
+	AttrNoDelete *bool `json:"attr_no_delete,omitempty"`
+
+	// DhcpdDns1 Primary DNS server
+	DhcpdDns1 *string `json:"dhcpd_dns_1,omitempty"`
+
+	// DhcpdDns2 Secondary DNS server
+	DhcpdDns2 *string `json:"dhcpd_dns_2,omitempty"`
+
+	// DhcpdDns3 Tertiary DNS server
+	DhcpdDns3 *string `json:"dhcpd_dns_3,omitempty"`
+
+	// DhcpdDnsEnabled DHCP DNS enabled
+	DhcpdDnsEnabled *bool `json:"dhcpd_dns_enabled,omitempty"`
+
+	// DhcpdEnabled DHCP server enabled
+	DhcpdEnabled *bool `json:"dhcpd_enabled,omitempty"`
+
+	// DhcpdLeasetime DHCP lease time in seconds
+	DhcpdLeasetime *int `json:"dhcpd_leasetime,omitempty"`
+
+	// DhcpdStart DHCP range start
+	DhcpdStart *string `json:"dhcpd_start,omitempty"`
+
+	// DhcpdStop DHCP range stop
+	DhcpdStop *string `json:"dhcpd_stop,omitempty"`
+
+	// DomainName Domain name
+	DomainName *string `json:"domain_name,omitempty"`
+
+	// Enabled Whether network is enabled
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// FirewallZoneId Firewall zone ID
+	FirewallZoneId *string `json:"firewall_zone_id,omitempty"`
+
+	// GatewayType Gateway type
+	GatewayType *string `json:"gateway_type,omitempty"`
+
+	// InternetAccessEnabled Internet access enabled
+	InternetAccessEnabled *bool `json:"internet_access_enabled,omitempty"`
+
+	// IpSubnet IP subnet in CIDR notation
+	IpSubnet *string `json:"ip_subnet,omitempty"`
+
+	// Ipv6Enabled IPv6 enabled
+	Ipv6Enabled *bool `json:"ipv6_enabled,omitempty"`
+
+	// Ipv6InterfaceType IPv6 interface type
+	Ipv6InterfaceType *string `json:"ipv6_interface_type,omitempty"`
+
+	// IsNat Whether NAT is enabled
+	IsNat *bool `json:"is_nat,omitempty"`
+
+	// Name Network name
+	Name *string `json:"name,omitempty"`
+
+	// Networkgroup Network group
+	Networkgroup *string `json:"networkgroup,omitempty"`
+
+	// Purpose Network purpose
+	Purpose *string `json:"purpose,omitempty"`
+
+	// SettingPreference Setting preference mode
+	SettingPreference *string `json:"setting_preference,omitempty"`
+
+	// SiteId Site ID
+	SiteId *string `json:"site_id,omitempty"`
+
+	// VlanEnabled Whether VLAN is enabled
+	VlanEnabled *bool `json:"vlan_enabled,omitempty"`
+}
+
+// LANDetails LAN network details
+type LANDetails struct {
+	// CreationTimestamp Creation timestamp
+	CreationTimestamp *int64 `json:"creation_timestamp,omitempty"`
+
+	// GatewayInterfaceName Gateway interface name
+	GatewayInterfaceName *string `json:"gateway_interface_name,omitempty"`
+
+	// GatewayMac Gateway MAC address
+	GatewayMac *string `json:"gateway_mac,omitempty"`
+}
+
+// LANEnrichedConfiguration Enriched LAN network configuration
+type LANEnrichedConfiguration struct {
+	// Configuration LAN network configuration
+	Configuration *LANConfiguration `json:"configuration,omitempty"`
+
+	// Details LAN network details
+	Details *LANDetails `json:"details,omitempty"`
+
+	// Statistics LAN network statistics
+	Statistics *LANStatistics `json:"statistics,omitempty"`
+}
+
+// LANStatistics LAN network statistics
+type LANStatistics struct {
+	// DhcpActiveLeases Active DHCP leases
+	DhcpActiveLeases *int `json:"dhcp_active_leases,omitempty"`
+
+	// DhcpExcludedIpsCount Excluded IPs count
+	DhcpExcludedIpsCount *int `json:"dhcp_excluded_ips_count,omitempty"`
+
+	// DhcpMaxLeases Maximum DHCP leases
+	DhcpMaxLeases *int `json:"dhcp_max_leases,omitempty"`
+}
+
+// LoopDetectionInfo Loop detection status
+type LoopDetectionInfo struct {
+	// KeepaliveDetectedLoopDevices Devices with keepalive-detected loops
+	KeepaliveDetectedLoopDevices *[]string `json:"keepalive_detected_loop_devices,omitempty"`
+
+	// StpDetectedLoopDevices Devices with STP-detected loops
+	StpDetectedLoopDevices *[]string `json:"stp_detected_loop_devices,omitempty"`
+}
+
+// MostActiveNetwork Most active network by client count
+type MostActiveNetwork struct {
+	// Id Network ID
+	Id *string `json:"id,omitempty"`
+
+	// Name Network name
+	Name *string `json:"name,omitempty"`
+
+	// NumberOfActiveClients Number of active clients
+	NumberOfActiveClients *int `json:"number_of_active_clients,omitempty"`
+
+	// Subnet Network subnet
+	Subnet *string `json:"subnet,omitempty"`
+
+	// Type Network type
+	Type *MostActiveNetworkType `json:"type,omitempty"`
+}
+
+// MostActiveNetworkType Network type
+type MostActiveNetworkType string
+
+// NATRule A NAT (port forwarding) rule
+type NATRule struct {
+	// UnderscoreId Rule ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// DstPort Destination port
+	DstPort *string `json:"dst_port,omitempty"`
+
+	// Enabled Whether rule is enabled
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// Fwd Forward to IP address
+	Fwd *string `json:"fwd,omitempty"`
+
+	// FwdPort Forward to port
+	FwdPort *string `json:"fwd_port,omitempty"`
+
+	// Name Rule name
+	Name *string `json:"name,omitempty"`
+
+	// Protocol Protocol
+	Protocol *NATRuleProtocol `json:"protocol,omitempty"`
+
+	// SrcAddress Source address
+	SrcAddress *string `json:"src_address,omitempty"`
+}
+
+// NATRuleProtocol Protocol
+type NATRuleProtocol string
 
 // NetworkClient defines model for NetworkClient.
 type NetworkClient = ClientListItem
@@ -944,6 +2274,102 @@ type NetworkDeviceUplink struct {
 // NetworkDeviceUplinkType Uplink type
 type NetworkDeviceUplinkType string
 
+// NetworkScore Network health score
+type NetworkScore struct {
+	// NetworkPerformanceDesign Design score
+	NetworkPerformanceDesign *string `json:"network_performance_design,omitempty"`
+
+	// NetworkPerformanceScore Performance score
+	NetworkPerformanceScore *string `json:"network_performance_score,omitempty"`
+
+	// NetworkPerformanceUpdates Updates score
+	NetworkPerformanceUpdates *string `json:"network_performance_updates,omitempty"`
+
+	// NetworkSecurityHardening Security hardening score
+	NetworkSecurityHardening *string `json:"network_security_hardening,omitempty"`
+
+	// NetworkSecurityLogging Security logging score
+	NetworkSecurityLogging *string `json:"network_security_logging,omitempty"`
+
+	// NetworkSecurityVulnerability Vulnerability score
+	NetworkSecurityVulnerability *string `json:"network_security_vulnerability,omitempty"`
+
+	// OverallScore Overall score grade
+	OverallScore *string `json:"overall_score,omitempty"`
+
+	// Subscores Detailed subscores
+	Subscores *[]NetworkSubscore `json:"subscores,omitempty"`
+}
+
+// NetworkSubscore A network subscore
+type NetworkSubscore struct {
+	// Category Score category
+	Category *string `json:"category,omitempty"`
+
+	// Id Subscore ID
+	Id *string `json:"id,omitempty"`
+
+	// Score Score value
+	Score *int `json:"score,omitempty"`
+
+	// Subcategory Score subcategory
+	Subcategory *string `json:"subcategory,omitempty"`
+}
+
+// Notification A notification entry
+type Notification struct {
+	// Id Notification ID
+	Id *string `json:"id,omitempty"`
+
+	// Message Message
+	Message *string `json:"message,omitempty"`
+
+	// Read Whether notification is read
+	Read *bool `json:"read,omitempty"`
+
+	// Timestamp Timestamp
+	Timestamp *int64 `json:"timestamp,omitempty"`
+
+	// Type Notification type
+	Type *string `json:"type,omitempty"`
+}
+
+// OSPFNeighbor An OSPF neighbor
+type OSPFNeighbor struct {
+	// Interface Interface name
+	Interface *string `json:"interface,omitempty"`
+
+	// Ip Neighbor IP address
+	Ip *string `json:"ip,omitempty"`
+
+	// NeighborId Neighbor router ID
+	NeighborId *string `json:"neighbor_id,omitempty"`
+
+	// State Neighbor state
+	State *OSPFNeighborState `json:"state,omitempty"`
+}
+
+// OSPFNeighborState Neighbor state
+type OSPFNeighborState string
+
+// OSPFRouter OSPF router configuration
+type OSPFRouter struct {
+	// UnderscoreId Router ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// Areas OSPF areas
+	Areas *[]string `json:"areas,omitempty"`
+
+	// DeviceMac Device MAC address
+	DeviceMac *string `json:"device_mac,omitempty"`
+
+	// Enabled Whether OSPF is enabled
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// RouterId OSPF router ID
+	RouterId *string `json:"router_id,omitempty"`
+}
+
 // PaginatedResponse defines model for PaginatedResponse.
 type PaginatedResponse struct {
 	// Count Number of items in current response
@@ -1007,6 +2433,153 @@ type PortConnector string
 // PortState Current port state
 type PortState string
 
+// PortProfileDefaults Default port profile configuration
+type PortProfileDefaults struct {
+	// Autoneg Auto-negotiation enabled
+	Autoneg *bool `json:"autoneg,omitempty"`
+
+	// Dot1xCtrl 802.1X control mode
+	Dot1xCtrl *string `json:"dot1x_ctrl,omitempty"`
+
+	// EgressRateLimitKbps Egress rate limit in Kbps
+	EgressRateLimitKbps *int `json:"egress_rate_limit_kbps,omitempty"`
+
+	// EgressRateLimitKbpsEnabled Egress rate limit enabled
+	EgressRateLimitKbpsEnabled *bool `json:"egress_rate_limit_kbps_enabled,omitempty"`
+
+	// FlowControlEnabled Flow control enabled
+	FlowControlEnabled *bool `json:"flow_control_enabled,omitempty"`
+
+	// Isolation Port isolation enabled
+	Isolation *bool `json:"isolation,omitempty"`
+
+	// LldpmedEnabled LLDP-MED enabled
+	LldpmedEnabled *bool `json:"lldpmed_enabled,omitempty"`
+
+	// LldpmedNotifyEnabled LLDP-MED notify enabled
+	LldpmedNotifyEnabled *bool `json:"lldpmed_notify_enabled,omitempty"`
+
+	// OpMode Operation mode
+	OpMode *string `json:"op_mode,omitempty"`
+
+	// PoeMode PoE mode
+	PoeMode *string `json:"poe_mode,omitempty"`
+
+	// PortKeepaliveEnabled Port keepalive enabled
+	PortKeepaliveEnabled *bool `json:"port_keepalive_enabled,omitempty"`
+
+	// StormctrlBcastEnabled Broadcast storm control enabled
+	StormctrlBcastEnabled *bool `json:"stormctrl_bcast_enabled,omitempty"`
+
+	// StormctrlBcastRate Broadcast storm control rate
+	StormctrlBcastRate *int `json:"stormctrl_bcast_rate,omitempty"`
+
+	// StormctrlMcastEnabled Multicast storm control enabled
+	StormctrlMcastEnabled *bool `json:"stormctrl_mcast_enabled,omitempty"`
+
+	// StormctrlMcastRate Multicast storm control rate
+	StormctrlMcastRate *int `json:"stormctrl_mcast_rate,omitempty"`
+
+	// StormctrlUcastEnabled Unicast storm control enabled
+	StormctrlUcastEnabled *bool `json:"stormctrl_ucast_enabled,omitempty"`
+
+	// StormctrlUcastRate Unicast storm control rate
+	StormctrlUcastRate *int `json:"stormctrl_ucast_rate,omitempty"`
+
+	// StpPortMode STP port mode enabled
+	StpPortMode *bool `json:"stp_port_mode,omitempty"`
+
+	// TaggedVlanMgmt Tagged VLAN management mode
+	TaggedVlanMgmt *string `json:"tagged_vlan_mgmt,omitempty"`
+
+	// VoiceNetworkconfId Voice network config ID
+	VoiceNetworkconfId *string `json:"voice_networkconf_id,omitempty"`
+}
+
+// QoSRule A QoS rule
+type QoSRule struct {
+	// UnderscoreId Rule ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// BandwidthLimit Bandwidth limit in Kbps
+	BandwidthLimit *int `json:"bandwidth_limit,omitempty"`
+
+	// Direction Traffic direction
+	Direction *QoSRuleDirection `json:"direction,omitempty"`
+
+	// Enabled Whether rule is enabled
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// Name Rule name
+	Name *string `json:"name,omitempty"`
+}
+
+// QoSRuleDirection Traffic direction
+type QoSRuleDirection string
+
+// RADIUSProfile A RADIUS authentication profile
+type RADIUSProfile struct {
+	// UnderscoreId Profile ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// AccountingEnabled Whether accounting is enabled
+	AccountingEnabled *bool `json:"accounting_enabled,omitempty"`
+
+	// AcctServers Accounting servers
+	AcctServers *[]RADIUSServer `json:"acct_servers,omitempty"`
+
+	// AttrHiddenId Hidden attribute ID
+	AttrHiddenId *string `json:"attr_hidden_id,omitempty"`
+
+	// AttrNoDelete Whether profile cannot be deleted
+	AttrNoDelete *bool `json:"attr_no_delete,omitempty"`
+
+	// AttrNoEdit Whether profile cannot be edited
+	AttrNoEdit *bool `json:"attr_no_edit,omitempty"`
+
+	// AuthServers Authentication servers
+	AuthServers *[]RADIUSServer `json:"auth_servers,omitempty"`
+
+	// InterimUpdateEnabled Whether interim updates are enabled
+	InterimUpdateEnabled *bool `json:"interim_update_enabled,omitempty"`
+
+	// Name Profile name
+	Name *string `json:"name,omitempty"`
+
+	// VlanEnabled Whether VLAN support is enabled
+	VlanEnabled *bool `json:"vlan_enabled,omitempty"`
+}
+
+// RADIUSServer A RADIUS server configuration
+type RADIUSServer struct {
+	// Ip Server IP address
+	Ip *string `json:"ip,omitempty"`
+
+	// Port Server port
+	Port *int `json:"port,omitempty"`
+
+	// XSecret Shared secret
+	XSecret *string `json:"x_secret,omitempty"`
+}
+
+// RADIUSUser A RADIUS user
+type RADIUSUser struct {
+	// UnderscoreId User ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// Name Username
+	Name *string `json:"name,omitempty"`
+
+	// TunnelMediumType Tunnel medium type
+	TunnelMediumType *int `json:"tunnel_medium_type,omitempty"`
+
+	// TunnelType Tunnel type
+	TunnelType *int `json:"tunnel_type,omitempty"`
+
+	// Vlan VLAN ID
+	Vlan *int `json:"vlan,omitempty"`
+}
+
 // Radio defines model for Radio.
 type Radio struct {
 	// Channel WiFi channel number
@@ -1030,6 +2603,93 @@ type RadioFrequencyGHz float32
 
 // RadioWlanStandard WiFi standard supported
 type RadioWlanStandard string
+
+// SSLInspectionCategory SSL inspection content category
+type SSLInspectionCategory struct {
+	// Id Category ID
+	Id *string `json:"id,omitempty"`
+
+	// Name Category name
+	Name *string `json:"name,omitempty"`
+}
+
+// SSLInspectionProfile SSL inspection profile
+type SSLInspectionProfile struct {
+	// UnderscoreId Profile ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// BlockWebsiteTypes Website types to block
+	BlockWebsiteTypes *[]string `json:"block_website_types,omitempty"`
+
+	// DefaultProfile Whether this is the default profile
+	DefaultProfile *bool `json:"default_profile,omitempty"`
+
+	// Enabled Whether profile is enabled
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// ExcludeAppleDomains Exclude Apple domains
+	ExcludeAppleDomains *bool `json:"exclude_apple_domains,omitempty"`
+
+	// ExcludeDomains Domains to exclude
+	ExcludeDomains *[]string `json:"exclude_domains,omitempty"`
+
+	// ExcludeForcedValidation Exclude forced validation
+	ExcludeForcedValidation *bool `json:"exclude_forced_validation,omitempty"`
+
+	// ExcludeMicrosoftDomains Exclude Microsoft domains
+	ExcludeMicrosoftDomains *bool `json:"exclude_microsoft_domains,omitempty"`
+
+	// ExcludeUbiquitiDomains Exclude Ubiquiti domains
+	ExcludeUbiquitiDomains *bool `json:"exclude_ubiquiti_domains,omitempty"`
+
+	// Filters Content filters
+	Filters *[]string `json:"filters,omitempty"`
+
+	// IncludeApplicationIds Application IDs to include
+	IncludeApplicationIds *[]string `json:"include_application_ids,omitempty"`
+
+	// IncludeDomains Domains to include
+	IncludeDomains *[]string `json:"include_domains,omitempty"`
+
+	// InspectDomains Domain inspection mode
+	InspectDomains *SSLInspectionProfileInspectDomains `json:"inspect_domains,omitempty"`
+
+	// Invalid Whether profile is invalid
+	Invalid *bool `json:"invalid,omitempty"`
+
+	// InvalidReason Reasons for invalidity
+	InvalidReason *[]string `json:"invalid_reason,omitempty"`
+
+	// Name Profile name
+	Name *string `json:"name,omitempty"`
+
+	// TargetNetworkIds Target network IDs
+	TargetNetworkIds *[]string `json:"target_network_ids,omitempty"`
+
+	// TargetNetworkIdsAll Apply to all networks
+	TargetNetworkIdsAll *bool `json:"target_network_ids_all,omitempty"`
+
+	// TargetProtocols Target protocols
+	TargetProtocols *[]string `json:"target_protocols,omitempty"`
+
+	// TargetProtocolsAll Apply to all protocols
+	TargetProtocolsAll *bool `json:"target_protocols_all,omitempty"`
+
+	// TargetTrafficAll Apply to all traffic
+	TargetTrafficAll *bool `json:"target_traffic_all,omitempty"`
+}
+
+// SSLInspectionProfileInspectDomains Domain inspection mode
+type SSLInspectionProfileInspectDomains string
+
+// ServiceProviderInfo Service provider information
+type ServiceProviderInfo struct {
+	// City Provider city
+	City *string `json:"city,omitempty"`
+
+	// Name Provider name
+	Name *string `json:"name,omitempty"`
+}
 
 // SiteListItem defines model for SiteListItem.
 type SiteListItem struct {
@@ -1057,6 +2717,297 @@ type SitesResponse struct {
 
 	// TotalCount Total number of items available
 	TotalCount int `json:"totalCount"`
+}
+
+// SpeedtestHistoricalEntry Historical speedtest result
+type SpeedtestHistoricalEntry struct {
+	// DownloadMbps Download speed in Mbps
+	DownloadMbps *int `json:"download_mbps,omitempty"`
+
+	// Id Speedtest ID
+	Id *string `json:"id,omitempty"`
+
+	// InterfaceName WAN interface name
+	InterfaceName *string `json:"interface_name,omitempty"`
+
+	// LatencyMs Latency in ms
+	LatencyMs *int `json:"latency_ms,omitempty"`
+
+	// Time Test time in Unix milliseconds
+	Time *int64 `json:"time,omitempty"`
+
+	// UploadMbps Upload speed in Mbps
+	UploadMbps *int `json:"upload_mbps,omitempty"`
+
+	// WanNetworkgroup WAN network group
+	WanNetworkgroup *string `json:"wan_networkgroup,omitempty"`
+}
+
+// SpeedtestHistoryResponse Speedtest history response
+type SpeedtestHistoryResponse struct {
+	// Data Historical speedtest results
+	Data *[]SpeedtestResult `json:"data,omitempty"`
+}
+
+// SpeedtestLatest Latest speedtest results and schedule
+type SpeedtestLatest struct {
+	// CronSchedule Cron expression for automatic speedtests
+	CronSchedule *string `json:"cron_schedule,omitempty"`
+
+	// Latest Single speedtest result
+	Latest *SpeedtestResult `json:"latest,omitempty"`
+}
+
+// SpeedtestLatestPerWan Latest speedtest for a WAN interface
+type SpeedtestLatestPerWan struct {
+	// DownloadMbps Download speed in Mbps
+	DownloadMbps *int `json:"download_mbps,omitempty"`
+
+	// Id Speedtest ID
+	Id *string `json:"id,omitempty"`
+
+	// InterfaceName WAN interface name
+	InterfaceName *string `json:"interface_name,omitempty"`
+
+	// LatencyMs Latency in ms
+	LatencyMs *int `json:"latency_ms,omitempty"`
+
+	// NetworkConfId Network configuration ID
+	NetworkConfId *string `json:"network_conf_id,omitempty"`
+
+	// Time Test timestamp in Unix milliseconds
+	Time *int64 `json:"time,omitempty"`
+
+	// UploadMbps Upload speed in Mbps
+	UploadMbps *int `json:"upload_mbps,omitempty"`
+
+	// WanNetworkgroup WAN network group
+	WanNetworkgroup *string `json:"wan_networkgroup,omitempty"`
+
+	// WanProviderCapabilities ISP-advertised capabilities
+	WanProviderCapabilities *WANProviderCapabilities `json:"wan_provider_capabilities,omitempty"`
+}
+
+// SpeedtestLatestPerWanResponse Latest speedtest per WAN interface
+type SpeedtestLatestPerWanResponse struct {
+	// CronSchedule Cron schedule for automatic speedtests
+	CronSchedule *string `json:"cron_schedule,omitempty"`
+
+	// Data Latest speedtest per WAN
+	Data *[]SpeedtestLatestPerWan `json:"data,omitempty"`
+}
+
+// SpeedtestResult Single speedtest result
+type SpeedtestResult struct {
+	// DownloadMbps Download speed in Mbps
+	DownloadMbps *int `json:"download_mbps,omitempty"`
+
+	// Id Speedtest ID
+	Id *string `json:"id,omitempty"`
+
+	// InterfaceName WAN interface name
+	InterfaceName *string `json:"interface_name,omitempty"`
+
+	// LatencyMs Latency in milliseconds
+	LatencyMs *int `json:"latency_ms,omitempty"`
+
+	// NetworkConfId Network configuration ID
+	NetworkConfId *string `json:"network_conf_id,omitempty"`
+
+	// Time Unix timestamp in milliseconds
+	Time *int `json:"time,omitempty"`
+
+	// UploadMbps Upload speed in Mbps
+	UploadMbps *int `json:"upload_mbps,omitempty"`
+
+	// WanNetworkgroup WAN network group name
+	WanNetworkgroup *string `json:"wan_networkgroup,omitempty"`
+
+	// WanProviderCapabilities ISP-advertised capabilities
+	WanProviderCapabilities *WANProviderCapabilities `json:"wan_provider_capabilities,omitempty"`
+}
+
+// StaticDNSDevice A device for static DNS mapping
+type StaticDNSDevice struct {
+	// Hostname Hostname
+	Hostname *string `json:"hostname,omitempty"`
+
+	// IpAddress IP address
+	IpAddress *string `json:"ip_address,omitempty"`
+
+	// MacAddress MAC address
+	MacAddress *string `json:"mac_address,omitempty"`
+
+	// Name Device name
+	Name *string `json:"name,omitempty"`
+}
+
+// SystemLogEntry A system log entry
+type SystemLogEntry struct {
+	// UnderscoreId Log entry ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// Ap Related AP MAC
+	Ap *string `json:"ap,omitempty"`
+
+	// ApName AP name
+	ApName *string `json:"ap_name,omitempty"`
+
+	// Channel WiFi channel
+	Channel *int `json:"channel,omitempty"`
+
+	// Datetime Log entry timestamp in ISO 8601 format
+	Datetime *time.Time `json:"datetime,omitempty"`
+
+	// Hostname Client hostname
+	Hostname *string `json:"hostname,omitempty"`
+
+	// IsAdmin Whether this is an admin activity
+	IsAdmin *bool `json:"is_admin,omitempty"`
+
+	// IsNegative Whether this is a negative/error event
+	IsNegative *bool `json:"is_negative,omitempty"`
+
+	// Key Log event key/type
+	Key *string `json:"key,omitempty"`
+
+	// Msg Human-readable log message
+	Msg *string `json:"msg,omitempty"`
+
+	// Network Related network name
+	Network *string `json:"network,omitempty"`
+
+	// Ssid Related SSID
+	Ssid *string `json:"ssid,omitempty"`
+
+	// Subsystem System subsystem
+	Subsystem *SystemLogEntrySubsystem `json:"subsystem,omitempty"`
+
+	// Time Unix timestamp in milliseconds
+	Time *int64 `json:"time,omitempty"`
+
+	// User Related user/client MAC
+	User *string `json:"user,omitempty"`
+}
+
+// SystemLogEntrySubsystem System subsystem
+type SystemLogEntrySubsystem string
+
+// SystemLogRequest Request body for system logs. Send empty object `{}` for default pagination.
+type SystemLogRequest struct {
+	// PageNumber Page number (0-indexed)
+	PageNumber *int `json:"page_number,omitempty"`
+
+	// PageSize Number of entries per page
+	PageSize *int `json:"page_size,omitempty"`
+}
+
+// SystemLogResponse Paginated system log response
+type SystemLogResponse struct {
+	// Data Log entries
+	Data *[]SystemLogEntry `json:"data,omitempty"`
+
+	// PageNumber Current page number (0-indexed)
+	PageNumber *int `json:"page_number,omitempty"`
+
+	// TotalElementCount Total number of log entries
+	TotalElementCount *int `json:"total_element_count,omitempty"`
+
+	// TotalPageCount Total number of pages
+	TotalPageCount *int `json:"total_page_count,omitempty"`
+}
+
+// TeleportClient A teleport client
+type TeleportClient struct {
+	// AssocTime Association time
+	AssocTime *int64 `json:"assoc_time,omitempty"`
+
+	// DisplayName Display name
+	DisplayName *string `json:"display_name,omitempty"`
+
+	// ExternalClientId External client ID
+	ExternalClientId *string `json:"external_client_id,omitempty"`
+
+	// Id Client ID
+	Id *string `json:"id,omitempty"`
+
+	// Ip Client IP
+	Ip *string `json:"ip,omitempty"`
+
+	// LastSeen Last seen timestamp
+	LastSeen *int64 `json:"last_seen,omitempty"`
+
+	// Name Client name
+	Name *string `json:"name,omitempty"`
+
+	// NetworkId Network ID
+	NetworkId *string `json:"network_id,omitempty"`
+
+	// SiteId Site ID
+	SiteId *string `json:"site_id,omitempty"`
+
+	// Status Client status
+	Status *string `json:"status,omitempty"`
+
+	// TokenId Token ID
+	TokenId *string `json:"token_id,omitempty"`
+
+	// Type Client type
+	Type *string `json:"type,omitempty"`
+}
+
+// TeleportInvitation A teleport invitation
+type TeleportInvitation struct {
+	// Client A teleport client
+	Client *TeleportClient `json:"client,omitempty"`
+
+	// CreationTimestamp Creation timestamp
+	CreationTimestamp *int64 `json:"creation_timestamp,omitempty"`
+
+	// InvitationStatus Invitation status
+	InvitationStatus *TeleportInvitationInvitationStatus `json:"invitation_status,omitempty"`
+
+	// InvitationTokenId Invitation token ID
+	InvitationTokenId *string `json:"invitation_token_id,omitempty"`
+
+	// InvitationUrl Invitation URL
+	InvitationUrl *string `json:"invitation_url,omitempty"`
+
+	// TokenId Token ID
+	TokenId *string `json:"token_id,omitempty"`
+}
+
+// TeleportInvitationInvitationStatus Invitation status
+type TeleportInvitationInvitationStatus string
+
+// TeleportInvitationHistoryResponse Teleport invitation history response
+type TeleportInvitationHistoryResponse struct {
+	// Data Invitation history entries
+	Data *[]TeleportInvitation `json:"data,omitempty"`
+
+	// PageNumber Current page number
+	PageNumber *int `json:"page_number,omitempty"`
+
+	// TotalElementCount Total elements
+	TotalElementCount *int `json:"total_element_count,omitempty"`
+
+	// TotalPageCount Total pages
+	TotalPageCount *int `json:"total_page_count,omitempty"`
+}
+
+// TeleportTokenResponse Teleport token pagination response
+type TeleportTokenResponse struct {
+	// Data Token data
+	Data *[]map[string]interface{} `json:"data,omitempty"`
+
+	// PageNumber Current page number
+	PageNumber *int `json:"page_number,omitempty"`
+
+	// TotalElementCount Total elements
+	TotalElementCount *int `json:"total_element_count,omitempty"`
+
+	// TotalPageCount Total pages
+	TotalPageCount *int `json:"total_page_count,omitempty"`
 }
 
 // Topology Network topology graph
@@ -1137,6 +3088,45 @@ type TopologyVertex struct {
 // TopologyVertexType Node type
 type TopologyVertexType string
 
+// TrafficRoute A traffic route (policy-based routing rule)
+type TrafficRoute struct {
+	// UnderscoreId Route ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// Domains Target domains (for DOMAIN matching)
+	Domains *[]string `json:"domains,omitempty"`
+
+	// Enabled Whether route is enabled
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// IpAddresses Target IP addresses (for IP matching)
+	IpAddresses *[]string `json:"ip_addresses,omitempty"`
+
+	// IpRanges Target IP ranges (for IP matching)
+	IpRanges *[]string `json:"ip_ranges,omitempty"`
+
+	// MatchingTarget Traffic matching target
+	MatchingTarget *TrafficRouteMatchingTarget `json:"matching_target,omitempty"`
+
+	// Name Route name
+	Name *string `json:"name,omitempty"`
+
+	// NetworkId Source network ID
+	NetworkId *string `json:"network_id,omitempty"`
+
+	// Regions Target regions (for REGION matching)
+	Regions *[]string `json:"regions,omitempty"`
+
+	// TargetDevice Target device/interface
+	TargetDevice *TrafficRouteTargetDevice `json:"target_device,omitempty"`
+}
+
+// TrafficRouteMatchingTarget Traffic matching target
+type TrafficRouteMatchingTarget string
+
+// TrafficRouteTargetDevice Target device/interface
+type TrafficRouteTargetDevice string
+
 // TrafficRule defines model for TrafficRule.
 type TrafficRule struct {
 	// UnderscoreId Unique identifier for the traffic rule
@@ -1194,8 +3184,491 @@ type TrafficRuleInput struct {
 // TrafficRuleInputMatchingTarget What this rule matches against
 type TrafficRuleInputMatchingTarget string
 
+// UplinkStatisticsEntry Uplink statistics for a time interval
+type UplinkStatisticsEntry struct {
+	// Downtime Whether downtime was detected
+	Downtime *bool `json:"downtime,omitempty"`
+
+	// Latency Average latency in ms
+	Latency *int `json:"latency,omitempty"`
+
+	// LatencyMax Maximum latency in ms
+	LatencyMax *int `json:"latency_max,omitempty"`
+
+	// ReceivedBytesRateAvg Average received bytes rate
+	ReceivedBytesRateAvg *int `json:"received_bytes_rate_avg,omitempty"`
+
+	// Timestamp Timestamp in Unix milliseconds
+	Timestamp *int64 `json:"timestamp,omitempty"`
+
+	// TransmittedBytesRateAvg Average transmitted bytes rate
+	TransmittedBytesRateAvg *int `json:"transmitted_bytes_rate_avg,omitempty"`
+}
+
+// UtilizationDataPoint A utilization data point
+type UtilizationDataPoint struct {
+	// CpuUtilizationPercent CPU utilization at this point
+	CpuUtilizationPercent *float32 `json:"cpu_utilization_percent,omitempty"`
+
+	// MemoryUtilizationPercent Memory utilization at this point
+	MemoryUtilizationPercent *float32 `json:"memory_utilization_percent,omitempty"`
+
+	// TimestampMilliseconds Timestamp in milliseconds
+	TimestampMilliseconds *int64 `json:"timestamp_milliseconds,omitempty"`
+}
+
+// VPNConnection A VPN connection
+type VPNConnection struct {
+	// UnderscoreId Connection ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// LocalIp Local IP address
+	LocalIp *string `json:"local_ip,omitempty"`
+
+	// Name Connection name
+	Name *string `json:"name,omitempty"`
+
+	// RemoteIp Remote IP address
+	RemoteIp *string `json:"remote_ip,omitempty"`
+
+	// Status Connection status
+	Status *VPNConnectionStatus `json:"status,omitempty"`
+
+	// Uptime Connection uptime in seconds
+	Uptime *int `json:"uptime,omitempty"`
+
+	// VpnType VPN type
+	VpnType *VPNConnectionVpnType `json:"vpn_type,omitempty"`
+}
+
+// VPNConnectionStatus Connection status
+type VPNConnectionStatus string
+
+// VPNConnectionVpnType VPN type
+type VPNConnectionVpnType string
+
+// VPNConnectionsResponse VPN connections response
+type VPNConnectionsResponse struct {
+	// Connections List of VPN connections
+	Connections *[]VPNConnection `json:"connections,omitempty"`
+}
+
+// WANConfiguration WAN network configuration
+type WANConfiguration struct {
+	// UnderscoreId Network ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// AttrHiddenId Hidden ID attribute
+	AttrHiddenId *string `json:"attr_hidden_id,omitempty"`
+
+	// AttrNoDelete Cannot be deleted
+	AttrNoDelete *bool `json:"attr_no_delete,omitempty"`
+
+	// IgmpProxyUpstream IGMP proxy upstream enabled
+	IgmpProxyUpstream *bool `json:"igmp_proxy_upstream,omitempty"`
+
+	// MacOverrideEnabled MAC override enabled
+	MacOverrideEnabled *bool `json:"mac_override_enabled,omitempty"`
+
+	// Name Network name
+	Name *string `json:"name,omitempty"`
+
+	// Purpose Network purpose
+	Purpose *string `json:"purpose,omitempty"`
+
+	// SettingPreference Setting preference mode
+	SettingPreference *string `json:"setting_preference,omitempty"`
+
+	// WanDns1 Primary WAN DNS
+	WanDns1 *string `json:"wan_dns1,omitempty"`
+
+	// WanDns2 Secondary WAN DNS
+	WanDns2 *string `json:"wan_dns2,omitempty"`
+
+	// WanDnsPreference DNS preference
+	WanDnsPreference *string `json:"wan_dns_preference,omitempty"`
+
+	// WanFailoverPriority Failover priority
+	WanFailoverPriority *int `json:"wan_failover_priority,omitempty"`
+
+	// WanLoadBalanceType Load balance type
+	WanLoadBalanceType *string `json:"wan_load_balance_type,omitempty"`
+
+	// WanLoadBalanceWeight Load balance weight
+	WanLoadBalanceWeight *int `json:"wan_load_balance_weight,omitempty"`
+
+	// WanMagicEnabled WAN Magic enabled
+	WanMagicEnabled *bool `json:"wan_magic_enabled,omitempty"`
+
+	// WanNetworkgroup WAN network group
+	WanNetworkgroup *string `json:"wan_networkgroup,omitempty"`
+
+	// WanProviderCapabilities ISP-advertised capabilities
+	WanProviderCapabilities *WANProviderCapabilities `json:"wan_provider_capabilities,omitempty"`
+
+	// WanSmartqEnabled Smart Queue enabled
+	WanSmartqEnabled *bool `json:"wan_smartq_enabled,omitempty"`
+
+	// WanType WAN type
+	WanType *WANConfigurationWanType `json:"wan_type,omitempty"`
+
+	// WanTypeV6 WAN IPv6 type
+	WanTypeV6 *string `json:"wan_type_v6,omitempty"`
+
+	// WanUsername PPPoE username
+	WanUsername *string `json:"wan_username,omitempty"`
+
+	// WanVlanEnabled WAN VLAN enabled
+	WanVlanEnabled *bool `json:"wan_vlan_enabled,omitempty"`
+}
+
+// WANConfigurationWanType WAN type
+type WANConfigurationWanType string
+
+// WANDetails WAN network details
+type WANDetails struct {
+	// CreationTimestamp Creation timestamp
+	CreationTimestamp *int64 `json:"creation_timestamp,omitempty"`
+
+	// ServiceProvider Service provider information
+	ServiceProvider *ServiceProviderInfo `json:"service_provider,omitempty"`
+}
+
+// WANEnrichedConfiguration Enriched WAN network configuration
+type WANEnrichedConfiguration struct {
+	// Configuration WAN network configuration
+	Configuration *WANConfiguration `json:"configuration,omitempty"`
+
+	// Details WAN network details
+	Details *WANDetails `json:"details,omitempty"`
+
+	// Statistics WAN network statistics
+	Statistics *WANStatistics `json:"statistics,omitempty"`
+}
+
+// WANPeakUsage WAN peak usage statistics
+type WANPeakUsage struct {
+	// DownloadPercentage Download peak percentage
+	DownloadPercentage *float32 `json:"download_percentage,omitempty"`
+
+	// MaxRxBytesR Max receive bytes rate
+	MaxRxBytesR *int `json:"max_rx_bytes-r,omitempty"`
+
+	// MaxTxBytesR Max transmit bytes rate
+	MaxTxBytesR *int `json:"max_tx_bytes-r,omitempty"`
+
+	// UploadPercentage Upload peak percentage
+	UploadPercentage *float32 `json:"upload_percentage,omitempty"`
+}
+
+// WANProviderCapabilities ISP-advertised capabilities
+type WANProviderCapabilities struct {
+	// DownloadKilobitsPerSecond Max download in kbps
+	DownloadKilobitsPerSecond *int `json:"download_kilobits_per_second,omitempty"`
+
+	// UploadKilobitsPerSecond Max upload in kbps
+	UploadKilobitsPerSecond *int `json:"upload_kilobits_per_second,omitempty"`
+}
+
+// WANSLA WAN SLA configuration
+type WANSLA struct {
+	// UnderscoreId SLA ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// Enabled Whether SLA is enabled
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// Name SLA name
+	Name *string `json:"name,omitempty"`
+
+	// TargetLatencyMs Target latency in milliseconds
+	TargetLatencyMs *int `json:"target_latency_ms,omitempty"`
+
+	// TargetPacketLossPercent Target packet loss percentage
+	TargetPacketLossPercent *float32 `json:"target_packet_loss_percent,omitempty"`
+}
+
+// WANStatistics WAN network statistics
+type WANStatistics struct {
+	// PeakUsage WAN peak usage statistics
+	PeakUsage *WANPeakUsage `json:"peak_usage,omitempty"`
+
+	// UptimePercentage Uptime percentage
+	UptimePercentage *float32 `json:"uptime_percentage,omitempty"`
+}
+
+// WLANCapabilities WLAN capabilities
+type WLANCapabilities struct {
+	// N6ghzBandSupported Whether 6GHz band is supported
+	N6ghzBandSupported *bool `json:"6ghz_band_supported,omitempty"`
+
+	// Wpa3Supported Whether WPA3 is supported
+	Wpa3Supported *bool `json:"wpa3_supported,omitempty"`
+}
+
+// WarningsResponse Security warnings response
+type WarningsResponse struct {
+	// MissingWindowsDefenderFirewallRules Missing Windows Defender firewall rules
+	MissingWindowsDefenderFirewallRules *[]map[string]interface{} `json:"missing_windows_defender_firewall_rules,omitempty"`
+
+	// RogueClients Rogue client warnings
+	RogueClients *[]map[string]interface{} `json:"rogue_clients,omitempty"`
+
+	// RogueDhcps Rogue DHCP server warnings
+	RogueDhcps *[]map[string]interface{} `json:"rogue_dhcps,omitempty"`
+}
+
+// WiFiConnectivity WiFi connectivity statistics
+type WiFiConnectivity struct {
+	// Attempts WiFi connection attempt statistics
+	Attempts *WiFiConnectivityAttempts `json:"attempts,omitempty"`
+
+	// EventGroups Connection event groups
+	EventGroups *[]map[string]interface{} `json:"event_groups,omitempty"`
+
+	// Latencies WiFi latency statistics
+	Latencies *WiFiConnectivityLatencies `json:"latencies,omitempty"`
+
+	// TotalClients Total number of clients
+	TotalClients *int `json:"total_clients,omitempty"`
+}
+
+// WiFiConnectivityAttempts WiFi connection attempt statistics
+type WiFiConnectivityAttempts struct {
+	// AssociationRatio Association success ratio
+	AssociationRatio *float32 `json:"association_ratio,omitempty"`
+
+	// AuthenticationRatio Authentication success ratio
+	AuthenticationRatio *float32 `json:"authentication_ratio,omitempty"`
+
+	// DhcpRatio DHCP success ratio
+	DhcpRatio *float32 `json:"dhcp_ratio,omitempty"`
+
+	// DnsRatio DNS success ratio
+	DnsRatio *float32 `json:"dns_ratio,omitempty"`
+
+	// FailedClientConnections Failed connections
+	FailedClientConnections *int `json:"failed_client_connections,omitempty"`
+
+	// SuccessRatio Success ratio percentage
+	SuccessRatio *float32 `json:"success_ratio,omitempty"`
+
+	// TotalAttempts Total connection attempts
+	TotalAttempts *int `json:"total_attempts,omitempty"`
+}
+
+// WiFiConnectivityLatencies WiFi latency statistics
+type WiFiConnectivityLatencies struct {
+	// AssociationLatency Association latency
+	AssociationLatency *int `json:"association_latency,omitempty"`
+
+	// AuthenticationLatency Authentication latency
+	AuthenticationLatency *int `json:"authentication_latency,omitempty"`
+
+	// DhcpLatency DHCP latency
+	DhcpLatency *int `json:"dhcp_latency,omitempty"`
+
+	// TotalLatency Total latency in microseconds
+	TotalLatency *int `json:"total_latency,omitempty"`
+
+	// TrafficLatency Traffic latency
+	TrafficLatency *int `json:"traffic_latency,omitempty"`
+}
+
+// WiFiManEntry WiFiMan diagnostic entry
+type WiFiManEntry struct {
+	// ClientIconDeviceId Client icon device ID
+	ClientIconDeviceId *int `json:"client_icon_device_id,omitempty"`
+
+	// ClientIconEngineId Client icon engine ID
+	ClientIconEngineId *int `json:"client_icon_engine_id,omitempty"`
+
+	// ClientLinkDownloadRateKbps Download link rate in Kbps
+	ClientLinkDownloadRateKbps *int `json:"client_link_download_rate_kbps,omitempty"`
+
+	// ClientLinkUploadRateKbps Upload link rate in Kbps
+	ClientLinkUploadRateKbps *int `json:"client_link_upload_rate_kbps,omitempty"`
+
+	// ClientMac Client MAC address
+	ClientMac *string `json:"client_mac,omitempty"`
+
+	// ClientModel Client device model
+	ClientModel *string `json:"client_model,omitempty"`
+
+	// ClientName Client name
+	ClientName *string `json:"client_name,omitempty"`
+
+	// ClientSignal Client signal strength
+	ClientSignal *int `json:"client_signal,omitempty"`
+
+	// ClientWifiExperience WiFi experience score
+	ClientWifiExperience *int `json:"client_wifi_experience,omitempty"`
+
+	// DeviceMac AP MAC address
+	DeviceMac *string `json:"device_mac,omitempty"`
+
+	// DeviceModel AP model
+	DeviceModel *string `json:"device_model,omitempty"`
+
+	// DeviceName AP name
+	DeviceName *string `json:"device_name,omitempty"`
+
+	// Id Entry ID
+	Id *string `json:"id,omitempty"`
+
+	// IspName ISP name
+	IspName *string `json:"isp_name,omitempty"`
+
+	// PublicIp Public IP address
+	PublicIp *string `json:"public_ip,omitempty"`
+
+	// ReportTimestamp Report timestamp
+	ReportTimestamp *int64 `json:"report_timestamp,omitempty"`
+
+	// SpeedTests Speed test results
+	SpeedTests *[]WiFiManSpeedTest `json:"speed_tests,omitempty"`
+
+	// UplinkDevices Uplink devices
+	UplinkDevices *[]WiFiManUplinkDevice `json:"uplink_devices,omitempty"`
+
+	// WlanBand WiFi band
+	WlanBand *WiFiManEntryWlanBand `json:"wlan_band,omitempty"`
+
+	// WlanChannel WiFi channel
+	WlanChannel *int `json:"wlan_channel,omitempty"`
+
+	// WlanChannelWidth Channel width in MHz
+	WlanChannelWidth *int `json:"wlan_channel_width,omitempty"`
+
+	// WlanEssid WLAN ESSID
+	WlanEssid *string `json:"wlan_essid,omitempty"`
+}
+
+// WiFiManEntryWlanBand WiFi band
+type WiFiManEntryWlanBand string
+
+// WiFiManSpeedTest WiFiMan speed test result
+type WiFiManSpeedTest struct {
+	// DownloadSpeedBytes Download speed in bytes/s
+	DownloadSpeedBytes *int `json:"download_speed_bytes,omitempty"`
+
+	// Endpoint Test endpoint
+	Endpoint *string `json:"endpoint,omitempty"`
+
+	// Mac Device MAC
+	Mac *string `json:"mac,omitempty"`
+
+	// Type Test type
+	Type *string `json:"type,omitempty"`
+
+	// UploadSpeedBytes Upload speed in bytes/s
+	UploadSpeedBytes *int `json:"upload_speed_bytes,omitempty"`
+}
+
+// WiFiManUplinkDevice WiFiMan uplink device
+type WiFiManUplinkDevice struct {
+	// Experience Experience score
+	Experience *int `json:"experience,omitempty"`
+
+	// Mac Device MAC
+	Mac *string `json:"mac,omitempty"`
+
+	// Model Device model
+	Model *string `json:"model,omitempty"`
+
+	// NumberOfClients Number of clients
+	NumberOfClients *int `json:"number_of_clients,omitempty"`
+
+	// WirelessUplink Whether uplink is wireless
+	WirelessUplink *bool `json:"wireless_uplink,omitempty"`
+}
+
+// WiFiStatsAP Statistics for a single access point
+type WiFiStatsAP struct {
+	// ClientsCount Number of connected clients
+	ClientsCount *int `json:"clients_count,omitempty"`
+
+	// DeviceMac Access point MAC address
+	DeviceMac *string `json:"device_mac,omitempty"`
+
+	// PhyRateMax Maximum PHY rate in Kbps
+	PhyRateMax *int `json:"phy_rate_max,omitempty"`
+
+	// PhyRateMostCommon Most common PHY rate in Kbps
+	PhyRateMostCommon *int `json:"phy_rate_most_common,omitempty"`
+
+	// RoamsCount Number of roaming events
+	RoamsCount *int `json:"roams_count,omitempty"`
+
+	// SatisfactionAvg Average satisfaction score (0-100)
+	SatisfactionAvg *int `json:"satisfaction_avg,omitempty"`
+
+	// SignalAvg Average signal strength in dBm
+	SignalAvg *int `json:"signal_avg,omitempty"`
+
+	// TotalTrafficPercentage Percentage of total network traffic
+	TotalTrafficPercentage *float32 `json:"total_traffic_percentage,omitempty"`
+
+	// TxRetriesPercentage TX retry percentage
+	TxRetriesPercentage *float32 `json:"tx_retries_percentage,omitempty"`
+
+	// WeakestClientsSignalAvg Average signal of weakest clients in dBm
+	WeakestClientsSignalAvg *int `json:"weakest_clients_signal_avg,omitempty"`
+}
+
+// WiFiStatsAPsResponse WiFi statistics for all access points
+type WiFiStatsAPsResponse struct {
+	// ApDetails Statistics per access point
+	ApDetails *[]WiFiStatsAP `json:"ap_details,omitempty"`
+}
+
+// WireGuardSubnets WireGuard existing subnets
+type WireGuardSubnets struct {
+	// Subnets List of subnets in use
+	Subnets *[]string `json:"subnets,omitempty"`
+}
+
+// WireGuardUser A WireGuard VPN user
+type WireGuardUser struct {
+	// UnderscoreId User ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// Enabled Whether user is enabled
+	Enabled *bool `json:"enabled,omitempty"`
+
+	// Name User name
+	Name *string `json:"name,omitempty"`
+
+	// NetworkId Associated network ID
+	NetworkId *string `json:"network_id,omitempty"`
+
+	// PublicKey User's public key
+	PublicKey *string `json:"public_key,omitempty"`
+
+	// TunnelIp Assigned tunnel IP
+	TunnelIp *string `json:"tunnel_ip,omitempty"`
+}
+
+// ZoneMatrixData Policy data between two zones
+type ZoneMatrixData struct {
+	// UnderscoreId Destination zone ID
+	UnderscoreId *string `json:"_id,omitempty"`
+
+	// Action Default action between zones
+	Action *ZoneMatrixDataAction `json:"action"`
+
+	// PolicyCount Number of policies between zones
+	PolicyCount *int `json:"policy_count,omitempty"`
+}
+
+// ZoneMatrixDataAction Default action between zones
+type ZoneMatrixDataAction string
+
 // ClientId defines model for ClientId.
 type ClientId = openapi_types.UUID
+
+// ClientMac defines model for ClientMac.
+type ClientMac = string
 
 // DeviceId defines model for DeviceId.
 type DeviceId = openapi_types.UUID
@@ -1272,6 +3745,21 @@ type GetAggregatedDashboardParams struct {
 	HistorySeconds *int `form:"historySeconds,omitempty" json:"historySeconds,omitempty"`
 }
 
+// GetWiFiStatsAPsParams defines parameters for GetWiFiStatsAPs.
+type GetWiFiStatsAPsParams struct {
+	// Interval Statistics interval granularity
+	Interval GetWiFiStatsAPsParamsInterval `form:"interval" json:"interval"`
+
+	// Start Start time in Unix milliseconds
+	Start int64 `form:"start" json:"start"`
+
+	// End End time in Unix milliseconds
+	End int64 `form:"end" json:"end"`
+}
+
+// GetWiFiStatsAPsParamsInterval defines parameters for GetWiFiStatsAPs.
+type GetWiFiStatsAPsParamsInterval string
+
 // CreateHotspotVouchersJSONRequestBody defines body for CreateHotspotVouchers for application/json ContentType.
 type CreateHotspotVouchersJSONRequestBody = CreateVouchersRequest
 
@@ -1286,6 +3774,9 @@ type CreateDNSRecordJSONRequestBody = DNSRecordInput
 
 // UpdateDNSRecordJSONRequestBody defines body for UpdateDNSRecord for application/json ContentType.
 type UpdateDNSRecordJSONRequestBody = DNSRecordInput
+
+// GetSystemLogsJSONRequestBody defines body for GetSystemLogs for application/json ContentType.
+type GetSystemLogsJSONRequestBody = SystemLogRequest
 
 // CreateTrafficRuleJSONRequestBody defines body for CreateTrafficRule for application/json ContentType.
 type CreateTrafficRuleJSONRequestBody = TrafficRuleInput
@@ -1395,14 +3886,53 @@ type ClientInterface interface {
 	// GetHotspotVoucher request
 	GetHotspotVoucher(ctx context.Context, siteId SiteId, voucherId openapi_types.UUID, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListACLRules request
+	ListACLRules(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListActiveDHCPLeases request
+	ListActiveDHCPLeases(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetAggregatedDashboard request
 	GetAggregatedDashboard(ctx context.Context, site Site, params *GetAggregatedDashboardParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListAlerts request
+	ListAlerts(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListAPGroups request
+	ListAPGroups(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetBGPConfig request
+	GetBGPConfig(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetAllBGPConfig request
+	GetAllBGPConfig(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListActiveClients request
 	ListActiveClients(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetActiveClientByMac request
+	GetActiveClientByMac(ctx context.Context, site Site, clientMac ClientMac, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListClientHistory request
+	ListClientHistory(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetClientsTrafficControl request
+	GetClientsTrafficControl(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListContentFilteringRules request
+	ListContentFilteringRules(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListContentFilteringCategories request
+	ListContentFilteringCategories(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListDescribedFeatures request
+	ListDescribedFeatures(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListAllDevices request
 	ListAllDevices(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListFeatures request
+	ListFeatures(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListFirewallPolicies request
 	ListFirewallPolicies(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1420,6 +3950,87 @@ type ClientInterface interface {
 
 	UpdateFirewallPolicy(ctx context.Context, site Site, policyId PolicyId, body UpdateFirewallPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListFirewallZones request
+	ListFirewallZones(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetFirewallZoneMatrix request
+	GetFirewallZoneMatrix(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetGatewayEngineFeatures request
+	GetGatewayEngineFeatures(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetGatewayEngineMostActiveNetworks request
+	GetGatewayEngineMostActiveNetworks(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetGatewayEngineUtilization request
+	GetGatewayEngineUtilization(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListHotspotClients request
+	ListHotspotClients(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetHotspotInfo request
+	GetHotspotInfo(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListIPSAlerts request
+	ListIPSAlerts(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetISPHealth request
+	GetISPHealth(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetISPHealthCompact request
+	GetISPHealthCompact(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetISPStatus request
+	GetISPStatus(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetLANEnrichedConfiguration request
+	GetLANEnrichedConfiguration(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetLoopDetectionInfo request
+	GetLoopDetectionInfo(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListNATRules request
+	ListNATRules(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListNotifications request
+	ListNotifications(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListOSPFNeighbors request
+	ListOSPFNeighbors(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListOSPFRouters request
+	ListOSPFRouters(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetPortProfileDefaults request
+	GetPortProfileDefaults(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListQoSRules request
+	ListQoSRules(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListRADIUSProfiles request
+	ListRADIUSProfiles(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListRADIUSUsers request
+	ListRADIUSUsers(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetNetworkScore request
+	GetNetworkScore(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListSpeedtestHistory request
+	ListSpeedtestHistory(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetLatestSpeedtest request
+	GetLatestSpeedtest(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetSpeedtestLatestPerWan request
+	GetSpeedtestLatestPerWan(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListSSLInspectionCategories request
+	ListSSLInspectionCategories(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListSSLInspectionProfiles request
+	ListSSLInspectionProfiles(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListDNSRecords request
 	ListDNSRecords(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
 
@@ -1427,6 +4038,9 @@ type ClientInterface interface {
 	CreateDNSRecordWithBody(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	CreateDNSRecord(ctx context.Context, site Site, body CreateDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListStaticDNSDevices request
+	ListStaticDNSDevices(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// DeleteDNSRecord request
 	DeleteDNSRecord(ctx context.Context, site Site, recordId RecordId, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1436,8 +4050,22 @@ type ClientInterface interface {
 
 	UpdateDNSRecord(ctx context.Context, site Site, recordId RecordId, body UpdateDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// GetSystemLogsWithBody request with any body
+	GetSystemLogsWithBody(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	GetSystemLogs(ctx context.Context, site Site, body GetSystemLogsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListTeleportInvitationHistory request
+	ListTeleportInvitationHistory(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetTeleportTokens request
+	GetTeleportTokens(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// GetTopology request
 	GetTopology(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListTrafficRoutes request
+	ListTrafficRoutes(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// ListTrafficRules request
 	ListTrafficRules(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
@@ -1454,6 +4082,42 @@ type ClientInterface interface {
 	UpdateTrafficRuleWithBody(ctx context.Context, site Site, ruleId RuleId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	UpdateTrafficRule(ctx context.Context, site Site, ruleId RuleId, body UpdateTrafficRuleJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListVendorIDs request
+	ListVendorIDs(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListVPNClientConnections request
+	ListVPNClientConnections(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListVPNConnections request
+	ListVPNConnections(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListWANSLAs request
+	ListWANSLAs(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetWANEnrichedConfiguration request
+	GetWANEnrichedConfiguration(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListWarnings request
+	ListWarnings(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetWiFiConnectivity request
+	GetWiFiConnectivity(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetWiFiStatsAPs request
+	GetWiFiStatsAPs(ctx context.Context, site Site, params *GetWiFiStatsAPsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetWiFiManData request
+	GetWiFiManData(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListWireGuardUsers request
+	ListWireGuardUsers(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetWireGuardExistingSubnets request
+	GetWireGuardExistingSubnets(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetWLANCapabilities request
+	GetWLANCapabilities(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) ListSites(ctx context.Context, params *ListSitesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -1576,8 +4240,80 @@ func (c *Client) GetHotspotVoucher(ctx context.Context, siteId SiteId, voucherId
 	return c.Client.Do(req)
 }
 
+func (c *Client) ListACLRules(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListACLRulesRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListActiveDHCPLeases(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListActiveDHCPLeasesRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetAggregatedDashboard(ctx context.Context, site Site, params *GetAggregatedDashboardParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetAggregatedDashboardRequest(c.Server, site, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListAlerts(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListAlertsRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListAPGroups(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListAPGroupsRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetBGPConfig(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetBGPConfigRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetAllBGPConfig(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAllBGPConfigRequest(c.Server, site)
 	if err != nil {
 		return nil, err
 	}
@@ -1600,8 +4336,92 @@ func (c *Client) ListActiveClients(ctx context.Context, site Site, reqEditors ..
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetActiveClientByMac(ctx context.Context, site Site, clientMac ClientMac, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetActiveClientByMacRequest(c.Server, site, clientMac)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListClientHistory(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListClientHistoryRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetClientsTrafficControl(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetClientsTrafficControlRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListContentFilteringRules(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListContentFilteringRulesRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListContentFilteringCategories(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListContentFilteringCategoriesRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListDescribedFeatures(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListDescribedFeaturesRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) ListAllDevices(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListAllDevicesRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListFeatures(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListFeaturesRequest(c.Server, site)
 	if err != nil {
 		return nil, err
 	}
@@ -1684,6 +4504,330 @@ func (c *Client) UpdateFirewallPolicy(ctx context.Context, site Site, policyId P
 	return c.Client.Do(req)
 }
 
+func (c *Client) ListFirewallZones(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListFirewallZonesRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetFirewallZoneMatrix(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetFirewallZoneMatrixRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetGatewayEngineFeatures(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetGatewayEngineFeaturesRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetGatewayEngineMostActiveNetworks(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetGatewayEngineMostActiveNetworksRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetGatewayEngineUtilization(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetGatewayEngineUtilizationRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListHotspotClients(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListHotspotClientsRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetHotspotInfo(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetHotspotInfoRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListIPSAlerts(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListIPSAlertsRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetISPHealth(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetISPHealthRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetISPHealthCompact(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetISPHealthCompactRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetISPStatus(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetISPStatusRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetLANEnrichedConfiguration(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetLANEnrichedConfigurationRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetLoopDetectionInfo(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetLoopDetectionInfoRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListNATRules(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListNATRulesRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListNotifications(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListNotificationsRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListOSPFNeighbors(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListOSPFNeighborsRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListOSPFRouters(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListOSPFRoutersRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetPortProfileDefaults(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetPortProfileDefaultsRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListQoSRules(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListQoSRulesRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListRADIUSProfiles(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListRADIUSProfilesRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListRADIUSUsers(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListRADIUSUsersRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetNetworkScore(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetNetworkScoreRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListSpeedtestHistory(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListSpeedtestHistoryRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetLatestSpeedtest(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetLatestSpeedtestRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetSpeedtestLatestPerWan(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetSpeedtestLatestPerWanRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListSSLInspectionCategories(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListSSLInspectionCategoriesRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListSSLInspectionProfiles(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListSSLInspectionProfilesRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) ListDNSRecords(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewListDNSRecordsRequest(c.Server, site)
 	if err != nil {
@@ -1710,6 +4854,18 @@ func (c *Client) CreateDNSRecordWithBody(ctx context.Context, site Site, content
 
 func (c *Client) CreateDNSRecord(ctx context.Context, site Site, body CreateDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewCreateDNSRecordRequest(c.Server, site, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListStaticDNSDevices(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListStaticDNSDevicesRequest(c.Server, site)
 	if err != nil {
 		return nil, err
 	}
@@ -1756,8 +4912,68 @@ func (c *Client) UpdateDNSRecord(ctx context.Context, site Site, recordId Record
 	return c.Client.Do(req)
 }
 
+func (c *Client) GetSystemLogsWithBody(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetSystemLogsRequestWithBody(c.Server, site, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetSystemLogs(ctx context.Context, site Site, body GetSystemLogsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetSystemLogsRequest(c.Server, site, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListTeleportInvitationHistory(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListTeleportInvitationHistoryRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetTeleportTokens(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTeleportTokensRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
 func (c *Client) GetTopology(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetTopologyRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListTrafficRoutes(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListTrafficRoutesRequest(c.Server, site)
 	if err != nil {
 		return nil, err
 	}
@@ -1830,6 +5046,150 @@ func (c *Client) UpdateTrafficRuleWithBody(ctx context.Context, site Site, ruleI
 
 func (c *Client) UpdateTrafficRule(ctx context.Context, site Site, ruleId RuleId, body UpdateTrafficRuleJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateTrafficRuleRequest(c.Server, site, ruleId, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListVendorIDs(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListVendorIDsRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListVPNClientConnections(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListVPNClientConnectionsRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListVPNConnections(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListVPNConnectionsRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListWANSLAs(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListWANSLAsRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetWANEnrichedConfiguration(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetWANEnrichedConfigurationRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListWarnings(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListWarningsRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetWiFiConnectivity(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetWiFiConnectivityRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetWiFiStatsAPs(ctx context.Context, site Site, params *GetWiFiStatsAPsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetWiFiStatsAPsRequest(c.Server, site, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetWiFiManData(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetWiFiManDataRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) ListWireGuardUsers(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListWireGuardUsersRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetWireGuardExistingSubnets(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetWireGuardExistingSubnetsRequest(c.Server, site)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) GetWLANCapabilities(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetWLANCapabilitiesRequest(c.Server, site)
 	if err != nil {
 		return nil, err
 	}
@@ -2332,6 +5692,74 @@ func NewGetHotspotVoucherRequest(server string, siteId SiteId, voucherId openapi
 	return req, nil
 }
 
+// NewListACLRulesRequest generates requests for ListACLRules
+func NewListACLRulesRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/acl-rules", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListActiveDHCPLeasesRequest generates requests for ListActiveDHCPLeases
+func NewListActiveDHCPLeasesRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/active-leases", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetAggregatedDashboardRequest generates requests for GetAggregatedDashboard
 func NewGetAggregatedDashboardRequest(server string, site Site, params *GetAggregatedDashboardParams) (*http.Request, error) {
 	var err error
@@ -2388,6 +5816,142 @@ func NewGetAggregatedDashboardRequest(server string, site Site, params *GetAggre
 	return req, nil
 }
 
+// NewListAlertsRequest generates requests for ListAlerts
+func NewListAlertsRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/alert", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListAPGroupsRequest generates requests for ListAPGroups
+func NewListAPGroupsRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/apgroups", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetBGPConfigRequest generates requests for GetBGPConfig
+func NewGetBGPConfigRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/bgp/config", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetAllBGPConfigRequest generates requests for GetAllBGPConfig
+func NewGetAllBGPConfigRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/bgp/config/all", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewListActiveClientsRequest generates requests for ListActiveClients
 func NewListActiveClientsRequest(server string, site Site) (*http.Request, error) {
 	var err error
@@ -2422,6 +5986,217 @@ func NewListActiveClientsRequest(server string, site Site) (*http.Request, error
 	return req, nil
 }
 
+// NewGetActiveClientByMacRequest generates requests for GetActiveClientByMac
+func NewGetActiveClientByMacRequest(server string, site Site, clientMac ClientMac) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithLocation("simple", false, "clientMac", runtime.ParamLocationPath, clientMac)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/clients/active/%s", pathParam0, pathParam1)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListClientHistoryRequest generates requests for ListClientHistory
+func NewListClientHistoryRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/clients/history", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetClientsTrafficControlRequest generates requests for GetClientsTrafficControl
+func NewGetClientsTrafficControlRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/clients/traffic-control", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListContentFilteringRulesRequest generates requests for ListContentFilteringRules
+func NewListContentFilteringRulesRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/content-filtering", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListContentFilteringCategoriesRequest generates requests for ListContentFilteringCategories
+func NewListContentFilteringCategoriesRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/content-filtering/categories", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListDescribedFeaturesRequest generates requests for ListDescribedFeatures
+func NewListDescribedFeaturesRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/described-features", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewListAllDevicesRequest generates requests for ListAllDevices
 func NewListAllDevicesRequest(server string, site Site) (*http.Request, error) {
 	var err error
@@ -2439,6 +6214,40 @@ func NewListAllDevicesRequest(server string, site Site) (*http.Request, error) {
 	}
 
 	operationPath := fmt.Sprintf("/v2/api/site/%s/device", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListFeaturesRequest generates requests for ListFeatures
+func NewListFeaturesRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/features", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -2632,6 +6441,924 @@ func NewUpdateFirewallPolicyRequestWithBody(server string, site Site, policyId P
 	return req, nil
 }
 
+// NewListFirewallZonesRequest generates requests for ListFirewallZones
+func NewListFirewallZonesRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/firewall/zone", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetFirewallZoneMatrixRequest generates requests for GetFirewallZoneMatrix
+func NewGetFirewallZoneMatrixRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/firewall/zone-matrix", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetGatewayEngineFeaturesRequest generates requests for GetGatewayEngineFeatures
+func NewGetGatewayEngineFeaturesRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/gateway-engine/features", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetGatewayEngineMostActiveNetworksRequest generates requests for GetGatewayEngineMostActiveNetworks
+func NewGetGatewayEngineMostActiveNetworksRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/gateway-engine/most-active-networks", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetGatewayEngineUtilizationRequest generates requests for GetGatewayEngineUtilization
+func NewGetGatewayEngineUtilizationRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/gateway-engine/utilization", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListHotspotClientsRequest generates requests for ListHotspotClients
+func NewListHotspotClientsRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/hotspot/clients", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetHotspotInfoRequest generates requests for GetHotspotInfo
+func NewGetHotspotInfoRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/hotspot/info", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListIPSAlertsRequest generates requests for ListIPSAlerts
+func NewListIPSAlertsRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/ips_alerts", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetISPHealthRequest generates requests for GetISPHealth
+func NewGetISPHealthRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/isp/health", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetISPHealthCompactRequest generates requests for GetISPHealthCompact
+func NewGetISPHealthCompactRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/isp/health/compact", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetISPStatusRequest generates requests for GetISPStatus
+func NewGetISPStatusRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/isp/status", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetLANEnrichedConfigurationRequest generates requests for GetLANEnrichedConfiguration
+func NewGetLANEnrichedConfigurationRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/lan/enriched-configuration", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetLoopDetectionInfoRequest generates requests for GetLoopDetectionInfo
+func NewGetLoopDetectionInfoRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/loop-detection/info", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListNATRulesRequest generates requests for ListNATRules
+func NewListNATRulesRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/nat", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListNotificationsRequest generates requests for ListNotifications
+func NewListNotificationsRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/notifications", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListOSPFNeighborsRequest generates requests for ListOSPFNeighbors
+func NewListOSPFNeighborsRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/ospf/neighbors", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListOSPFRoutersRequest generates requests for ListOSPFRouters
+func NewListOSPFRoutersRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/ospf/router", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetPortProfileDefaultsRequest generates requests for GetPortProfileDefaults
+func NewGetPortProfileDefaultsRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/port-profiles/defaults", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListQoSRulesRequest generates requests for ListQoSRules
+func NewListQoSRulesRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/qos-rules", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListRADIUSProfilesRequest generates requests for ListRADIUSProfiles
+func NewListRADIUSProfilesRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/radius/profiles", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListRADIUSUsersRequest generates requests for ListRADIUSUsers
+func NewListRADIUSUsersRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/radius/users", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetNetworkScoreRequest generates requests for GetNetworkScore
+func NewGetNetworkScoreRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/score", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListSpeedtestHistoryRequest generates requests for ListSpeedtestHistory
+func NewListSpeedtestHistoryRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/speedtest", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetLatestSpeedtestRequest generates requests for GetLatestSpeedtest
+func NewGetLatestSpeedtestRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/speedtest/latest", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetSpeedtestLatestPerWanRequest generates requests for GetSpeedtestLatestPerWan
+func NewGetSpeedtestLatestPerWanRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/speedtest/latest-per-wan", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListSSLInspectionCategoriesRequest generates requests for ListSSLInspectionCategories
+func NewListSSLInspectionCategoriesRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/ssl-inspection/categories", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListSSLInspectionProfilesRequest generates requests for ListSSLInspectionProfiles
+func NewListSSLInspectionProfilesRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/ssl-inspection/profiles", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewListDNSRecordsRequest generates requests for ListDNSRecords
 func NewListDNSRecordsRequest(server string, site Site) (*http.Request, error) {
 	var err error
@@ -2709,6 +7436,40 @@ func NewCreateDNSRecordRequestWithBody(server string, site Site, contentType str
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewListStaticDNSDevicesRequest generates requests for ListStaticDNSDevices
+func NewListStaticDNSDevicesRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/static-dns/devices", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	return req, nil
 }
@@ -2808,6 +7569,121 @@ func NewUpdateDNSRecordRequestWithBody(server string, site Site, recordId Record
 	return req, nil
 }
 
+// NewGetSystemLogsRequest calls the generic GetSystemLogs builder with application/json body
+func NewGetSystemLogsRequest(server string, site Site, body GetSystemLogsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := json.Marshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewGetSystemLogsRequestWithBody(server, site, "application/json", bodyReader)
+}
+
+// NewGetSystemLogsRequestWithBody generates requests for GetSystemLogs with any type of body
+func NewGetSystemLogsRequestWithBody(server string, site Site, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/system-log/all", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
+// NewListTeleportInvitationHistoryRequest generates requests for ListTeleportInvitationHistory
+func NewListTeleportInvitationHistoryRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/teleport/invitation-history", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetTeleportTokensRequest generates requests for GetTeleportTokens
+func NewGetTeleportTokensRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/teleport/token", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 // NewGetTopologyRequest generates requests for GetTopology
 func NewGetTopologyRequest(server string, site Site) (*http.Request, error) {
 	var err error
@@ -2825,6 +7701,40 @@ func NewGetTopologyRequest(server string, site Site) (*http.Request, error) {
 	}
 
 	operationPath := fmt.Sprintf("/v2/api/site/%s/topology", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListTrafficRoutesRequest generates requests for ListTrafficRoutes
+func NewListTrafficRoutesRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/trafficroutes", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -3018,6 +7928,456 @@ func NewUpdateTrafficRuleRequestWithBody(server string, site Site, ruleId RuleId
 	return req, nil
 }
 
+// NewListVendorIDsRequest generates requests for ListVendorIDs
+func NewListVendorIDsRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/vendor-ids", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListVPNClientConnectionsRequest generates requests for ListVPNClientConnections
+func NewListVPNClientConnectionsRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/vpn/client-connections", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListVPNConnectionsRequest generates requests for ListVPNConnections
+func NewListVPNConnectionsRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/vpn/connections", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListWANSLAsRequest generates requests for ListWANSLAs
+func NewListWANSLAsRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/wan-slas", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetWANEnrichedConfigurationRequest generates requests for GetWANEnrichedConfiguration
+func NewGetWANEnrichedConfigurationRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/wan/enriched-configuration", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListWarningsRequest generates requests for ListWarnings
+func NewListWarningsRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/warnings", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetWiFiConnectivityRequest generates requests for GetWiFiConnectivity
+func NewGetWiFiConnectivityRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/wifi-connectivity", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetWiFiStatsAPsRequest generates requests for GetWiFiStatsAPs
+func NewGetWiFiStatsAPsRequest(server string, site Site, params *GetWiFiStatsAPsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/wifi-stats/aps", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "interval", runtime.ParamLocationQuery, params.Interval); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "start", runtime.ParamLocationQuery, params.Start); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "end", runtime.ParamLocationQuery, params.End); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetWiFiManDataRequest generates requests for GetWiFiManData
+func NewGetWiFiManDataRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/wifiman", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewListWireGuardUsersRequest generates requests for ListWireGuardUsers
+func NewListWireGuardUsersRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/wireguard/users", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetWireGuardExistingSubnetsRequest generates requests for GetWireGuardExistingSubnets
+func NewGetWireGuardExistingSubnetsRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/wireguard/users/existing-subnets", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
+// NewGetWLANCapabilitiesRequest generates requests for GetWLANCapabilities
+func NewGetWLANCapabilitiesRequest(server string, site Site) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "site", runtime.ParamLocationPath, site)
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/v2/api/site/%s/wlan-capabilities", pathParam0)
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -3090,14 +8450,53 @@ type ClientWithResponsesInterface interface {
 	// GetHotspotVoucherWithResponse request
 	GetHotspotVoucherWithResponse(ctx context.Context, siteId SiteId, voucherId openapi_types.UUID, reqEditors ...RequestEditorFn) (*GetHotspotVoucherResponse, error)
 
+	// ListACLRulesWithResponse request
+	ListACLRulesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListACLRulesResponse, error)
+
+	// ListActiveDHCPLeasesWithResponse request
+	ListActiveDHCPLeasesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListActiveDHCPLeasesResponse, error)
+
 	// GetAggregatedDashboardWithResponse request
 	GetAggregatedDashboardWithResponse(ctx context.Context, site Site, params *GetAggregatedDashboardParams, reqEditors ...RequestEditorFn) (*GetAggregatedDashboardResponse, error)
+
+	// ListAlertsWithResponse request
+	ListAlertsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListAlertsResponse, error)
+
+	// ListAPGroupsWithResponse request
+	ListAPGroupsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListAPGroupsResponse, error)
+
+	// GetBGPConfigWithResponse request
+	GetBGPConfigWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetBGPConfigResponse, error)
+
+	// GetAllBGPConfigWithResponse request
+	GetAllBGPConfigWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetAllBGPConfigResponse, error)
 
 	// ListActiveClientsWithResponse request
 	ListActiveClientsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListActiveClientsResponse, error)
 
+	// GetActiveClientByMacWithResponse request
+	GetActiveClientByMacWithResponse(ctx context.Context, site Site, clientMac ClientMac, reqEditors ...RequestEditorFn) (*GetActiveClientByMacResponse, error)
+
+	// ListClientHistoryWithResponse request
+	ListClientHistoryWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListClientHistoryResponse, error)
+
+	// GetClientsTrafficControlWithResponse request
+	GetClientsTrafficControlWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetClientsTrafficControlResponse, error)
+
+	// ListContentFilteringRulesWithResponse request
+	ListContentFilteringRulesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListContentFilteringRulesResponse, error)
+
+	// ListContentFilteringCategoriesWithResponse request
+	ListContentFilteringCategoriesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListContentFilteringCategoriesResponse, error)
+
+	// ListDescribedFeaturesWithResponse request
+	ListDescribedFeaturesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListDescribedFeaturesResponse, error)
+
 	// ListAllDevicesWithResponse request
 	ListAllDevicesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListAllDevicesResponse, error)
+
+	// ListFeaturesWithResponse request
+	ListFeaturesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListFeaturesResponse, error)
 
 	// ListFirewallPoliciesWithResponse request
 	ListFirewallPoliciesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListFirewallPoliciesResponse, error)
@@ -3115,6 +8514,87 @@ type ClientWithResponsesInterface interface {
 
 	UpdateFirewallPolicyWithResponse(ctx context.Context, site Site, policyId PolicyId, body UpdateFirewallPolicyJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateFirewallPolicyResponse, error)
 
+	// ListFirewallZonesWithResponse request
+	ListFirewallZonesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListFirewallZonesResponse, error)
+
+	// GetFirewallZoneMatrixWithResponse request
+	GetFirewallZoneMatrixWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetFirewallZoneMatrixResponse, error)
+
+	// GetGatewayEngineFeaturesWithResponse request
+	GetGatewayEngineFeaturesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetGatewayEngineFeaturesResponse, error)
+
+	// GetGatewayEngineMostActiveNetworksWithResponse request
+	GetGatewayEngineMostActiveNetworksWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetGatewayEngineMostActiveNetworksResponse, error)
+
+	// GetGatewayEngineUtilizationWithResponse request
+	GetGatewayEngineUtilizationWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetGatewayEngineUtilizationResponse, error)
+
+	// ListHotspotClientsWithResponse request
+	ListHotspotClientsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListHotspotClientsResponse, error)
+
+	// GetHotspotInfoWithResponse request
+	GetHotspotInfoWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetHotspotInfoResponse, error)
+
+	// ListIPSAlertsWithResponse request
+	ListIPSAlertsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListIPSAlertsResponse, error)
+
+	// GetISPHealthWithResponse request
+	GetISPHealthWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetISPHealthResponse, error)
+
+	// GetISPHealthCompactWithResponse request
+	GetISPHealthCompactWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetISPHealthCompactResponse, error)
+
+	// GetISPStatusWithResponse request
+	GetISPStatusWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetISPStatusResponse, error)
+
+	// GetLANEnrichedConfigurationWithResponse request
+	GetLANEnrichedConfigurationWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetLANEnrichedConfigurationResponse, error)
+
+	// GetLoopDetectionInfoWithResponse request
+	GetLoopDetectionInfoWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetLoopDetectionInfoResponse, error)
+
+	// ListNATRulesWithResponse request
+	ListNATRulesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListNATRulesResponse, error)
+
+	// ListNotificationsWithResponse request
+	ListNotificationsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListNotificationsResponse, error)
+
+	// ListOSPFNeighborsWithResponse request
+	ListOSPFNeighborsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListOSPFNeighborsResponse, error)
+
+	// ListOSPFRoutersWithResponse request
+	ListOSPFRoutersWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListOSPFRoutersResponse, error)
+
+	// GetPortProfileDefaultsWithResponse request
+	GetPortProfileDefaultsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetPortProfileDefaultsResponse, error)
+
+	// ListQoSRulesWithResponse request
+	ListQoSRulesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListQoSRulesResponse, error)
+
+	// ListRADIUSProfilesWithResponse request
+	ListRADIUSProfilesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListRADIUSProfilesResponse, error)
+
+	// ListRADIUSUsersWithResponse request
+	ListRADIUSUsersWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListRADIUSUsersResponse, error)
+
+	// GetNetworkScoreWithResponse request
+	GetNetworkScoreWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetNetworkScoreResponse, error)
+
+	// ListSpeedtestHistoryWithResponse request
+	ListSpeedtestHistoryWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListSpeedtestHistoryResponse, error)
+
+	// GetLatestSpeedtestWithResponse request
+	GetLatestSpeedtestWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetLatestSpeedtestResponse, error)
+
+	// GetSpeedtestLatestPerWanWithResponse request
+	GetSpeedtestLatestPerWanWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetSpeedtestLatestPerWanResponse, error)
+
+	// ListSSLInspectionCategoriesWithResponse request
+	ListSSLInspectionCategoriesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListSSLInspectionCategoriesResponse, error)
+
+	// ListSSLInspectionProfilesWithResponse request
+	ListSSLInspectionProfilesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListSSLInspectionProfilesResponse, error)
+
 	// ListDNSRecordsWithResponse request
 	ListDNSRecordsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListDNSRecordsResponse, error)
 
@@ -3122,6 +8602,9 @@ type ClientWithResponsesInterface interface {
 	CreateDNSRecordWithBodyWithResponse(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateDNSRecordResponse, error)
 
 	CreateDNSRecordWithResponse(ctx context.Context, site Site, body CreateDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateDNSRecordResponse, error)
+
+	// ListStaticDNSDevicesWithResponse request
+	ListStaticDNSDevicesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListStaticDNSDevicesResponse, error)
 
 	// DeleteDNSRecordWithResponse request
 	DeleteDNSRecordWithResponse(ctx context.Context, site Site, recordId RecordId, reqEditors ...RequestEditorFn) (*DeleteDNSRecordResponse, error)
@@ -3131,8 +8614,22 @@ type ClientWithResponsesInterface interface {
 
 	UpdateDNSRecordWithResponse(ctx context.Context, site Site, recordId RecordId, body UpdateDNSRecordJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateDNSRecordResponse, error)
 
+	// GetSystemLogsWithBodyWithResponse request with any body
+	GetSystemLogsWithBodyWithResponse(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetSystemLogsResponse, error)
+
+	GetSystemLogsWithResponse(ctx context.Context, site Site, body GetSystemLogsJSONRequestBody, reqEditors ...RequestEditorFn) (*GetSystemLogsResponse, error)
+
+	// ListTeleportInvitationHistoryWithResponse request
+	ListTeleportInvitationHistoryWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListTeleportInvitationHistoryResponse, error)
+
+	// GetTeleportTokensWithResponse request
+	GetTeleportTokensWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetTeleportTokensResponse, error)
+
 	// GetTopologyWithResponse request
 	GetTopologyWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetTopologyResponse, error)
+
+	// ListTrafficRoutesWithResponse request
+	ListTrafficRoutesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListTrafficRoutesResponse, error)
 
 	// ListTrafficRulesWithResponse request
 	ListTrafficRulesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListTrafficRulesResponse, error)
@@ -3149,6 +8646,42 @@ type ClientWithResponsesInterface interface {
 	UpdateTrafficRuleWithBodyWithResponse(ctx context.Context, site Site, ruleId RuleId, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateTrafficRuleResponse, error)
 
 	UpdateTrafficRuleWithResponse(ctx context.Context, site Site, ruleId RuleId, body UpdateTrafficRuleJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateTrafficRuleResponse, error)
+
+	// ListVendorIDsWithResponse request
+	ListVendorIDsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListVendorIDsResponse, error)
+
+	// ListVPNClientConnectionsWithResponse request
+	ListVPNClientConnectionsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListVPNClientConnectionsResponse, error)
+
+	// ListVPNConnectionsWithResponse request
+	ListVPNConnectionsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListVPNConnectionsResponse, error)
+
+	// ListWANSLAsWithResponse request
+	ListWANSLAsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListWANSLAsResponse, error)
+
+	// GetWANEnrichedConfigurationWithResponse request
+	GetWANEnrichedConfigurationWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetWANEnrichedConfigurationResponse, error)
+
+	// ListWarningsWithResponse request
+	ListWarningsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListWarningsResponse, error)
+
+	// GetWiFiConnectivityWithResponse request
+	GetWiFiConnectivityWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetWiFiConnectivityResponse, error)
+
+	// GetWiFiStatsAPsWithResponse request
+	GetWiFiStatsAPsWithResponse(ctx context.Context, site Site, params *GetWiFiStatsAPsParams, reqEditors ...RequestEditorFn) (*GetWiFiStatsAPsResponse, error)
+
+	// GetWiFiManDataWithResponse request
+	GetWiFiManDataWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetWiFiManDataResponse, error)
+
+	// ListWireGuardUsersWithResponse request
+	ListWireGuardUsersWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListWireGuardUsersResponse, error)
+
+	// GetWireGuardExistingSubnetsWithResponse request
+	GetWireGuardExistingSubnetsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetWireGuardExistingSubnetsResponse, error)
+
+	// GetWLANCapabilitiesWithResponse request
+	GetWLANCapabilitiesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetWLANCapabilitiesResponse, error)
 }
 
 type ListSitesResponse struct {
@@ -3367,6 +8900,54 @@ func (r GetHotspotVoucherResponse) StatusCode() int {
 	return 0
 }
 
+type ListACLRulesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]ACLRule
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListACLRulesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListACLRulesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListActiveDHCPLeasesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *DHCPLeasesResponse
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListActiveDHCPLeasesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListActiveDHCPLeasesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetAggregatedDashboardResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -3385,6 +8966,102 @@ func (r GetAggregatedDashboardResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetAggregatedDashboardResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListAlertsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *AlertsResponse
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListAlertsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListAlertsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListAPGroupsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]APGroup
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListAPGroupsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListAPGroupsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetBGPConfigResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]BGPConfig
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetBGPConfigResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetBGPConfigResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetAllBGPConfigResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]BGPConfig
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAllBGPConfigResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAllBGPConfigResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3415,6 +9092,150 @@ func (r ListActiveClientsResponse) StatusCode() int {
 	return 0
 }
 
+type GetActiveClientByMacResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ActiveClientDetails
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetActiveClientByMacResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetActiveClientByMacResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListClientHistoryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]ClientHistoryEntry
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListClientHistoryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListClientHistoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetClientsTrafficControlResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ClientsTrafficControl
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetClientsTrafficControlResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetClientsTrafficControlResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListContentFilteringRulesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]ContentFilteringRule
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListContentFilteringRulesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListContentFilteringRulesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListContentFilteringCategoriesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]string
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListContentFilteringCategoriesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListContentFilteringCategoriesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListDescribedFeaturesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]DescribedFeature
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListDescribedFeaturesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListDescribedFeaturesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type ListAllDevicesResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -3433,6 +9254,30 @@ func (r ListAllDevicesResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r ListAllDevicesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListFeaturesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]string
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListFeaturesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListFeaturesResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3537,6 +9382,654 @@ func (r UpdateFirewallPolicyResponse) StatusCode() int {
 	return 0
 }
 
+type ListFirewallZonesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]FirewallZone
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListFirewallZonesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListFirewallZonesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetFirewallZoneMatrixResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]FirewallZoneMatrixEntry
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetFirewallZoneMatrixResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetFirewallZoneMatrixResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetGatewayEngineFeaturesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]GatewayEngineFeature
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetGatewayEngineFeaturesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetGatewayEngineFeaturesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetGatewayEngineMostActiveNetworksResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]MostActiveNetwork
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetGatewayEngineMostActiveNetworksResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetGatewayEngineMostActiveNetworksResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetGatewayEngineUtilizationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *GatewayEngineUtilization
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetGatewayEngineUtilizationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetGatewayEngineUtilizationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListHotspotClientsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]HotspotClient
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListHotspotClientsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListHotspotClientsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetHotspotInfoResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *HotspotInfo
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetHotspotInfoResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetHotspotInfoResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListIPSAlertsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *IPSAlertsResponse
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListIPSAlertsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListIPSAlertsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetISPHealthResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ISPHealth
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetISPHealthResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetISPHealthResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetISPHealthCompactResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ISPHealthCompact
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetISPHealthCompactResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetISPHealthCompactResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetISPStatusResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *ISPStatus
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetISPStatusResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetISPStatusResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetLANEnrichedConfigurationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]LANEnrichedConfiguration
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetLANEnrichedConfigurationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetLANEnrichedConfigurationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetLoopDetectionInfoResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *LoopDetectionInfo
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetLoopDetectionInfoResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetLoopDetectionInfoResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListNATRulesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]NATRule
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListNATRulesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListNATRulesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListNotificationsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]Notification
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListNotificationsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListNotificationsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListOSPFNeighborsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]OSPFNeighbor
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListOSPFNeighborsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListOSPFNeighborsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListOSPFRoutersResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]OSPFRouter
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListOSPFRoutersResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListOSPFRoutersResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetPortProfileDefaultsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *PortProfileDefaults
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetPortProfileDefaultsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetPortProfileDefaultsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListQoSRulesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]QoSRule
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListQoSRulesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListQoSRulesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListRADIUSProfilesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]RADIUSProfile
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListRADIUSProfilesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListRADIUSProfilesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListRADIUSUsersResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]RADIUSUser
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListRADIUSUsersResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListRADIUSUsersResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetNetworkScoreResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *NetworkScore
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetNetworkScoreResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetNetworkScoreResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListSpeedtestHistoryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SpeedtestHistoryResponse
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListSpeedtestHistoryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListSpeedtestHistoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetLatestSpeedtestResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SpeedtestLatest
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetLatestSpeedtestResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetLatestSpeedtestResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetSpeedtestLatestPerWanResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SpeedtestLatestPerWanResponse
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetSpeedtestLatestPerWanResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetSpeedtestLatestPerWanResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListSSLInspectionCategoriesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]SSLInspectionCategory
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListSSLInspectionCategoriesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListSSLInspectionCategoriesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListSSLInspectionProfilesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]SSLInspectionProfile
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListSSLInspectionProfilesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListSSLInspectionProfilesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type ListDNSRecordsResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -3579,6 +10072,30 @@ func (r CreateDNSRecordResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r CreateDNSRecordResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListStaticDNSDevicesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]StaticDNSDevice
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListStaticDNSDevicesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListStaticDNSDevicesResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3633,6 +10150,79 @@ func (r UpdateDNSRecordResponse) StatusCode() int {
 	return 0
 }
 
+type GetSystemLogsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *SystemLogResponse
+	JSON400      *BadRequest
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetSystemLogsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetSystemLogsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListTeleportInvitationHistoryResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TeleportInvitationHistoryResponse
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListTeleportInvitationHistoryResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListTeleportInvitationHistoryResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetTeleportTokensResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *TeleportTokenResponse
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTeleportTokensResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTeleportTokensResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 type GetTopologyResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
@@ -3651,6 +10241,30 @@ func (r GetTopologyResponse) Status() string {
 
 // StatusCode returns HTTPResponse.StatusCode
 func (r GetTopologyResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListTrafficRoutesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]TrafficRoute
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListTrafficRoutesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListTrafficRoutesResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
@@ -3754,6 +10368,295 @@ func (r UpdateTrafficRuleResponse) StatusCode() int {
 	return 0
 }
 
+type ListVendorIDsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]string
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListVendorIDsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListVendorIDsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListVPNClientConnectionsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *VPNConnectionsResponse
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListVPNClientConnectionsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListVPNClientConnectionsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListVPNConnectionsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *VPNConnectionsResponse
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListVPNConnectionsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListVPNConnectionsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListWANSLAsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]WANSLA
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListWANSLAsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListWANSLAsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetWANEnrichedConfigurationResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]WANEnrichedConfiguration
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetWANEnrichedConfigurationResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetWANEnrichedConfigurationResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListWarningsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *WarningsResponse
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListWarningsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListWarningsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetWiFiConnectivityResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *WiFiConnectivity
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetWiFiConnectivityResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetWiFiConnectivityResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetWiFiStatsAPsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *WiFiStatsAPsResponse
+	JSON400      *BadRequest
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetWiFiStatsAPsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetWiFiStatsAPsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetWiFiManDataResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]WiFiManEntry
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetWiFiManDataResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetWiFiManDataResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type ListWireGuardUsersResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *[]WireGuardUser
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r ListWireGuardUsersResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListWireGuardUsersResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetWireGuardExistingSubnetsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *WireGuardSubnets
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetWireGuardExistingSubnetsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetWireGuardExistingSubnetsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+type GetWLANCapabilitiesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON200      *WLANCapabilities
+	JSON401      *Unauthorized
+	JSON404      *NotFound
+}
+
+// Status returns HTTPResponse.Status
+func (r GetWLANCapabilitiesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetWLANCapabilitiesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 // ListSitesWithResponse request returning *ListSitesResponse
 func (c *ClientWithResponses) ListSitesWithResponse(ctx context.Context, params *ListSitesParams, reqEditors ...RequestEditorFn) (*ListSitesResponse, error) {
 	rsp, err := c.ListSites(ctx, params, reqEditors...)
@@ -3843,6 +10746,24 @@ func (c *ClientWithResponses) GetHotspotVoucherWithResponse(ctx context.Context,
 	return ParseGetHotspotVoucherResponse(rsp)
 }
 
+// ListACLRulesWithResponse request returning *ListACLRulesResponse
+func (c *ClientWithResponses) ListACLRulesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListACLRulesResponse, error) {
+	rsp, err := c.ListACLRules(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListACLRulesResponse(rsp)
+}
+
+// ListActiveDHCPLeasesWithResponse request returning *ListActiveDHCPLeasesResponse
+func (c *ClientWithResponses) ListActiveDHCPLeasesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListActiveDHCPLeasesResponse, error) {
+	rsp, err := c.ListActiveDHCPLeases(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListActiveDHCPLeasesResponse(rsp)
+}
+
 // GetAggregatedDashboardWithResponse request returning *GetAggregatedDashboardResponse
 func (c *ClientWithResponses) GetAggregatedDashboardWithResponse(ctx context.Context, site Site, params *GetAggregatedDashboardParams, reqEditors ...RequestEditorFn) (*GetAggregatedDashboardResponse, error) {
 	rsp, err := c.GetAggregatedDashboard(ctx, site, params, reqEditors...)
@@ -3850,6 +10771,42 @@ func (c *ClientWithResponses) GetAggregatedDashboardWithResponse(ctx context.Con
 		return nil, err
 	}
 	return ParseGetAggregatedDashboardResponse(rsp)
+}
+
+// ListAlertsWithResponse request returning *ListAlertsResponse
+func (c *ClientWithResponses) ListAlertsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListAlertsResponse, error) {
+	rsp, err := c.ListAlerts(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListAlertsResponse(rsp)
+}
+
+// ListAPGroupsWithResponse request returning *ListAPGroupsResponse
+func (c *ClientWithResponses) ListAPGroupsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListAPGroupsResponse, error) {
+	rsp, err := c.ListAPGroups(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListAPGroupsResponse(rsp)
+}
+
+// GetBGPConfigWithResponse request returning *GetBGPConfigResponse
+func (c *ClientWithResponses) GetBGPConfigWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetBGPConfigResponse, error) {
+	rsp, err := c.GetBGPConfig(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetBGPConfigResponse(rsp)
+}
+
+// GetAllBGPConfigWithResponse request returning *GetAllBGPConfigResponse
+func (c *ClientWithResponses) GetAllBGPConfigWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetAllBGPConfigResponse, error) {
+	rsp, err := c.GetAllBGPConfig(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetAllBGPConfigResponse(rsp)
 }
 
 // ListActiveClientsWithResponse request returning *ListActiveClientsResponse
@@ -3861,6 +10818,60 @@ func (c *ClientWithResponses) ListActiveClientsWithResponse(ctx context.Context,
 	return ParseListActiveClientsResponse(rsp)
 }
 
+// GetActiveClientByMacWithResponse request returning *GetActiveClientByMacResponse
+func (c *ClientWithResponses) GetActiveClientByMacWithResponse(ctx context.Context, site Site, clientMac ClientMac, reqEditors ...RequestEditorFn) (*GetActiveClientByMacResponse, error) {
+	rsp, err := c.GetActiveClientByMac(ctx, site, clientMac, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetActiveClientByMacResponse(rsp)
+}
+
+// ListClientHistoryWithResponse request returning *ListClientHistoryResponse
+func (c *ClientWithResponses) ListClientHistoryWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListClientHistoryResponse, error) {
+	rsp, err := c.ListClientHistory(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListClientHistoryResponse(rsp)
+}
+
+// GetClientsTrafficControlWithResponse request returning *GetClientsTrafficControlResponse
+func (c *ClientWithResponses) GetClientsTrafficControlWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetClientsTrafficControlResponse, error) {
+	rsp, err := c.GetClientsTrafficControl(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetClientsTrafficControlResponse(rsp)
+}
+
+// ListContentFilteringRulesWithResponse request returning *ListContentFilteringRulesResponse
+func (c *ClientWithResponses) ListContentFilteringRulesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListContentFilteringRulesResponse, error) {
+	rsp, err := c.ListContentFilteringRules(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListContentFilteringRulesResponse(rsp)
+}
+
+// ListContentFilteringCategoriesWithResponse request returning *ListContentFilteringCategoriesResponse
+func (c *ClientWithResponses) ListContentFilteringCategoriesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListContentFilteringCategoriesResponse, error) {
+	rsp, err := c.ListContentFilteringCategories(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListContentFilteringCategoriesResponse(rsp)
+}
+
+// ListDescribedFeaturesWithResponse request returning *ListDescribedFeaturesResponse
+func (c *ClientWithResponses) ListDescribedFeaturesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListDescribedFeaturesResponse, error) {
+	rsp, err := c.ListDescribedFeatures(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListDescribedFeaturesResponse(rsp)
+}
+
 // ListAllDevicesWithResponse request returning *ListAllDevicesResponse
 func (c *ClientWithResponses) ListAllDevicesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListAllDevicesResponse, error) {
 	rsp, err := c.ListAllDevices(ctx, site, reqEditors...)
@@ -3868,6 +10879,15 @@ func (c *ClientWithResponses) ListAllDevicesWithResponse(ctx context.Context, si
 		return nil, err
 	}
 	return ParseListAllDevicesResponse(rsp)
+}
+
+// ListFeaturesWithResponse request returning *ListFeaturesResponse
+func (c *ClientWithResponses) ListFeaturesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListFeaturesResponse, error) {
+	rsp, err := c.ListFeatures(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListFeaturesResponse(rsp)
 }
 
 // ListFirewallPoliciesWithResponse request returning *ListFirewallPoliciesResponse
@@ -3922,6 +10942,249 @@ func (c *ClientWithResponses) UpdateFirewallPolicyWithResponse(ctx context.Conte
 	return ParseUpdateFirewallPolicyResponse(rsp)
 }
 
+// ListFirewallZonesWithResponse request returning *ListFirewallZonesResponse
+func (c *ClientWithResponses) ListFirewallZonesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListFirewallZonesResponse, error) {
+	rsp, err := c.ListFirewallZones(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListFirewallZonesResponse(rsp)
+}
+
+// GetFirewallZoneMatrixWithResponse request returning *GetFirewallZoneMatrixResponse
+func (c *ClientWithResponses) GetFirewallZoneMatrixWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetFirewallZoneMatrixResponse, error) {
+	rsp, err := c.GetFirewallZoneMatrix(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetFirewallZoneMatrixResponse(rsp)
+}
+
+// GetGatewayEngineFeaturesWithResponse request returning *GetGatewayEngineFeaturesResponse
+func (c *ClientWithResponses) GetGatewayEngineFeaturesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetGatewayEngineFeaturesResponse, error) {
+	rsp, err := c.GetGatewayEngineFeatures(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetGatewayEngineFeaturesResponse(rsp)
+}
+
+// GetGatewayEngineMostActiveNetworksWithResponse request returning *GetGatewayEngineMostActiveNetworksResponse
+func (c *ClientWithResponses) GetGatewayEngineMostActiveNetworksWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetGatewayEngineMostActiveNetworksResponse, error) {
+	rsp, err := c.GetGatewayEngineMostActiveNetworks(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetGatewayEngineMostActiveNetworksResponse(rsp)
+}
+
+// GetGatewayEngineUtilizationWithResponse request returning *GetGatewayEngineUtilizationResponse
+func (c *ClientWithResponses) GetGatewayEngineUtilizationWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetGatewayEngineUtilizationResponse, error) {
+	rsp, err := c.GetGatewayEngineUtilization(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetGatewayEngineUtilizationResponse(rsp)
+}
+
+// ListHotspotClientsWithResponse request returning *ListHotspotClientsResponse
+func (c *ClientWithResponses) ListHotspotClientsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListHotspotClientsResponse, error) {
+	rsp, err := c.ListHotspotClients(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListHotspotClientsResponse(rsp)
+}
+
+// GetHotspotInfoWithResponse request returning *GetHotspotInfoResponse
+func (c *ClientWithResponses) GetHotspotInfoWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetHotspotInfoResponse, error) {
+	rsp, err := c.GetHotspotInfo(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetHotspotInfoResponse(rsp)
+}
+
+// ListIPSAlertsWithResponse request returning *ListIPSAlertsResponse
+func (c *ClientWithResponses) ListIPSAlertsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListIPSAlertsResponse, error) {
+	rsp, err := c.ListIPSAlerts(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListIPSAlertsResponse(rsp)
+}
+
+// GetISPHealthWithResponse request returning *GetISPHealthResponse
+func (c *ClientWithResponses) GetISPHealthWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetISPHealthResponse, error) {
+	rsp, err := c.GetISPHealth(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetISPHealthResponse(rsp)
+}
+
+// GetISPHealthCompactWithResponse request returning *GetISPHealthCompactResponse
+func (c *ClientWithResponses) GetISPHealthCompactWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetISPHealthCompactResponse, error) {
+	rsp, err := c.GetISPHealthCompact(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetISPHealthCompactResponse(rsp)
+}
+
+// GetISPStatusWithResponse request returning *GetISPStatusResponse
+func (c *ClientWithResponses) GetISPStatusWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetISPStatusResponse, error) {
+	rsp, err := c.GetISPStatus(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetISPStatusResponse(rsp)
+}
+
+// GetLANEnrichedConfigurationWithResponse request returning *GetLANEnrichedConfigurationResponse
+func (c *ClientWithResponses) GetLANEnrichedConfigurationWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetLANEnrichedConfigurationResponse, error) {
+	rsp, err := c.GetLANEnrichedConfiguration(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetLANEnrichedConfigurationResponse(rsp)
+}
+
+// GetLoopDetectionInfoWithResponse request returning *GetLoopDetectionInfoResponse
+func (c *ClientWithResponses) GetLoopDetectionInfoWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetLoopDetectionInfoResponse, error) {
+	rsp, err := c.GetLoopDetectionInfo(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetLoopDetectionInfoResponse(rsp)
+}
+
+// ListNATRulesWithResponse request returning *ListNATRulesResponse
+func (c *ClientWithResponses) ListNATRulesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListNATRulesResponse, error) {
+	rsp, err := c.ListNATRules(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListNATRulesResponse(rsp)
+}
+
+// ListNotificationsWithResponse request returning *ListNotificationsResponse
+func (c *ClientWithResponses) ListNotificationsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListNotificationsResponse, error) {
+	rsp, err := c.ListNotifications(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListNotificationsResponse(rsp)
+}
+
+// ListOSPFNeighborsWithResponse request returning *ListOSPFNeighborsResponse
+func (c *ClientWithResponses) ListOSPFNeighborsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListOSPFNeighborsResponse, error) {
+	rsp, err := c.ListOSPFNeighbors(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListOSPFNeighborsResponse(rsp)
+}
+
+// ListOSPFRoutersWithResponse request returning *ListOSPFRoutersResponse
+func (c *ClientWithResponses) ListOSPFRoutersWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListOSPFRoutersResponse, error) {
+	rsp, err := c.ListOSPFRouters(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListOSPFRoutersResponse(rsp)
+}
+
+// GetPortProfileDefaultsWithResponse request returning *GetPortProfileDefaultsResponse
+func (c *ClientWithResponses) GetPortProfileDefaultsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetPortProfileDefaultsResponse, error) {
+	rsp, err := c.GetPortProfileDefaults(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetPortProfileDefaultsResponse(rsp)
+}
+
+// ListQoSRulesWithResponse request returning *ListQoSRulesResponse
+func (c *ClientWithResponses) ListQoSRulesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListQoSRulesResponse, error) {
+	rsp, err := c.ListQoSRules(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListQoSRulesResponse(rsp)
+}
+
+// ListRADIUSProfilesWithResponse request returning *ListRADIUSProfilesResponse
+func (c *ClientWithResponses) ListRADIUSProfilesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListRADIUSProfilesResponse, error) {
+	rsp, err := c.ListRADIUSProfiles(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListRADIUSProfilesResponse(rsp)
+}
+
+// ListRADIUSUsersWithResponse request returning *ListRADIUSUsersResponse
+func (c *ClientWithResponses) ListRADIUSUsersWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListRADIUSUsersResponse, error) {
+	rsp, err := c.ListRADIUSUsers(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListRADIUSUsersResponse(rsp)
+}
+
+// GetNetworkScoreWithResponse request returning *GetNetworkScoreResponse
+func (c *ClientWithResponses) GetNetworkScoreWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetNetworkScoreResponse, error) {
+	rsp, err := c.GetNetworkScore(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetNetworkScoreResponse(rsp)
+}
+
+// ListSpeedtestHistoryWithResponse request returning *ListSpeedtestHistoryResponse
+func (c *ClientWithResponses) ListSpeedtestHistoryWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListSpeedtestHistoryResponse, error) {
+	rsp, err := c.ListSpeedtestHistory(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListSpeedtestHistoryResponse(rsp)
+}
+
+// GetLatestSpeedtestWithResponse request returning *GetLatestSpeedtestResponse
+func (c *ClientWithResponses) GetLatestSpeedtestWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetLatestSpeedtestResponse, error) {
+	rsp, err := c.GetLatestSpeedtest(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetLatestSpeedtestResponse(rsp)
+}
+
+// GetSpeedtestLatestPerWanWithResponse request returning *GetSpeedtestLatestPerWanResponse
+func (c *ClientWithResponses) GetSpeedtestLatestPerWanWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetSpeedtestLatestPerWanResponse, error) {
+	rsp, err := c.GetSpeedtestLatestPerWan(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetSpeedtestLatestPerWanResponse(rsp)
+}
+
+// ListSSLInspectionCategoriesWithResponse request returning *ListSSLInspectionCategoriesResponse
+func (c *ClientWithResponses) ListSSLInspectionCategoriesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListSSLInspectionCategoriesResponse, error) {
+	rsp, err := c.ListSSLInspectionCategories(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListSSLInspectionCategoriesResponse(rsp)
+}
+
+// ListSSLInspectionProfilesWithResponse request returning *ListSSLInspectionProfilesResponse
+func (c *ClientWithResponses) ListSSLInspectionProfilesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListSSLInspectionProfilesResponse, error) {
+	rsp, err := c.ListSSLInspectionProfiles(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListSSLInspectionProfilesResponse(rsp)
+}
+
 // ListDNSRecordsWithResponse request returning *ListDNSRecordsResponse
 func (c *ClientWithResponses) ListDNSRecordsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListDNSRecordsResponse, error) {
 	rsp, err := c.ListDNSRecords(ctx, site, reqEditors...)
@@ -3946,6 +11209,15 @@ func (c *ClientWithResponses) CreateDNSRecordWithResponse(ctx context.Context, s
 		return nil, err
 	}
 	return ParseCreateDNSRecordResponse(rsp)
+}
+
+// ListStaticDNSDevicesWithResponse request returning *ListStaticDNSDevicesResponse
+func (c *ClientWithResponses) ListStaticDNSDevicesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListStaticDNSDevicesResponse, error) {
+	rsp, err := c.ListStaticDNSDevices(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListStaticDNSDevicesResponse(rsp)
 }
 
 // DeleteDNSRecordWithResponse request returning *DeleteDNSRecordResponse
@@ -3974,6 +11246,41 @@ func (c *ClientWithResponses) UpdateDNSRecordWithResponse(ctx context.Context, s
 	return ParseUpdateDNSRecordResponse(rsp)
 }
 
+// GetSystemLogsWithBodyWithResponse request with arbitrary body returning *GetSystemLogsResponse
+func (c *ClientWithResponses) GetSystemLogsWithBodyWithResponse(ctx context.Context, site Site, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetSystemLogsResponse, error) {
+	rsp, err := c.GetSystemLogsWithBody(ctx, site, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetSystemLogsResponse(rsp)
+}
+
+func (c *ClientWithResponses) GetSystemLogsWithResponse(ctx context.Context, site Site, body GetSystemLogsJSONRequestBody, reqEditors ...RequestEditorFn) (*GetSystemLogsResponse, error) {
+	rsp, err := c.GetSystemLogs(ctx, site, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetSystemLogsResponse(rsp)
+}
+
+// ListTeleportInvitationHistoryWithResponse request returning *ListTeleportInvitationHistoryResponse
+func (c *ClientWithResponses) ListTeleportInvitationHistoryWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListTeleportInvitationHistoryResponse, error) {
+	rsp, err := c.ListTeleportInvitationHistory(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListTeleportInvitationHistoryResponse(rsp)
+}
+
+// GetTeleportTokensWithResponse request returning *GetTeleportTokensResponse
+func (c *ClientWithResponses) GetTeleportTokensWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetTeleportTokensResponse, error) {
+	rsp, err := c.GetTeleportTokens(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTeleportTokensResponse(rsp)
+}
+
 // GetTopologyWithResponse request returning *GetTopologyResponse
 func (c *ClientWithResponses) GetTopologyWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetTopologyResponse, error) {
 	rsp, err := c.GetTopology(ctx, site, reqEditors...)
@@ -3981,6 +11288,15 @@ func (c *ClientWithResponses) GetTopologyWithResponse(ctx context.Context, site 
 		return nil, err
 	}
 	return ParseGetTopologyResponse(rsp)
+}
+
+// ListTrafficRoutesWithResponse request returning *ListTrafficRoutesResponse
+func (c *ClientWithResponses) ListTrafficRoutesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListTrafficRoutesResponse, error) {
+	rsp, err := c.ListTrafficRoutes(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListTrafficRoutesResponse(rsp)
 }
 
 // ListTrafficRulesWithResponse request returning *ListTrafficRulesResponse
@@ -4033,6 +11349,114 @@ func (c *ClientWithResponses) UpdateTrafficRuleWithResponse(ctx context.Context,
 		return nil, err
 	}
 	return ParseUpdateTrafficRuleResponse(rsp)
+}
+
+// ListVendorIDsWithResponse request returning *ListVendorIDsResponse
+func (c *ClientWithResponses) ListVendorIDsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListVendorIDsResponse, error) {
+	rsp, err := c.ListVendorIDs(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListVendorIDsResponse(rsp)
+}
+
+// ListVPNClientConnectionsWithResponse request returning *ListVPNClientConnectionsResponse
+func (c *ClientWithResponses) ListVPNClientConnectionsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListVPNClientConnectionsResponse, error) {
+	rsp, err := c.ListVPNClientConnections(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListVPNClientConnectionsResponse(rsp)
+}
+
+// ListVPNConnectionsWithResponse request returning *ListVPNConnectionsResponse
+func (c *ClientWithResponses) ListVPNConnectionsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListVPNConnectionsResponse, error) {
+	rsp, err := c.ListVPNConnections(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListVPNConnectionsResponse(rsp)
+}
+
+// ListWANSLAsWithResponse request returning *ListWANSLAsResponse
+func (c *ClientWithResponses) ListWANSLAsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListWANSLAsResponse, error) {
+	rsp, err := c.ListWANSLAs(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListWANSLAsResponse(rsp)
+}
+
+// GetWANEnrichedConfigurationWithResponse request returning *GetWANEnrichedConfigurationResponse
+func (c *ClientWithResponses) GetWANEnrichedConfigurationWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetWANEnrichedConfigurationResponse, error) {
+	rsp, err := c.GetWANEnrichedConfiguration(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetWANEnrichedConfigurationResponse(rsp)
+}
+
+// ListWarningsWithResponse request returning *ListWarningsResponse
+func (c *ClientWithResponses) ListWarningsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListWarningsResponse, error) {
+	rsp, err := c.ListWarnings(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListWarningsResponse(rsp)
+}
+
+// GetWiFiConnectivityWithResponse request returning *GetWiFiConnectivityResponse
+func (c *ClientWithResponses) GetWiFiConnectivityWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetWiFiConnectivityResponse, error) {
+	rsp, err := c.GetWiFiConnectivity(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetWiFiConnectivityResponse(rsp)
+}
+
+// GetWiFiStatsAPsWithResponse request returning *GetWiFiStatsAPsResponse
+func (c *ClientWithResponses) GetWiFiStatsAPsWithResponse(ctx context.Context, site Site, params *GetWiFiStatsAPsParams, reqEditors ...RequestEditorFn) (*GetWiFiStatsAPsResponse, error) {
+	rsp, err := c.GetWiFiStatsAPs(ctx, site, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetWiFiStatsAPsResponse(rsp)
+}
+
+// GetWiFiManDataWithResponse request returning *GetWiFiManDataResponse
+func (c *ClientWithResponses) GetWiFiManDataWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetWiFiManDataResponse, error) {
+	rsp, err := c.GetWiFiManData(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetWiFiManDataResponse(rsp)
+}
+
+// ListWireGuardUsersWithResponse request returning *ListWireGuardUsersResponse
+func (c *ClientWithResponses) ListWireGuardUsersWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*ListWireGuardUsersResponse, error) {
+	rsp, err := c.ListWireGuardUsers(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListWireGuardUsersResponse(rsp)
+}
+
+// GetWireGuardExistingSubnetsWithResponse request returning *GetWireGuardExistingSubnetsResponse
+func (c *ClientWithResponses) GetWireGuardExistingSubnetsWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetWireGuardExistingSubnetsResponse, error) {
+	rsp, err := c.GetWireGuardExistingSubnets(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetWireGuardExistingSubnetsResponse(rsp)
+}
+
+// GetWLANCapabilitiesWithResponse request returning *GetWLANCapabilitiesResponse
+func (c *ClientWithResponses) GetWLANCapabilitiesWithResponse(ctx context.Context, site Site, reqEditors ...RequestEditorFn) (*GetWLANCapabilitiesResponse, error) {
+	rsp, err := c.GetWLANCapabilities(ctx, site, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetWLANCapabilitiesResponse(rsp)
 }
 
 // ParseListSitesResponse parses an HTTP response from a ListSitesWithResponse call
@@ -4395,6 +11819,86 @@ func ParseGetHotspotVoucherResponse(rsp *http.Response) (*GetHotspotVoucherRespo
 	return response, nil
 }
 
+// ParseListACLRulesResponse parses an HTTP response from a ListACLRulesWithResponse call
+func ParseListACLRulesResponse(rsp *http.Response) (*ListACLRulesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListACLRulesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []ACLRule
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListActiveDHCPLeasesResponse parses an HTTP response from a ListActiveDHCPLeasesWithResponse call
+func ParseListActiveDHCPLeasesResponse(rsp *http.Response) (*ListActiveDHCPLeasesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListActiveDHCPLeasesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest DHCPLeasesResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetAggregatedDashboardResponse parses an HTTP response from a GetAggregatedDashboardWithResponse call
 func ParseGetAggregatedDashboardResponse(rsp *http.Response) (*GetAggregatedDashboardResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -4411,6 +11915,166 @@ func ParseGetAggregatedDashboardResponse(rsp *http.Response) (*GetAggregatedDash
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest AggregatedDashboard
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListAlertsResponse parses an HTTP response from a ListAlertsWithResponse call
+func ParseListAlertsResponse(rsp *http.Response) (*ListAlertsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListAlertsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AlertsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListAPGroupsResponse parses an HTTP response from a ListAPGroupsWithResponse call
+func ParseListAPGroupsResponse(rsp *http.Response) (*ListAPGroupsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListAPGroupsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []APGroup
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetBGPConfigResponse parses an HTTP response from a GetBGPConfigWithResponse call
+func ParseGetBGPConfigResponse(rsp *http.Response) (*GetBGPConfigResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetBGPConfigResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []BGPConfig
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetAllBGPConfigResponse parses an HTTP response from a GetAllBGPConfigWithResponse call
+func ParseGetAllBGPConfigResponse(rsp *http.Response) (*GetAllBGPConfigResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetAllBGPConfigResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []BGPConfig
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4475,6 +12139,246 @@ func ParseListActiveClientsResponse(rsp *http.Response) (*ListActiveClientsRespo
 	return response, nil
 }
 
+// ParseGetActiveClientByMacResponse parses an HTTP response from a GetActiveClientByMacWithResponse call
+func ParseGetActiveClientByMacResponse(rsp *http.Response) (*GetActiveClientByMacResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetActiveClientByMacResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ActiveClientDetails
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListClientHistoryResponse parses an HTTP response from a ListClientHistoryWithResponse call
+func ParseListClientHistoryResponse(rsp *http.Response) (*ListClientHistoryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListClientHistoryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []ClientHistoryEntry
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetClientsTrafficControlResponse parses an HTTP response from a GetClientsTrafficControlWithResponse call
+func ParseGetClientsTrafficControlResponse(rsp *http.Response) (*GetClientsTrafficControlResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetClientsTrafficControlResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ClientsTrafficControl
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListContentFilteringRulesResponse parses an HTTP response from a ListContentFilteringRulesWithResponse call
+func ParseListContentFilteringRulesResponse(rsp *http.Response) (*ListContentFilteringRulesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListContentFilteringRulesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []ContentFilteringRule
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListContentFilteringCategoriesResponse parses an HTTP response from a ListContentFilteringCategoriesWithResponse call
+func ParseListContentFilteringCategoriesResponse(rsp *http.Response) (*ListContentFilteringCategoriesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListContentFilteringCategoriesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []string
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListDescribedFeaturesResponse parses an HTTP response from a ListDescribedFeaturesWithResponse call
+func ParseListDescribedFeaturesResponse(rsp *http.Response) (*ListDescribedFeaturesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListDescribedFeaturesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []DescribedFeature
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseListAllDevicesResponse parses an HTTP response from a ListAllDevicesWithResponse call
 func ParseListAllDevicesResponse(rsp *http.Response) (*ListAllDevicesResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -4491,6 +12395,46 @@ func ParseListAllDevicesResponse(rsp *http.Response) (*ListAllDevicesResponse, e
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest AllDevicesResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListFeaturesResponse parses an HTTP response from a ListFeaturesWithResponse call
+func ParseListFeaturesResponse(rsp *http.Response) (*ListFeaturesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListFeaturesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []string
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -4689,6 +12633,1086 @@ func ParseUpdateFirewallPolicyResponse(rsp *http.Response) (*UpdateFirewallPolic
 	return response, nil
 }
 
+// ParseListFirewallZonesResponse parses an HTTP response from a ListFirewallZonesWithResponse call
+func ParseListFirewallZonesResponse(rsp *http.Response) (*ListFirewallZonesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListFirewallZonesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []FirewallZone
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetFirewallZoneMatrixResponse parses an HTTP response from a GetFirewallZoneMatrixWithResponse call
+func ParseGetFirewallZoneMatrixResponse(rsp *http.Response) (*GetFirewallZoneMatrixResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetFirewallZoneMatrixResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []FirewallZoneMatrixEntry
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetGatewayEngineFeaturesResponse parses an HTTP response from a GetGatewayEngineFeaturesWithResponse call
+func ParseGetGatewayEngineFeaturesResponse(rsp *http.Response) (*GetGatewayEngineFeaturesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetGatewayEngineFeaturesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []GatewayEngineFeature
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetGatewayEngineMostActiveNetworksResponse parses an HTTP response from a GetGatewayEngineMostActiveNetworksWithResponse call
+func ParseGetGatewayEngineMostActiveNetworksResponse(rsp *http.Response) (*GetGatewayEngineMostActiveNetworksResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetGatewayEngineMostActiveNetworksResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []MostActiveNetwork
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetGatewayEngineUtilizationResponse parses an HTTP response from a GetGatewayEngineUtilizationWithResponse call
+func ParseGetGatewayEngineUtilizationResponse(rsp *http.Response) (*GetGatewayEngineUtilizationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetGatewayEngineUtilizationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest GatewayEngineUtilization
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListHotspotClientsResponse parses an HTTP response from a ListHotspotClientsWithResponse call
+func ParseListHotspotClientsResponse(rsp *http.Response) (*ListHotspotClientsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListHotspotClientsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []HotspotClient
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetHotspotInfoResponse parses an HTTP response from a GetHotspotInfoWithResponse call
+func ParseGetHotspotInfoResponse(rsp *http.Response) (*GetHotspotInfoResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetHotspotInfoResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest HotspotInfo
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListIPSAlertsResponse parses an HTTP response from a ListIPSAlertsWithResponse call
+func ParseListIPSAlertsResponse(rsp *http.Response) (*ListIPSAlertsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListIPSAlertsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest IPSAlertsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetISPHealthResponse parses an HTTP response from a GetISPHealthWithResponse call
+func ParseGetISPHealthResponse(rsp *http.Response) (*GetISPHealthResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetISPHealthResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ISPHealth
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetISPHealthCompactResponse parses an HTTP response from a GetISPHealthCompactWithResponse call
+func ParseGetISPHealthCompactResponse(rsp *http.Response) (*GetISPHealthCompactResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetISPHealthCompactResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ISPHealthCompact
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetISPStatusResponse parses an HTTP response from a GetISPStatusWithResponse call
+func ParseGetISPStatusResponse(rsp *http.Response) (*GetISPStatusResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetISPStatusResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ISPStatus
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetLANEnrichedConfigurationResponse parses an HTTP response from a GetLANEnrichedConfigurationWithResponse call
+func ParseGetLANEnrichedConfigurationResponse(rsp *http.Response) (*GetLANEnrichedConfigurationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetLANEnrichedConfigurationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []LANEnrichedConfiguration
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetLoopDetectionInfoResponse parses an HTTP response from a GetLoopDetectionInfoWithResponse call
+func ParseGetLoopDetectionInfoResponse(rsp *http.Response) (*GetLoopDetectionInfoResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetLoopDetectionInfoResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest LoopDetectionInfo
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListNATRulesResponse parses an HTTP response from a ListNATRulesWithResponse call
+func ParseListNATRulesResponse(rsp *http.Response) (*ListNATRulesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListNATRulesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []NATRule
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListNotificationsResponse parses an HTTP response from a ListNotificationsWithResponse call
+func ParseListNotificationsResponse(rsp *http.Response) (*ListNotificationsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListNotificationsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Notification
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListOSPFNeighborsResponse parses an HTTP response from a ListOSPFNeighborsWithResponse call
+func ParseListOSPFNeighborsResponse(rsp *http.Response) (*ListOSPFNeighborsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListOSPFNeighborsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []OSPFNeighbor
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListOSPFRoutersResponse parses an HTTP response from a ListOSPFRoutersWithResponse call
+func ParseListOSPFRoutersResponse(rsp *http.Response) (*ListOSPFRoutersResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListOSPFRoutersResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []OSPFRouter
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetPortProfileDefaultsResponse parses an HTTP response from a GetPortProfileDefaultsWithResponse call
+func ParseGetPortProfileDefaultsResponse(rsp *http.Response) (*GetPortProfileDefaultsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetPortProfileDefaultsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest PortProfileDefaults
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListQoSRulesResponse parses an HTTP response from a ListQoSRulesWithResponse call
+func ParseListQoSRulesResponse(rsp *http.Response) (*ListQoSRulesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListQoSRulesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []QoSRule
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListRADIUSProfilesResponse parses an HTTP response from a ListRADIUSProfilesWithResponse call
+func ParseListRADIUSProfilesResponse(rsp *http.Response) (*ListRADIUSProfilesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListRADIUSProfilesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []RADIUSProfile
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListRADIUSUsersResponse parses an HTTP response from a ListRADIUSUsersWithResponse call
+func ParseListRADIUSUsersResponse(rsp *http.Response) (*ListRADIUSUsersResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListRADIUSUsersResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []RADIUSUser
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetNetworkScoreResponse parses an HTTP response from a GetNetworkScoreWithResponse call
+func ParseGetNetworkScoreResponse(rsp *http.Response) (*GetNetworkScoreResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetNetworkScoreResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest NetworkScore
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListSpeedtestHistoryResponse parses an HTTP response from a ListSpeedtestHistoryWithResponse call
+func ParseListSpeedtestHistoryResponse(rsp *http.Response) (*ListSpeedtestHistoryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListSpeedtestHistoryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SpeedtestHistoryResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetLatestSpeedtestResponse parses an HTTP response from a GetLatestSpeedtestWithResponse call
+func ParseGetLatestSpeedtestResponse(rsp *http.Response) (*GetLatestSpeedtestResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetLatestSpeedtestResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SpeedtestLatest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetSpeedtestLatestPerWanResponse parses an HTTP response from a GetSpeedtestLatestPerWanWithResponse call
+func ParseGetSpeedtestLatestPerWanResponse(rsp *http.Response) (*GetSpeedtestLatestPerWanResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetSpeedtestLatestPerWanResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SpeedtestLatestPerWanResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListSSLInspectionCategoriesResponse parses an HTTP response from a ListSSLInspectionCategoriesWithResponse call
+func ParseListSSLInspectionCategoriesResponse(rsp *http.Response) (*ListSSLInspectionCategoriesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListSSLInspectionCategoriesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []SSLInspectionCategory
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListSSLInspectionProfilesResponse parses an HTTP response from a ListSSLInspectionProfilesWithResponse call
+func ParseListSSLInspectionProfilesResponse(rsp *http.Response) (*ListSSLInspectionProfilesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListSSLInspectionProfilesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []SSLInspectionProfile
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseListDNSRecordsResponse parses an HTTP response from a ListDNSRecordsWithResponse call
 func ParseListDNSRecordsResponse(rsp *http.Response) (*ListDNSRecordsResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -4763,6 +13787,46 @@ func ParseCreateDNSRecordResponse(rsp *http.Response) (*CreateDNSRecordResponse,
 			return nil, err
 		}
 		response.JSON401 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListStaticDNSDevicesResponse parses an HTTP response from a ListStaticDNSDevicesWithResponse call
+func ParseListStaticDNSDevicesResponse(rsp *http.Response) (*ListStaticDNSDevicesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListStaticDNSDevicesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []StaticDNSDevice
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
 
 	}
 
@@ -4849,6 +13913,133 @@ func ParseUpdateDNSRecordResponse(rsp *http.Response) (*UpdateDNSRecordResponse,
 	return response, nil
 }
 
+// ParseGetSystemLogsResponse parses an HTTP response from a GetSystemLogsWithResponse call
+func ParseGetSystemLogsResponse(rsp *http.Response) (*GetSystemLogsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetSystemLogsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest SystemLogResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListTeleportInvitationHistoryResponse parses an HTTP response from a ListTeleportInvitationHistoryWithResponse call
+func ParseListTeleportInvitationHistoryResponse(rsp *http.Response) (*ListTeleportInvitationHistoryResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListTeleportInvitationHistoryResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TeleportInvitationHistoryResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetTeleportTokensResponse parses an HTTP response from a GetTeleportTokensWithResponse call
+func ParseGetTeleportTokensResponse(rsp *http.Response) (*GetTeleportTokensResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTeleportTokensResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest TeleportTokenResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ParseGetTopologyResponse parses an HTTP response from a GetTopologyWithResponse call
 func ParseGetTopologyResponse(rsp *http.Response) (*GetTopologyResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
@@ -4865,6 +14056,46 @@ func ParseGetTopologyResponse(rsp *http.Response) (*GetTopologyResponse, error) 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest Topology
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListTrafficRoutesResponse parses an HTTP response from a ListTrafficRoutesWithResponse call
+func ParseListTrafficRoutesResponse(rsp *http.Response) (*ListTrafficRoutesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListTrafficRoutesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []TrafficRoute
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -5056,168 +14287,891 @@ func ParseUpdateTrafficRuleResponse(rsp *http.Response) (*UpdateTrafficRuleRespo
 	return response, nil
 }
 
+// ParseListVendorIDsResponse parses an HTTP response from a ListVendorIDsWithResponse call
+func ParseListVendorIDsResponse(rsp *http.Response) (*ListVendorIDsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListVendorIDsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []string
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListVPNClientConnectionsResponse parses an HTTP response from a ListVPNClientConnectionsWithResponse call
+func ParseListVPNClientConnectionsResponse(rsp *http.Response) (*ListVPNClientConnectionsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListVPNClientConnectionsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest VPNConnectionsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListVPNConnectionsResponse parses an HTTP response from a ListVPNConnectionsWithResponse call
+func ParseListVPNConnectionsResponse(rsp *http.Response) (*ListVPNConnectionsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListVPNConnectionsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest VPNConnectionsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListWANSLAsResponse parses an HTTP response from a ListWANSLAsWithResponse call
+func ParseListWANSLAsResponse(rsp *http.Response) (*ListWANSLAsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListWANSLAsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []WANSLA
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetWANEnrichedConfigurationResponse parses an HTTP response from a GetWANEnrichedConfigurationWithResponse call
+func ParseGetWANEnrichedConfigurationResponse(rsp *http.Response) (*GetWANEnrichedConfigurationResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetWANEnrichedConfigurationResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []WANEnrichedConfiguration
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListWarningsResponse parses an HTTP response from a ListWarningsWithResponse call
+func ParseListWarningsResponse(rsp *http.Response) (*ListWarningsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListWarningsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest WarningsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetWiFiConnectivityResponse parses an HTTP response from a GetWiFiConnectivityWithResponse call
+func ParseGetWiFiConnectivityResponse(rsp *http.Response) (*GetWiFiConnectivityResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetWiFiConnectivityResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest WiFiConnectivity
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetWiFiStatsAPsResponse parses an HTTP response from a GetWiFiStatsAPsWithResponse call
+func ParseGetWiFiStatsAPsResponse(rsp *http.Response) (*GetWiFiStatsAPsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetWiFiStatsAPsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest WiFiStatsAPsResponse
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest BadRequest
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetWiFiManDataResponse parses an HTTP response from a GetWiFiManDataWithResponse call
+func ParseGetWiFiManDataResponse(rsp *http.Response) (*GetWiFiManDataResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetWiFiManDataResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []WiFiManEntry
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseListWireGuardUsersResponse parses an HTTP response from a ListWireGuardUsersWithResponse call
+func ParseListWireGuardUsersResponse(rsp *http.Response) (*ListWireGuardUsersResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListWireGuardUsersResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []WireGuardUser
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetWireGuardExistingSubnetsResponse parses an HTTP response from a GetWireGuardExistingSubnetsWithResponse call
+func ParseGetWireGuardExistingSubnetsResponse(rsp *http.Response) (*GetWireGuardExistingSubnetsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetWireGuardExistingSubnetsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest WireGuardSubnets
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
+// ParseGetWLANCapabilitiesResponse parses an HTTP response from a GetWLANCapabilitiesWithResponse call
+func ParseGetWLANCapabilitiesResponse(rsp *http.Response) (*GetWLANCapabilitiesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetWLANCapabilitiesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest WLANCapabilities
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Unauthorized
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest NotFound
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON404 = &dest
+
+	}
+
+	return response, nil
+}
+
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
+	"AA==",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

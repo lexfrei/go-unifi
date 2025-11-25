@@ -2192,3 +2192,331 @@ func (c *APIClient) GetSystemLogAPLogsDisplayOptionsAPs(ctx context.Context, sit
 	}
 	return *data, nil
 }
+
+// GetWiFiStatsRadios retrieves WiFi statistics per radio.
+func (c *APIClient) GetWiFiStatsRadios(
+	ctx context.Context,
+	site Site,
+	params *GetWiFiStatsRadiosParams,
+) (*WiFiStatsRadiosResponse, error) {
+	resp, err := c.client.GetWiFiStatsRadiosWithResponse(ctx, site, params)
+	var dataPtr *WiFiStatsRadiosResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get WiFi stats radios for site "+site)
+}
+
+// GetWiFiStatsChannelization retrieves WiFi channelization statistics over time.
+func (c *APIClient) GetWiFiStatsChannelization(
+	ctx context.Context,
+	site Site,
+	params *GetWiFiStatsChannelizationParams,
+) (*WiFiStatsChannelizationResponse, error) {
+	resp, err := c.client.GetWiFiStatsChannelizationWithResponse(ctx, site, params)
+	var dataPtr *WiFiStatsChannelizationResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get WiFi stats channelization for site "+site)
+}
+
+// GetWiFiStatsDetails retrieves detailed WiFi statistics per connected client.
+func (c *APIClient) GetWiFiStatsDetails(
+	ctx context.Context,
+	site Site,
+	params *GetWiFiStatsDetailsParams,
+) (*WiFiStatsDetailsResponse, error) {
+	resp, err := c.client.GetWiFiStatsDetailsWithResponse(ctx, site, params)
+	var dataPtr *WiFiStatsDetailsResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get WiFi stats details for site "+site)
+}
+
+// GetTrafficStats retrieves traffic statistics by client and application.
+func (c *APIClient) GetTrafficStats(
+	ctx context.Context,
+	site Site,
+	params *GetTrafficStatsParams,
+) (*TrafficStatsResponse, error) {
+	resp, err := c.client.GetTrafficStatsWithResponse(ctx, site, params)
+	var dataPtr *TrafficStatsResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get traffic stats for site "+site)
+}
+
+// GetTrafficRate retrieves traffic rate time series data.
+func (c *APIClient) GetTrafficRate(
+	ctx context.Context,
+	site Site,
+	params *GetTrafficRateParams,
+) ([]TrafficRateEntry, error) {
+	resp, err := c.client.GetTrafficRateWithResponse(ctx, site, params)
+	var dataPtr *[]TrafficRateEntry
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get traffic rate for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetUtilizationTimeRange retrieves system and ISP utilization over time range.
+func (c *APIClient) GetUtilizationTimeRange(
+	ctx context.Context,
+	site Site,
+	params *GetUtilizationTimeRangeParams,
+) (*UtilizationTimeRangeResponse, error) {
+	resp, err := c.client.GetUtilizationTimeRangeWithResponse(ctx, site, params)
+	var dataPtr *UtilizationTimeRangeResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get utilization time range for site "+site)
+}
+
+// GetSystemLogCount retrieves system log counts by category.
+func (c *APIClient) GetSystemLogCount(
+	ctx context.Context,
+	site Site,
+	request *SystemLogRequest,
+) (*SystemLogCountResponse, error) {
+	if request == nil {
+		request = &SystemLogRequest{}
+	}
+	resp, err := c.client.GetSystemLogCountWithResponse(ctx, site, *request)
+	var dataPtr *SystemLogCountResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get system log count for site "+site)
+}
+
+// GetSystemLogCritical retrieves critical system logs.
+func (c *APIClient) GetSystemLogCritical(
+	ctx context.Context,
+	site Site,
+	request *SystemLogRequest,
+) (*SystemLogResponse, error) {
+	if request == nil {
+		request = &SystemLogRequest{}
+	}
+	resp, err := c.client.GetSystemLogCriticalWithResponse(ctx, site, *request)
+	var dataPtr *SystemLogResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get critical system logs for site "+site)
+}
+
+// GetSystemLogThreats retrieves threat detection logs.
+func (c *APIClient) GetSystemLogThreats(
+	ctx context.Context,
+	site Site,
+	request *SystemLogRequest,
+) (*SystemLogResponse, error) {
+	if request == nil {
+		request = &SystemLogRequest{}
+	}
+	resp, err := c.client.GetSystemLogThreatsWithResponse(ctx, site, *request)
+	var dataPtr *SystemLogResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get threat logs for site "+site)
+}
+
+// GetSystemLogAdminAccess retrieves admin access logs.
+func (c *APIClient) GetSystemLogAdminAccess(
+	ctx context.Context,
+	site Site,
+	request *SystemLogRequest,
+) (*SystemLogResponse, error) {
+	if request == nil {
+		request = &SystemLogRequest{}
+	}
+	resp, err := c.client.GetSystemLogAdminAccessWithResponse(ctx, site, *request)
+	var dataPtr *SystemLogResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get admin access logs for site "+site)
+}
+
+// GetSystemLogAdminActivity retrieves admin activity logs.
+func (c *APIClient) GetSystemLogAdminActivity(
+	ctx context.Context,
+	site Site,
+	request *SystemLogRequest,
+) (*SystemLogResponse, error) {
+	if request == nil {
+		request = &SystemLogRequest{}
+	}
+	resp, err := c.client.GetSystemLogAdminActivityWithResponse(ctx, site, *request)
+	var dataPtr *SystemLogResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get admin activity logs for site "+site)
+}
+
+// GetSystemLogClientAlert retrieves client alert logs.
+func (c *APIClient) GetSystemLogClientAlert(
+	ctx context.Context,
+	site Site,
+	request *SystemLogRequest,
+) (*SystemLogResponse, error) {
+	if request == nil {
+		request = &SystemLogRequest{}
+	}
+	resp, err := c.client.GetSystemLogClientAlertWithResponse(ctx, site, *request)
+	var dataPtr *SystemLogResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get client alert logs for site "+site)
+}
+
+// GetSystemLogDeviceAlert retrieves device alert logs.
+func (c *APIClient) GetSystemLogDeviceAlert(
+	ctx context.Context,
+	site Site,
+	request *SystemLogRequest,
+) (*SystemLogResponse, error) {
+	if request == nil {
+		request = &SystemLogRequest{}
+	}
+	resp, err := c.client.GetSystemLogDeviceAlertWithResponse(ctx, site, *request)
+	var dataPtr *SystemLogResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get device alert logs for site "+site)
+}
+
+// GetSystemLogThreatAlert retrieves security threat alert logs.
+func (c *APIClient) GetSystemLogThreatAlert(
+	ctx context.Context,
+	site Site,
+	request *SystemLogRequest,
+) (*SystemLogResponse, error) {
+	if request == nil {
+		request = &SystemLogRequest{}
+	}
+	resp, err := c.client.GetSystemLogThreatAlertWithResponse(ctx, site, *request)
+	var dataPtr *SystemLogResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get threat alert logs for site "+site)
+}
+
+// GetSystemLogUpdateAlert retrieves update alert logs.
+func (c *APIClient) GetSystemLogUpdateAlert(
+	ctx context.Context,
+	site Site,
+	request *SystemLogRequest,
+) (*SystemLogResponse, error) {
+	if request == nil {
+		request = &SystemLogRequest{}
+	}
+	resp, err := c.client.GetSystemLogUpdateAlertWithResponse(ctx, site, *request)
+	var dataPtr *SystemLogResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get update alert logs for site "+site)
+}
+
+// GetSystemLogVPNAlert retrieves VPN alert logs.
+func (c *APIClient) GetSystemLogVPNAlert(
+	ctx context.Context,
+	site Site,
+	request *SystemLogRequest,
+) (*SystemLogResponse, error) {
+	if request == nil {
+		request = &SystemLogRequest{}
+	}
+	resp, err := c.client.GetSystemLogVPNAlertWithResponse(ctx, site, *request)
+	var dataPtr *SystemLogResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get VPN alert logs for site "+site)
+}
+
+// GetSystemLogNextAIAlert retrieves AI-powered threat detection alert logs.
+func (c *APIClient) GetSystemLogNextAIAlert(
+	ctx context.Context,
+	site Site,
+	request *SystemLogRequest,
+) (*SystemLogResponse, error) {
+	if request == nil {
+		request = &SystemLogRequest{}
+	}
+	resp, err := c.client.GetSystemLogNextAIAlertWithResponse(ctx, site, *request)
+	var dataPtr *SystemLogResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get Next AI alert logs for site "+site)
+}
+
+// GetSystemLogSystemCriticalAlert retrieves system critical alert logs.
+func (c *APIClient) GetSystemLogSystemCriticalAlert(
+	ctx context.Context,
+	site Site,
+	request *SystemLogRequest,
+) (*SystemLogResponse, error) {
+	if request == nil {
+		request = &SystemLogRequest{}
+	}
+	resp, err := c.client.GetSystemLogSystemCriticalAlertWithResponse(ctx, site, *request)
+	var dataPtr *SystemLogResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get system critical alert logs for site "+site)
+}
+
+// GetTrafficFlows retrieves firewall traffic flow data.
+func (c *APIClient) GetTrafficFlows(
+	ctx context.Context,
+	site Site,
+	request *TrafficFlowsRequest,
+) (*TrafficFlowsResponse, error) {
+	if request == nil {
+		request = &TrafficFlowsRequest{}
+	}
+	resp, err := c.client.GetTrafficFlowsWithResponse(ctx, site, *request)
+	var dataPtr *TrafficFlowsResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get traffic flows for site "+site)
+}

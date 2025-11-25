@@ -608,4 +608,69 @@ type NetworkAPIClient interface { //nolint:interfacebloat // This interface mirr
 
 	// GetSystemLogAPLogsDisplayOptionsAPs retrieves AP MAC addresses for AP log filtering.
 	GetSystemLogAPLogsDisplayOptionsAPs(ctx context.Context, site Site) ([]string, error)
+
+	// WiFi statistics operations with parameters (v2 API)
+
+	// GetWiFiStatsRadios retrieves WiFi statistics per radio.
+	GetWiFiStatsRadios(ctx context.Context, site Site, params *GetWiFiStatsRadiosParams) (*WiFiStatsRadiosResponse, error)
+
+	// GetWiFiStatsChannelization retrieves WiFi channelization statistics over time.
+	GetWiFiStatsChannelization(ctx context.Context, site Site, params *GetWiFiStatsChannelizationParams) (*WiFiStatsChannelizationResponse, error)
+
+	// GetWiFiStatsDetails retrieves detailed WiFi statistics per connected client.
+	GetWiFiStatsDetails(ctx context.Context, site Site, params *GetWiFiStatsDetailsParams) (*WiFiStatsDetailsResponse, error)
+
+	// Traffic statistics operations (v2 API)
+
+	// GetTrafficStats retrieves traffic statistics by client and application.
+	GetTrafficStats(ctx context.Context, site Site, params *GetTrafficStatsParams) (*TrafficStatsResponse, error)
+
+	// GetTrafficRate retrieves traffic rate time series data.
+	GetTrafficRate(ctx context.Context, site Site, params *GetTrafficRateParams) ([]TrafficRateEntry, error)
+
+	// GetUtilizationTimeRange retrieves system and ISP utilization over time range.
+	GetUtilizationTimeRange(ctx context.Context, site Site, params *GetUtilizationTimeRangeParams) (*UtilizationTimeRangeResponse, error)
+
+	// System log category operations (v2 API)
+
+	// GetSystemLogCount retrieves system log counts by category.
+	GetSystemLogCount(ctx context.Context, site Site, request *SystemLogRequest) (*SystemLogCountResponse, error)
+
+	// GetSystemLogCritical retrieves critical system logs.
+	GetSystemLogCritical(ctx context.Context, site Site, request *SystemLogRequest) (*SystemLogResponse, error)
+
+	// GetSystemLogThreats retrieves threat detection logs.
+	GetSystemLogThreats(ctx context.Context, site Site, request *SystemLogRequest) (*SystemLogResponse, error)
+
+	// GetSystemLogAdminAccess retrieves admin access logs.
+	GetSystemLogAdminAccess(ctx context.Context, site Site, request *SystemLogRequest) (*SystemLogResponse, error)
+
+	// GetSystemLogAdminActivity retrieves admin activity logs.
+	GetSystemLogAdminActivity(ctx context.Context, site Site, request *SystemLogRequest) (*SystemLogResponse, error)
+
+	// GetSystemLogClientAlert retrieves client alert logs.
+	GetSystemLogClientAlert(ctx context.Context, site Site, request *SystemLogRequest) (*SystemLogResponse, error)
+
+	// GetSystemLogDeviceAlert retrieves device alert logs.
+	GetSystemLogDeviceAlert(ctx context.Context, site Site, request *SystemLogRequest) (*SystemLogResponse, error)
+
+	// GetSystemLogThreatAlert retrieves security threat alert logs.
+	GetSystemLogThreatAlert(ctx context.Context, site Site, request *SystemLogRequest) (*SystemLogResponse, error)
+
+	// GetSystemLogUpdateAlert retrieves update alert logs.
+	GetSystemLogUpdateAlert(ctx context.Context, site Site, request *SystemLogRequest) (*SystemLogResponse, error)
+
+	// GetSystemLogVPNAlert retrieves VPN alert logs.
+	GetSystemLogVPNAlert(ctx context.Context, site Site, request *SystemLogRequest) (*SystemLogResponse, error)
+
+	// GetSystemLogNextAIAlert retrieves AI-powered threat detection alert logs.
+	GetSystemLogNextAIAlert(ctx context.Context, site Site, request *SystemLogRequest) (*SystemLogResponse, error)
+
+	// GetSystemLogSystemCriticalAlert retrieves system critical alert logs.
+	GetSystemLogSystemCriticalAlert(ctx context.Context, site Site, request *SystemLogRequest) (*SystemLogResponse, error)
+
+	// Firewall traffic flows operations (v2 API)
+
+	// GetTrafficFlows retrieves firewall traffic flow data.
+	GetTrafficFlows(ctx context.Context, site Site, request *TrafficFlowsRequest) (*TrafficFlowsResponse, error)
 }

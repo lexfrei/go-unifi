@@ -2788,6 +2788,359 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # Settings Connectivity Defaults API (v2)
+  /v2/api/site/{site}/settings/connectivity-defaults:
+    get:
+      summary: Get connectivity settings defaults
+      description: |
+        Retrieves default connectivity settings including uplink type.
+      operationId: getSettingsConnectivityDefaults
+      tags:
+        - Settings
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with connectivity settings defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectivityDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Settings Element Adopt Defaults API (v2)
+  /v2/api/site/{site}/settings/element_adopt-defaults:
+    get:
+      summary: Get element adopt settings defaults
+      description: |
+        Retrieves default settings for element adoption.
+      operationId: getSettingsElementAdoptDefaults
+      tags:
+        - Settings
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with element adopt settings defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElementAdoptDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Settings Global NAT Defaults API (v2)
+  /v2/api/site/{site}/settings/global_nat-defaults:
+    get:
+      summary: Get global NAT settings defaults
+      description: |
+        Retrieves default global NAT settings including mode and excluded networks.
+      operationId: getSettingsGlobalNATDefaults
+      tags:
+        - Settings
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with global NAT settings defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlobalNATDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Settings Global Switch Defaults API (v2)
+  /v2/api/site/{site}/settings/global_switch-defaults:
+    get:
+      summary: Get global switch settings defaults
+      description: |
+        Retrieves default global switch settings including STP version, DHCP snooping, and port controls.
+      operationId: getSettingsGlobalSwitchDefaults
+      tags:
+        - Settings
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with global switch settings defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlobalSwitchDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Settings IPS Advanced Filtering Auto Values API (v2)
+  /v2/api/site/{site}/settings/ips/advanced-filtering-auto-values:
+    get:
+      summary: Get IPS advanced filtering auto values
+      description: |
+        Retrieves automatically computed IPS advanced filtering settings.
+      operationId: getSettingsIPSAdvancedFilteringAutoValues
+      tags:
+        - Settings
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with IPS advanced filtering auto values
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IPSAdvancedFilteringSettings'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Settings IPS Advanced Filtering Defaults API (v2)
+  /v2/api/site/{site}/settings/ips/advanced-filtering-defaults:
+    get:
+      summary: Get IPS advanced filtering defaults
+      description: |
+        Retrieves default IPS advanced filtering settings.
+      operationId: getSettingsIPSAdvancedFilteringDefaults
+      tags:
+        - Settings
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with IPS advanced filtering defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IPSAdvancedFilteringSettings'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Settings IPS Available Categories API (v2)
+  /v2/api/site/{site}/settings/ips/available-categories:
+    get:
+      summary: Get IPS available categories
+      description: |
+        Retrieves list of available IPS categories with sensitivity levels.
+      operationId: getSettingsIPSAvailableCategories
+      tags:
+        - Settings
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with IPS available categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IPSCategory'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Settings Netflow Defaults API (v2)
+  /v2/api/site/{site}/settings/netflow-defaults:
+    get:
+      summary: Get netflow settings defaults
+      description: |
+        Retrieves default netflow settings including port, version, and sampling configuration.
+      operationId: getSettingsNetflowDefaults
+      tags:
+        - Settings
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with netflow settings defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetflowDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Settings NTP Defaults API (v2)
+  /v2/api/site/{site}/settings/ntp-defaults:
+    get:
+      summary: Get NTP settings defaults
+      description: |
+        Retrieves default NTP server settings.
+      operationId: getSettingsNTPDefaults
+      tags:
+        - Settings
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with NTP settings defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NTPDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Settings Roaming Assistant Defaults API (v2)
+  /v2/api/site/{site}/settings/roaming_assistant-defaults:
+    get:
+      summary: Get roaming assistant settings defaults
+      description: |
+        Retrieves default roaming assistant settings including RSSI threshold.
+      operationId: getSettingsRoamingAssistantDefaults
+      tags:
+        - Settings
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with roaming assistant settings defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoamingAssistantDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Settings Shortcuts API (v2)
+  /v2/api/site/{site}/settings/shortcuts:
+    get:
+      summary: Get settings shortcuts
+      description: |
+        Retrieves configured shortcuts.
+      operationId: getSettingsShortcuts
+      tags:
+        - Settings
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with shortcuts list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SettingsShortcut'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Settings Teleport Defaults API (v2)
+  /v2/api/site/{site}/settings/teleport-defaults:
+    get:
+      summary: Get teleport settings defaults
+      description: |
+        Retrieves default teleport settings.
+      operationId: getSettingsTeleportDefaults
+      tags:
+        - Settings
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with teleport settings defaults
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeleportSettingsDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Settings Traffic Flow Defaults API (v2)
+  /v2/api/site/{site}/settings/traffic_flow-defaults:
+    get:
+      summary: Get traffic flow settings defaults
+      description: |
+        Retrieves default traffic flow settings.
+      operationId: getSettingsTrafficFlowDefaults
+      tags:
+        - Settings
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with traffic flow settings defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrafficFlowDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Settings USG Defaults API (v2)
+  /v2/api/site/{site}/settings/usg-defaults:
+    get:
+      summary: Get USG settings defaults
+      description: |
+        Retrieves default USG (UniFi Security Gateway) settings including timeouts and DNS verification.
+      operationId: getSettingsUSGDefaults
+      tags:
+        - Settings
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with USG settings defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/USGDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Settings WiFi AI Defaults API (v2)
+  /v2/api/site/{site}/settings/wifiai-defaults:
+    get:
+      summary: Get WiFi AI settings defaults
+      description: |
+        Retrieves default WiFi AI settings including channel optimization settings.
+      operationId: getSettingsWiFiAIDefaults
+      tags:
+        - Settings
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with WiFi AI settings defaults
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WiFiAIDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   # System Log Settings Defaults API (v2)
   /v2/api/site/{site}/system-log/setting-defaults:
     get:
@@ -8220,3 +8573,362 @@ components:
         send_mobile_push_notification:
           type: boolean
           description: Whether to send mobile push notification
+
+    # Settings Defaults
+    ConnectivityDefaults:
+      type: object
+      description: Default connectivity settings
+      properties:
+        enabled:
+          type: boolean
+          description: Whether connectivity is enabled
+        uplink_type:
+          type: string
+          description: Uplink type (gateway, etc.)
+
+    ElementAdoptDefaults:
+      type: object
+      description: Default element adoption settings
+      properties:
+        enabled:
+          type: boolean
+          description: Whether element adoption is enabled
+
+    GlobalNATDefaults:
+      type: object
+      description: Default global NAT settings
+      properties:
+        mode:
+          type: string
+          description: NAT mode (auto, manual)
+        excluded_network_ids:
+          type: array
+          description: Network IDs excluded from NAT
+          items:
+            type: string
+
+    GlobalSwitchDefaults:
+      type: object
+      description: Default global switch settings
+      properties:
+        dhcp_snoop:
+          type: boolean
+          description: Whether DHCP snooping is enabled
+        dot1x_fallback_networkconf_id:
+          type: string
+          description: 802.1X fallback network configuration ID
+        dot1x_portctrl_enabled:
+          type: boolean
+          description: Whether 802.1X port control is enabled
+        flood_known_protocols:
+          type: boolean
+          description: Whether to flood known protocols
+        flowctrl_enabled:
+          type: boolean
+          description: Whether flow control is enabled
+        forward_unknown_mcast_router_ports:
+          type: boolean
+          description: Whether to forward unknown multicast to router ports
+        jumboframe_enabled:
+          type: boolean
+          description: Whether jumbo frames are enabled
+        radiusprofile_id:
+          type: string
+          description: RADIUS profile ID
+        stp_version:
+          type: string
+          description: Spanning Tree Protocol version (rstp, stp)
+        switch_exclusions:
+          type: array
+          description: Switch exclusions
+          items:
+            type: string
+        acl_device_isolation:
+          type: array
+          description: ACL device isolation settings
+          items:
+            type: object
+            additionalProperties: true
+        acl_l3_isolation:
+          type: array
+          description: ACL L3 isolation settings
+          items:
+            type: object
+            additionalProperties: true
+
+    IPSAdvancedFilteringSettings:
+      type: object
+      description: IPS advanced filtering settings
+      properties:
+        key:
+          type: string
+          description: Settings key
+        memory_optimized:
+          type: boolean
+          description: Whether memory optimization is enabled
+        advanced_filtering_preference:
+          type: string
+          description: Filtering preference (auto, manual)
+        ips_mode:
+          type: string
+          description: IPS mode (ids, ips)
+        enabled_categories:
+          type: array
+          description: List of enabled IPS categories
+          items:
+            type: string
+        enabled_networks:
+          type: array
+          description: Network IDs where IPS is enabled
+          items:
+            type: string
+        suppression:
+          $ref: '#/components/schemas/IPSSuppression'
+
+    IPSSuppression:
+      type: object
+      description: IPS suppression settings
+      properties:
+        alerts:
+          type: array
+          description: Suppressed alerts
+          items:
+            type: object
+            additionalProperties: true
+        whitelist:
+          type: array
+          description: Whitelisted items
+          items:
+            type: object
+            additionalProperties: true
+
+    IPSCategory:
+      type: object
+      description: IPS category with sensitivity
+      properties:
+        value:
+          type: string
+          description: Category identifier
+        category_group:
+          type: string
+          description: Category group
+        sensitivity:
+          type: string
+          description: Sensitivity level (LOW, MEDIUM, HIGH)
+
+    NetflowDefaults:
+      type: object
+      description: Default netflow settings
+      properties:
+        enabled:
+          type: boolean
+          description: Whether netflow is enabled
+        auto_engine_id_enabled:
+          type: boolean
+          description: Whether auto engine ID is enabled
+        export_frequency:
+          type: integer
+          description: Export frequency in seconds
+        port:
+          type: integer
+          description: Netflow port
+        refresh_rate:
+          type: integer
+          description: Refresh rate in seconds
+        sampling_mode:
+          type: string
+          description: Sampling mode (hash, random)
+        sampling_rate:
+          type: integer
+          description: Sampling rate
+        version:
+          type: integer
+          description: Netflow version (5, 9, 10)
+
+    NTPDefaults:
+      type: object
+      description: Default NTP settings
+      properties:
+        ntp_server_1:
+          type: string
+          description: Primary NTP server
+        ntp_server_2:
+          type: string
+          description: Secondary NTP server
+        ntp_server_3:
+          type: string
+          description: Tertiary NTP server
+        ntp_server_4:
+          type: string
+          description: Quaternary NTP server
+        setting_preference:
+          type: string
+          description: Setting preference (auto, manual)
+
+    RoamingAssistantDefaults:
+      type: object
+      description: Default roaming assistant settings
+      properties:
+        enabled:
+          type: boolean
+          description: Whether roaming assistant is enabled
+        rssi:
+          type: integer
+          description: RSSI threshold for roaming
+
+    SettingsShortcut:
+      type: object
+      description: Settings shortcut
+      additionalProperties: true
+
+    TeleportSettingsDefaults:
+      type: object
+      description: Default teleport settings
+      properties:
+        enabled:
+          type: boolean
+          description: Whether teleport is enabled
+
+    TrafficFlowDefaults:
+      type: object
+      description: Default traffic flow settings
+      properties:
+        enabled_allowed_traffic:
+          type: boolean
+          description: Whether allowed traffic flow is enabled
+        gateway_dns_enabled:
+          type: boolean
+          description: Whether gateway DNS is enabled
+        unifi_device_management_enabled:
+          type: boolean
+          description: Whether UniFi device management is enabled
+        unifi_services_enabled:
+          type: boolean
+          description: Whether UniFi services are enabled
+
+    USGDefaults:
+      type: object
+      description: Default USG settings
+      properties:
+        icmp_timeout:
+          type: integer
+          description: ICMP timeout in seconds
+        other_timeout:
+          type: integer
+          description: Other protocol timeout in seconds
+        tcp_close_timeout:
+          type: integer
+          description: TCP close timeout in seconds
+        tcp_close_wait_timeout:
+          type: integer
+          description: TCP close wait timeout in seconds
+        tcp_established_timeout:
+          type: integer
+          description: TCP established timeout in seconds
+        tcp_fin_wait_timeout:
+          type: integer
+          description: TCP FIN wait timeout in seconds
+        tcp_last_ack_timeout:
+          type: integer
+          description: TCP last ACK timeout in seconds
+        tcp_syn_recv_timeout:
+          type: integer
+          description: TCP SYN received timeout in seconds
+        tcp_syn_sent_timeout:
+          type: integer
+          description: TCP SYN sent timeout in seconds
+        tcp_time_wait_timeout:
+          type: integer
+          description: TCP time wait timeout in seconds
+        timeout_setting_preference:
+          type: string
+          description: Timeout setting preference (auto, manual)
+        udp_other_timeout:
+          type: integer
+          description: UDP other timeout in seconds
+        udp_stream_timeout:
+          type: integer
+          description: UDP stream timeout in seconds
+        unbind_wan_monitors:
+          type: boolean
+          description: Whether to unbind WAN monitors
+        dns_verification:
+          $ref: '#/components/schemas/DNSVerification'
+
+    DNSVerification:
+      type: object
+      description: DNS verification settings
+      properties:
+        domain:
+          type: string
+          description: Domain to verify
+        primary_dns_server:
+          type: string
+          description: Primary DNS server IP
+        secondary_dns_server:
+          type: string
+          description: Secondary DNS server IP
+        setting_preference:
+          type: string
+          description: Setting preference (auto, manual)
+
+    WiFiAIDefaults:
+      type: object
+      description: Default WiFi AI settings
+      properties:
+        enabled:
+          type: boolean
+          description: Whether WiFi AI is enabled
+        auto_adjust_channels_to_country:
+          type: boolean
+          description: Whether to auto-adjust channels to country
+        cron_expr:
+          type: string
+          description: Cron expression for scheduled optimization
+        setting_preference:
+          type: string
+          description: Setting preference (auto, manual)
+        channels_na:
+          type: array
+          description: Available 5GHz channels
+          items:
+            type: string
+        channels_ng:
+          type: array
+          description: Available 2.4GHz channels
+          items:
+            type: string
+        channels_6e:
+          type: array
+          description: Available 6GHz channels
+          items:
+            type: string
+        channels_blacklist:
+          type: array
+          description: Blacklisted channels
+          items:
+            $ref: '#/components/schemas/ChannelBlacklistEntry'
+        exclude_devices:
+          type: array
+          description: Devices excluded from WiFi AI
+          items:
+            type: string
+        high_priority_devices:
+          type: array
+          description: High priority devices for WiFi AI
+          items:
+            type: string
+
+    ChannelBlacklistEntry:
+      type: object
+      description: Channel blacklist entry
+      properties:
+        channel:
+          type: integer
+          description: Channel number
+        channel_width:
+          type: integer
+          description: Channel width in MHz
+        radio:
+          type: string
+          description: Radio type (ng, na)

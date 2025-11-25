@@ -591,4 +591,21 @@ type NetworkAPIClient interface { //nolint:interfacebloat // This interface mirr
 
 	// GetVPNClientConnections retrieves current VPN client connections.
 	GetVPNClientConnections(ctx context.Context, site Site) (*VPNClientConnections, error)
+
+	// System log display options operations (v2 API)
+
+	// GetSystemLogRemoteSettings retrieves remote syslog settings.
+	GetSystemLogRemoteSettings(ctx context.Context, site Site) (*SystemLogRemoteSettings, error)
+
+	// GetSystemLogDisplayOptionsAdmins retrieves admin users for log filtering.
+	GetSystemLogDisplayOptionsAdmins(ctx context.Context, site Site) ([]SystemLogAdmin, error)
+
+	// GetSystemLogThreatDisplayOptionsClients retrieves clients for threat log filtering.
+	GetSystemLogThreatDisplayOptionsClients(ctx context.Context, site Site) ([]SystemLogClient, error)
+
+	// GetSystemLogTriggersDisplayOptionsHosts retrieves hosts for trigger log filtering.
+	GetSystemLogTriggersDisplayOptionsHosts(ctx context.Context, site Site) ([]SystemLogHost, error)
+
+	// GetSystemLogAPLogsDisplayOptionsAPs retrieves AP MAC addresses for AP log filtering.
+	GetSystemLogAPLogsDisplayOptionsAPs(ctx context.Context, site Site) ([]string, error)
 }

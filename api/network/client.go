@@ -2113,3 +2113,82 @@ func (c *APIClient) GetVPNClientConnections(ctx context.Context, site Site) (*VP
 	}
 	return data, nil
 }
+
+// GetSystemLogRemoteSettings retrieves remote syslog settings.
+func (c *APIClient) GetSystemLogRemoteSettings(ctx context.Context, site Site) (*SystemLogRemoteSettings, error) {
+	resp, err := c.client.GetSystemLogRemoteSettingsWithResponse(ctx, site)
+	var dataPtr *SystemLogRemoteSettings
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get system log remote settings for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetSystemLogDisplayOptionsAdmins retrieves admin users for log filtering.
+func (c *APIClient) GetSystemLogDisplayOptionsAdmins(ctx context.Context, site Site) ([]SystemLogAdmin, error) {
+	resp, err := c.client.GetSystemLogDisplayOptionsAdminsWithResponse(ctx, site)
+	var dataPtr *[]SystemLogAdmin
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get system log display options admins for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetSystemLogThreatDisplayOptionsClients retrieves clients for threat log filtering.
+func (c *APIClient) GetSystemLogThreatDisplayOptionsClients(
+	ctx context.Context, site Site,
+) ([]SystemLogClient, error) {
+	resp, err := c.client.GetSystemLogThreatDisplayOptionsClientsWithResponse(ctx, site)
+	var dataPtr *[]SystemLogClient
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get system log threat display options clients for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetSystemLogTriggersDisplayOptionsHosts retrieves hosts for trigger log filtering.
+func (c *APIClient) GetSystemLogTriggersDisplayOptionsHosts(
+	ctx context.Context, site Site,
+) ([]SystemLogHost, error) {
+	resp, err := c.client.GetSystemLogTriggersDisplayOptionsHostsWithResponse(ctx, site)
+	var dataPtr *[]SystemLogHost
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get system log triggers display options hosts for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetSystemLogAPLogsDisplayOptionsAPs retrieves AP MAC addresses for AP log filtering.
+func (c *APIClient) GetSystemLogAPLogsDisplayOptionsAPs(ctx context.Context, site Site) ([]string, error) {
+	resp, err := c.client.GetSystemLogAPLogsDisplayOptionsAPsWithResponse(ctx, site)
+	var dataPtr *[]string
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get system log AP logs display options APs for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}

@@ -3141,6 +3141,173 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # SSL Inspection Certificates API (v2)
+  /v2/api/site/{site}/ssl-inspection/certificates:
+    get:
+      summary: Get SSL inspection certificates
+      description: |
+        Retrieves list of SSL inspection certificates.
+      operationId: getSSLInspectionCertificates
+      tags:
+        - Security
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with SSL inspection certificates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SSLInspectionCertificate'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # SSL Inspection Active Certificate API (v2)
+  /v2/api/site/{site}/ssl-inspection/certificates-active:
+    get:
+      summary: Get active SSL inspection certificate
+      description: |
+        Retrieves the currently active SSL inspection certificate.
+      operationId: getSSLInspectionCertificateActive
+      tags:
+        - Security
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with active SSL inspection certificate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SSLInspectionCertificate'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # SSL Inspection File Extensions API (v2)
+  /v2/api/site/{site}/ssl-inspection/file-extensions:
+    get:
+      summary: Get SSL inspection file extensions
+      description: |
+        Retrieves list of file extensions for SSL inspection.
+      operationId: getSSLInspectionFileExtensions
+      tags:
+        - Security
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with file extensions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # SSL Inspection Search Engines API (v2)
+  /v2/api/site/{site}/ssl-inspection/search-engines:
+    get:
+      summary: Get SSL inspection search engines
+      description: |
+        Retrieves list of search engines for SSL inspection.
+      operationId: getSSLInspectionSearchEngines
+      tags:
+        - Security
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with search engines
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SSLInspectionSearchEngine'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # SSL Inspection Setting API (v2)
+  /v2/api/site/{site}/ssl-inspection/setting:
+    get:
+      summary: Get SSL inspection setting
+      description: |
+        Retrieves SSL inspection setting configuration.
+      operationId: getSSLInspectionSetting
+      tags:
+        - Security
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with SSL inspection setting
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SSLInspectionSetting'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # SSL Inspection Setting Defaults API (v2)
+  /v2/api/site/{site}/ssl-inspection/setting-defaults:
+    get:
+      summary: Get SSL inspection setting defaults
+      description: |
+        Retrieves default SSL inspection settings.
+      operationId: getSSLInspectionSettingDefaults
+      tags:
+        - Security
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with SSL inspection setting defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SSLInspectionSetting'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # SSL Inspection Profiles Defaults API (v2)
+  /v2/api/site/{site}/ssl-inspection/profiles-defaults:
+    get:
+      summary: Get SSL inspection profiles defaults
+      description: |
+        Retrieves default SSL inspection profile configuration.
+      operationId: getSSLInspectionProfilesDefaults
+      tags:
+        - Security
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with SSL inspection profiles defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SSLInspectionProfileDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   # System Log Settings Defaults API (v2)
   /v2/api/site/{site}/system-log/setting-defaults:
     get:
@@ -8932,3 +9099,202 @@ components:
         radio:
           type: string
           description: Radio type (ng, na)
+
+    # SSL Inspection Types
+    SSLInspectionCertificate:
+      type: object
+      description: SSL inspection certificate
+      properties:
+        id:
+          type: string
+          description: Certificate ID
+        name:
+          type: string
+          description: Certificate name
+        type:
+          type: string
+          description: Certificate type (generated, uploaded)
+        status:
+          type: string
+          description: Certificate status (active, inactive)
+        valid:
+          type: boolean
+          description: Whether the certificate is valid
+        root_certificate:
+          $ref: '#/components/schemas/SSLCertificateDetails'
+        intermediate_certificates:
+          type: array
+          description: Intermediate certificates
+          items:
+            $ref: '#/components/schemas/SSLCertificateDetails'
+
+    SSLCertificateDetails:
+      type: object
+      description: SSL certificate details
+      properties:
+        certificate:
+          type: string
+          description: Base64-encoded certificate
+        details:
+          $ref: '#/components/schemas/SSLCertificateInfo'
+
+    SSLCertificateInfo:
+      type: object
+      description: SSL certificate information
+      properties:
+        issuer:
+          $ref: '#/components/schemas/SSLCertificateSubject'
+        subject:
+          $ref: '#/components/schemas/SSLCertificateSubject'
+        overview:
+          $ref: '#/components/schemas/SSLCertificateOverview'
+
+    SSLCertificateSubject:
+      type: object
+      description: Certificate subject or issuer
+      properties:
+        common_name:
+          type: string
+          description: Common name
+        organization:
+          type: string
+          description: Organization
+
+    SSLCertificateOverview:
+      type: object
+      description: Certificate overview
+      properties:
+        fingerprint:
+          type: string
+          description: Certificate fingerprint
+        serial_number:
+          type: string
+          description: Serial number
+        valid_from:
+          type: integer
+          format: int64
+          description: Valid from timestamp (Unix ms)
+        valid_to:
+          type: integer
+          format: int64
+          description: Valid to timestamp (Unix ms)
+        version:
+          type: integer
+          description: Certificate version
+
+    SSLInspectionSearchEngine:
+      type: object
+      description: Search engine for SSL inspection
+      properties:
+        id:
+          type: string
+          description: Search engine ID
+        name:
+          type: string
+          description: Search engine name
+        category_id:
+          type: string
+          description: Category ID
+
+    SSLInspectionSetting:
+      type: object
+      description: SSL inspection setting
+      properties:
+        state:
+          type: string
+          description: SSL inspection state (on, off)
+        identity_certificate_all_users:
+          type: boolean
+          description: Whether identity certificate applies to all users
+        identity_certificate_users:
+          type: array
+          description: Users with identity certificate
+          items:
+            type: string
+        identity_certificate_groups:
+          type: array
+          description: Groups with identity certificate
+          items:
+            type: string
+
+    SSLInspectionProfileDefaults:
+      type: object
+      description: Default SSL inspection profile
+      properties:
+        name:
+          type: string
+          description: Profile name
+        enabled:
+          type: boolean
+          description: Whether profile is enabled
+        default_profile:
+          type: boolean
+          description: Whether this is the default profile
+        invalid:
+          type: boolean
+          description: Whether the profile is invalid
+        invalid_reason:
+          type: array
+          description: Reasons why profile is invalid
+          items:
+            type: string
+        inspect_domains:
+          type: string
+          description: Domain inspection mode (all, specific)
+        include_domains:
+          type: array
+          description: Domains to include for inspection
+          items:
+            type: string
+        exclude_domains:
+          type: array
+          description: Domains to exclude from inspection
+          items:
+            type: string
+        include_application_ids:
+          type: array
+          description: Application IDs to include
+          items:
+            type: string
+        exclude_apple_domains:
+          type: boolean
+          description: Whether to exclude Apple domains
+        exclude_microsoft_domains:
+          type: boolean
+          description: Whether to exclude Microsoft domains
+        exclude_ubiquiti_domains:
+          type: boolean
+          description: Whether to exclude Ubiquiti domains
+        exclude_forced_validation:
+          type: boolean
+          description: Whether to exclude forced validation
+        block_website_types:
+          type: array
+          description: Website types to block
+          items:
+            type: string
+        target_network_ids:
+          type: array
+          description: Target network IDs
+          items:
+            type: string
+        target_network_ids_all:
+          type: boolean
+          description: Whether to target all networks
+        target_protocols:
+          type: array
+          description: Target protocols
+          items:
+            type: string
+        target_protocols_all:
+          type: boolean
+          description: Whether to target all protocols
+        target_traffic_all:
+          type: boolean
+          description: Whether to target all traffic
+        filters:
+          type: array
+          description: Inspection filters
+          items:
+            type: object
+            additionalProperties: true

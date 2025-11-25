@@ -2673,6 +2673,29 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # Network Status API (v2)
+  /v2/api/site/{site}/network_status:
+    get:
+      summary: Get network status
+      description: |
+        Retrieves overall network health status and satisfaction scores.
+      operationId: getNetworkStatus
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with network status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkStatus'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -7940,5 +7963,27 @@ components:
         ddns:
           type: array
           description: List of DDNS provider names
+          items:
+            type: string
+
+    # Network Status
+    NetworkStatus:
+      type: object
+      description: Overall network health status
+      properties:
+        health:
+          type: string
+          description: Health status (excellent, good, fair, poor)
+        average_satisfaction:
+          type: integer
+          description: Average satisfaction score (0-100)
+        historical_satisfaction:
+          type: array
+          description: Historical satisfaction scores
+          items:
+            type: integer
+        reasons:
+          type: array
+          description: Reasons for health status
           items:
             type: string

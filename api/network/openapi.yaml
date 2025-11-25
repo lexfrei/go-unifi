@@ -2696,6 +2696,121 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # Teleport Invitation History API (v2)
+  /v2/api/site/{site}/teleport-invitation-history:
+    get:
+      summary: Get Teleport invitation history
+      description: |
+        Retrieves Teleport VPN invitation history including clients and connection details.
+      operationId: getTeleportInvitationHistory
+      tags:
+        - Network
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with Teleport invitation history
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TeleportInvitationHistory'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # ULP Users and Groups API (v2)
+  /v2/api/site/{site}/ulp-users_groups:
+    get:
+      summary: Get ULP users and groups
+      description: |
+        Retrieves UniFi Local Portal users and groups.
+      operationId: getULPUsersGroups
+      tags:
+        - Network
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with ULP users and groups
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ULPUsersGroups'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # WAN Magic Configuration API (v2)
+  /v2/api/site/{site}/wan-magic-configuration:
+    get:
+      summary: Get WAN Magic configuration
+      description: |
+        Retrieves WAN Magic (Teleport WAN) configuration settings.
+      operationId: getWANMagicConfiguration
+      tags:
+        - Network
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with WAN Magic configuration
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANMagicConfiguration'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # System Log Settings API (v2)
+  /v2/api/site/{site}/system-log/setting:
+    get:
+      summary: Get system log settings
+      description: |
+        Retrieves alert event settings for system logging and notifications.
+      operationId: getSystemLogSettings
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with system log settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemLogSettings'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # System Log Settings Defaults API (v2)
+  /v2/api/site/{site}/system-log/setting-defaults:
+    get:
+      summary: Get system log settings defaults
+      description: |
+        Retrieves default alert event settings for system logging.
+      operationId: getSystemLogSettingsDefaults
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with system log settings defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemLogSettings'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -7987,3 +8102,121 @@ components:
           description: Reasons for health status
           items:
             type: string
+
+    # Teleport Invitation History
+    TeleportInvitationHistory:
+      type: object
+      description: Teleport VPN invitation history
+      properties:
+        data:
+          type: array
+          description: List of Teleport invitations
+          items:
+            $ref: '#/components/schemas/TeleportInvitation'
+        page_number:
+          type: integer
+          description: Current page number
+        total_element_count:
+          type: integer
+          description: Total number of elements
+        total_page_count:
+          type: integer
+          description: Total number of pages
+
+    # ULP Users and Groups
+    ULPUsersGroups:
+      type: object
+      description: UniFi Local Portal users and groups
+      properties:
+        users:
+          type: array
+          description: List of ULP users
+          items:
+            $ref: '#/components/schemas/ULPUser'
+        groups:
+          type: array
+          description: List of ULP groups
+          items:
+            $ref: '#/components/schemas/ULPGroup'
+
+    ULPUser:
+      type: object
+      description: ULP user
+      properties:
+        unique_id:
+          type: string
+          description: Unique user ID
+        full_name:
+          type: string
+          description: Full name
+        group_ids:
+          type: array
+          description: Group IDs the user belongs to
+          items:
+            type: string
+
+    ULPGroup:
+      type: object
+      description: ULP group
+      properties:
+        unique_id:
+          type: string
+          description: Unique group ID
+        name:
+          type: string
+          description: Group name
+
+    # WAN Magic Configuration
+    WANMagicConfiguration:
+      type: object
+      description: WAN Magic (Teleport WAN) configuration
+      properties:
+        enabled:
+          type: boolean
+          description: Whether WAN Magic is enabled
+        data_usage_limit_alert:
+          type: boolean
+          description: Whether data usage limit alert is enabled
+        data_usage_limit_in_bytes:
+          type: integer
+          format: int64
+          description: Data usage limit in bytes
+        wan_networkgroup:
+          type: array
+          description: WAN network groups
+          items:
+            type: string
+
+    # System Log Settings
+    SystemLogSettings:
+      type: object
+      description: System log and alert event settings
+      properties:
+        setting_preference:
+          type: string
+          description: Setting preference (ON, OFF)
+        alert_event_settings:
+          type: object
+          description: Alert event settings by event type
+          additionalProperties:
+            $ref: '#/components/schemas/AlertEventSetting'
+
+    AlertEventSetting:
+      type: object
+      description: Alert event setting
+      properties:
+        category:
+          type: string
+          description: Event category (SYSTEM, SECURITY, POWER, MONITORING, INTERNET)
+        subcategory:
+          type: string
+          description: Event subcategory
+        label:
+          type: string
+          description: Human-readable label
+        send_email:
+          type: boolean
+          description: Whether to send email notification
+        send_mobile_push_notification:
+          type: boolean
+          description: Whether to send mobile push notification

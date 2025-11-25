@@ -417,4 +417,51 @@ type NetworkAPIClient interface { //nolint:interfacebloat // This interface mirr
 
 	// GetL2TPVPNDefaults retrieves default L2TP VPN configuration.
 	GetL2TPVPNDefaults(ctx context.Context, site Site) (*L2TPVPNDefaults, error)
+
+	// Global configuration operations (v2 API)
+
+	// GetGlobalNetworkConfig retrieves global network configuration settings.
+	GetGlobalNetworkConfig(ctx context.Context, site Site) (*GlobalNetworkConfig, error)
+
+	// mDNS operations (v2 API)
+
+	// ListMDNSServices retrieves available mDNS service definitions.
+	ListMDNSServices(ctx context.Context, site Site) ([]MDNSService, error)
+
+	// Combined firewall rules operations (v2 API)
+
+	// ListCombinedFirewallRules retrieves combined traffic and firewall rules.
+	ListCombinedFirewallRules(ctx context.Context, site Site) ([]CombinedFirewallRule, error)
+
+	// GetFirewallRulesDefaults retrieves default firewall rule settings.
+	GetFirewallRulesDefaults(ctx context.Context, site Site) ([]FirewallRulesDefault, error)
+
+	// IP exclusion operations (v2 API)
+
+	// GetExcludedIPs retrieves IPs excluded from device identification.
+	GetExcludedIPs(ctx context.Context, site Site) (*ExcludedIPs, error)
+
+	// Network suggestion operations (v2 API)
+
+	// GetNetworkSuggestions retrieves suggested IP subnets for new networks.
+	GetNetworkSuggestions(ctx context.Context, site Site) ([]NetworkSuggestion, error)
+
+	// GetNetworkPortSuggestions retrieves available ports for new services.
+	GetNetworkPortSuggestions(ctx context.Context, site Site) (*NetworkPortSuggestions, error)
+
+	// WAN load balancing operations (v2 API)
+
+	// GetWANLoadBalancingConfiguration retrieves WAN load balancing configuration.
+	GetWANLoadBalancingConfiguration(ctx context.Context, site Site) (*WANLoadBalancingConfig, error)
+
+	// GetWANLoadBalancingStatus retrieves WAN load balancing interface status.
+	GetWANLoadBalancingStatus(ctx context.Context, site Site) (*WANLoadBalancingStatus, error)
+
+	// GetWANNetworkGroups retrieves WAN network group configurations.
+	GetWANNetworkGroups(ctx context.Context, site Site) (*WANNetworkGroups, error)
+
+	// DDNS operations (v2 API)
+
+	// GetDDNSProviders retrieves available Dynamic DNS providers.
+	GetDDNSProviders(ctx context.Context, site Site) (*DDNSProviders, error)
 }

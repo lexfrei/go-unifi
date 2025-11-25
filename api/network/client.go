@@ -1373,3 +1373,168 @@ func (c *APIClient) GetL2TPVPNDefaults(ctx context.Context, site Site) (*L2TPVPN
 	}
 	return data, nil
 }
+
+// GetGlobalNetworkConfig retrieves global network configuration settings.
+func (c *APIClient) GetGlobalNetworkConfig(ctx context.Context, site Site) (*GlobalNetworkConfig, error) {
+	resp, err := c.client.GetGlobalNetworkConfigWithResponse(ctx, site)
+	var dataPtr *GlobalNetworkConfig
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get global network config for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// ListMDNSServices retrieves available mDNS service definitions.
+func (c *APIClient) ListMDNSServices(ctx context.Context, site Site) ([]MDNSService, error) {
+	resp, err := c.client.ListMDNSServicesWithResponse(ctx, site)
+	var dataPtr *[]MDNSService
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list mDNS services for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// ListCombinedFirewallRules retrieves combined traffic and firewall rules.
+func (c *APIClient) ListCombinedFirewallRules(ctx context.Context, site Site) ([]CombinedFirewallRule, error) {
+	resp, err := c.client.ListCombinedFirewallRulesWithResponse(ctx, site)
+	var dataPtr *[]CombinedFirewallRule
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to list combined firewall rules for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetFirewallRulesDefaults retrieves default firewall rule settings.
+func (c *APIClient) GetFirewallRulesDefaults(ctx context.Context, site Site) ([]FirewallRulesDefault, error) {
+	resp, err := c.client.GetFirewallRulesDefaultsWithResponse(ctx, site)
+	var dataPtr *[]FirewallRulesDefault
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get firewall rules defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetExcludedIPs retrieves IPs excluded from device identification.
+func (c *APIClient) GetExcludedIPs(ctx context.Context, site Site) (*ExcludedIPs, error) {
+	resp, err := c.client.GetExcludedIPsWithResponse(ctx, site)
+	var dataPtr *ExcludedIPs
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get excluded IPs for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetNetworkSuggestions retrieves suggested IP subnets for new networks.
+func (c *APIClient) GetNetworkSuggestions(ctx context.Context, site Site) ([]NetworkSuggestion, error) {
+	resp, err := c.client.GetNetworkSuggestionsWithResponse(ctx, site)
+	var dataPtr *[]NetworkSuggestion
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get network suggestions for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetNetworkPortSuggestions retrieves available ports for new services.
+func (c *APIClient) GetNetworkPortSuggestions(ctx context.Context, site Site) (*NetworkPortSuggestions, error) {
+	resp, err := c.client.GetNetworkPortSuggestionsWithResponse(ctx, site)
+	var dataPtr *NetworkPortSuggestions
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get network port suggestions for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetWANLoadBalancingConfiguration retrieves WAN load balancing configuration.
+func (c *APIClient) GetWANLoadBalancingConfiguration(ctx context.Context, site Site) (*WANLoadBalancingConfig, error) {
+	resp, err := c.client.GetWANLoadBalancingConfigurationWithResponse(ctx, site)
+	var dataPtr *WANLoadBalancingConfig
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get WAN load balancing configuration for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetWANLoadBalancingStatus retrieves WAN load balancing interface status.
+func (c *APIClient) GetWANLoadBalancingStatus(ctx context.Context, site Site) (*WANLoadBalancingStatus, error) {
+	resp, err := c.client.GetWANLoadBalancingStatusWithResponse(ctx, site)
+	var dataPtr *WANLoadBalancingStatus
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get WAN load balancing status for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetWANNetworkGroups retrieves WAN network group configurations.
+func (c *APIClient) GetWANNetworkGroups(ctx context.Context, site Site) (*WANNetworkGroups, error) {
+	resp, err := c.client.GetWANNetworkGroupsWithResponse(ctx, site)
+	var dataPtr *WANNetworkGroups
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get WAN network groups for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetDDNSProviders retrieves available Dynamic DNS providers.
+func (c *APIClient) GetDDNSProviders(ctx context.Context, site Site) (*DDNSProviders, error) {
+	resp, err := c.client.GetDDNSProvidersWithResponse(ctx, site)
+	var dataPtr *DDNSProviders
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get DDNS providers for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}

@@ -2337,6 +2337,129 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # OpenVPN Certificates API (v2)
+  /v2/api/site/{site}/vpn/openvpn/certificates:
+    post:
+      summary: Get OpenVPN certificates
+      description: |
+        Retrieves OpenVPN certificates including CA, server, and client certificates.
+        Returns base64-encoded certificate data for OpenVPN configuration.
+      operationId: getOpenVPNCertificates
+      tags:
+        - VPN
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Empty object - no parameters required
+      responses:
+        '200':
+          description: Successful response with OpenVPN certificates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpenVPNCertificatesResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Alias API (v2)
+  /v2/api/site/{site}/alias:
+    post:
+      summary: Get aliases for MAC addresses
+      description: |
+        Retrieves client aliases (custom names) for specified MAC addresses.
+      operationId: getAliases
+      tags:
+        - Clients
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AliasRequest'
+      responses:
+        '200':
+          description: Successful response with client aliases
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AliasResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Clients Metadata API (v2)
+  /v2/api/site/{site}/clients/metadata:
+    post:
+      summary: Get clients metadata
+      description: |
+        Retrieves metadata for clients by their MAC addresses.
+      operationId: getClientsMetadata
+      tags:
+        - Clients
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+                description: MAC address
+              minItems: 1
+              example: ["aa:bb:cc:dd:ee:ff"]
+      responses:
+        '200':
+          description: Successful response with clients metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientsMetadataResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Port System Logs API (v2)
+  /v2/api/site/{site}/ports/system-logs:
+    post:
+      summary: Get system logs for a specific port
+      description: |
+        Retrieves system logs (alerts) for a specific port on a device.
+      operationId: getPortSystemLogs
+      tags:
+        - Devices
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PortSystemLogsRequest'
+      responses:
+        '200':
+          description: Successful response with port system logs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PortSystemLogsResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   # BGP API (v2)
   /v2/api/site/{site}/bgp/config:
     get:
@@ -11246,3 +11369,91 @@ components:
       type: object
       description: Host for trigger log filtering
       additionalProperties: true
+
+    # OpenVPN Certificates schemas
+    OpenVPNCertificatesResponse:
+      type: object
+      description: OpenVPN certificates for server and client configuration
+      properties:
+        x_auth_key:
+          type: string
+          description: Base64-encoded OpenVPN static key (TLS Auth)
+        x_ca_crt:
+          type: string
+          description: Base64-encoded CA certificate
+        x_ca_key:
+          type: string
+          description: Base64-encoded CA private key
+        x_server_crt:
+          type: string
+          description: Base64-encoded server certificate
+        x_server_key:
+          type: string
+          description: Base64-encoded server private key
+        x_shared_client_crt:
+          type: string
+          description: Base64-encoded shared client certificate
+        x_shared_client_key:
+          type: string
+          description: Base64-encoded shared client private key
+
+    # Alias schemas
+    AliasRequest:
+      type: object
+      description: Request body for retrieving aliases
+      required:
+        - macs
+      properties:
+        macs:
+          type: array
+          items:
+            type: string
+          description: List of MAC addresses to get aliases for
+          minItems: 1
+
+    AliasResponse:
+      type: object
+      description: Response containing client aliases
+      additionalProperties:
+        type: object
+        properties:
+          alias:
+            type: string
+            description: Custom alias for the client
+          mac:
+            type: string
+            description: MAC address of the client
+
+    # Clients Metadata schemas
+    ClientsMetadataResponse:
+      type: object
+      description: Response containing clients metadata
+      additionalProperties: true
+
+    # Port System Logs schemas
+    PortSystemLogsRequest:
+      type: object
+      description: Request body for port system logs
+      required:
+        - mac
+        - portIdx
+      properties:
+        mac:
+          type: string
+          description: MAC address of the device
+        portIdx:
+          type: integer
+          minimum: 1
+          description: Port index (1-based)
+
+    PortSystemLogsResponse:
+      type: object
+      description: Response containing port system logs (alerts)
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Alert'
+        totalCount:
+          type: integer
+          description: Total number of alerts

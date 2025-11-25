@@ -464,4 +464,9 @@ type NetworkAPIClient interface { //nolint:interfacebloat // This interface mirr
 
 	// GetDDNSProviders retrieves available Dynamic DNS providers.
 	GetDDNSProviders(ctx context.Context, site Site) (*DDNSProviders, error)
+
+	// Network status operations (v2 API)
+
+	// GetNetworkStatus retrieves overall network health status.
+	GetNetworkStatus(ctx context.Context, site Site) (*NetworkStatus, error)
 }

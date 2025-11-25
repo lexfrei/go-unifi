@@ -1538,3 +1538,18 @@ func (c *APIClient) GetDDNSProviders(ctx context.Context, site Site) (*DDNSProvi
 	}
 	return data, nil
 }
+
+// GetNetworkStatus retrieves overall network health status.
+func (c *APIClient) GetNetworkStatus(ctx context.Context, site Site) (*NetworkStatus, error) {
+	resp, err := c.client.GetNetworkStatusWithResponse(ctx, site)
+	var dataPtr *NetworkStatus
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get network status for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}

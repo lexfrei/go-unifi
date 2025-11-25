@@ -2580,3 +2580,168 @@ func (c *APIClient) GetPortSystemLogs(
 	//nolint:wrapcheck // response.Handle wraps errors internally
 	return response.Handle(resp, dataPtr, err, "failed to get port system logs for site "+site)
 }
+
+// =============================================================================
+// Integration API: Application Info
+// =============================================================================
+
+// GetApplicationInfo retrieves general information about the UniFi Network application.
+func (c *APIClient) GetApplicationInfo(ctx context.Context) (*ApplicationInfo, error) {
+	resp, err := c.client.GetApplicationInfoWithResponse(ctx)
+	var dataPtr *ApplicationInfo
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get application info")
+}
+
+// =============================================================================
+// Integration API: Device Statistics
+// =============================================================================
+
+// GetDeviceLatestStatistics retrieves the latest real-time statistics of a device.
+func (c *APIClient) GetDeviceLatestStatistics(
+	ctx context.Context,
+	siteID openapi_types.UUID,
+	deviceID openapi_types.UUID,
+) (*DeviceStatistics, error) {
+	resp, err := c.client.GetDeviceLatestStatisticsWithResponse(ctx, siteID, deviceID)
+	var dataPtr *DeviceStatistics
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, fmt.Sprintf("failed to get statistics for device %s", deviceID))
+}
+
+// =============================================================================
+// Integration API: Device Actions
+// =============================================================================
+
+// ExecuteDeviceAction performs an action on a specific adopted device.
+func (c *APIClient) ExecuteDeviceAction(
+	ctx context.Context,
+	siteID openapi_types.UUID,
+	deviceID openapi_types.UUID,
+	request DeviceActionRequest,
+) error {
+	resp, err := c.client.ExecuteDeviceActionWithResponse(ctx, siteID, deviceID, request)
+	if err != nil {
+		return errors.Wrapf(err, "failed to execute action %s on device %s", request.Action, deviceID)
+	}
+	if resp.StatusCode() != http.StatusOK {
+		return errors.Errorf("failed to execute action %s on device %s: status %d",
+			request.Action, deviceID, resp.StatusCode())
+	}
+	return nil
+}
+
+// RestartDevice restarts a specific adopted device.
+func (c *APIClient) RestartDevice(
+	ctx context.Context,
+	siteID openapi_types.UUID,
+	deviceID openapi_types.UUID,
+) error {
+	return c.ExecuteDeviceAction(ctx, siteID, deviceID, DeviceActionRequest{
+		Action: RESTART,
+	})
+}
+
+// =============================================================================
+// Integration API: Port Actions
+// =============================================================================
+
+// ExecutePortAction performs an action on a specific device port.
+func (c *APIClient) ExecutePortAction(
+	ctx context.Context,
+	siteID openapi_types.UUID,
+	deviceID openapi_types.UUID,
+	portIdx int32,
+	request PortActionRequest,
+) error {
+	resp, err := c.client.ExecutePortActionWithResponse(ctx, siteID, deviceID, portIdx, request)
+	if err != nil {
+		return errors.Wrapf(err, "failed to execute action %s on port %d of device %s",
+			request.Action, portIdx, deviceID)
+	}
+	if resp.StatusCode() != http.StatusOK {
+		return errors.Errorf("failed to execute action %s on port %d of device %s: status %d",
+			request.Action, portIdx, deviceID, resp.StatusCode())
+	}
+	return nil
+}
+
+// PowerCyclePort power cycles a PoE port (turns it off and on again).
+func (c *APIClient) PowerCyclePort(
+	ctx context.Context,
+	siteID openapi_types.UUID,
+	deviceID openapi_types.UUID,
+	portIdx int32,
+) error {
+	return c.ExecutePortAction(ctx, siteID, deviceID, portIdx, PortActionRequest{
+		Action: POWERCYCLE,
+	})
+}
+
+// =============================================================================
+// Integration API: Client Actions
+// =============================================================================
+
+// ExecuteClientAction performs an action on a specific connected client.
+func (c *APIClient) ExecuteClientAction(
+	ctx context.Context,
+	siteID openapi_types.UUID,
+	clientID openapi_types.UUID,
+	request ClientActionRequest,
+) (*ClientActionResponse, error) {
+	resp, err := c.client.ExecuteClientActionWithResponse(ctx, clientID, siteID, request)
+	var dataPtr *ClientActionResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, fmt.Sprintf("failed to execute action on client %s", clientID))
+}
+
+// AuthorizeGuestAccess authorizes a guest client for network access.
+func (c *APIClient) AuthorizeGuestAccess(
+	ctx context.Context,
+	siteID openapi_types.UUID,
+	clientID openapi_types.UUID,
+	options *GuestAccessOptions,
+) (*ClientActionResponse, error) {
+	request := ClientActionRequest{
+		Action: ClientActionRequestActionAUTHORIZEGUESTACCESS,
+	}
+	if options != nil {
+		request.TimeLimitMinutes = options.TimeLimitMinutes
+		request.DataUsageLimitMBytes = options.DataUsageLimitMBytes
+		request.RxRateLimitKbps = options.RxRateLimitKbps
+		request.TxRateLimitKbps = options.TxRateLimitKbps
+	}
+	return c.ExecuteClientAction(ctx, siteID, clientID, request)
+}
+
+// UnauthorizeGuestAccess revokes guest authorization and disconnects the client.
+func (c *APIClient) UnauthorizeGuestAccess(
+	ctx context.Context,
+	siteID openapi_types.UUID,
+	clientID openapi_types.UUID,
+) (*ClientActionResponse, error) {
+	return c.ExecuteClientAction(ctx, siteID, clientID, ClientActionRequest{
+		Action: ClientActionRequestActionUNAUTHORIZEGUESTACCESS,
+	})
+}
+
+// GuestAccessOptions contains optional parameters for authorizing guest access.
+type GuestAccessOptions struct {
+	// TimeLimitMinutes is how long (in minutes) the guest will be authorized
+	TimeLimitMinutes *int64
+	// DataUsageLimitMBytes is the data usage limit in megabytes
+	DataUsageLimitMBytes *int64
+	// RxRateLimitKbps is the download rate limit in kilobits per second
+	RxRateLimitKbps *int64
+	// TxRateLimitKbps is the upload rate limit in kilobits per second
+	TxRateLimitKbps *int64
+}

@@ -693,4 +693,41 @@ type NetworkAPIClient interface { //nolint:interfacebloat // This interface mirr
 
 	// GetPortSystemLogs retrieves system logs for a specific port.
 	GetPortSystemLogs(ctx context.Context, site Site, request *PortSystemLogsRequest) (*PortSystemLogsResponse, error)
+
+	// Application info operations (Integration API)
+
+	// GetApplicationInfo retrieves general information about the UniFi Network application.
+	GetApplicationInfo(ctx context.Context) (*ApplicationInfo, error)
+
+	// Device statistics operations (Integration API)
+
+	// GetDeviceLatestStatistics retrieves the latest real-time statistics of a device.
+	GetDeviceLatestStatistics(ctx context.Context, siteID openapi_types.UUID, deviceID openapi_types.UUID) (*DeviceStatistics, error)
+
+	// Device actions operations (Integration API)
+
+	// ExecuteDeviceAction performs an action on a specific adopted device.
+	ExecuteDeviceAction(ctx context.Context, siteID openapi_types.UUID, deviceID openapi_types.UUID, request DeviceActionRequest) error
+
+	// RestartDevice restarts a specific adopted device.
+	RestartDevice(ctx context.Context, siteID openapi_types.UUID, deviceID openapi_types.UUID) error
+
+	// Port actions operations (Integration API)
+
+	// ExecutePortAction performs an action on a specific device port.
+	ExecutePortAction(ctx context.Context, siteID openapi_types.UUID, deviceID openapi_types.UUID, portIdx int32, request PortActionRequest) error
+
+	// PowerCyclePort power cycles a PoE port (turns it off and on again).
+	PowerCyclePort(ctx context.Context, siteID openapi_types.UUID, deviceID openapi_types.UUID, portIdx int32) error
+
+	// Client actions operations (Integration API)
+
+	// ExecuteClientAction performs an action on a specific connected client.
+	ExecuteClientAction(ctx context.Context, siteID openapi_types.UUID, clientID openapi_types.UUID, request ClientActionRequest) (*ClientActionResponse, error)
+
+	// AuthorizeGuestAccess authorizes a guest client for network access.
+	AuthorizeGuestAccess(ctx context.Context, siteID openapi_types.UUID, clientID openapi_types.UUID, options *GuestAccessOptions) (*ClientActionResponse, error)
+
+	// UnauthorizeGuestAccess revokes guest authorization and disconnects the client.
+	UnauthorizeGuestAccess(ctx context.Context, siteID openapi_types.UUID, clientID openapi_types.UUID) (*ClientActionResponse, error)
 }

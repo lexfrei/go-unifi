@@ -2412,6 +2412,267 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # Global Network Config API (v2)
+  /v2/api/site/{site}/global-config/network:
+    get:
+      summary: Get global network config
+      description: |
+        Retrieves global network configuration settings.
+      operationId: getGlobalNetworkConfig
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with global network config
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlobalNetworkConfig'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # LAN mDNS Services API (v2)
+  /v2/api/site/{site}/lan/mdns:
+    get:
+      summary: List mDNS services
+      description: |
+        Retrieves available mDNS service definitions.
+      operationId: listMDNSServices
+      tags:
+        - Network
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with mDNS services
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MDNSService'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Firewall Rules Combined API (v2)
+  /v2/api/site/{site}/firewall-rules/combined-traffic-firewall-rules:
+    get:
+      summary: List combined firewall rules
+      description: |
+        Retrieves combined traffic and firewall rules.
+      operationId: listCombinedFirewallRules
+      tags:
+        - Firewall
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with combined firewall rules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CombinedFirewallRule'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Firewall Rules Defaults API (v2)
+  /v2/api/site/{site}/firewall-rules/defaults:
+    get:
+      summary: Get firewall rules defaults
+      description: |
+        Retrieves default firewall rule settings.
+      operationId: getFirewallRulesDefaults
+      tags:
+        - Firewall
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with firewall rules defaults
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FirewallRulesDefault'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Excluded IPs API (v2)
+  /v2/api/site/{site}/excluded-ips:
+    get:
+      summary: Get excluded IPs
+      description: |
+        Retrieves IPs excluded from device identification.
+      operationId: getExcludedIPs
+      tags:
+        - Network
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with excluded IPs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExcludedIPs'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Network Suggest API (v2)
+  /v2/api/site/{site}/network-suggest:
+    get:
+      summary: Get network suggestions
+      description: |
+        Retrieves suggested IP subnets for new networks.
+      operationId: getNetworkSuggestions
+      tags:
+        - Network
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with network suggestions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NetworkSuggestion'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Network Port Suggest API (v2)
+  /v2/api/site/{site}/network-port-suggest:
+    get:
+      summary: Get available ports
+      description: |
+        Retrieves available ports for new services.
+      operationId: getNetworkPortSuggestions
+      tags:
+        - Network
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with available ports
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NetworkPortSuggestions'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # WAN Load Balancing Configuration API (v2)
+  /v2/api/site/{site}/wan/load-balancing/configuration:
+    get:
+      summary: Get WAN load balancing configuration
+      description: |
+        Retrieves WAN load balancing configuration.
+      operationId: getWANLoadBalancingConfiguration
+      tags:
+        - Network
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with WAN load balancing config
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANLoadBalancingConfig'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # WAN Load Balancing Status API (v2)
+  /v2/api/site/{site}/wan/load-balancing/status:
+    get:
+      summary: Get WAN load balancing status
+      description: |
+        Retrieves WAN load balancing interface status.
+      operationId: getWANLoadBalancingStatus
+      tags:
+        - Network
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with WAN load balancing status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANLoadBalancingStatus'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # WAN Network Groups API (v2)
+  /v2/api/site/{site}/wan/networkgroups:
+    get:
+      summary: Get WAN network groups
+      description: |
+        Retrieves WAN network group configurations.
+      operationId: getWANNetworkGroups
+      tags:
+        - Network
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with WAN network groups
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANNetworkGroups'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # WAN DDNS Providers API (v2)
+  /v2/api/site/{site}/wan/ddns:
+    get:
+      summary: Get DDNS providers
+      description: |
+        Retrieves available Dynamic DNS providers.
+      operationId: getDDNSProviders
+      tags:
+        - Network
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with DDNS providers
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DDNSProviders'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -7375,3 +7636,309 @@ components:
         setting_preference:
           type: string
           description: Setting preference
+
+    # Global Network Configuration
+    GlobalNetworkConfig:
+      type: object
+      description: Global network configuration settings
+      properties:
+        default_security_posture:
+          type: string
+          description: Default security posture (ALLOW_ALL, etc.)
+        flood_unknown_multicast_for_network_ids:
+          type: array
+          description: Network IDs to flood unknown multicast
+          items:
+            type: string
+        igmp_fastleave_for_network_ids:
+          type: array
+          description: Network IDs with IGMP fast leave
+          items:
+            type: string
+        igmp_querier_switches:
+          type: array
+          description: IGMP querier switches
+          items:
+            type: string
+        igmp_snooping_for:
+          type: string
+          description: IGMP snooping scope (none, etc.)
+        igmp_snooping_for_network_ids:
+          type: array
+          description: Network IDs with IGMP snooping
+          items:
+            type: string
+        ipv6_pd_interfaces:
+          type: array
+          description: IPv6 prefix delegation interfaces
+          items:
+            type: string
+        mdns_enabled_for:
+          type: string
+          description: mDNS enabled scope (none, etc.)
+        mdns_enabled_for_network_ids:
+          type: array
+          description: Network IDs with mDNS enabled
+          items:
+            type: string
+
+    # mDNS Service
+    MDNSService:
+      type: object
+      description: mDNS service definition
+      properties:
+        code:
+          type: string
+          description: Service code identifier
+        name:
+          type: string
+          description: Service display name
+        addresses:
+          type: array
+          description: mDNS service addresses/patterns
+          items:
+            type: string
+
+    # Combined Firewall Rule
+    CombinedFirewallRule:
+      type: object
+      description: Combined traffic and firewall rule
+      properties:
+        name:
+          type: string
+          description: Rule name
+        enabled:
+          type: boolean
+          description: Whether rule is enabled
+        logging:
+          type: boolean
+          description: Whether logging is enabled
+        origin_type:
+          type: string
+          description: Origin type (predefined_firewall_rule, etc.)
+        protocol:
+          type: string
+          description: Protocol (all, tcp, udp, etc.)
+        protocol_v6:
+          type: string
+          description: IPv6 protocol (icmpv6, etc.)
+        rule_index:
+          type: integer
+          description: Rule index/priority
+        ruleset:
+          type: string
+          description: Ruleset name (LAN_IN, WAN_LOCAL, etc.)
+        firewall_rule_action:
+          type: string
+          description: Action (drop, accept, etc.)
+        state_established:
+          type: boolean
+          description: Match established state
+        state_invalid:
+          type: boolean
+          description: Match invalid state
+        state_new:
+          type: boolean
+          description: Match new state
+        state_related:
+          type: boolean
+          description: Match related state
+        dst_address_list:
+          type: array
+          description: Destination address list
+          items:
+            type: string
+        dst_port_list:
+          type: array
+          description: Destination port list
+          items:
+            type: string
+
+    # Firewall Rules Default
+    FirewallRulesDefault:
+      type: object
+      description: Default firewall rule settings
+      properties:
+        ipsec:
+          type: string
+          description: IPsec setting
+        setting_preference:
+          type: string
+          description: Setting preference
+        state_established:
+          type: boolean
+          description: Default established state
+        state_invalid:
+          type: boolean
+          description: Default invalid state
+        state_new:
+          type: boolean
+          description: Default new state
+        state_related:
+          type: boolean
+          description: Default related state
+
+    # Excluded IPs
+    ExcludedIPs:
+      type: object
+      description: IPs excluded from device identification
+      properties:
+        excluded_ip_client_info:
+          type: array
+          description: Excluded IP client information
+          items:
+            type: object
+        unidentified_excluded_ip_info:
+          type: array
+          description: Unidentified excluded IP information
+          items:
+            type: object
+
+    # Network Suggestion
+    NetworkSuggestion:
+      type: object
+      description: Suggested network subnet
+      properties:
+        mask:
+          type: integer
+          description: Subnet mask (e.g., 24, 22, 20)
+        ip_subnets:
+          type: array
+          description: Suggested IP subnets
+          items:
+            type: string
+
+    # Network Port Suggestions
+    NetworkPortSuggestions:
+      type: object
+      description: Available ports for new services
+      properties:
+        available_ports:
+          type: array
+          description: List of available ports
+          items:
+            type: integer
+
+    # WAN Load Balancing Configuration
+    WANLoadBalancingConfig:
+      type: object
+      description: WAN load balancing configuration
+      properties:
+        mode:
+          type: string
+          description: Load balancing mode (FAILOVER_ONLY, DISTRIBUTED, etc.)
+        wan_interfaces:
+          type: array
+          description: WAN interface configurations
+          items:
+            $ref: '#/components/schemas/WANLoadBalancingInterface'
+
+    WANLoadBalancingInterface:
+      type: object
+      description: WAN interface in load balancing config
+      properties:
+        name:
+          type: string
+          description: Interface name
+        mode:
+          type: string
+          description: Interface mode (DISTRIBUTED, FAILOVER_ONLY)
+        priority:
+          type: integer
+          description: Interface priority
+        wan_networkgroup:
+          type: string
+          description: WAN network group ID
+        weight:
+          type: integer
+          description: Weight for load distribution
+
+    # WAN Load Balancing Status
+    WANLoadBalancingStatus:
+      type: object
+      description: WAN load balancing interface status
+      properties:
+        wan_interfaces:
+          type: array
+          description: WAN interface statuses
+          items:
+            $ref: '#/components/schemas/WANInterfaceStatus'
+
+    WANInterfaceStatus:
+      type: object
+      description: WAN interface status
+      properties:
+        name:
+          type: string
+          description: Interface name
+        state:
+          type: string
+          description: Interface state (ACTIVE, BACKUP, etc.)
+        wan_networkgroup:
+          type: string
+          description: WAN network group ID
+
+    # WAN Network Groups
+    WANNetworkGroups:
+      type: object
+      description: WAN network groups configuration
+      properties:
+        wan_network_groups:
+          type: array
+          description: WAN network groups
+          items:
+            $ref: '#/components/schemas/WANNetworkGroup'
+
+    WANNetworkGroup:
+      type: object
+      description: WAN network group
+      properties:
+        id:
+          type: string
+          description: Group ID (WAN, WAN2, etc.)
+        name:
+          type: string
+          description: Group display name
+        network_id:
+          type: string
+          description: Associated network ID
+        is_mobile_broadband:
+          type: boolean
+          description: Whether mobile broadband
+        load_balancing_mode:
+          type: string
+          description: Load balancing mode
+        priority:
+          type: integer
+          description: Group priority
+        wan_magic_enabled:
+          type: boolean
+          description: WAN Magic enabled
+        port_info:
+          $ref: '#/components/schemas/WANPortInfo'
+
+    WANPortInfo:
+      type: object
+      description: WAN port information
+      nullable: true
+      properties:
+        disabled:
+          type: boolean
+          description: Whether port is disabled
+        port_idx:
+          type: integer
+          description: Port index
+        port_ifname:
+          type: string
+          description: Port interface name
+
+    # DDNS Providers
+    DDNSProviders:
+      type: object
+      description: Available Dynamic DNS providers
+      properties:
+        ddns:
+          type: array
+          description: List of DDNS provider names
+          items:
+            type: string

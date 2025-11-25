@@ -1553,3 +1553,78 @@ func (c *APIClient) GetNetworkStatus(ctx context.Context, site Site) (*NetworkSt
 	}
 	return data, nil
 }
+
+// GetTeleportInvitationHistory retrieves Teleport VPN invitation history.
+func (c *APIClient) GetTeleportInvitationHistory(ctx context.Context, site Site) (*TeleportInvitationHistory, error) {
+	resp, err := c.client.GetTeleportInvitationHistoryWithResponse(ctx, site)
+	var dataPtr *TeleportInvitationHistory
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get Teleport invitation history for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetULPUsersGroups retrieves UniFi Local Portal users and groups.
+func (c *APIClient) GetULPUsersGroups(ctx context.Context, site Site) (*ULPUsersGroups, error) {
+	resp, err := c.client.GetULPUsersGroupsWithResponse(ctx, site)
+	var dataPtr *ULPUsersGroups
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get ULP users and groups for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetWANMagicConfiguration retrieves WAN Magic (Teleport WAN) configuration.
+func (c *APIClient) GetWANMagicConfiguration(ctx context.Context, site Site) (*WANMagicConfiguration, error) {
+	resp, err := c.client.GetWANMagicConfigurationWithResponse(ctx, site)
+	var dataPtr *WANMagicConfiguration
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get WAN Magic configuration for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetSystemLogSettings retrieves alert event settings for system logging.
+func (c *APIClient) GetSystemLogSettings(ctx context.Context, site Site) (*SystemLogSettings, error) {
+	resp, err := c.client.GetSystemLogSettingsWithResponse(ctx, site)
+	var dataPtr *SystemLogSettings
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get system log settings for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetSystemLogSettingsDefaults retrieves default alert event settings.
+func (c *APIClient) GetSystemLogSettingsDefaults(ctx context.Context, site Site) (*SystemLogSettings, error) {
+	resp, err := c.client.GetSystemLogSettingsDefaultsWithResponse(ctx, site)
+	var dataPtr *SystemLogSettings
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get system log settings defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}

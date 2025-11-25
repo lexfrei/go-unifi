@@ -469,4 +469,27 @@ type NetworkAPIClient interface { //nolint:interfacebloat // This interface mirr
 
 	// GetNetworkStatus retrieves overall network health status.
 	GetNetworkStatus(ctx context.Context, site Site) (*NetworkStatus, error)
+
+	// Teleport operations (v2 API)
+
+	// GetTeleportInvitationHistory retrieves Teleport VPN invitation history.
+	GetTeleportInvitationHistory(ctx context.Context, site Site) (*TeleportInvitationHistory, error)
+
+	// ULP operations (v2 API)
+
+	// GetULPUsersGroups retrieves UniFi Local Portal users and groups.
+	GetULPUsersGroups(ctx context.Context, site Site) (*ULPUsersGroups, error)
+
+	// WAN Magic operations (v2 API)
+
+	// GetWANMagicConfiguration retrieves WAN Magic (Teleport WAN) configuration.
+	GetWANMagicConfiguration(ctx context.Context, site Site) (*WANMagicConfiguration, error)
+
+	// System log operations (v2 API)
+
+	// GetSystemLogSettings retrieves alert event settings for system logging.
+	GetSystemLogSettings(ctx context.Context, site Site) (*SystemLogSettings, error)
+
+	// GetSystemLogSettingsDefaults retrieves default alert event settings.
+	GetSystemLogSettingsDefaults(ctx context.Context, site Site) (*SystemLogSettings, error)
 }

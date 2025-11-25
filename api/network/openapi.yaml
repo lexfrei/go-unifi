@@ -3141,6 +3141,223 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # Shadow Mode Info API (v2)
+  /v2/api/site/{site}/shadowmode/info:
+    get:
+      summary: Get shadow mode info
+      description: |
+        Retrieves shadow mode information.
+      operationId: getShadowModeInfo
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with shadow mode info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShadowModeInfo'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Stacking API (v2)
+  /v2/api/site/{site}/stacking:
+    get:
+      summary: Get switch stacking configuration
+      description: |
+        Retrieves switch stacking configuration.
+      operationId: getStacking
+      tags:
+        - Devices
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with stacking configuration
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StackingConfig'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # MC-LAG Groups API (v2)
+  /v2/api/site/{site}/mclag-groups:
+    get:
+      summary: Get MC-LAG groups
+      description: |
+        Retrieves MC-LAG (Multi-Chassis Link Aggregation Group) configurations.
+      operationId: getMCLAGGroups
+      tags:
+        - Devices
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with MC-LAG groups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MCLAGGroup'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Device Wireless Links API (v2)
+  /v2/api/site/{site}/device-wireless-links:
+    get:
+      summary: Get device wireless links
+      description: |
+        Retrieves wireless mesh link configurations between devices.
+      operationId: getDeviceWirelessLinks
+      tags:
+        - Devices
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with wireless links
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DeviceWirelessLink'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # WireGuard Users Existing Subnets API (v2)
+  /v2/api/site/{site}/wireguard-users-existing-subnets:
+    get:
+      summary: Get WireGuard users existing subnets
+      description: |
+        Retrieves subnets that are already in use by WireGuard users.
+      operationId: getWireGuardUsersExistingSubnets
+      tags:
+        - VPN
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with existing subnets
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WireGuardExistingSubnets'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Magic Site-to-Site VPN Configs API (v2)
+  /v2/api/site/{site}/magicsitetositevpn-configs:
+    get:
+      summary: Get Magic site-to-site VPN configs
+      description: |
+        Retrieves Magic site-to-site VPN configurations.
+      operationId: getMagicSiteToSiteVPNConfigs
+      tags:
+        - VPN
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with Magic VPN configs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MagicSiteToSiteVPNConfig'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Object-Oriented Network Configs API (v2)
+  /v2/api/site/{site}/object-oriented-network-configs:
+    get:
+      summary: Get object-oriented network configs
+      description: |
+        Retrieves object-oriented network configurations.
+      operationId: getObjectOrientedNetworkConfigs
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with OON configs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ObjectOrientedNetworkConfig'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Utilization Last Days API (v2)
+  /v2/api/site/{site}/utilization/last_days:
+    get:
+      summary: Get utilization for last days
+      description: |
+        Retrieves ISP and system utilization statistics for the last days.
+      operationId: getUtilizationLastDays
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with utilization data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UtilizationLastDays'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # VPN Client Connections API (v2)
+  /v2/api/site/{site}/vpn-client-connections:
+    get:
+      summary: Get VPN client connections
+      description: |
+        Retrieves current VPN client connections.
+      operationId: getVPNClientConnections
+      tags:
+        - VPN
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with VPN client connections
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VPNClientConnections'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   # SSL Inspection Certificates API (v2)
   /v2/api/site/{site}/ssl-inspection/certificates:
     get:
@@ -9298,3 +9515,112 @@ components:
           items:
             type: object
             additionalProperties: true
+
+    # Batch 3 Types - WAN/VPN/Device
+    ShadowModeInfo:
+      type: object
+      description: Shadow mode information
+      additionalProperties: true
+
+    StackingConfig:
+      type: object
+      description: Switch stacking configuration
+      additionalProperties: true
+
+    MCLAGGroup:
+      type: object
+      description: MC-LAG group configuration
+      additionalProperties: true
+
+    DeviceWirelessLink:
+      type: object
+      description: Wireless link between devices
+      additionalProperties: true
+
+    WireGuardExistingSubnets:
+      type: object
+      description: WireGuard existing subnets
+      properties:
+        subnets:
+          type: array
+          description: List of subnets in use
+          items:
+            type: string
+
+    MagicSiteToSiteVPNConfig:
+      type: object
+      description: Magic site-to-site VPN configuration
+      additionalProperties: true
+
+    ObjectOrientedNetworkConfig:
+      type: object
+      description: Object-oriented network configuration
+      additionalProperties: true
+
+    UtilizationLastDays:
+      type: object
+      description: Utilization statistics for last days
+      properties:
+        isp_utilization:
+          $ref: '#/components/schemas/ISPUtilization'
+        system_utilization:
+          type: array
+          description: System CPU utilization data
+          items:
+            $ref: '#/components/schemas/UtilizationDataPoint'
+
+    ISPUtilization:
+      type: object
+      description: ISP bandwidth utilization
+      properties:
+        wan_peak_received_bytes_rate:
+          type: integer
+          format: int64
+          description: WAN peak received bytes rate
+        wan_peak_transmitted_bytes_rate:
+          type: integer
+          format: int64
+          description: WAN peak transmitted bytes rate
+        wan2_peak_received_bytes_rate:
+          type: integer
+          format: int64
+          description: WAN2 peak received bytes rate
+        wan2_peak_transmitted_bytes_rate:
+          type: integer
+          format: int64
+          description: WAN2 peak transmitted bytes rate
+        wan_utilization_down:
+          type: array
+          description: WAN download utilization distribution
+          items:
+            $ref: '#/components/schemas/UtilizationDataPoint'
+        wan_utilization_up:
+          type: array
+          description: WAN upload utilization distribution
+          items:
+            $ref: '#/components/schemas/UtilizationDataPoint'
+        wan2_utilization_down:
+          type: array
+          description: WAN2 download utilization distribution
+          items:
+            $ref: '#/components/schemas/UtilizationDataPoint'
+        wan2_utilization_up:
+          type: array
+          description: WAN2 upload utilization distribution
+          items:
+            $ref: '#/components/schemas/UtilizationDataPoint'
+
+    VPNClientConnections:
+      type: object
+      description: VPN client connections
+      properties:
+        connections:
+          type: array
+          description: List of VPN client connections
+          items:
+            $ref: '#/components/schemas/VPNClientConnection'
+
+    VPNClientConnection:
+      type: object
+      description: VPN client connection
+      additionalProperties: true

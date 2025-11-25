@@ -320,6 +320,150 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  /integration/v1/info:
+    get:
+      summary: Get application info
+      description: |
+        Retrieves general information about the UniFi Network application,
+        including the application version.
+      operationId: getApplicationInfo
+      tags:
+        - Sites
+      responses:
+        '200':
+          description: Successful response with application info
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationInfo'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /integration/v1/sites/{siteId}/devices/{deviceId}/statistics/latest:
+    get:
+      summary: Get latest device statistics
+      description: |
+        Retrieves the latest real-time statistics of a specific adopted device, such as:
+        - Uptime
+        - Data transmission rates
+        - CPU and memory utilization
+        - Load averages
+        - Interface statistics
+      operationId: getDeviceLatestStatistics
+      tags:
+        - Devices
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - $ref: '#/components/parameters/DeviceId'
+      responses:
+        '200':
+          description: Successful response with device statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceStatistics'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /integration/v1/sites/{siteId}/devices/{deviceId}/actions:
+    post:
+      summary: Execute device action
+      description: |
+        Perform an action on a specific adopted device.
+
+        Available actions:
+        - `RESTART`: Restart the device
+      operationId: executeDeviceAction
+      tags:
+        - Devices
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - $ref: '#/components/parameters/DeviceId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceActionRequest'
+      responses:
+        '200':
+          description: Action executed successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /integration/v1/sites/{siteId}/devices/{deviceId}/interfaces/ports/{portIdx}/actions:
+    post:
+      summary: Execute port action
+      description: |
+        Perform an action on a specific device port.
+
+        Available actions:
+        - `POWER_CYCLE`: Power cycle the PoE port (turn off and on again)
+      operationId: executePortAction
+      tags:
+        - Devices
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - $ref: '#/components/parameters/DeviceId'
+        - name: portIdx
+          in: path
+          required: true
+          description: Port index (1-based)
+          schema:
+            type: integer
+            format: int32
+            minimum: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PortActionRequest'
+      responses:
+        '200':
+          description: Action executed successfully
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /integration/v1/sites/{siteId}/clients/{clientId}/actions:
+    post:
+      summary: Execute client action
+      description: |
+        Perform an action on a specific connected client.
+
+        Available actions:
+        - `AUTHORIZE_GUEST_ACCESS`: Authorize a guest client for network access
+        - `UNAUTHORIZE_GUEST_ACCESS`: Revoke guest authorization and disconnect
+      operationId: executeClientAction
+      tags:
+        - Clients
+      parameters:
+        - $ref: '#/components/parameters/SiteId'
+        - $ref: '#/components/parameters/ClientId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientActionRequest'
+      responses:
+        '200':
+          description: Action executed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientActionResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   # DNS API (v2)
   /v2/api/site/{site}/static-dns:
     get:
@@ -4721,6 +4865,17 @@ components:
           description: Display name of the site
           example: Default
 
+    # Application Info
+    ApplicationInfo:
+      type: object
+      required:
+        - applicationVersion
+      properties:
+        applicationVersion:
+          type: string
+          description: Version of the UniFi Network application
+          example: "9.5.21"
+
     # Devices
     DevicesResponse:
       allOf:
@@ -5010,6 +5165,120 @@ components:
           description: WiFi channel number
           example: 6
 
+    # Device Statistics
+    DeviceStatistics:
+      type: object
+      properties:
+        uptimeSec:
+          type: integer
+          format: int64
+          description: Device uptime in seconds
+          example: 86400
+        lastHeartbeatAt:
+          type: string
+          format: date-time
+          description: Timestamp of last heartbeat from device
+        nextHeartbeatAt:
+          type: string
+          format: date-time
+          description: Expected timestamp of next heartbeat
+        loadAverage1Min:
+          type: number
+          format: double
+          description: 1-minute load average
+          example: 0.5
+        loadAverage5Min:
+          type: number
+          format: double
+          description: 5-minute load average
+          example: 0.4
+        loadAverage15Min:
+          type: number
+          format: double
+          description: 15-minute load average
+          example: 0.3
+        cpuUtilizationPct:
+          type: number
+          format: double
+          description: CPU utilization percentage
+          example: 15.5
+        memoryUtilizationPct:
+          type: number
+          format: double
+          description: Memory utilization percentage
+          example: 45.2
+        uplink:
+          $ref: '#/components/schemas/UplinkStatistics'
+        interfaces:
+          $ref: '#/components/schemas/InterfaceStatistics'
+
+    UplinkStatistics:
+      type: object
+      properties:
+        txRateBps:
+          type: integer
+          format: int64
+          description: Transmit rate in bits per second
+          example: 125000000
+        rxRateBps:
+          type: integer
+          format: int64
+          description: Receive rate in bits per second
+          example: 62500000
+
+    InterfaceStatistics:
+      type: object
+      properties:
+        radios:
+          type: array
+          items:
+            $ref: '#/components/schemas/RadioStatistics'
+
+    RadioStatistics:
+      type: object
+      required:
+        - frequencyGHz
+      properties:
+        frequencyGHz:
+          type: string
+          description: Radio frequency band
+          enum:
+            - "2.4"
+            - "5"
+            - "6"
+            - "60"
+          example: "5"
+        txRetriesPct:
+          type: number
+          format: double
+          description: Percentage of transmit retries
+          example: 2.5
+
+    # Device Actions
+    DeviceActionRequest:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          description: Action to perform on the device
+          enum:
+            - RESTART
+          example: RESTART
+
+    PortActionRequest:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          description: Action to perform on the port
+          enum:
+            - POWER_CYCLE
+          example: POWER_CYCLE
+
     # Clients
     ClientsResponse:
       allOf:
@@ -5087,6 +5356,142 @@ components:
             - RESTRICTED
             - BLOCKED
           example: DEFAULT
+
+    # Client Actions
+    ClientActionRequest:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          description: Action to perform on the client
+          enum:
+            - AUTHORIZE_GUEST_ACCESS
+            - UNAUTHORIZE_GUEST_ACCESS
+          example: AUTHORIZE_GUEST_ACCESS
+        timeLimitMinutes:
+          type: integer
+          format: int64
+          description: |
+            How long (in minutes) the guest will be authorized.
+            Only applicable for AUTHORIZE_GUEST_ACCESS action.
+          minimum: 1
+          maximum: 1000000
+          example: 1440
+        dataUsageLimitMBytes:
+          type: integer
+          format: int64
+          description: |
+            Data usage limit in megabytes.
+            Only applicable for AUTHORIZE_GUEST_ACCESS action.
+          minimum: 1
+          maximum: 1048576
+          example: 1024
+        rxRateLimitKbps:
+          type: integer
+          format: int64
+          description: |
+            Download rate limit in kilobits per second.
+            Only applicable for AUTHORIZE_GUEST_ACCESS action.
+          minimum: 2
+          maximum: 100000
+          example: 10000
+        txRateLimitKbps:
+          type: integer
+          format: int64
+          description: |
+            Upload rate limit in kilobits per second.
+            Only applicable for AUTHORIZE_GUEST_ACCESS action.
+          minimum: 2
+          maximum: 100000
+          example: 5000
+
+    ClientActionResponse:
+      type: object
+      required:
+        - action
+      properties:
+        action:
+          type: string
+          description: Action that was performed
+          enum:
+            - AUTHORIZE_GUEST_ACCESS
+            - UNAUTHORIZE_GUEST_ACCESS
+        revokedAuthorization:
+          $ref: '#/components/schemas/GuestAuthorization'
+        grantedAuthorization:
+          $ref: '#/components/schemas/GuestAuthorization'
+
+    GuestAuthorization:
+      type: object
+      required:
+        - authorizedAt
+        - authorizationMethod
+        - expiresAt
+      properties:
+        authorizedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the guest was authorized
+        authorizationMethod:
+          type: string
+          description: Method used for authorization
+          enum:
+            - VOUCHER
+            - API
+            - OTHER
+          example: API
+        expiresAt:
+          type: string
+          format: date-time
+          description: Timestamp when authorization expires
+        dataUsageLimitMBytes:
+          type: integer
+          format: int64
+          description: Data usage limit in megabytes
+          example: 1024
+        rxRateLimitKbps:
+          type: integer
+          format: int64
+          description: Download rate limit in kilobits per second
+          example: 10000
+        txRateLimitKbps:
+          type: integer
+          format: int64
+          description: Upload rate limit in kilobits per second
+          example: 5000
+        usage:
+          $ref: '#/components/schemas/GuestUsageDetails'
+
+    GuestUsageDetails:
+      type: object
+      required:
+        - durationSec
+        - rxBytes
+        - txBytes
+        - bytes
+      properties:
+        durationSec:
+          type: integer
+          format: int64
+          description: Total session duration in seconds
+          example: 3600
+        rxBytes:
+          type: integer
+          format: int64
+          description: Total bytes received
+          example: 104857600
+        txBytes:
+          type: integer
+          format: int64
+          description: Total bytes transmitted
+          example: 52428800
+        bytes:
+          type: integer
+          format: int64
+          description: Total bytes (rx + tx)
+          example: 157286400
 
     # Hotspot Vouchers
     HotspotVouchersResponse:

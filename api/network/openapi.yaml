@@ -1002,6 +1002,291 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  /v2/api/site/{site}/wifi-stats/radios:
+    get:
+      summary: Get WiFi radio statistics
+      description: |
+        Retrieves WiFi statistics per radio including bytes transferred,
+        client signal averages, and device information.
+        Requires time range parameters.
+      operationId: getWiFiStatsRadios
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+        - name: interval
+          in: query
+          required: true
+          description: Statistics interval granularity
+          schema:
+            type: string
+            enum:
+              - hourly
+              - daily
+            example: hourly
+        - name: start
+          in: query
+          required: true
+          description: Start time in Unix milliseconds
+          schema:
+            type: integer
+            format: int64
+            example: 1764000000000
+        - name: end
+          in: query
+          required: true
+          description: End time in Unix milliseconds
+          schema:
+            type: integer
+            format: int64
+            example: 1764086400000
+      responses:
+        '200':
+          description: Successful response with radio statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WiFiStatsRadiosResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/wifi-stats/channelization:
+    get:
+      summary: Get WiFi channelization statistics
+      description: |
+        Retrieves WiFi channel utilization statistics including band utilization,
+        client counts, byte rates, and TX retry percentages per time interval.
+        Requires time range parameters.
+      operationId: getWiFiStatsChannelization
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+        - name: interval
+          in: query
+          required: true
+          description: Statistics interval granularity
+          schema:
+            type: string
+            enum:
+              - hourly
+              - daily
+            example: hourly
+        - name: start
+          in: query
+          required: true
+          description: Start time in Unix milliseconds
+          schema:
+            type: integer
+            format: int64
+            example: 1764000000000
+        - name: end
+          in: query
+          required: true
+          description: End time in Unix milliseconds
+          schema:
+            type: integer
+            format: int64
+            example: 1764086400000
+      responses:
+        '200':
+          description: Successful response with channelization statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WiFiStatsChannelizationResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/wifi-stats/details:
+    get:
+      summary: Get WiFi client details statistics
+      description: |
+        Retrieves detailed WiFi statistics per connected client including
+        fingerprint, PHY mode, signal strength, and traffic percentage.
+        Requires time range parameters.
+      operationId: getWiFiStatsDetails
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+        - name: interval
+          in: query
+          required: true
+          description: Statistics interval granularity
+          schema:
+            type: string
+            enum:
+              - hourly
+              - daily
+            example: hourly
+        - name: start
+          in: query
+          required: true
+          description: Start time in Unix milliseconds
+          schema:
+            type: integer
+            format: int64
+            example: 1764000000000
+        - name: end
+          in: query
+          required: true
+          description: End time in Unix milliseconds
+          schema:
+            type: integer
+            format: int64
+            example: 1764086400000
+      responses:
+        '200':
+          description: Successful response with client details statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WiFiStatsDetailsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Traffic Statistics API (v2)
+  /v2/api/site/{site}/traffic:
+    get:
+      summary: Get traffic statistics by client and application
+      description: |
+        Retrieves detailed traffic usage statistics broken down by client
+        and application, including bytes transmitted/received per app.
+        Requires time range parameters.
+      operationId: getTrafficStats
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+        - name: start
+          in: query
+          required: true
+          description: Start time in Unix milliseconds
+          schema:
+            type: integer
+            format: int64
+            example: 1764000000000
+        - name: end
+          in: query
+          required: true
+          description: End time in Unix milliseconds
+          schema:
+            type: integer
+            format: int64
+            example: 1764086400000
+      responses:
+        '200':
+          description: Successful response with traffic statistics
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrafficStatsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/traffic-rate:
+    get:
+      summary: Get traffic rate time series
+      description: |
+        Retrieves traffic rate data over time with 5-minute intervals,
+        including top application per interval.
+        Requires time range parameters.
+      operationId: getTrafficRate
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+        - name: start
+          in: query
+          required: true
+          description: Start time in Unix milliseconds
+          schema:
+            type: integer
+            format: int64
+            example: 1764000000000
+        - name: end
+          in: query
+          required: true
+          description: End time in Unix milliseconds
+          schema:
+            type: integer
+            format: int64
+            example: 1764086400000
+      responses:
+        '200':
+          description: Successful response with traffic rate data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TrafficRateEntry'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/utilization/time_range:
+    get:
+      summary: Get system and ISP utilization over time range
+      description: |
+        Retrieves system CPU utilization and ISP bandwidth utilization
+        statistics bucketed by usage percentage over the time range.
+        Requires time range parameters.
+      operationId: getUtilizationTimeRange
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+        - name: start
+          in: query
+          required: true
+          description: Start time in Unix milliseconds
+          schema:
+            type: integer
+            format: int64
+            example: 1764000000000
+        - name: end
+          in: query
+          required: true
+          description: End time in Unix milliseconds
+          schema:
+            type: integer
+            format: int64
+            example: 1764086400000
+      responses:
+        '200':
+          description: Successful response with utilization data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UtilizationTimeRangeResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   # System Log API (v2)
   /v2/api/site/{site}/system-log/all:
     post:
@@ -1028,6 +1313,399 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SystemLogResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/system-log/count:
+    post:
+      summary: Get system log counts
+      description: |
+        Retrieves counts of system log entries by category.
+      operationId: getSystemLogCount
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemLogRequest'
+      responses:
+        '200':
+          description: Successful response with log counts
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemLogCountResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/system-log/critical:
+    post:
+      summary: Get critical system logs
+      description: |
+        Retrieves critical system log entries requiring attention.
+      operationId: getSystemLogCritical
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemLogRequest'
+      responses:
+        '200':
+          description: Successful response with critical logs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemLogResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/system-log/threats:
+    post:
+      summary: Get threat logs
+      description: |
+        Retrieves security threat detection logs.
+      operationId: getSystemLogThreats
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemLogRequest'
+      responses:
+        '200':
+          description: Successful response with threat logs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemLogResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/system-log/admin-access:
+    post:
+      summary: Get admin access logs
+      description: |
+        Retrieves administrator access and login logs.
+      operationId: getSystemLogAdminAccess
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemLogRequest'
+      responses:
+        '200':
+          description: Successful response with admin access logs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemLogResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/system-log/admin-activity:
+    post:
+      summary: Get admin activity logs
+      description: |
+        Retrieves administrator activity and configuration change logs.
+      operationId: getSystemLogAdminActivity
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemLogRequest'
+      responses:
+        '200':
+          description: Successful response with admin activity logs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemLogResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/system-log/client-alert:
+    post:
+      summary: Get client alert logs
+      description: |
+        Retrieves client-related alert logs.
+      operationId: getSystemLogClientAlert
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemLogRequest'
+      responses:
+        '200':
+          description: Successful response with client alert logs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemLogResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/system-log/device-alert:
+    post:
+      summary: Get device alert logs
+      description: |
+        Retrieves device-related alert logs.
+      operationId: getSystemLogDeviceAlert
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemLogRequest'
+      responses:
+        '200':
+          description: Successful response with device alert logs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemLogResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/system-log/threat-alert:
+    post:
+      summary: Get threat alert logs
+      description: |
+        Retrieves security threat alert logs.
+      operationId: getSystemLogThreatAlert
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemLogRequest'
+      responses:
+        '200':
+          description: Successful response with threat alert logs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemLogResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/system-log/update-alert:
+    post:
+      summary: Get update alert logs
+      description: |
+        Retrieves firmware and software update alert logs.
+      operationId: getSystemLogUpdateAlert
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemLogRequest'
+      responses:
+        '200':
+          description: Successful response with update alert logs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemLogResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/system-log/vpn-alert:
+    post:
+      summary: Get VPN alert logs
+      description: |
+        Retrieves VPN-related alert logs.
+      operationId: getSystemLogVPNAlert
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemLogRequest'
+      responses:
+        '200':
+          description: Successful response with VPN alert logs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemLogResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/system-log/next-ai-alert:
+    post:
+      summary: Get Next AI alert logs
+      description: |
+        Retrieves AI-powered threat detection alert logs.
+      operationId: getSystemLogNextAIAlert
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemLogRequest'
+      responses:
+        '200':
+          description: Successful response with Next AI alert logs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemLogResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /v2/api/site/{site}/system-log/system-critical-alert:
+    post:
+      summary: Get system critical alert logs
+      description: |
+        Retrieves system critical alert logs requiring immediate attention.
+      operationId: getSystemLogSystemCriticalAlert
+      tags:
+        - Analytics
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SystemLogRequest'
+      responses:
+        '200':
+          description: Successful response with system critical alert logs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemLogResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Traffic Flows API (v2)
+  /v2/api/site/{site}/traffic-flows:
+    post:
+      summary: Get firewall traffic flows
+      description: |
+        Retrieves firewall traffic flow data including blocked and allowed
+        connections with source/destination details and policy matches.
+        Send empty JSON body `{}` for default pagination.
+      operationId: getTrafficFlows
+      tags:
+        - Firewall
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TrafficFlowsRequest'
+      responses:
+        '200':
+          description: Successful response with traffic flows
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrafficFlowsResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '401':
@@ -5971,6 +6649,502 @@ components:
           description: Percentage of total network traffic
           example: 98.5
 
+    # WiFi Radio Statistics
+    WiFiStatsRadiosResponse:
+      type: object
+      description: WiFi statistics per radio
+      properties:
+        radio_details:
+          type: array
+          description: Statistics per radio
+          items:
+            $ref: '#/components/schemas/WiFiStatsRadio'
+
+    WiFiStatsRadio:
+      type: object
+      description: Statistics for a single radio
+      properties:
+        device_mac:
+          type: string
+          description: Device MAC address
+          example: "94:2a:6f:ce:26:52"
+        radio_name:
+          type: string
+          description: Radio identifier
+          example: "wifi0"
+        bytes:
+          type: number
+          format: double
+          description: Total bytes transferred
+          example: 9.095958E7
+        client_signal_avg:
+          type: number
+          format: double
+          description: Average client signal strength in dBm
+          example: -49.31
+
+    # WiFi Channelization Statistics
+    WiFiStatsChannelizationResponse:
+      type: object
+      description: WiFi channelization statistics over time
+      properties:
+        details:
+          type: array
+          description: Statistics per time interval
+          items:
+            $ref: '#/components/schemas/WiFiChannelizationDetail'
+
+    WiFiChannelizationDetail:
+      type: object
+      description: Channelization statistics for a time interval
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: Time interval start in Unix milliseconds
+          example: 1764050400000
+        band_utilization:
+          $ref: '#/components/schemas/BandMetrics'
+        clients_count:
+          $ref: '#/components/schemas/BandMetricsInteger'
+        receiving_byte_rate:
+          $ref: '#/components/schemas/BandMetricsInteger'
+        transmitting_byte_rate:
+          $ref: '#/components/schemas/BandMetricsInteger'
+        tx_retries_percentage:
+          $ref: '#/components/schemas/BandMetrics'
+
+    BandMetrics:
+      type: object
+      description: Metrics per WiFi band (float values)
+      properties:
+        radio_ng:
+          type: number
+          format: double
+          description: 2.4GHz band value
+          example: 42.12
+        radio_na:
+          type: number
+          format: double
+          description: 5GHz band value
+          example: 13.77
+        radio_6e:
+          type: number
+          format: double
+          description: 6GHz band value
+          example: 0.0
+        total:
+          type: number
+          format: double
+          description: Total across all bands
+          example: 0.0
+
+    BandMetricsInteger:
+      type: object
+      description: Metrics per WiFi band (integer values)
+      properties:
+        radio_ng:
+          type: integer
+          description: 2.4GHz band value
+          example: 0
+        radio_na:
+          type: integer
+          description: 5GHz band value
+          example: 32620517
+        radio_6e:
+          type: integer
+          description: 6GHz band value
+          example: 0
+        total:
+          type: integer
+          description: Total across all bands
+          example: 32651179
+
+    # WiFi Client Details Statistics
+    WiFiStatsDetailsResponse:
+      type: object
+      description: Detailed WiFi statistics per client
+      properties:
+        client_details:
+          type: array
+          description: Statistics per WiFi client
+          items:
+            $ref: '#/components/schemas/WiFiClientDetail'
+
+    WiFiClientDetail:
+      type: object
+      description: Detailed statistics for a WiFi client
+      properties:
+        client:
+          $ref: '#/components/schemas/WiFiClientInfo'
+        band:
+          type: string
+          description: WiFi band (ng=2.4GHz, na=5GHz, 6e=6GHz)
+          enum:
+            - ng
+            - na
+            - "6e"
+          example: "na"
+        channel:
+          type: integer
+          description: WiFi channel number
+          example: 44
+        channel_width:
+          type: string
+          description: Channel width in MHz
+          example: "80"
+        is_mlo:
+          type: boolean
+          description: Whether client uses Multi-Link Operation
+          example: false
+        last_ap_mac:
+          type: string
+          description: Last connected AP MAC address
+          example: "94:2a:6f:ce:26:52"
+        mimo:
+          type: string
+          description: MIMO configuration
+          example: "MIMO_2"
+        phy_mode_most_common:
+          type: string
+          description: Most common PHY mode used
+          example: "ax"
+        phy_rate_max:
+          type: integer
+          description: Maximum PHY rate in Kbps
+          example: 1201000
+        phy_rate_most_common:
+          type: integer
+          description: Most common PHY rate in Kbps
+          example: 720600
+        roams_count:
+          type: integer
+          description: Number of roaming events
+          example: 5
+        satisfaction_avg:
+          type: integer
+          description: Average satisfaction score (0-100)
+          example: 99
+        signal_avg:
+          type: integer
+          description: Average signal strength in dBm
+          example: -49
+        standard:
+          type: string
+          description: WiFi standard
+          enum:
+            - WIFI_3
+            - WIFI_4
+            - WIFI_5
+            - WIFI_6
+            - WIFI_6E
+            - WIFI_7
+          example: "WIFI_6"
+        total_traffic_percentage:
+          type: number
+          format: float
+          description: Percentage of total network traffic
+          example: 20.4
+        tx_retries_percentage:
+          type: number
+          format: float
+          description: TX retry percentage
+          example: 10.9
+
+    WiFiClientInfo:
+      type: object
+      description: WiFi client information
+      properties:
+        mac:
+          type: string
+          description: Client MAC address
+          example: "6c:1f:8a:db:ce:2c"
+        name:
+          type: string
+          description: Client display name
+          example: "iPhone-13 ce:2c"
+        hostname:
+          type: string
+          description: Client hostname
+          example: "iPhone-13"
+        oui:
+          type: string
+          description: Organizationally Unique Identifier vendor name
+          example: "Apple, Inc."
+        is_wired:
+          type: boolean
+          description: Whether client is wired (always false for WiFi stats)
+          example: false
+        wlanconf_id:
+          type: string
+          description: WLAN configuration ID
+          example: "66c784a65302e23512334ec7"
+        fingerprint:
+          $ref: '#/components/schemas/ClientFingerprint'
+
+    # Traffic Statistics
+    TrafficStatsResponse:
+      type: object
+      description: Traffic statistics by client and application
+      properties:
+        client_usage_by_app:
+          type: array
+          description: Traffic usage per client broken down by application
+          items:
+            $ref: '#/components/schemas/ClientUsageByApp'
+        total_usage_by_app:
+          type: array
+          description: Total traffic usage across all clients by application
+          items:
+            $ref: '#/components/schemas/TotalUsageByApp'
+
+    ClientUsageByApp:
+      type: object
+      description: Traffic usage for a single client by application
+      properties:
+        client:
+          $ref: '#/components/schemas/TrafficClient'
+        usage_by_app:
+          type: array
+          description: Usage per application
+          items:
+            $ref: '#/components/schemas/AppUsage'
+
+    TrafficClient:
+      type: object
+      description: Client information in traffic context
+      properties:
+        mac:
+          type: string
+          description: Client MAC address
+          example: "c6:a2:4a:77:10:55"
+        name:
+          type: string
+          description: Client display name
+          example: "iPad 10:55"
+        hostname:
+          type: string
+          description: Client hostname
+          example: "iPad"
+        oui:
+          type: string
+          description: Vendor OUI name
+          example: "Apple, Inc."
+        is_wired:
+          type: boolean
+          description: Whether client is wired
+          example: false
+        wlanconf_id:
+          type: string
+          description: WLAN configuration ID for wireless clients
+          example: "66c784a65302e23512334ec7"
+        fingerprint:
+          $ref: '#/components/schemas/ClientFingerprint'
+
+    AppUsage:
+      type: object
+      description: Application traffic usage
+      properties:
+        application:
+          type: integer
+          description: Application ID
+          example: 185
+        category:
+          type: integer
+          description: Application category ID
+          example: 20
+        activity_seconds:
+          type: integer
+          description: Active time in seconds
+          example: 365
+        bytes_received:
+          type: integer
+          format: int64
+          description: Bytes received
+          example: 38025
+        bytes_transmitted:
+          type: integer
+          format: int64
+          description: Bytes transmitted
+          example: 37376
+        total_bytes:
+          type: integer
+          format: int64
+          description: Total bytes (received + transmitted)
+          example: 75401
+
+    TotalUsageByApp:
+      type: object
+      description: Total traffic usage for an application across all clients
+      properties:
+        application:
+          type: integer
+          description: Application ID
+          example: 185
+        category:
+          type: integer
+          description: Application category ID
+          example: 20
+        client_count:
+          type: integer
+          description: Number of clients using this application
+          example: 12
+        bytes_received:
+          type: integer
+          format: int64
+          description: Total bytes received
+          example: 72315381
+        bytes_transmitted:
+          type: integer
+          format: int64
+          description: Total bytes transmitted
+          example: 305712530
+        total_bytes:
+          type: integer
+          format: int64
+          description: Total bytes (received + transmitted)
+          example: 378027911
+
+    # Traffic Rate Time Series
+    TrafficRateEntry:
+      type: object
+      description: Traffic rate data for a single time interval
+      properties:
+        timestamp:
+          type: integer
+          format: int64
+          description: Interval start time in Unix milliseconds
+          example: 1764025200000
+        interval_seconds:
+          type: integer
+          description: Interval duration in seconds
+          example: 300
+        rx_byte-r:
+          type: integer
+          description: Receive rate in bytes per second
+          example: 3913
+        tx_byte-r:
+          type: integer
+          description: Transmit rate in bytes per second
+          example: 963
+        total_bytes:
+          type: integer
+          format: int64
+          description: Total bytes in this interval
+          example: 1463234
+        top_app:
+          $ref: '#/components/schemas/TopAppInfo'
+
+    TopAppInfo:
+      type: object
+      description: Top application for a time interval
+      properties:
+        application:
+          type: integer
+          description: Application ID
+          example: 41
+        category:
+          type: integer
+          description: Application category ID
+          example: 3
+        rx_byte-r:
+          type: integer
+          description: Receive rate in bytes per second
+          example: 2932
+        tx_byte-r:
+          type: integer
+          description: Transmit rate in bytes per second
+          example: 57
+        total_bytes:
+          type: integer
+          format: int64
+          description: Total bytes
+          example: 897120
+
+    # Utilization Time Range
+    UtilizationTimeRangeResponse:
+      type: object
+      description: System and ISP utilization statistics over time range
+      properties:
+        system_utilization:
+          type: array
+          description: System CPU utilization buckets (time spent at each percentage)
+          items:
+            $ref: '#/components/schemas/SystemUtilizationBucket'
+        isp_utilization:
+          $ref: '#/components/schemas/ISPUtilizationTimeRange'
+
+    SystemUtilizationBucket:
+      type: object
+      description: Time spent at a system utilization level
+      properties:
+        seconds_spent:
+          type: integer
+          description: Seconds spent at this utilization level
+          example: 14400
+        system_usage_percentage:
+          type: integer
+          description: CPU usage percentage
+          example: 43
+
+    ISPUtilizationTimeRange:
+      type: object
+      description: ISP bandwidth utilization statistics for time range
+      properties:
+        wan_peak_received_bytes_rate:
+          type: integer
+          format: int64
+          description: Peak WAN receive rate in bytes per second
+          example: 15888688
+        wan_peak_transmitted_bytes_rate:
+          type: integer
+          format: int64
+          description: Peak WAN transmit rate in bytes per second
+          example: 16238391
+        wan_utilization_down:
+          type: array
+          description: Download utilization buckets
+          items:
+            $ref: '#/components/schemas/WANUtilizationBucket'
+        wan_utilization_up:
+          type: array
+          description: Upload utilization buckets
+          items:
+            $ref: '#/components/schemas/WANUtilizationBucket'
+        wan2_peak_received_bytes_rate:
+          type: integer
+          format: int64
+          description: Peak WAN2 receive rate in bytes per second
+          example: 0
+        wan2_peak_transmitted_bytes_rate:
+          type: integer
+          format: int64
+          description: Peak WAN2 transmit rate in bytes per second
+          example: 0
+        wan2_utilization_down:
+          type: array
+          description: WAN2 download utilization buckets
+          items:
+            $ref: '#/components/schemas/WANUtilizationBucket'
+        wan2_utilization_up:
+          type: array
+          description: WAN2 upload utilization buckets
+          items:
+            $ref: '#/components/schemas/WANUtilizationBucket'
+
+    WANUtilizationBucket:
+      type: object
+      description: Time spent at a WAN utilization level
+      properties:
+        seconds_spent:
+          type: integer
+          description: Seconds spent at this utilization level
+          example: 81900
+        usage_percentage:
+          type: integer
+          description: Bandwidth usage percentage
+          example: 0
+
     # System Log
     SystemLogRequest:
       type: object
@@ -6009,6 +7183,278 @@ components:
           type: integer
           description: Total number of pages
           example: 66
+
+    SystemLogCountResponse:
+      type: object
+      description: System log event counts by category
+      properties:
+        events:
+          type: array
+          description: Counts per event type
+          items:
+            $ref: '#/components/schemas/SystemLogEventCount'
+        subcategories:
+          type: array
+          description: Counts per subcategory
+          items:
+            $ref: '#/components/schemas/SystemLogSubcategoryCount'
+
+    SystemLogEventCount:
+      type: object
+      description: Count for a specific event type
+      properties:
+        name:
+          type: string
+          description: Event type name
+          example: "THREAT_DETECTED"
+        count:
+          type: integer
+          description: Number of occurrences
+          example: 2388
+
+    SystemLogSubcategoryCount:
+      type: object
+      description: Count for a log subcategory
+      properties:
+        name:
+          type: string
+          description: Subcategory name
+          example: "MONITORING_WIFI"
+        count:
+          type: integer
+          description: Number of entries in this subcategory
+          example: 857
+
+    # Traffic Flows
+    TrafficFlowsRequest:
+      type: object
+      description: Request body for traffic flows query
+      properties:
+        page_number:
+          type: integer
+          description: Page number (0-indexed)
+          default: 0
+          example: 0
+        page_size:
+          type: integer
+          description: Number of entries per page
+          default: 50
+          example: 50
+
+    TrafficFlowsResponse:
+      type: object
+      description: Paginated traffic flows response
+      properties:
+        data:
+          type: array
+          description: Traffic flow entries
+          items:
+            $ref: '#/components/schemas/TrafficFlow'
+        has_next:
+          type: boolean
+          description: Whether more pages are available
+          example: true
+        or_more:
+          type: boolean
+          description: Indicates approximate count
+          example: false
+        page_number:
+          type: integer
+          description: Current page number (0-indexed)
+          example: 0
+        total_element_count:
+          type: integer
+          description: Total number of flow entries
+          example: 9746
+        total_page_count:
+          type: integer
+          description: Total number of pages
+          example: 195
+
+    TrafficFlow:
+      type: object
+      description: A single traffic flow entry
+      properties:
+        id:
+          type: string
+          description: Flow entry ID
+          example: "692630406fcfc41f6da677e6"
+        action:
+          type: string
+          description: Action taken on this flow
+          enum:
+            - blocked
+            - allowed
+          example: "blocked"
+        count:
+          type: integer
+          description: Number of packets/connections
+          example: 1
+        direction:
+          type: string
+          description: Traffic direction
+          enum:
+            - incoming
+            - outgoing
+          example: "incoming"
+        protocol:
+          type: string
+          description: Network protocol
+          example: "TCP"
+        risk:
+          type: string
+          description: Risk level assessment
+          enum:
+            - low
+            - medium
+            - high
+          example: "low"
+        service:
+          type: string
+          description: Detected service
+          example: "OTHER"
+        time:
+          type: integer
+          format: int64
+          description: Flow timestamp in Unix milliseconds
+          example: 1764110393762
+        duration_milliseconds:
+          type: integer
+          description: Flow duration in milliseconds
+          example: 58
+        flow_start_time:
+          type: integer
+          format: int64
+          description: Flow start timestamp in Unix milliseconds
+          example: 1764110393506
+        flow_end_time:
+          type: integer
+          format: int64
+          description: Flow end timestamp in Unix milliseconds
+          example: 1764110393564
+        source:
+          $ref: '#/components/schemas/TrafficFlowEndpoint'
+        destination:
+          $ref: '#/components/schemas/TrafficFlowDestination'
+        traffic_data:
+          $ref: '#/components/schemas/TrafficFlowData'
+        policies:
+          type: array
+          description: Matched firewall policies
+          items:
+            $ref: '#/components/schemas/TrafficFlowPolicy'
+        next_ai:
+          type: array
+          description: AI threat detection results
+          items:
+            type: object
+
+    TrafficFlowEndpoint:
+      type: object
+      description: Traffic flow source endpoint
+      properties:
+        id:
+          type: string
+          description: Endpoint identifier
+          example: "178.76.224.225"
+        ip:
+          type: string
+          description: IP address
+          example: "178.76.224.225"
+        port:
+          type: integer
+          description: Port number
+          example: 1281
+        region:
+          type: string
+          description: Geographic region code
+          example: "RU"
+
+    TrafficFlowDestination:
+      type: object
+      description: Traffic flow destination endpoint
+      properties:
+        id:
+          type: string
+          description: Endpoint identifier
+          example: "94:2a:6f:ce:26:52"
+        ip:
+          type: string
+          description: IP address
+          example: "217.78.182.161"
+        port:
+          type: integer
+          description: Port number
+          example: 51413
+        mac:
+          type: string
+          description: MAC address
+          example: "94:2a:6f:ce:26:52"
+        region:
+          type: string
+          description: Geographic region code
+          example: "RU"
+        device_name:
+          type: string
+          description: Device display name
+          example: "LexFrei's home"
+        device_model:
+          type: string
+          description: Device model
+          example: "UDMA67A"
+        zone_id:
+          type: string
+          description: Network zone ID
+          example: "68a496708e604379be63f815"
+        zone_name:
+          type: string
+          description: Network zone name
+          example: "Gateway"
+        domains:
+          type: array
+          description: Associated domain names
+          items:
+            type: string
+
+    TrafficFlowData:
+      type: object
+      description: Traffic flow statistics
+      properties:
+        bytes_rx:
+          type: integer
+          format: int64
+          description: Bytes received
+          example: 132
+        bytes_tx:
+          type: integer
+          format: int64
+          description: Bytes transmitted
+          example: 0
+        packets_rx:
+          type: integer
+          description: Packets received
+          example: 1
+        packets_tx:
+          type: integer
+          description: Packets transmitted
+          example: 0
+
+    TrafficFlowPolicy:
+      type: object
+      description: Matched firewall policy
+      properties:
+        id:
+          type: string
+          description: Policy ID
+          example: "68a496718e604379be63f836"
+        type:
+          type: string
+          description: Policy type
+          example: "FIREWALL"
+        internal_type:
+          type: string
+          description: Internal policy type
+          example: "PREDEFINED_FIREWALL_RULE"
 
     SystemLogEntry:
       type: object

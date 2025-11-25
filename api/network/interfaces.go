@@ -380,4 +380,41 @@ type NetworkAPIClient interface { //nolint:interfacebloat // This interface mirr
 
 	// GetWiFiManData retrieves WiFiMan diagnostic data for connected clients.
 	GetWiFiManData(ctx context.Context, site Site) ([]WiFiManEntry, error)
+
+	// Firewall defaults operations (v2 API)
+
+	// GetFirewallZoneDefaults retrieves default firewall zone configurations.
+	GetFirewallZoneDefaults(ctx context.Context, site Site) ([]FirewallZoneDefault, error)
+
+	// GetFirewallPolicyDefaults retrieves default firewall policy configuration.
+	GetFirewallPolicyDefaults(ctx context.Context, site Site) (*FirewallPolicyDefaults, error)
+
+	// DNS over HTTPS operations (v2 API)
+
+	// GetDOHDefaults retrieves DNS over HTTPS default settings.
+	GetDOHDefaults(ctx context.Context, site Site) (*DOHDefaults, error)
+
+	// GetDOHAvailableServerNames retrieves list of available DNS over HTTPS server names.
+	GetDOHAvailableServerNames(ctx context.Context, site Site) (*DOHAvailableServers, error)
+
+	// Network defaults operations (v2 API)
+
+	// GetLANDefaults retrieves default LAN network configuration.
+	GetLANDefaults(ctx context.Context, site Site) (*LANDefaults, error)
+
+	// GetWANDefaults retrieves default WAN network configuration.
+	GetWANDefaults(ctx context.Context, site Site) (*WANDefaults, error)
+
+	// WLAN operations (v2 API)
+
+	// GetWLANDefaults retrieves default WLAN configuration.
+	GetWLANDefaults(ctx context.Context, site Site) ([]WLANDefaults, error)
+
+	// GetWLANEnrichedConfiguration retrieves enriched WLAN configurations.
+	GetWLANEnrichedConfiguration(ctx context.Context, site Site) ([]WLANEnrichedConfiguration, error)
+
+	// VPN defaults operations (v2 API)
+
+	// GetL2TPVPNDefaults retrieves default L2TP VPN configuration.
+	GetL2TPVPNDefaults(ctx context.Context, site Site) (*L2TPVPNDefaults, error)
 }

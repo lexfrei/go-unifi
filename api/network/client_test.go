@@ -303,7 +303,7 @@ func TestCreateDNSRecord(t *testing.T) {
 
 			input := &DNSRecordInput{
 				Key:        testHostKey,
-				RecordType: DNSRecordInputRecordTypeA,
+				RecordType: A,
 				Value:      testHostValue,
 			}
 
@@ -378,7 +378,7 @@ func TestUpdateDNSRecord(t *testing.T) {
 
 			input := &DNSRecordInput{
 				Key:        testHostKey,
-				RecordType: DNSRecordInputRecordTypeA,
+				RecordType: A,
 				Value:      testHostValue,
 			}
 
@@ -881,7 +881,7 @@ func TestCreateFirewallPolicy(t *testing.T) {
 			require.NoError(t, err)
 
 			input := &FirewallPolicyInput{
-				Action:  FirewallPolicyInputActionALLOW,
+				Action:  ALLOW,
 				Enabled: true,
 				Name:    testPolicyName,
 			}
@@ -952,7 +952,7 @@ func TestUpdateFirewallPolicy(t *testing.T) {
 			require.NoError(t, err)
 
 			input := &FirewallPolicyInput{
-				Action:  FirewallPolicyInputActionALLOW,
+				Action:  ALLOW,
 				Enabled: true,
 				Name:    testPolicyName,
 			}
@@ -1139,7 +1139,7 @@ func TestCreateTrafficRule(t *testing.T) {
 			desc := testRuleName
 			input := &TrafficRuleInput{
 				Enabled:        true,
-				MatchingTarget: INTERNET,
+				MatchingTarget: TrafficRuleInputMatchingTargetINTERNET,
 				Description:    &desc,
 			}
 
@@ -1212,7 +1212,7 @@ func TestUpdateTrafficRule(t *testing.T) {
 			desc := testRuleName
 			input := &TrafficRuleInput{
 				Enabled:        true,
-				MatchingTarget: INTERNET,
+				MatchingTarget: TrafficRuleInputMatchingTargetINTERNET,
 				Description:    &desc,
 			}
 

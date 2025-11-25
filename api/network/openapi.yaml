@@ -2199,6 +2199,219 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # Firewall Zone Defaults API (v2)
+  /v2/api/site/{site}/firewall/zone/defaults:
+    get:
+      summary: Get firewall zone defaults
+      description: |
+        Retrieves default firewall zone configurations.
+      operationId: getFirewallZoneDefaults
+      tags:
+        - Firewall
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with firewall zone defaults
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FirewallZoneDefault'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # Firewall Policy Defaults API (v2)
+  /v2/api/site/{site}/firewall/policies/defaults:
+    get:
+      summary: Get firewall policy defaults
+      description: |
+        Retrieves default firewall policy configuration.
+      operationId: getFirewallPolicyDefaults
+      tags:
+        - Firewall
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with firewall policy defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FirewallPolicyDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # DNS over HTTPS Defaults API (v2)
+  /v2/api/site/{site}/settings/doh/defaults:
+    get:
+      summary: Get DoH defaults
+      description: |
+        Retrieves DNS over HTTPS default settings.
+      operationId: getDOHDefaults
+      tags:
+        - DNS
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with DoH defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DOHDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # DNS over HTTPS Available Servers API (v2)
+  /v2/api/site/{site}/settings/doh/available-server-names:
+    get:
+      summary: Get available DoH server names
+      description: |
+        Retrieves list of available DNS over HTTPS server names.
+      operationId: getDOHAvailableServerNames
+      tags:
+        - DNS
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with DoH server names
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DOHAvailableServers'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # LAN Defaults API (v2)
+  /v2/api/site/{site}/lan/defaults:
+    get:
+      summary: Get LAN defaults
+      description: |
+        Retrieves default LAN network configuration.
+      operationId: getLANDefaults
+      tags:
+        - Network
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with LAN defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LANDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # WAN Defaults API (v2)
+  /v2/api/site/{site}/wan/defaults:
+    get:
+      summary: Get WAN defaults
+      description: |
+        Retrieves default WAN network configuration.
+      operationId: getWANDefaults
+      tags:
+        - Network
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with WAN defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WANDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # WLAN Defaults API (v2)
+  /v2/api/site/{site}/wlan/defaults:
+    get:
+      summary: Get WLAN defaults
+      description: |
+        Retrieves default WLAN configuration.
+      operationId: getWLANDefaults
+      tags:
+        - WiFi
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with WLAN defaults
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WLANDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # WLAN Enriched Configuration API (v2)
+  /v2/api/site/{site}/wlan/enriched-configuration:
+    get:
+      summary: Get WLAN enriched configuration
+      description: |
+        Retrieves enriched WLAN configurations with details and statistics.
+      operationId: getWLANEnrichedConfiguration
+      tags:
+        - WiFi
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with WLAN configurations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WLANEnrichedConfiguration'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # L2TP VPN Defaults API (v2)
+  /v2/api/site/{site}/vpn/l2tp/defaults:
+    get:
+      summary: Get L2TP VPN defaults
+      description: |
+        Retrieves default L2TP VPN configuration.
+      operationId: getL2TPVPNDefaults
+      tags:
+        - VPN
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with L2TP VPN defaults
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/L2TPVPNDefaults'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -6690,3 +6903,475 @@ components:
         wireless_uplink:
           type: boolean
           description: Whether uplink is wireless
+
+    # Firewall Zone Default
+    FirewallZoneDefault:
+      type: object
+      description: Default firewall zone configuration
+      properties:
+        _id:
+          type: string
+          description: Zone ID
+        name:
+          type: string
+          description: Zone name
+        zone_key:
+          type: string
+          description: Zone key identifier
+        default_zone:
+          type: boolean
+          description: Whether this is a default zone
+        attr_no_edit:
+          type: boolean
+          description: Cannot be edited
+        network_ids:
+          type: array
+          description: Associated network IDs
+          items:
+            type: string
+
+    # Firewall Policy Defaults
+    FirewallPolicyDefaults:
+      type: object
+      description: Default firewall policy configuration
+      properties:
+        action:
+          type: string
+          description: Default action
+          enum:
+            - ALLOW
+            - BLOCK
+            - REJECT
+        enabled:
+          type: boolean
+          description: Whether enabled by default
+        logging:
+          type: boolean
+          description: Whether logging is enabled
+        protocol:
+          type: string
+          description: Protocol
+        ip_version:
+          type: string
+          description: IP version
+          enum:
+            - IPV4
+            - IPV6
+            - BOTH
+        connection_state_type:
+          type: string
+          description: Connection state type
+        predefined:
+          type: boolean
+          description: Whether this is predefined
+        match_ip_sec:
+          type: boolean
+          description: Match IPSec traffic
+        create_allow_respond:
+          type: boolean
+          description: Create allow respond rule
+        source:
+          $ref: '#/components/schemas/FirewallPolicyTarget'
+        destination:
+          $ref: '#/components/schemas/FirewallPolicyTarget'
+        schedule:
+          $ref: '#/components/schemas/FirewallSchedule'
+
+    FirewallPolicyTarget:
+      type: object
+      description: Firewall policy target
+      properties:
+        matching_target:
+          type: string
+          description: Matching target
+        matching_target_type:
+          type: string
+          description: Target type
+        port_matching_type:
+          type: string
+          description: Port matching type
+        match_opposite_ports:
+          type: boolean
+          description: Match opposite ports
+
+    FirewallSchedule:
+      type: object
+      description: Firewall schedule
+      properties:
+        mode:
+          type: string
+          description: Schedule mode
+          enum:
+            - ALWAYS
+            - SPECIFIC
+
+    # DoH Defaults
+    DOHDefaults:
+      type: object
+      description: DNS over HTTPS default settings
+      properties:
+        state:
+          type: string
+          description: DoH state
+          enum:
+            - "off"
+            - "on"
+        server_names:
+          type: array
+          description: Selected server names
+          items:
+            type: string
+
+    # DoH Available Servers
+    DOHAvailableServers:
+      type: object
+      description: Available DoH servers
+      properties:
+        server_names:
+          type: array
+          description: Available server names
+          items:
+            type: string
+
+    # LAN Defaults
+    LANDefaults:
+      type: object
+      description: Default LAN network configuration
+      properties:
+        purpose:
+          type: string
+          description: Network purpose
+        networkgroup:
+          type: string
+          description: Network group
+        auto_scale_enabled:
+          type: boolean
+          description: Auto scale enabled
+        dhcpd_enabled:
+          type: boolean
+          description: DHCP server enabled
+        dhcpd_leasetime:
+          type: integer
+          description: DHCP lease time in seconds
+        dhcpd_conflict_checking:
+          type: boolean
+          description: DHCP conflict checking
+        dhcpd_dns_enabled:
+          type: boolean
+          description: DHCP DNS enabled
+        dhcpd_gateway_enabled:
+          type: boolean
+          description: DHCP gateway enabled
+        dhcp_relay_enabled:
+          type: boolean
+          description: DHCP relay enabled
+        dhcpguard_enabled:
+          type: boolean
+          description: DHCP guard enabled
+        dhcpdv6_enabled:
+          type: boolean
+          description: DHCPv6 enabled
+        dhcpdv6_dns_auto:
+          type: boolean
+          description: DHCPv6 auto DNS
+        dhcpdv6_leasetime:
+          type: integer
+          description: DHCPv6 lease time
+        is_nat:
+          type: boolean
+          description: NAT enabled
+        igmp_snooping:
+          type: boolean
+          description: IGMP snooping enabled
+        mdns_enabled:
+          type: boolean
+          description: mDNS enabled
+        ipv6_interface_type:
+          type: string
+          description: IPv6 interface type
+        ipv6_ra_enabled:
+          type: boolean
+          description: IPv6 RA enabled
+        ipv6_client_address_assignment:
+          type: string
+          description: IPv6 client address assignment
+        upnp_lan_enabled:
+          type: boolean
+          description: UPnP LAN enabled
+        lte_lan_enabled:
+          type: boolean
+          description: LTE LAN enabled
+        setting_preference:
+          type: string
+          description: Setting preference
+
+    # WAN Defaults
+    WANDefaults:
+      type: object
+      description: Default WAN network configuration
+      properties:
+        purpose:
+          type: string
+          description: Network purpose
+        wan_type:
+          type: string
+          description: WAN type
+          enum:
+            - dhcp
+            - static
+            - pppoe
+        wan_type_v6:
+          type: string
+          description: WAN IPv6 type
+        wan_vlan_enabled:
+          type: boolean
+          description: WAN VLAN enabled
+        wan_dns_preference:
+          type: string
+          description: DNS preference
+        wan_ipv6_dns_preference:
+          type: string
+          description: IPv6 DNS preference
+        wan_smartq_enabled:
+          type: boolean
+          description: Smart Queue enabled
+        wan_magic_enabled:
+          type: boolean
+          description: WAN Magic enabled
+        wan_failover_priority:
+          type: integer
+          description: Failover priority
+        mac_override_enabled:
+          type: boolean
+          description: MAC override enabled
+        igmp_proxy_upstream:
+          type: boolean
+          description: IGMP proxy upstream
+        igmp_proxy_for:
+          type: string
+          description: IGMP proxy for
+        report_wan_event:
+          type: boolean
+          description: Report WAN events
+        attr_no_delete:
+          type: boolean
+          description: Cannot be deleted
+        wan_provider_capabilities:
+          $ref: '#/components/schemas/WANProviderCapabilities'
+        setting_preference:
+          type: string
+          description: Setting preference
+
+    # WLAN Defaults
+    WLANDefaults:
+      type: object
+      description: Default WLAN configuration
+      properties:
+        enabled:
+          type: boolean
+          description: Whether enabled
+        security:
+          type: string
+          description: Security type
+        wpa_mode:
+          type: string
+          description: WPA mode
+        wpa_enc:
+          type: string
+          description: WPA encryption
+        wpa3_support:
+          type: boolean
+          description: WPA3 support
+        wpa3_transition:
+          type: boolean
+          description: WPA3 transition mode
+        pmf_mode:
+          type: string
+          description: PMF mode
+        hide_ssid:
+          type: boolean
+          description: Hide SSID
+        is_guest:
+          type: boolean
+          description: Guest network
+        l2_isolation:
+          type: boolean
+          description: L2 isolation
+        fast_roaming_enabled:
+          type: boolean
+          description: Fast roaming enabled
+        bss_transition:
+          type: boolean
+          description: BSS transition
+        enhanced_iot:
+          type: boolean
+          description: Enhanced IoT mode
+        uapsd_enabled:
+          type: boolean
+          description: UAPSD enabled
+        mac_filter_enabled:
+          type: boolean
+          description: MAC filter enabled
+        mac_filter_policy:
+          type: string
+          description: MAC filter policy
+        wlan_bands:
+          type: array
+          description: Enabled WiFi bands
+          items:
+            type: string
+        ap_group_mode:
+          type: string
+          description: AP group mode
+        dtim_mode:
+          type: string
+          description: DTIM mode
+        dtim_ng:
+          type: integer
+          description: DTIM 2.4GHz
+        dtim_na:
+          type: integer
+          description: DTIM 5GHz
+        dtim_6e:
+          type: integer
+          description: DTIM 6GHz
+        minrate_ng_enabled:
+          type: boolean
+          description: Min rate 2.4GHz enabled
+        minrate_ng_data_rate_kbps:
+          type: integer
+          description: Min rate 2.4GHz in Kbps
+        minrate_na_enabled:
+          type: boolean
+          description: Min rate 5GHz enabled
+        minrate_na_data_rate_kbps:
+          type: integer
+          description: Min rate 5GHz in Kbps
+        setting_preference:
+          type: string
+          description: Setting preference
+
+    # WLAN Enriched Configuration
+    WLANEnrichedConfiguration:
+      type: object
+      description: Enriched WLAN configuration
+      properties:
+        configuration:
+          $ref: '#/components/schemas/WLANConfiguration'
+        details:
+          $ref: '#/components/schemas/WLANDetails'
+        statistics:
+          $ref: '#/components/schemas/WLANStatistics'
+
+    WLANConfiguration:
+      type: object
+      description: WLAN network configuration
+      properties:
+        _id:
+          type: string
+          description: WLAN ID
+        name:
+          type: string
+          description: WLAN name (SSID)
+        enabled:
+          type: boolean
+          description: Whether enabled
+        security:
+          type: string
+          description: Security type
+        wpa_mode:
+          type: string
+          description: WPA mode
+        wpa_enc:
+          type: string
+          description: WPA encryption
+        wpa3_support:
+          type: boolean
+          description: WPA3 support
+        wpa3_transition:
+          type: boolean
+          description: WPA3 transition mode
+        pmf_mode:
+          type: string
+          description: PMF mode
+        hide_ssid:
+          type: boolean
+          description: Hide SSID
+        is_guest:
+          type: boolean
+          description: Guest network
+        networkconf_id:
+          type: string
+          description: Associated network ID
+        usergroup_id:
+          type: string
+          description: User group ID
+        wlan_band:
+          type: string
+          description: WLAN band
+        wlan_bands:
+          type: array
+          description: Enabled WiFi bands
+          items:
+            type: string
+        ap_group_ids:
+          type: array
+          description: AP group IDs
+          items:
+            type: string
+        ap_group_mode:
+          type: string
+          description: AP group mode
+        setting_preference:
+          type: string
+          description: Setting preference
+
+    WLANDetails:
+      type: object
+      description: WLAN details
+      properties:
+        creation_timestamp:
+          type: integer
+          format: int64
+          description: Creation timestamp
+
+    WLANStatistics:
+      type: object
+      description: WLAN statistics
+      properties:
+        current_client_count:
+          type: integer
+          description: Current client count
+        current_access_point_count:
+          type: integer
+          description: Current AP count
+        current_satisfaction:
+          type: integer
+          description: Current satisfaction score
+        peak_client_count:
+          type: integer
+          description: Peak client count
+
+    # L2TP VPN Defaults
+    L2TPVPNDefaults:
+      type: object
+      description: Default L2TP VPN configuration
+      properties:
+        purpose:
+          type: string
+          description: Purpose
+        vpn_type:
+          type: string
+          description: VPN type
+        require_mschapv2:
+          type: boolean
+          description: Require MS-CHAPv2
+        l2tp_allow_weak_ciphers:
+          type: boolean
+          description: Allow weak ciphers
+        dhcpd_dns_enabled:
+          type: boolean
+          description: DHCP DNS enabled
+        setting_preference:
+          type: string
+          description: Setting preference

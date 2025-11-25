@@ -1238,3 +1238,138 @@ func (c *APIClient) GetWiFiManData(ctx context.Context, site Site) ([]WiFiManEnt
 	}
 	return *data, nil
 }
+
+// GetFirewallZoneDefaults retrieves default firewall zone configurations.
+func (c *APIClient) GetFirewallZoneDefaults(ctx context.Context, site Site) ([]FirewallZoneDefault, error) {
+	resp, err := c.client.GetFirewallZoneDefaultsWithResponse(ctx, site)
+	var dataPtr *[]FirewallZoneDefault
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get firewall zone defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetFirewallPolicyDefaults retrieves default firewall policy configuration.
+func (c *APIClient) GetFirewallPolicyDefaults(ctx context.Context, site Site) (*FirewallPolicyDefaults, error) {
+	resp, err := c.client.GetFirewallPolicyDefaultsWithResponse(ctx, site)
+	var dataPtr *FirewallPolicyDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get firewall policy defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetDOHDefaults retrieves DNS over HTTPS default settings.
+func (c *APIClient) GetDOHDefaults(ctx context.Context, site Site) (*DOHDefaults, error) {
+	resp, err := c.client.GetDOHDefaultsWithResponse(ctx, site)
+	var dataPtr *DOHDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get DoH defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetDOHAvailableServerNames retrieves list of available DNS over HTTPS server names.
+func (c *APIClient) GetDOHAvailableServerNames(ctx context.Context, site Site) (*DOHAvailableServers, error) {
+	resp, err := c.client.GetDOHAvailableServerNamesWithResponse(ctx, site)
+	var dataPtr *DOHAvailableServers
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get DoH available server names for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetLANDefaults retrieves default LAN network configuration.
+func (c *APIClient) GetLANDefaults(ctx context.Context, site Site) (*LANDefaults, error) {
+	resp, err := c.client.GetLANDefaultsWithResponse(ctx, site)
+	var dataPtr *LANDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get LAN defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetWANDefaults retrieves default WAN network configuration.
+func (c *APIClient) GetWANDefaults(ctx context.Context, site Site) (*WANDefaults, error) {
+	resp, err := c.client.GetWANDefaultsWithResponse(ctx, site)
+	var dataPtr *WANDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get WAN defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetWLANDefaults retrieves default WLAN configuration.
+func (c *APIClient) GetWLANDefaults(ctx context.Context, site Site) ([]WLANDefaults, error) {
+	resp, err := c.client.GetWLANDefaultsWithResponse(ctx, site)
+	var dataPtr *[]WLANDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get WLAN defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetWLANEnrichedConfiguration retrieves enriched WLAN configurations.
+func (c *APIClient) GetWLANEnrichedConfiguration(ctx context.Context, site Site) ([]WLANEnrichedConfiguration, error) {
+	resp, err := c.client.GetWLANEnrichedConfigurationWithResponse(ctx, site)
+	var dataPtr *[]WLANEnrichedConfiguration
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get WLAN enriched configuration for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetL2TPVPNDefaults retrieves default L2TP VPN configuration.
+func (c *APIClient) GetL2TPVPNDefaults(ctx context.Context, site Site) (*L2TPVPNDefaults, error) {
+	resp, err := c.client.GetL2TPVPNDefaultsWithResponse(ctx, site)
+	var dataPtr *L2TPVPNDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get L2TP VPN defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}

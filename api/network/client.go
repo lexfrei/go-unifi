@@ -1972,3 +1972,144 @@ func (c *APIClient) GetSSLInspectionProfilesDefaults(
 	}
 	return data, nil
 }
+
+// GetShadowModeInfo retrieves shadow mode information.
+func (c *APIClient) GetShadowModeInfo(ctx context.Context, site Site) (*ShadowModeInfo, error) {
+	resp, err := c.client.GetShadowModeInfoWithResponse(ctx, site)
+	var dataPtr *ShadowModeInfo
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get shadow mode info for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetStacking retrieves switch stacking configuration.
+func (c *APIClient) GetStacking(ctx context.Context, site Site) ([]StackingConfig, error) {
+	resp, err := c.client.GetStackingWithResponse(ctx, site)
+	var dataPtr *[]StackingConfig
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get stacking configuration for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetMCLAGGroups retrieves MC-LAG group configurations.
+func (c *APIClient) GetMCLAGGroups(ctx context.Context, site Site) ([]MCLAGGroup, error) {
+	resp, err := c.client.GetMCLAGGroupsWithResponse(ctx, site)
+	var dataPtr *[]MCLAGGroup
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get MC-LAG groups for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetDeviceWirelessLinks retrieves wireless mesh link configurations.
+func (c *APIClient) GetDeviceWirelessLinks(ctx context.Context, site Site) ([]DeviceWirelessLink, error) {
+	resp, err := c.client.GetDeviceWirelessLinksWithResponse(ctx, site)
+	var dataPtr *[]DeviceWirelessLink
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get device wireless links for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetWireGuardUsersExistingSubnets retrieves WireGuard existing subnets.
+func (c *APIClient) GetWireGuardUsersExistingSubnets(
+	ctx context.Context, site Site,
+) (*WireGuardExistingSubnets, error) {
+	resp, err := c.client.GetWireGuardUsersExistingSubnetsWithResponse(ctx, site)
+	var dataPtr *WireGuardExistingSubnets
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get WireGuard existing subnets for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetMagicSiteToSiteVPNConfigs retrieves Magic site-to-site VPN configurations.
+func (c *APIClient) GetMagicSiteToSiteVPNConfigs(
+	ctx context.Context, site Site,
+) ([]MagicSiteToSiteVPNConfig, error) {
+	resp, err := c.client.GetMagicSiteToSiteVPNConfigsWithResponse(ctx, site)
+	var dataPtr *[]MagicSiteToSiteVPNConfig
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get Magic site-to-site VPN configs for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetObjectOrientedNetworkConfigs retrieves object-oriented network configurations.
+func (c *APIClient) GetObjectOrientedNetworkConfigs(
+	ctx context.Context, site Site,
+) ([]ObjectOrientedNetworkConfig, error) {
+	resp, err := c.client.GetObjectOrientedNetworkConfigsWithResponse(ctx, site)
+	var dataPtr *[]ObjectOrientedNetworkConfig
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get OON configs for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetUtilizationLastDays retrieves utilization statistics for last days.
+func (c *APIClient) GetUtilizationLastDays(ctx context.Context, site Site) (*UtilizationLastDays, error) {
+	resp, err := c.client.GetUtilizationLastDaysWithResponse(ctx, site)
+	var dataPtr *UtilizationLastDays
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get utilization data for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetVPNClientConnections retrieves current VPN client connections.
+func (c *APIClient) GetVPNClientConnections(ctx context.Context, site Site) (*VPNClientConnections, error) {
+	resp, err := c.client.GetVPNClientConnectionsWithResponse(ctx, site)
+	var dataPtr *VPNClientConnections
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get VPN client connections for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}

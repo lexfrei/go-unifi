@@ -562,4 +562,33 @@ type NetworkAPIClient interface { //nolint:interfacebloat // This interface mirr
 
 	// GetSSLInspectionProfilesDefaults retrieves default SSL inspection profile configuration.
 	GetSSLInspectionProfilesDefaults(ctx context.Context, site Site) (*SSLInspectionProfileDefaults, error)
+
+	// Miscellaneous v2 API operations
+
+	// GetShadowModeInfo retrieves shadow mode information.
+	GetShadowModeInfo(ctx context.Context, site Site) (*ShadowModeInfo, error)
+
+	// GetStacking retrieves switch stacking configuration.
+	GetStacking(ctx context.Context, site Site) ([]StackingConfig, error)
+
+	// GetMCLAGGroups retrieves MC-LAG group configurations.
+	GetMCLAGGroups(ctx context.Context, site Site) ([]MCLAGGroup, error)
+
+	// GetDeviceWirelessLinks retrieves wireless mesh link configurations.
+	GetDeviceWirelessLinks(ctx context.Context, site Site) ([]DeviceWirelessLink, error)
+
+	// GetWireGuardUsersExistingSubnets retrieves WireGuard existing subnets.
+	GetWireGuardUsersExistingSubnets(ctx context.Context, site Site) (*WireGuardExistingSubnets, error)
+
+	// GetMagicSiteToSiteVPNConfigs retrieves Magic site-to-site VPN configurations.
+	GetMagicSiteToSiteVPNConfigs(ctx context.Context, site Site) ([]MagicSiteToSiteVPNConfig, error)
+
+	// GetObjectOrientedNetworkConfigs retrieves object-oriented network configurations.
+	GetObjectOrientedNetworkConfigs(ctx context.Context, site Site) ([]ObjectOrientedNetworkConfig, error)
+
+	// GetUtilizationLastDays retrieves utilization statistics for last days.
+	GetUtilizationLastDays(ctx context.Context, site Site) (*UtilizationLastDays, error)
+
+	// GetVPNClientConnections retrieves current VPN client connections.
+	GetVPNClientConnections(ctx context.Context, site Site) (*VPNClientConnections, error)
 }

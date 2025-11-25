@@ -3358,6 +3358,129 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # System Log Remote Settings API (v2)
+  /v2/api/site/{site}/system-log/remote-settings:
+    get:
+      summary: Get system log remote settings
+      description: |
+        Retrieves remote syslog settings.
+      operationId: getSystemLogRemoteSettings
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with remote settings
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemLogRemoteSettings'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # System Log Display Options Admins API (v2)
+  /v2/api/site/{site}/system-log/display-options/admins:
+    get:
+      summary: Get system log display options for admins
+      description: |
+        Retrieves admin users for log filtering.
+      operationId: getSystemLogDisplayOptionsAdmins
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with admins
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SystemLogAdmin'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # System Log Threat Display Options Clients API (v2)
+  /v2/api/site/{site}/system-log/threat/display-options/clients:
+    get:
+      summary: Get system log threat display options for clients
+      description: |
+        Retrieves client devices for threat log filtering.
+      operationId: getSystemLogThreatDisplayOptionsClients
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with client devices
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SystemLogClient'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # System Log Triggers Display Options Hosts API (v2)
+  /v2/api/site/{site}/system-log/triggers/display-options/hosts:
+    get:
+      summary: Get system log triggers display options for hosts
+      description: |
+        Retrieves hosts for trigger log filtering.
+      operationId: getSystemLogTriggersDisplayOptionsHosts
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with hosts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SystemLogHost'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  # System Log AP Logs Display Options APs API (v2)
+  /v2/api/site/{site}/system-log/ap-logs/display-options/aps:
+    get:
+      summary: Get system log AP logs display options for APs
+      description: |
+        Retrieves access point MAC addresses for AP log filtering.
+      operationId: getSystemLogAPLogsDisplayOptionsAPs
+      tags:
+        - Configuration
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      responses:
+        '200':
+          description: Successful response with AP MAC addresses
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
   # SSL Inspection Certificates API (v2)
   /v2/api/site/{site}/ssl-inspection/certificates:
     get:
@@ -9623,4 +9746,57 @@ components:
     VPNClientConnection:
       type: object
       description: VPN client connection
+      additionalProperties: true
+
+    # System Log Types
+    SystemLogRemoteSettings:
+      type: object
+      description: Remote syslog settings
+      properties:
+        enabled:
+          type: boolean
+          description: Whether remote logging is enabled
+        debug:
+          type: boolean
+          description: Whether debug logging is enabled
+        port:
+          type: integer
+          description: Syslog port
+        this_controller:
+          type: boolean
+          description: Log to this controller
+        this_controller_encrypted_only:
+          type: boolean
+          description: Only encrypted logs to this controller
+        log_all_contents:
+          type: boolean
+          description: Log all contents
+        contents:
+          type: array
+          description: Specific content types to log
+          items:
+            type: string
+
+    SystemLogAdmin:
+      type: object
+      description: Admin user for log filtering
+      properties:
+        _id:
+          type: string
+          description: Admin ID
+        name:
+          type: string
+          description: Admin name
+        avatar_id:
+          type: string
+          description: Avatar ID
+
+    SystemLogClient:
+      type: object
+      description: Client device for log filtering
+      additionalProperties: true
+
+    SystemLogHost:
+      type: object
+      description: Host for trigger log filtering
       additionalProperties: true

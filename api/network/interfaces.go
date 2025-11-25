@@ -539,4 +539,27 @@ type NetworkAPIClient interface { //nolint:interfacebloat // This interface mirr
 
 	// GetSettingsWiFiAIDefaults retrieves default WiFi AI settings.
 	GetSettingsWiFiAIDefaults(ctx context.Context, site Site) ([]WiFiAIDefaults, error)
+
+	// SSL Inspection operations (v2 API)
+
+	// GetSSLInspectionCertificates retrieves SSL inspection certificates.
+	GetSSLInspectionCertificates(ctx context.Context, site Site) ([]SSLInspectionCertificate, error)
+
+	// GetSSLInspectionCertificateActive retrieves the active SSL inspection certificate.
+	GetSSLInspectionCertificateActive(ctx context.Context, site Site) (*SSLInspectionCertificate, error)
+
+	// GetSSLInspectionFileExtensions retrieves file extensions for SSL inspection.
+	GetSSLInspectionFileExtensions(ctx context.Context, site Site) ([]string, error)
+
+	// GetSSLInspectionSearchEngines retrieves search engines for SSL inspection.
+	GetSSLInspectionSearchEngines(ctx context.Context, site Site) ([]SSLInspectionSearchEngine, error)
+
+	// GetSSLInspectionSetting retrieves SSL inspection setting.
+	GetSSLInspectionSetting(ctx context.Context, site Site) (*SSLInspectionSetting, error)
+
+	// GetSSLInspectionSettingDefaults retrieves default SSL inspection settings.
+	GetSSLInspectionSettingDefaults(ctx context.Context, site Site) (*SSLInspectionSetting, error)
+
+	// GetSSLInspectionProfilesDefaults retrieves default SSL inspection profile configuration.
+	GetSSLInspectionProfilesDefaults(ctx context.Context, site Site) (*SSLInspectionProfileDefaults, error)
 }

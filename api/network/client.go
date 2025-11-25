@@ -1859,3 +1859,116 @@ func (c *APIClient) GetSettingsWiFiAIDefaults(ctx context.Context, site Site) ([
 	}
 	return *data, nil
 }
+
+// GetSSLInspectionCertificates retrieves SSL inspection certificates.
+func (c *APIClient) GetSSLInspectionCertificates(
+	ctx context.Context, site Site,
+) ([]SSLInspectionCertificate, error) {
+	resp, err := c.client.GetSSLInspectionCertificatesWithResponse(ctx, site)
+	var dataPtr *[]SSLInspectionCertificate
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get SSL inspection certificates for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetSSLInspectionCertificateActive retrieves the active SSL inspection certificate.
+func (c *APIClient) GetSSLInspectionCertificateActive(
+	ctx context.Context, site Site,
+) (*SSLInspectionCertificate, error) {
+	resp, err := c.client.GetSSLInspectionCertificateActiveWithResponse(ctx, site)
+	var dataPtr *SSLInspectionCertificate
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get active SSL inspection certificate for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetSSLInspectionFileExtensions retrieves file extensions for SSL inspection.
+func (c *APIClient) GetSSLInspectionFileExtensions(ctx context.Context, site Site) ([]string, error) {
+	resp, err := c.client.GetSSLInspectionFileExtensionsWithResponse(ctx, site)
+	var dataPtr *[]string
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get SSL inspection file extensions for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetSSLInspectionSearchEngines retrieves search engines for SSL inspection.
+func (c *APIClient) GetSSLInspectionSearchEngines(
+	ctx context.Context, site Site,
+) ([]SSLInspectionSearchEngine, error) {
+	resp, err := c.client.GetSSLInspectionSearchEnginesWithResponse(ctx, site)
+	var dataPtr *[]SSLInspectionSearchEngine
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get SSL inspection search engines for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetSSLInspectionSetting retrieves SSL inspection setting.
+func (c *APIClient) GetSSLInspectionSetting(ctx context.Context, site Site) (*SSLInspectionSetting, error) {
+	resp, err := c.client.GetSSLInspectionSettingWithResponse(ctx, site)
+	var dataPtr *SSLInspectionSetting
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get SSL inspection setting for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetSSLInspectionSettingDefaults retrieves default SSL inspection settings.
+func (c *APIClient) GetSSLInspectionSettingDefaults(ctx context.Context, site Site) (*SSLInspectionSetting, error) {
+	resp, err := c.client.GetSSLInspectionSettingDefaultsWithResponse(ctx, site)
+	var dataPtr *SSLInspectionSetting
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get SSL inspection setting defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetSSLInspectionProfilesDefaults retrieves default SSL inspection profile configuration.
+func (c *APIClient) GetSSLInspectionProfilesDefaults(
+	ctx context.Context, site Site,
+) (*SSLInspectionProfileDefaults, error) {
+	resp, err := c.client.GetSSLInspectionProfilesDefaultsWithResponse(ctx, site)
+	var dataPtr *SSLInspectionProfileDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get SSL inspection profiles defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}

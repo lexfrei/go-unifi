@@ -1628,3 +1628,234 @@ func (c *APIClient) GetSystemLogSettingsDefaults(ctx context.Context, site Site)
 	}
 	return data, nil
 }
+
+// GetSettingsConnectivityDefaults retrieves default connectivity settings.
+func (c *APIClient) GetSettingsConnectivityDefaults(ctx context.Context, site Site) (*ConnectivityDefaults, error) {
+	resp, err := c.client.GetSettingsConnectivityDefaultsWithResponse(ctx, site)
+	var dataPtr *ConnectivityDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get connectivity defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetSettingsElementAdoptDefaults retrieves default element adoption settings.
+func (c *APIClient) GetSettingsElementAdoptDefaults(ctx context.Context, site Site) (*ElementAdoptDefaults, error) {
+	resp, err := c.client.GetSettingsElementAdoptDefaultsWithResponse(ctx, site)
+	var dataPtr *ElementAdoptDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get element adopt defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetSettingsGlobalNATDefaults retrieves default global NAT settings.
+func (c *APIClient) GetSettingsGlobalNATDefaults(ctx context.Context, site Site) (*GlobalNATDefaults, error) {
+	resp, err := c.client.GetSettingsGlobalNATDefaultsWithResponse(ctx, site)
+	var dataPtr *GlobalNATDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get global NAT defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetSettingsGlobalSwitchDefaults retrieves default global switch settings.
+func (c *APIClient) GetSettingsGlobalSwitchDefaults(ctx context.Context, site Site) (*GlobalSwitchDefaults, error) {
+	resp, err := c.client.GetSettingsGlobalSwitchDefaultsWithResponse(ctx, site)
+	var dataPtr *GlobalSwitchDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get global switch defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetSettingsIPSAdvancedFilteringAutoValues retrieves auto-computed IPS advanced filtering settings.
+func (c *APIClient) GetSettingsIPSAdvancedFilteringAutoValues(
+	ctx context.Context, site Site,
+) (*IPSAdvancedFilteringSettings, error) {
+	resp, err := c.client.GetSettingsIPSAdvancedFilteringAutoValuesWithResponse(ctx, site)
+	var dataPtr *IPSAdvancedFilteringSettings
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get IPS advanced filtering auto values for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetSettingsIPSAdvancedFilteringDefaults retrieves default IPS advanced filtering settings.
+func (c *APIClient) GetSettingsIPSAdvancedFilteringDefaults(
+	ctx context.Context, site Site,
+) (*IPSAdvancedFilteringSettings, error) {
+	resp, err := c.client.GetSettingsIPSAdvancedFilteringDefaultsWithResponse(ctx, site)
+	var dataPtr *IPSAdvancedFilteringSettings
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get IPS advanced filtering defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetSettingsIPSAvailableCategories retrieves available IPS categories.
+func (c *APIClient) GetSettingsIPSAvailableCategories(ctx context.Context, site Site) ([]IPSCategory, error) {
+	resp, err := c.client.GetSettingsIPSAvailableCategoriesWithResponse(ctx, site)
+	var dataPtr *[]IPSCategory
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get IPS available categories for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetSettingsNetflowDefaults retrieves default netflow settings.
+func (c *APIClient) GetSettingsNetflowDefaults(ctx context.Context, site Site) (*NetflowDefaults, error) {
+	resp, err := c.client.GetSettingsNetflowDefaultsWithResponse(ctx, site)
+	var dataPtr *NetflowDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get netflow defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetSettingsNTPDefaults retrieves default NTP settings.
+func (c *APIClient) GetSettingsNTPDefaults(ctx context.Context, site Site) (*NTPDefaults, error) {
+	resp, err := c.client.GetSettingsNTPDefaultsWithResponse(ctx, site)
+	var dataPtr *NTPDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get NTP defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetSettingsRoamingAssistantDefaults retrieves default roaming assistant settings.
+func (c *APIClient) GetSettingsRoamingAssistantDefaults(
+	ctx context.Context, site Site,
+) (*RoamingAssistantDefaults, error) {
+	resp, err := c.client.GetSettingsRoamingAssistantDefaultsWithResponse(ctx, site)
+	var dataPtr *RoamingAssistantDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get roaming assistant defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetSettingsShortcuts retrieves configured shortcuts.
+func (c *APIClient) GetSettingsShortcuts(ctx context.Context, site Site) ([]SettingsShortcut, error) {
+	resp, err := c.client.GetSettingsShortcutsWithResponse(ctx, site)
+	var dataPtr *[]SettingsShortcut
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get shortcuts for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetSettingsTeleportDefaults retrieves default teleport settings.
+func (c *APIClient) GetSettingsTeleportDefaults(ctx context.Context, site Site) ([]TeleportSettingsDefaults, error) {
+	resp, err := c.client.GetSettingsTeleportDefaultsWithResponse(ctx, site)
+	var dataPtr *[]TeleportSettingsDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get teleport defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}
+
+// GetSettingsTrafficFlowDefaults retrieves default traffic flow settings.
+func (c *APIClient) GetSettingsTrafficFlowDefaults(ctx context.Context, site Site) (*TrafficFlowDefaults, error) {
+	resp, err := c.client.GetSettingsTrafficFlowDefaultsWithResponse(ctx, site)
+	var dataPtr *TrafficFlowDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get traffic flow defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetSettingsUSGDefaults retrieves default USG settings.
+func (c *APIClient) GetSettingsUSGDefaults(ctx context.Context, site Site) (*USGDefaults, error) {
+	resp, err := c.client.GetSettingsUSGDefaultsWithResponse(ctx, site)
+	var dataPtr *USGDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get USG defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return data, nil
+}
+
+// GetSettingsWiFiAIDefaults retrieves default WiFi AI settings.
+func (c *APIClient) GetSettingsWiFiAIDefaults(ctx context.Context, site Site) ([]WiFiAIDefaults, error) {
+	resp, err := c.client.GetSettingsWiFiAIDefaultsWithResponse(ctx, site)
+	var dataPtr *[]WiFiAIDefaults
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	data, err := response.Handle(resp, dataPtr, err, "failed to get WiFi AI defaults for site "+site)
+	if err != nil {
+		//nolint:wrapcheck // err is already wrapped by response.Handle
+		return nil, err
+	}
+	return *data, nil
+}

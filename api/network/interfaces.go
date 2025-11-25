@@ -492,4 +492,51 @@ type NetworkAPIClient interface { //nolint:interfacebloat // This interface mirr
 
 	// GetSystemLogSettingsDefaults retrieves default alert event settings.
 	GetSystemLogSettingsDefaults(ctx context.Context, site Site) (*SystemLogSettings, error)
+
+	// Settings operations (v2 API)
+
+	// GetSettingsConnectivityDefaults retrieves default connectivity settings.
+	GetSettingsConnectivityDefaults(ctx context.Context, site Site) (*ConnectivityDefaults, error)
+
+	// GetSettingsElementAdoptDefaults retrieves default element adoption settings.
+	GetSettingsElementAdoptDefaults(ctx context.Context, site Site) (*ElementAdoptDefaults, error)
+
+	// GetSettingsGlobalNATDefaults retrieves default global NAT settings.
+	GetSettingsGlobalNATDefaults(ctx context.Context, site Site) (*GlobalNATDefaults, error)
+
+	// GetSettingsGlobalSwitchDefaults retrieves default global switch settings.
+	GetSettingsGlobalSwitchDefaults(ctx context.Context, site Site) (*GlobalSwitchDefaults, error)
+
+	// GetSettingsIPSAdvancedFilteringAutoValues retrieves auto-computed IPS advanced filtering settings.
+	GetSettingsIPSAdvancedFilteringAutoValues(ctx context.Context, site Site) (*IPSAdvancedFilteringSettings, error)
+
+	// GetSettingsIPSAdvancedFilteringDefaults retrieves default IPS advanced filtering settings.
+	GetSettingsIPSAdvancedFilteringDefaults(ctx context.Context, site Site) (*IPSAdvancedFilteringSettings, error)
+
+	// GetSettingsIPSAvailableCategories retrieves available IPS categories.
+	GetSettingsIPSAvailableCategories(ctx context.Context, site Site) ([]IPSCategory, error)
+
+	// GetSettingsNetflowDefaults retrieves default netflow settings.
+	GetSettingsNetflowDefaults(ctx context.Context, site Site) (*NetflowDefaults, error)
+
+	// GetSettingsNTPDefaults retrieves default NTP settings.
+	GetSettingsNTPDefaults(ctx context.Context, site Site) (*NTPDefaults, error)
+
+	// GetSettingsRoamingAssistantDefaults retrieves default roaming assistant settings.
+	GetSettingsRoamingAssistantDefaults(ctx context.Context, site Site) (*RoamingAssistantDefaults, error)
+
+	// GetSettingsShortcuts retrieves configured shortcuts.
+	GetSettingsShortcuts(ctx context.Context, site Site) ([]SettingsShortcut, error)
+
+	// GetSettingsTeleportDefaults retrieves default teleport settings.
+	GetSettingsTeleportDefaults(ctx context.Context, site Site) ([]TeleportSettingsDefaults, error)
+
+	// GetSettingsTrafficFlowDefaults retrieves default traffic flow settings.
+	GetSettingsTrafficFlowDefaults(ctx context.Context, site Site) (*TrafficFlowDefaults, error)
+
+	// GetSettingsUSGDefaults retrieves default USG settings.
+	GetSettingsUSGDefaults(ctx context.Context, site Site) (*USGDefaults, error)
+
+	// GetSettingsWiFiAIDefaults retrieves default WiFi AI settings.
+	GetSettingsWiFiAIDefaults(ctx context.Context, site Site) ([]WiFiAIDefaults, error)
 }

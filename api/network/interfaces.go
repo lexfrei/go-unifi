@@ -673,4 +673,24 @@ type NetworkAPIClient interface { //nolint:interfacebloat // This interface mirr
 
 	// GetTrafficFlows retrieves firewall traffic flow data.
 	GetTrafficFlows(ctx context.Context, site Site, request *TrafficFlowsRequest) (*TrafficFlowsResponse, error)
+
+	// OpenVPN operations (v2 API)
+
+	// GetOpenVPNCertificates retrieves OpenVPN certificates.
+	GetOpenVPNCertificates(ctx context.Context, site Site) (*OpenVPNCertificatesResponse, error)
+
+	// Alias operations (v2 API)
+
+	// GetAliases retrieves client aliases for specified MAC addresses.
+	GetAliases(ctx context.Context, site Site, request *AliasRequest) (*AliasResponse, error)
+
+	// Clients metadata operations (v2 API)
+
+	// GetClientsMetadata retrieves metadata for clients by their MAC addresses.
+	GetClientsMetadata(ctx context.Context, site Site, macs []string) (*ClientsMetadataResponse, error)
+
+	// Port system logs operations (v2 API)
+
+	// GetPortSystemLogs retrieves system logs for a specific port.
+	GetPortSystemLogs(ctx context.Context, site Site, request *PortSystemLogsRequest) (*PortSystemLogsResponse, error)
 }

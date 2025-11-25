@@ -2520,3 +2520,63 @@ func (c *APIClient) GetTrafficFlows(
 	//nolint:wrapcheck // response.Handle wraps errors internally
 	return response.Handle(resp, dataPtr, err, "failed to get traffic flows for site "+site)
 }
+
+// GetOpenVPNCertificates retrieves OpenVPN certificates.
+func (c *APIClient) GetOpenVPNCertificates(
+	ctx context.Context,
+	site Site,
+) (*OpenVPNCertificatesResponse, error) {
+	body := map[string]any{}
+	resp, err := c.client.GetOpenVPNCertificatesWithResponse(ctx, site, body)
+	var dataPtr *OpenVPNCertificatesResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get OpenVPN certificates for site "+site)
+}
+
+// GetAliases retrieves client aliases for specified MAC addresses.
+func (c *APIClient) GetAliases(
+	ctx context.Context,
+	site Site,
+	request *AliasRequest,
+) (*AliasResponse, error) {
+	resp, err := c.client.GetAliasesWithResponse(ctx, site, *request)
+	var dataPtr *AliasResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get aliases for site "+site)
+}
+
+// GetClientsMetadata retrieves metadata for clients by their MAC addresses.
+func (c *APIClient) GetClientsMetadata(
+	ctx context.Context,
+	site Site,
+	macs []string,
+) (*ClientsMetadataResponse, error) {
+	resp, err := c.client.GetClientsMetadataWithResponse(ctx, site, macs)
+	var dataPtr *ClientsMetadataResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get clients metadata for site "+site)
+}
+
+// GetPortSystemLogs retrieves system logs for a specific port.
+func (c *APIClient) GetPortSystemLogs(
+	ctx context.Context,
+	site Site,
+	request *PortSystemLogsRequest,
+) (*PortSystemLogsResponse, error) {
+	resp, err := c.client.GetPortSystemLogsWithResponse(ctx, site, *request)
+	var dataPtr *PortSystemLogsResponse
+	if resp != nil {
+		dataPtr = resp.JSON200
+	}
+	//nolint:wrapcheck // response.Handle wraps errors internally
+	return response.Handle(resp, dataPtr, err, "failed to get port system logs for site "+site)
+}

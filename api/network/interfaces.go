@@ -730,4 +730,29 @@ type NetworkAPIClient interface { //nolint:interfacebloat // This interface mirr
 
 	// UnauthorizeGuestAccess revokes guest authorization and disconnects the client.
 	UnauthorizeGuestAccess(ctx context.Context, siteID openapi_types.UUID, clientID openapi_types.UUID) (*ClientActionResponse, error)
+
+	// Legacy Cmd API - Device Manager Commands
+	// These methods use the legacy /api/s/{site}/cmd/devmgr endpoint for operations
+	// not available in the Integration API.
+
+	// ExecuteDeviceManagerCommand executes a device manager command on a device.
+	ExecuteDeviceManagerCommand(ctx context.Context, site Site, request DeviceManagerCommandRequest) error
+
+	// LocateDevice starts LED blinking on a device to help locate it physically.
+	LocateDevice(ctx context.Context, site Site, mac string) error
+
+	// UnlocateDevice stops LED blinking on a device.
+	UnlocateDevice(ctx context.Context, site Site, mac string) error
+
+	// PowerCyclePortByMAC power cycles a PoE port on a device identified by MAC address.
+	PowerCyclePortByMAC(ctx context.Context, site Site, deviceMAC string, portIdx int) error
+
+	// RestartDeviceByMAC restarts a device by its MAC address using the legacy API.
+	RestartDeviceByMAC(ctx context.Context, site Site, mac string) error
+
+	// AdoptDevice initiates adoption of a new device.
+	AdoptDevice(ctx context.Context, site Site, mac string) error
+
+	// ForceProvisionDevice forces re-provisioning of a device configuration.
+	ForceProvisionDevice(ctx context.Context, site Site, mac string) error
 }

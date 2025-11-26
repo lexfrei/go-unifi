@@ -2745,3 +2745,112 @@ type GuestAccessOptions struct {
 	// TxRateLimitKbps is the upload rate limit in kilobits per second
 	TxRateLimitKbps *int64
 }
+
+// ============================================================================
+// Legacy Cmd API - Device Manager Commands
+// These methods use the legacy /api/s/{site}/cmd/devmgr endpoint for operations
+// not available in the Integration API, such as LED blinking and PoE power cycling.
+// ============================================================================
+
+// ExecuteDeviceManagerCommand executes a device manager command on a device.
+// This is a low-level method; prefer using the higher-level wrapper methods like
+// LocateDevice, UnlocateDevice, PowerCyclePortByMAC, or RestartDeviceByMAC.
+func (c *APIClient) ExecuteDeviceManagerCommand(
+	ctx context.Context,
+	site Site,
+	request DeviceManagerCommandRequest,
+) error {
+	resp, err := c.client.ExecuteDeviceManagerCommandWithResponse(ctx, site, request)
+	if err != nil {
+		return errors.Wrap(err, "failed to execute device manager command")
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		//nolint:wrapcheck // Creating new error for unexpected status code, no source error to wrap
+		return errors.Newf("device manager command failed: status=%d", resp.StatusCode())
+	}
+
+	if resp.JSON200 == nil {
+		return errors.New("unexpected nil response")
+	}
+
+	// Check legacy API result code
+	if resp.JSON200.Meta.Rc != "ok" {
+		msg := "command failed"
+		if resp.JSON200.Meta.Msg != nil {
+			msg = *resp.JSON200.Meta.Msg
+		}
+		//nolint:wrapcheck // Creating new error for API error, no source error to wrap
+		return errors.Newf("device manager command failed: %s", msg)
+	}
+
+	return nil
+}
+
+// LocateDevice starts LED blinking on a device to help locate it physically.
+// The device MAC address should be in lowercase with colons (e.g., "ac:8b:a9:3c:12:5d").
+func (c *APIClient) LocateDevice(ctx context.Context, site Site, mac string) error {
+	return c.ExecuteDeviceManagerCommand(ctx, site, DeviceManagerCommandRequest{
+		Cmd: SetLocate,
+		Mac: mac,
+	})
+}
+
+// UnlocateDevice stops LED blinking on a device.
+// The device MAC address should be in lowercase with colons (e.g., "ac:8b:a9:3c:12:5d").
+func (c *APIClient) UnlocateDevice(ctx context.Context, site Site, mac string) error {
+	return c.ExecuteDeviceManagerCommand(ctx, site, DeviceManagerCommandRequest{
+		Cmd: UnsetLocate,
+		Mac: mac,
+	})
+}
+
+// PowerCyclePortByMAC power cycles a PoE port on a device identified by MAC address.
+// This will cut power to the connected device and restore it after a short delay.
+//
+// Parameters:
+//   - site: Site reference (e.g., "default")
+//   - deviceMAC: MAC address of the device with the PoE port (e.g., "94:2a:6f:ce:26:52")
+//   - portIdx: Port index (1-based) of the PoE port to power cycle
+//
+// Note: Only devices with PoE capability on the specified port can use this command.
+// This uses the legacy API which works with devices that don't have UUIDs in the Integration API.
+func (c *APIClient) PowerCyclePortByMAC(ctx context.Context, site Site, deviceMAC string, portIdx int) error {
+	portIdxInt := portIdx
+
+	return c.ExecuteDeviceManagerCommand(ctx, site, DeviceManagerCommandRequest{
+		Cmd:     PowerCycle,
+		Mac:     deviceMAC,
+		PortIdx: &portIdxInt,
+	})
+}
+
+// RestartDeviceByMAC restarts a device by its MAC address using the legacy API.
+// The device MAC address should be in lowercase with colons (e.g., "ac:8b:a9:3c:12:5d").
+//
+// Note: This is an alternative to RestartDevice which uses the Integration API with UUIDs.
+// Use this for devices that don't have UUIDs in the Integration API (like gateway devices).
+func (c *APIClient) RestartDeviceByMAC(ctx context.Context, site Site, mac string) error {
+	return c.ExecuteDeviceManagerCommand(ctx, site, DeviceManagerCommandRequest{
+		Cmd: Restart,
+		Mac: mac,
+	})
+}
+
+// AdoptDevice initiates adoption of a new device.
+// The device MAC address should be in lowercase with colons (e.g., "ac:8b:a9:3c:12:5d").
+func (c *APIClient) AdoptDevice(ctx context.Context, site Site, mac string) error {
+	return c.ExecuteDeviceManagerCommand(ctx, site, DeviceManagerCommandRequest{
+		Cmd: Adopt,
+		Mac: mac,
+	})
+}
+
+// ForceProvisionDevice forces re-provisioning of a device configuration.
+// The device MAC address should be in lowercase with colons (e.g., "ac:8b:a9:3c:12:5d").
+func (c *APIClient) ForceProvisionDevice(ctx context.Context, site Site, mac string) error {
+	return c.ExecuteDeviceManagerCommand(ctx, site, DeviceManagerCommandRequest{
+		Cmd: ForceProvision,
+		Mac: mac,
+	})
+}

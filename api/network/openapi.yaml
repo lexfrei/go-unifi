@@ -5240,14 +5240,10 @@ components:
         - frequencyGHz
       properties:
         frequencyGHz:
-          type: string
-          description: Radio frequency band
-          enum:
-            - "2.4"
-            - "5"
-            - "6"
-            - "60"
-          example: "5"
+          type: number
+          format: float
+          description: Radio frequency in GHz (2.4, 5, 6, or 60)
+          example: 5
         txRetriesPct:
           type: number
           format: double

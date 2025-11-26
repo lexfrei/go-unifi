@@ -4616,6 +4616,55 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
 
+  # Legacy Cmd API - Device Manager Commands
+  # Note: Legacy API uses Cookie session auth, but X-API-KEY also works
+  /api/s/{site}/cmd/devmgr:
+    post:
+      summary: Execute device manager command
+      description: |
+        Executes a device manager command on a device identified by MAC address.
+
+        This is a legacy API endpoint that provides device management functionality
+        not available in the Integration API, including:
+        - Device location (LED blinking)
+        - PoE power cycling
+        - Device restart
+        - Device adoption and provisioning
+
+        **Important**: This endpoint uses MAC addresses to identify devices, not UUIDs.
+        The MAC address should be in lowercase with colons (e.g., `ac:8b:a9:3c:12:5d`).
+
+        **Available Commands:**
+        - `set-locate`: Start LED blinking on device
+        - `unset-locate`: Stop LED blinking on device
+        - `power-cycle`: Power cycle a PoE port (requires `port_idx`)
+        - `restart`: Restart device
+        - `adopt`: Adopt a device
+        - `upgrade`: Upgrade device firmware
+        - `force-provision`: Force re-provision device configuration
+      operationId: executeDeviceManagerCommand
+      tags:
+        - Devices
+      parameters:
+        - $ref: '#/components/parameters/Site'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceManagerCommandRequest'
+      responses:
+        '200':
+          description: Command executed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LegacyAPIResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
 components:
   securitySchemes:
     ApiKeyAuth:
@@ -4800,6 +4849,79 @@ components:
         totalCount:
           type: integer
           description: Total number of items available
+          example: 1
+
+    # Legacy API types
+    LegacyAPIResponse:
+      type: object
+      description: |
+        Standard response format for Legacy API endpoints.
+        The `rc` field indicates success ("ok") or error code.
+      required:
+        - meta
+        - data
+      properties:
+        meta:
+          type: object
+          required:
+            - rc
+          properties:
+            rc:
+              type: string
+              description: Result code - "ok" for success, error code otherwise
+              example: ok
+            msg:
+              type: string
+              description: Error message when rc is not "ok"
+        data:
+          type: array
+          description: Response data (usually empty for command endpoints)
+          items:
+            type: object
+
+    DeviceManagerCommandRequest:
+      type: object
+      description: |
+        Request body for device manager commands.
+        The `cmd` field specifies the command, and `mac` identifies the target device.
+        Additional fields depend on the command type.
+      required:
+        - cmd
+        - mac
+      properties:
+        cmd:
+          type: string
+          description: |
+            Command to execute:
+            - `set-locate`: Start LED blinking (locate device)
+            - `unset-locate`: Stop LED blinking
+            - `power-cycle`: Power cycle PoE port (requires port_idx)
+            - `restart`: Restart device
+            - `adopt`: Adopt device
+            - `upgrade`: Upgrade device firmware
+            - `force-provision`: Force re-provision device
+          enum:
+            - set-locate
+            - unset-locate
+            - power-cycle
+            - restart
+            - adopt
+            - upgrade
+            - force-provision
+          example: set-locate
+        mac:
+          type: string
+          description: |
+            MAC address of the target device in lowercase with colons.
+            Example: ac:8b:a9:3c:12:5d
+          pattern: "^([0-9a-f]{2}:){5}[0-9a-f]{2}$"
+          example: ac:8b:a9:3c:12:5d
+        port_idx:
+          type: integer
+          description: |
+            Port index for power-cycle command (1-based).
+            Required when cmd is "power-cycle".
+          minimum: 1
           example: 1
 
     ErrorResponse:

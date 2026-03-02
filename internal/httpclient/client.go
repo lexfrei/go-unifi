@@ -54,7 +54,7 @@ func New(opts ...Option) *Client {
 
 // Do executes an HTTP request using the configured middleware chain.
 func (c *Client) Do(req *http.Request) (*http.Response, error) {
-	//nolint:wrapcheck // Proxy method - middleware chain handles error context
+	//nolint:wrapcheck,gosec // Proxy method — URL validation is caller's responsibility
 	return c.base.Do(req)
 }
 

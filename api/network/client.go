@@ -45,7 +45,7 @@ type ClientConfig struct {
 	ControllerURL string
 
 	// APIKey is the API key for authentication
-	APIKey string
+	APIKey string `json:"-"`
 
 	// HTTPClient is the HTTP client to use (optional)
 	HTTPClient *http.Client

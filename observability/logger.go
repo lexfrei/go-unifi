@@ -33,9 +33,7 @@ type noopLogger struct{}
 
 // NoopLogger returns a logger that does nothing.
 // This is the default logger used when none is provided.
-//
-//nolint:ireturn // Factory function returning interface is correct DI pattern
-func NoopLogger() Logger {
+func NoopLogger() Logger { //nolint:ireturn // Factory returning interface for DI
 	return &noopLogger{}
 }
 
@@ -44,5 +42,4 @@ func (l *noopLogger) Info(string, ...Field)  {}
 func (l *noopLogger) Warn(string, ...Field)  {}
 func (l *noopLogger) Error(string, ...Field) {}
 
-//nolint:ireturn // Interface method must return interface to satisfy Logger contract
-func (l *noopLogger) With(...Field) Logger { return l }
+func (l *noopLogger) With(...Field) Logger { return l } //nolint:ireturn // Interface method

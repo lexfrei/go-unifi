@@ -48,7 +48,7 @@ var _ SiteManagerAPIClient = (*UnifiClient)(nil)
 // ClientConfig holds configuration for the Unifi API client.
 type ClientConfig struct {
 	// APIKey is the Unifi API key for authentication
-	APIKey string
+	APIKey string `json:"-"`
 
 	// BaseURL is the base URL for the API (defaults to https://api.ui.com)
 	BaseURL string

@@ -53,7 +53,7 @@ func TestRetryResourceCleanupOnCancellation(t *testing.T) {
 	require.NoError(t, err)
 
 	client := &http.Client{Transport: transport}
-	resp, err := client.Do(req) //nolint:gosec // Test uses httptest.NewServer URL
+	resp, err := client.Do(req)
 
 	// Should fail due to context cancellation
 	require.Error(t, err)
@@ -107,7 +107,7 @@ func TestRetryNoGoroutineLeaks(t *testing.T) {
 		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, http.NoBody)
 
 		client := &http.Client{Transport: transport}
-		resp, err := client.Do(req) //nolint:gosec // Test uses httptest.NewServer URL
+		resp, err := client.Do(req)
 		if resp != nil {
 			resp.Body.Close()
 		}
@@ -171,7 +171,7 @@ func TestRetryStressTestConcurrentCancellations(t *testing.T) {
 			req, _ := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, http.NoBody)
 			client := &http.Client{Transport: transport}
 
-			resp, err := client.Do(req) //nolint:gosec // Test uses httptest.NewServer URL
+			resp, err := client.Do(req)
 			if resp != nil {
 				// Always close the response body
 				resp.Body.Close()
@@ -215,7 +215,7 @@ func BenchmarkRetryCancellation(b *testing.B) {
 		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, server.URL, http.NoBody)
 
 		client := &http.Client{Transport: transport}
-		resp, err := client.Do(req) //nolint:gosec // Benchmark uses httptest.NewServer URL
+		resp, err := client.Do(req)
 		if resp != nil {
 			resp.Body.Close()
 		}

@@ -57,7 +57,7 @@ func BenchmarkRetryBodyBuffering(b *testing.B) {
 					io.NopCloser(bytes.NewReader(payload)),
 				)
 
-				resp, err := client.Do(req) //nolint:gosec // Benchmark uses httptest.NewServer URL
+				resp, err := client.Do(req)
 				if err != nil {
 					b.Fatal(err)
 				}
@@ -103,7 +103,7 @@ func BenchmarkRetryWithRetries(b *testing.B) {
 			io.NopCloser(bytes.NewReader(payload)),
 		)
 
-		resp, err := client.Do(req) //nolint:gosec // Benchmark uses httptest.NewServer URL
+		resp, err := client.Do(req)
 		if err != nil {
 			b.Fatal(err)
 		}

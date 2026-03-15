@@ -5,6 +5,7 @@
     ":enablePreCommit"
   ],
   "enabledManagers": ["gomod", "github-actions"],
+  "postUpdateOptions": ["gomodTidy"],
   "platformAutomerge": true,
   "automergeStrategy": "squash",
   "packageRules": [

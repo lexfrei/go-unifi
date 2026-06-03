@@ -3,6 +3,7 @@ package httpclient
 
 import (
 	"net/http"
+	"slices"
 	"time"
 )
 
@@ -42,8 +43,8 @@ func New(opts ...Option) *Client {
 		}
 
 		// Apply middleware in reverse order so first middleware is outermost
-		for i := len(c.middleware) - 1; i >= 0; i-- {
-			transport = c.middleware[i](transport)
+		for _, mw := range slices.Backward(c.middleware) {
+			transport = mw(transport)
 		}
 
 		c.base.Transport = transport

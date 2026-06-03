@@ -17,17 +17,29 @@ import (
 
 // Test constants.
 const (
-	testAPIKey       = "test-api-key"
-	testSiteInternal = "default"
-	testRecordID     = "6913a4964a990741124a6d94"
-	testHostKey      = "testhost1.local"
-	testHostValue    = "192.168.100.1"
-	testModelUDR7    = "UDR7"
-	testTypeWired    = "WIRED"
-	testPolicyName   = "test-policy-1"
-	testPolicyID     = "507f1f77bcf86cd799439011"
-	testRuleName     = "test-rule-1"
-	testRuleID       = "507f1f77bcf86cd799439012"
+	testAPIKey        = "test-api-key"
+	testSiteInternal  = "default"
+	testRecordID      = "6913a4964a990741124a6d94"
+	testHostKey       = "testhost1.local"
+	testHostValue     = "192.168.100.1"
+	testModelUDR7     = "UDR7"
+	testTypeWired     = "WIRED"
+	testPolicyName    = "test-policy-1"
+	testPolicyID      = "507f1f77bcf86cd799439011"
+	testRuleName      = "test-rule-1"
+	testRuleID        = "507f1f77bcf86cd799439012"
+	testControllerURL = "https://test.local"
+	testEmptyJSON     = "{}"
+)
+
+// Subtest name constants.
+const (
+	testNameSuccess          = "success"
+	testNameSuccessEmptyList = "success with empty list"
+	testNameUnauthorized     = "unauthorized"
+	testNameServerError      = "server error"
+	testNameBadRequest       = "bad request"
+	testNameNotFound         = "not found"
 )
 
 var testSiteID = types.UUID{0x88, 0xf7, 0xaf, 0x54, 0x98, 0xf8, 0x30, 0x6a, 0xa1, 0xc7, 0xc9, 0x34, 0x97, 0x22, 0xb1, 0xf6}
@@ -35,7 +47,7 @@ var testSiteID = types.UUID{0x88, 0xf7, 0xaf, 0x54, 0x98, 0xf8, 0x30, 0x6a, 0xa1
 func TestNew(t *testing.T) {
 	t.Parallel()
 
-	client, err := New("https://test.local", testAPIKey)
+	client, err := New(testControllerURL, testAPIKey)
 	require.NoError(t, err)
 	require.NotNil(t, client)
 }
@@ -51,7 +63,7 @@ func TestNewWithConfig(t *testing.T) {
 		{
 			name: "valid config",
 			config: &ClientConfig{
-				ControllerURL: "https://test.local",
+				ControllerURL: testControllerURL,
 				APIKey:        testAPIKey,
 			},
 			wantErr: false,
@@ -64,7 +76,7 @@ func TestNewWithConfig(t *testing.T) {
 		{
 			name: "empty API key",
 			config: &ClientConfig{
-				ControllerURL: "https://test.local",
+				ControllerURL: testControllerURL,
 				APIKey:        "",
 			},
 			wantErr: true,
@@ -107,7 +119,7 @@ func TestListSites(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *SitesResponse)
 	}{
 		{
-			name:           "success",
+			name:           testNameSuccess,
 			mockResponse:   testdata.LoadFixture(t, "sites/list_success.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -124,7 +136,7 @@ func TestListSites(t *testing.T) {
 			},
 		},
 		{
-			name:           "unauthorized",
+			name:           testNameUnauthorized,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
@@ -136,7 +148,7 @@ func TestListSites(t *testing.T) {
 			wantErr:        true,
 		},
 		{
-			name:           "server error",
+			name:           testNameServerError,
 			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
@@ -208,13 +220,13 @@ func TestListDNSRecords(t *testing.T) {
 			},
 		},
 		{
-			name:           "unauthorized",
+			name:           testNameUnauthorized,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
-			name:           "server error",
+			name:           testNameServerError,
 			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
@@ -259,7 +271,7 @@ func TestCreateDNSRecord(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *DNSRecord)
 	}{
 		{
-			name:           "success",
+			name:           testNameSuccess,
 			mockResponse:   testdata.LoadFixture(t, "dns/single_record.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -270,13 +282,13 @@ func TestCreateDNSRecord(t *testing.T) {
 			},
 		},
 		{
-			name:           "bad request",
+			name:           testNameBadRequest,
 			mockResponse:   testdata.LoadFixture(t, "errors/bad_request.json"),
 			mockStatusCode: http.StatusBadRequest,
 			wantErr:        true,
 		},
 		{
-			name:           "unauthorized",
+			name:           testNameUnauthorized,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
@@ -335,7 +347,7 @@ func TestUpdateDNSRecord(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *DNSRecord)
 	}{
 		{
-			name:           "success",
+			name:           testNameSuccess,
 			mockResponse:   testdata.LoadFixture(t, "dns/single_record.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -345,13 +357,13 @@ func TestUpdateDNSRecord(t *testing.T) {
 			},
 		},
 		{
-			name:           "not found",
+			name:           testNameNotFound,
 			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
 		},
 		{
-			name:           "bad request",
+			name:           testNameBadRequest,
 			mockResponse:   testdata.LoadFixture(t, "errors/bad_request.json"),
 			mockStatusCode: http.StatusBadRequest,
 			wantErr:        true,
@@ -409,13 +421,13 @@ func TestDeleteDNSRecord(t *testing.T) {
 		wantErr        bool
 	}{
 		{
-			name:           "success",
-			mockResponse:   `{}`,
+			name:           testNameSuccess,
+			mockResponse:   testEmptyJSON,
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 		},
 		{
-			name:           "not found",
+			name:           testNameNotFound,
 			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
@@ -475,13 +487,13 @@ func TestListSiteDevices(t *testing.T) {
 			},
 		},
 		{
-			name:           "unauthorized",
+			name:           testNameUnauthorized,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
-			name:           "server error",
+			name:           testNameServerError,
 			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
@@ -542,13 +554,13 @@ func TestGetDeviceByID(t *testing.T) {
 			},
 		},
 		{
-			name:           "not found",
+			name:           testNameNotFound,
 			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
 		},
 		{
-			name:           "unauthorized",
+			name:           testNameUnauthorized,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
@@ -605,13 +617,13 @@ func TestListSiteClients(t *testing.T) {
 			},
 		},
 		{
-			name:           "unauthorized",
+			name:           testNameUnauthorized,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
-			name:           "server error",
+			name:           testNameServerError,
 			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
@@ -669,13 +681,13 @@ func TestGetClientByID(t *testing.T) {
 			},
 		},
 		{
-			name:           "not found",
+			name:           testNameNotFound,
 			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
 		},
 		{
-			name:           "unauthorized",
+			name:           testNameUnauthorized,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
@@ -734,13 +746,13 @@ func TestGetAggregatedDashboard(t *testing.T) {
 			},
 		},
 		{
-			name:           "unauthorized",
+			name:           testNameUnauthorized,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
-			name:           "not found",
+			name:           testNameNotFound,
 			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
@@ -785,7 +797,7 @@ func TestListFirewallPolicies(t *testing.T) {
 		checkResponse  func(t *testing.T, resp []FirewallPolicy)
 	}{
 		{
-			name:           "success with empty list",
+			name:           testNameSuccessEmptyList,
 			mockResponse:   testdata.LoadFixture(t, "firewall/empty_list.json"),
 			mockStatusCode: http.StatusOK,
 			checkResponse: func(t *testing.T, resp []FirewallPolicy) {
@@ -794,13 +806,13 @@ func TestListFirewallPolicies(t *testing.T) {
 			},
 		},
 		{
-			name:           "unauthorized",
+			name:           testNameUnauthorized,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
-			name:           "server error",
+			name:           testNameServerError,
 			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
@@ -845,7 +857,7 @@ func TestCreateFirewallPolicy(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *FirewallPolicy)
 	}{
 		{
-			name:           "success",
+			name:           testNameSuccess,
 			mockResponse:   testdata.LoadFixture(t, "firewall/single_policy.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -855,7 +867,7 @@ func TestCreateFirewallPolicy(t *testing.T) {
 			},
 		},
 		{
-			name:           "bad request",
+			name:           testNameBadRequest,
 			mockResponse:   testdata.LoadFixture(t, "errors/bad_request.json"),
 			mockStatusCode: http.StatusBadRequest,
 			wantErr:        true,
@@ -916,7 +928,7 @@ func TestUpdateFirewallPolicy(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *FirewallPolicy)
 	}{
 		{
-			name:           "success",
+			name:           testNameSuccess,
 			mockResponse:   testdata.LoadFixture(t, "firewall/single_policy.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -926,7 +938,7 @@ func TestUpdateFirewallPolicy(t *testing.T) {
 			},
 		},
 		{
-			name:           "not found",
+			name:           testNameNotFound,
 			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
@@ -986,13 +998,13 @@ func TestDeleteFirewallPolicy(t *testing.T) {
 		wantErr        bool
 	}{
 		{
-			name:           "success",
-			mockResponse:   `{}`,
+			name:           testNameSuccess,
+			mockResponse:   testEmptyJSON,
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 		},
 		{
-			name:           "not found",
+			name:           testNameNotFound,
 			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
@@ -1040,7 +1052,7 @@ func TestListTrafficRules(t *testing.T) {
 		checkResponse  func(t *testing.T, resp []TrafficRule)
 	}{
 		{
-			name:           "success with empty list",
+			name:           testNameSuccessEmptyList,
 			mockResponse:   testdata.LoadFixture(t, "traffic/empty_list.json"),
 			mockStatusCode: http.StatusOK,
 			checkResponse: func(t *testing.T, resp []TrafficRule) {
@@ -1049,13 +1061,13 @@ func TestListTrafficRules(t *testing.T) {
 			},
 		},
 		{
-			name:           "unauthorized",
+			name:           testNameUnauthorized,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
-			name:           "server error",
+			name:           testNameServerError,
 			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
@@ -1100,7 +1112,7 @@ func TestCreateTrafficRule(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *TrafficRule)
 	}{
 		{
-			name:           "success",
+			name:           testNameSuccess,
 			mockResponse:   testdata.LoadFixture(t, "traffic/single_rule.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -1111,7 +1123,7 @@ func TestCreateTrafficRule(t *testing.T) {
 			},
 		},
 		{
-			name:           "bad request",
+			name:           testNameBadRequest,
 			mockResponse:   testdata.LoadFixture(t, "errors/bad_request.json"),
 			mockStatusCode: http.StatusBadRequest,
 			wantErr:        true,
@@ -1173,7 +1185,7 @@ func TestUpdateTrafficRule(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *TrafficRule)
 	}{
 		{
-			name:           "success",
+			name:           testNameSuccess,
 			mockResponse:   testdata.LoadFixture(t, "traffic/single_rule.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -1184,7 +1196,7 @@ func TestUpdateTrafficRule(t *testing.T) {
 			},
 		},
 		{
-			name:           "not found",
+			name:           testNameNotFound,
 			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
@@ -1245,13 +1257,13 @@ func TestDeleteTrafficRule(t *testing.T) {
 		wantErr        bool
 	}{
 		{
-			name:           "success",
-			mockResponse:   `{}`,
+			name:           testNameSuccess,
+			mockResponse:   testEmptyJSON,
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 		},
 		{
-			name:           "not found",
+			name:           testNameNotFound,
 			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
@@ -1310,7 +1322,7 @@ func TestListHotspotVouchers(t *testing.T) {
 			},
 		},
 		{
-			name:           "success with empty list",
+			name:           testNameSuccessEmptyList,
 			mockResponse:   testdata.LoadFixture(t, "hotspot/empty_list.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -1320,7 +1332,7 @@ func TestListHotspotVouchers(t *testing.T) {
 			},
 		},
 		{
-			name:           "unauthorized",
+			name:           testNameUnauthorized,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
@@ -1365,13 +1377,13 @@ func TestCreateHotspotVouchers(t *testing.T) {
 		wantErr        bool
 	}{
 		{
-			name:           "success",
+			name:           testNameSuccess,
 			mockResponse:   testdata.LoadFixture(t, "hotspot/list_vouchers_success.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 		},
 		{
-			name:           "bad request",
+			name:           testNameBadRequest,
 			mockResponse:   testdata.LoadFixture(t, "errors/bad_request.json"),
 			mockStatusCode: http.StatusBadRequest,
 			wantErr:        true,
@@ -1427,7 +1439,7 @@ func TestGetHotspotVoucher(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *HotspotVoucher)
 	}{
 		{
-			name:           "success",
+			name:           testNameSuccess,
 			mockResponse:   testdata.LoadFixture(t, "hotspot/single_voucher.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -1437,7 +1449,7 @@ func TestGetHotspotVoucher(t *testing.T) {
 			},
 		},
 		{
-			name:           "not found",
+			name:           testNameNotFound,
 			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
@@ -1484,13 +1496,13 @@ func TestDeleteHotspotVoucher(t *testing.T) {
 		wantErr        bool
 	}{
 		{
-			name:           "success",
-			mockResponse:   `{}`,
+			name:           testNameSuccess,
+			mockResponse:   testEmptyJSON,
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
 		},
 		{
-			name:           "not found",
+			name:           testNameNotFound,
 			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,

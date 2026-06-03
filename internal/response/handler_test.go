@@ -10,6 +10,9 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// testDataValue is the placeholder value used across response handler tests.
+const testDataValue = "test"
+
 // mockResponse is a test double for API responses.
 type mockResponse struct {
 	statusCode int
@@ -31,7 +34,7 @@ func TestHandle(t *testing.T) {
 		t.Parallel()
 
 		resp := &mockResponse{statusCode: http.StatusOK}
-		data := &mockData{Value: "test"}
+		data := &mockData{Value: testDataValue}
 
 		result, err := response.Handle(resp, data, nil, "test error")
 		require.NoError(t, err, "Handle() should not return error")
@@ -43,7 +46,7 @@ func TestHandle(t *testing.T) {
 		t.Parallel()
 
 		resp := &mockResponse{statusCode: http.StatusOK}
-		data := &mockData{Value: "test"}
+		data := &mockData{Value: testDataValue}
 		clientErr := errors.New("network error")
 
 		_, err := response.Handle(resp, data, clientErr, "test error")
@@ -56,7 +59,7 @@ func TestHandle(t *testing.T) {
 		t.Parallel()
 
 		resp := &mockResponse{statusCode: http.StatusNotFound}
-		data := &mockData{Value: "test"}
+		data := &mockData{Value: testDataValue}
 
 		_, err := response.Handle(resp, data, nil, "test error")
 		require.Error(t, err, "Handle() should return error")
@@ -79,7 +82,7 @@ func TestHandleWithStatus(t *testing.T) {
 		t.Parallel()
 
 		resp := &mockResponse{statusCode: http.StatusCreated}
-		data := &mockData{Value: "test"}
+		data := &mockData{Value: testDataValue}
 
 		result, err := response.HandleWithStatus(resp, data, nil, "test error", http.StatusCreated)
 		require.NoError(t, err, "HandleWithStatus() should not return error")
@@ -91,7 +94,7 @@ func TestHandleWithStatus(t *testing.T) {
 		t.Parallel()
 
 		resp := &mockResponse{statusCode: http.StatusOK}
-		data := &mockData{Value: "test"}
+		data := &mockData{Value: testDataValue}
 
 		_, err := response.HandleWithStatus(resp, data, nil, "test error", http.StatusCreated)
 		require.Error(t, err, "HandleWithStatus() should return error")

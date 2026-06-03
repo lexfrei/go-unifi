@@ -22,6 +22,23 @@ const (
 	testToken     = "test-token"
 	testNextToken = "ba8e384e-3308-4236-b344-7357657351ca" //nolint:gosec // Test pagination token, not a real credential
 	testHostID    = "900A6F00301100000000074A6BA90000000007A3387E0000000063EC9853:123456789"
+
+	testKey           = "test-key"
+	testHostIDShort   = "test-host-id"
+	testConfigID      = "test-config-id"
+	testNonExistentID = "non-existent-id"
+	testConfigUUID    = "b344034f-2636-478c-8c7a-e3350f8ed37a"
+)
+
+// Subtest name constants.
+const (
+	testNameSuccess          = "success"
+	testNameUnauthorized     = "unauthorized"
+	testNameRateLimit        = "rate limit"
+	testNameServerError      = "server error"
+	testNameBadGateway       = "bad gateway"
+	testNameNotFound         = "not found"
+	testNameParameterInvalid = "parameter invalid"
 )
 
 func TestNew(t *testing.T) {
@@ -44,14 +61,14 @@ func TestNewWithConfig(t *testing.T) {
 		{
 			name: "minimal config",
 			config: &ClientConfig{
-				APIKey: "test-key",
+				APIKey: testKey,
 			},
 			wantErr: false,
 		},
 		{
 			name: "custom rate limits",
 			config: &ClientConfig{
-				APIKey:               "test-key",
+				APIKey:               testKey,
 				V1RateLimitPerMinute: 5000,
 				EARateLimitPerMinute: 50,
 			},
@@ -60,7 +77,7 @@ func TestNewWithConfig(t *testing.T) {
 		{
 			name: "custom retry settings",
 			config: &ClientConfig{
-				APIKey:        "test-key",
+				APIKey:        testKey,
 				MaxRetries:    5,
 				RetryWaitTime: 2 * time.Second,
 			},
@@ -69,7 +86,7 @@ func TestNewWithConfig(t *testing.T) {
 		{
 			name: "custom base URL",
 			config: &ClientConfig{
-				APIKey:  "test-key",
+				APIKey:  testKey,
 				BaseURL: "https://custom.api.com",
 			},
 			wantErr: false,
@@ -141,25 +158,25 @@ func TestListHosts(t *testing.T) {
 			},
 		},
 		{
-			name:           "unauthorized",
+			name:           testNameUnauthorized,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
-			name:           "rate limit",
+			name:           testNameRateLimit,
 			mockResponse:   testdata.LoadFixture(t, "errors/rate_limit.json"),
 			mockStatusCode: http.StatusTooManyRequests,
 			wantErr:        true,
 		},
 		{
-			name:           "server error",
+			name:           testNameServerError,
 			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
 		},
 		{
-			name:           "bad gateway",
+			name:           testNameBadGateway,
 			mockResponse:   testdata.LoadFixture(t, "errors/bad_gateway.json"),
 			mockStatusCode: http.StatusBadGateway,
 			wantErr:        true,
@@ -207,7 +224,7 @@ func TestGetHostByID(t *testing.T) {
 	}{
 		{
 			name:           "success - ucore",
-			hostID:         "test-host-id",
+			hostID:         testHostIDShort,
 			mockResponse:   testdata.LoadFixture(t, "hosts/get_ucore.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -221,7 +238,7 @@ func TestGetHostByID(t *testing.T) {
 		},
 		{
 			name:           "success - network-server",
-			hostID:         "test-host-id",
+			hostID:         testHostIDShort,
 			mockResponse:   testdata.LoadFixture(t, "hosts/get_network_server.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -233,15 +250,15 @@ func TestGetHostByID(t *testing.T) {
 			},
 		},
 		{
-			name:           "not found",
+			name:           testNameNotFound,
 			hostID:         "invalid-id",
 			mockResponse:   testdata.LoadFixture(t, "errors/not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
 		},
 		{
-			name:           "server error",
-			hostID:         "test-host-id",
+			name:           testNameServerError,
+			hostID:         testHostIDShort,
 			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
@@ -384,7 +401,7 @@ func TestListSites(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *SitesResponse)
 	}{
 		{
-			name:           "success",
+			name:           testNameSuccess,
 			mockResponse:   testdata.LoadFixture(t, "sites/list_success.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -403,25 +420,25 @@ func TestListSites(t *testing.T) {
 			},
 		},
 		{
-			name:           "unauthorized",
+			name:           testNameUnauthorized,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
-			name:           "rate limit",
+			name:           testNameRateLimit,
 			mockResponse:   testdata.LoadFixture(t, "errors/rate_limit.json"),
 			mockStatusCode: http.StatusTooManyRequests,
 			wantErr:        true,
 		},
 		{
-			name:           "server error",
+			name:           testNameServerError,
 			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
 		},
 		{
-			name:           "bad gateway",
+			name:           testNameBadGateway,
 			mockResponse:   testdata.LoadFixture(t, "errors/bad_gateway.json"),
 			mockStatusCode: http.StatusBadGateway,
 			wantErr:        true,
@@ -467,7 +484,7 @@ func TestListDevices(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *DevicesResponse)
 	}{
 		{
-			name:           "success",
+			name:           testNameSuccess,
 			mockResponse:   testdata.LoadFixture(t, "devices/list_success.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -499,31 +516,31 @@ func TestListDevices(t *testing.T) {
 			},
 		},
 		{
-			name:           "parameter invalid",
+			name:           testNameParameterInvalid,
 			mockResponse:   testdata.LoadFixture(t, "errors/parameter_invalid.json"),
 			mockStatusCode: http.StatusBadRequest,
 			wantErr:        true,
 		},
 		{
-			name:           "unauthorized",
+			name:           testNameUnauthorized,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
-			name:           "rate limit",
+			name:           testNameRateLimit,
 			mockResponse:   testdata.LoadFixture(t, "errors/rate_limit.json"),
 			mockStatusCode: http.StatusTooManyRequests,
 			wantErr:        true,
 		},
 		{
-			name:           "server error",
+			name:           testNameServerError,
 			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
 		},
 		{
-			name:           "bad gateway",
+			name:           testNameBadGateway,
 			mockResponse:   testdata.LoadFixture(t, "errors/bad_gateway.json"),
 			mockStatusCode: http.StatusBadGateway,
 			wantErr:        true,
@@ -570,8 +587,8 @@ func TestGetISPMetrics(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *ISPMetricsResponse)
 	}{
 		{
-			name:           "success",
-			metricType:     "5m",
+			name:           testNameSuccess,
+			metricType:     N5m,
 			mockResponse:   testdata.LoadFixture(t, "metrics/get_isp_metrics.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -589,29 +606,29 @@ func TestGetISPMetrics(t *testing.T) {
 			},
 		},
 		{
-			name:           "parameter invalid",
-			metricType:     "5m",
+			name:           testNameParameterInvalid,
+			metricType:     N5m,
 			mockResponse:   testdata.LoadFixture(t, "errors/parameter_invalid.json"),
 			mockStatusCode: http.StatusBadRequest,
 			wantErr:        true,
 		},
 		{
-			name:           "unauthorized",
-			metricType:     "5m",
+			name:           testNameUnauthorized,
+			metricType:     N5m,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
-			name:           "rate limit",
-			metricType:     "5m",
+			name:           testNameRateLimit,
+			metricType:     N5m,
 			mockResponse:   testdata.LoadFixture(t, "errors/rate_limit.json"),
 			mockStatusCode: http.StatusTooManyRequests,
 			wantErr:        true,
 		},
 		{
-			name:           "server error",
-			metricType:     "5m",
+			name:           testNameServerError,
+			metricType:     N5m,
 			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
@@ -671,8 +688,8 @@ func TestGetSDWANConfigStatus(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *SDWANConfigStatusResponse)
 	}{
 		{
-			name:           "success",
-			configID:       "test-config-id",
+			name:           testNameSuccess,
+			configID:       testConfigID,
 			mockResponse:   testdata.LoadFixture(t, "sdwan/config_status.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -688,29 +705,29 @@ func TestGetSDWANConfigStatus(t *testing.T) {
 			},
 		},
 		{
-			name:           "not found",
-			configID:       "non-existent-id",
+			name:           testNameNotFound,
+			configID:       testNonExistentID,
 			mockResponse:   testdata.LoadFixture(t, "sdwan/config_status_not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
 		},
 		{
-			name:           "unauthorized",
-			configID:       "test-config-id",
+			name:           testNameUnauthorized,
+			configID:       testConfigID,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
-			name:           "rate limit",
-			configID:       "test-config-id",
+			name:           testNameRateLimit,
+			configID:       testConfigID,
 			mockResponse:   testdata.LoadFixture(t, "errors/rate_limit.json"),
 			mockStatusCode: http.StatusTooManyRequests,
 			wantErr:        true,
 		},
 		{
-			name:           "server error",
-			configID:       "test-config-id",
+			name:           testNameServerError,
+			configID:       testConfigID,
 			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
@@ -758,8 +775,8 @@ func TestGetSDWANConfigByID(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *SDWANConfigResponse)
 	}{
 		{
-			name:           "success",
-			configID:       "b344034f-2636-478c-8c7a-e3350f8ed37a",
+			name:           testNameSuccess,
+			configID:       testConfigUUID,
 			mockResponse:   testdata.LoadFixture(t, "sdwan/get_config_by_id.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -767,7 +784,7 @@ func TestGetSDWANConfigByID(t *testing.T) {
 				t.Helper()
 				require.NotNil(t, resp)
 				require.NotNil(t, resp.Data.Id)
-				assert.Equal(t, "b344034f-2636-478c-8c7a-e3350f8ed37a", *resp.Data.Id)
+				assert.Equal(t, testConfigUUID, *resp.Data.Id)
 				require.NotNil(t, resp.Data.Name)
 				assert.Equal(t, "RS test", *resp.Data.Name)
 				require.NotNil(t, resp.Data.Hubs)
@@ -777,29 +794,29 @@ func TestGetSDWANConfigByID(t *testing.T) {
 			},
 		},
 		{
-			name:           "not found",
-			configID:       "non-existent-id",
+			name:           testNameNotFound,
+			configID:       testNonExistentID,
 			mockResponse:   testdata.LoadFixture(t, "sdwan/config_status_not_found.json"),
 			mockStatusCode: http.StatusNotFound,
 			wantErr:        true,
 		},
 		{
-			name:           "unauthorized",
-			configID:       "b344034f-2636-478c-8c7a-e3350f8ed37a",
+			name:           testNameUnauthorized,
+			configID:       testConfigUUID,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
-			name:           "rate limit",
-			configID:       "b344034f-2636-478c-8c7a-e3350f8ed37a",
+			name:           testNameRateLimit,
+			configID:       testConfigUUID,
 			mockResponse:   testdata.LoadFixture(t, "errors/rate_limit.json"),
 			mockStatusCode: http.StatusTooManyRequests,
 			wantErr:        true,
 		},
 		{
-			name:           "server error",
-			configID:       "b344034f-2636-478c-8c7a-e3350f8ed37a",
+			name:           testNameServerError,
+			configID:       testConfigUUID,
 			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
@@ -846,7 +863,7 @@ func TestListSDWANConfigs(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *SDWANConfigsResponse)
 	}{
 		{
-			name:           "success",
+			name:           testNameSuccess,
 			mockResponse:   testdata.LoadFixture(t, "sdwan/list_configs.json"),
 			mockStatusCode: http.StatusOK,
 			wantErr:        false,
@@ -864,25 +881,25 @@ func TestListSDWANConfigs(t *testing.T) {
 			},
 		},
 		{
-			name:           "unauthorized",
+			name:           testNameUnauthorized,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
-			name:           "rate limit",
+			name:           testNameRateLimit,
 			mockResponse:   testdata.LoadFixture(t, "errors/rate_limit.json"),
 			mockStatusCode: http.StatusTooManyRequests,
 			wantErr:        true,
 		},
 		{
-			name:           "server error",
+			name:           testNameServerError,
 			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
 		},
 		{
-			name:           "bad gateway",
+			name:           testNameBadGateway,
 			mockResponse:   testdata.LoadFixture(t, "errors/bad_gateway.json"),
 			mockStatusCode: http.StatusBadGateway,
 			wantErr:        true,
@@ -940,8 +957,8 @@ func TestQueryISPMetrics(t *testing.T) {
 		checkResponse  func(t *testing.T, resp *ISPMetricsQueryResponse)
 	}{
 		{
-			name:           "success",
-			metricType:     "5m",
+			name:           testNameSuccess,
+			metricType:     string(N5m),
 			query:          testQuery,
 			mockResponse:   testdata.LoadFixture(t, "metrics/query_isp_metrics_success.json"),
 			mockStatusCode: http.StatusOK,
@@ -960,7 +977,7 @@ func TestQueryISPMetrics(t *testing.T) {
 		},
 		{
 			name:           "partial success",
-			metricType:     "5m",
+			metricType:     string(N5m),
 			query:          testQuery,
 			mockResponse:   testdata.LoadFixture(t, "metrics/query_isp_metrics_partial_success.json"),
 			mockStatusCode: http.StatusOK,
@@ -975,39 +992,39 @@ func TestQueryISPMetrics(t *testing.T) {
 		},
 		{
 			name:           "invalid parameter",
-			metricType:     "5m",
+			metricType:     string(N5m),
 			query:          testQuery,
 			mockResponse:   testdata.LoadFixture(t, "errors/invalid_parameter.json"),
 			mockStatusCode: http.StatusBadRequest,
 			wantErr:        true,
 		},
 		{
-			name:           "unauthorized",
-			metricType:     "5m",
+			name:           testNameUnauthorized,
+			metricType:     string(N5m),
 			query:          testQuery,
 			mockResponse:   testdata.LoadFixture(t, "errors/unauthorized.json"),
 			mockStatusCode: http.StatusUnauthorized,
 			wantErr:        true,
 		},
 		{
-			name:           "rate limit",
-			metricType:     "5m",
+			name:           testNameRateLimit,
+			metricType:     string(N5m),
 			query:          testQuery,
 			mockResponse:   testdata.LoadFixture(t, "errors/rate_limit.json"),
 			mockStatusCode: http.StatusTooManyRequests,
 			wantErr:        true,
 		},
 		{
-			name:           "server error",
-			metricType:     "5m",
+			name:           testNameServerError,
+			metricType:     string(N5m),
 			query:          testQuery,
 			mockResponse:   testdata.LoadFixture(t, "errors/server_error.json"),
 			mockStatusCode: http.StatusInternalServerError,
 			wantErr:        true,
 		},
 		{
-			name:           "bad gateway",
-			metricType:     "5m",
+			name:           testNameBadGateway,
+			metricType:     string(N5m),
 			query:          testQuery,
 			mockResponse:   testdata.LoadFixture(t, "errors/bad_gateway.json"),
 			mockStatusCode: http.StatusBadGateway,

@@ -9,6 +9,16 @@ import (
 	"github.com/lexfrei/go-unifi/observability"
 )
 
+// Log field key constants shared across middleware.
+const (
+	fieldKeyMethod   = "method"
+	fieldKeyURL      = "url"
+	fieldKeyPath     = "path"
+	fieldKeyDuration = "duration"
+	fieldKeyAttempt  = "attempt"
+	fieldKeyWait     = "wait"
+)
+
 // Observability returns a middleware that logs and records metrics for HTTP requests.
 func Observability(logger observability.Logger, metrics observability.MetricsRecorder) func(http.RoundTripper) http.RoundTripper {
 	if logger == nil {
@@ -41,9 +51,9 @@ func (t *observabilityTransport) RoundTrip(req *http.Request) (*http.Response, e
 
 	// Log request
 	t.logger.Debug("http request started",
-		observability.Field{Key: "method", Value: req.Method},
-		observability.Field{Key: "url", Value: urlStr},
-		observability.Field{Key: "path", Value: req.URL.Path},
+		observability.Field{Key: fieldKeyMethod, Value: req.Method},
+		observability.Field{Key: fieldKeyURL, Value: urlStr},
+		observability.Field{Key: fieldKeyPath, Value: req.URL.Path},
 	)
 
 	// Make request
@@ -54,9 +64,9 @@ func (t *observabilityTransport) RoundTrip(req *http.Request) (*http.Response, e
 	if err != nil {
 		// Log error
 		t.logger.Error("http request failed",
-			observability.Field{Key: "method", Value: req.Method},
-			observability.Field{Key: "url", Value: urlStr},
-			observability.Field{Key: "duration", Value: duration},
+			observability.Field{Key: fieldKeyMethod, Value: req.Method},
+			observability.Field{Key: fieldKeyURL, Value: urlStr},
+			observability.Field{Key: fieldKeyDuration, Value: duration},
 			observability.Field{Key: "error", Value: err.Error()},
 		)
 
@@ -68,10 +78,10 @@ func (t *observabilityTransport) RoundTrip(req *http.Request) (*http.Response, e
 
 	// Log response
 	fields := []observability.Field{
-		{Key: "method", Value: req.Method},
-		{Key: "url", Value: urlStr},
+		{Key: fieldKeyMethod, Value: req.Method},
+		{Key: fieldKeyURL, Value: urlStr},
 		{Key: "status", Value: resp.StatusCode},
-		{Key: "duration", Value: duration},
+		{Key: fieldKeyDuration, Value: duration},
 	}
 
 	if resp.StatusCode >= http.StatusBadRequest {

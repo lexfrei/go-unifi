@@ -7,6 +7,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+// testHeaderInvalid is an unparseable Retry-After header value used in tests.
+const testHeaderInvalid = "invalid"
+
 func TestShouldRetry(t *testing.T) {
 	t.Parallel()
 	tests := []struct {
@@ -109,7 +112,7 @@ func TestParseRetryAfter(t *testing.T) {
 		},
 		{
 			name:   "invalid format - text",
-			header: "invalid",
+			header: testHeaderInvalid,
 			want:   0,
 		},
 		{
@@ -149,7 +152,7 @@ func BenchmarkShouldRetry(b *testing.B) {
 }
 
 func BenchmarkParseRetryAfter(b *testing.B) {
-	headers := []string{"", "60", "120", "invalid"}
+	headers := []string{"", "60", "120", testHeaderInvalid}
 
 	for b.Loop() {
 		for _, header := range headers {

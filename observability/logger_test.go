@@ -8,6 +8,16 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+// Test constants.
+const (
+	testFieldKey   = "key"
+	testFieldName  = "name"
+	testFieldValue = "test"
+	testFieldCount = "count"
+	testFieldNull  = "null"
+	testValue      = "value"
+)
+
 func TestNoopLogger(t *testing.T) {
 	t.Parallel()
 
@@ -20,7 +30,7 @@ func TestNoopLogger(t *testing.T) {
 	logger.Error("test error")
 
 	// With should return a logger
-	newLogger := logger.With(observability.Field{Key: "key", Value: "value"})
+	newLogger := logger.With(observability.Field{Key: testFieldKey, Value: testValue})
 	require.NotNil(t, newLogger)
 
 	// With'd logger should also work
@@ -38,20 +48,20 @@ func TestField(t *testing.T) {
 	}{
 		{
 			name:  "string value",
-			field: observability.Field{Key: "name", Value: "test"},
-			key:   "name",
-			value: "test",
+			field: observability.Field{Key: testFieldName, Value: testFieldValue},
+			key:   testFieldName,
+			value: testFieldValue,
 		},
 		{
 			name:  "int value",
-			field: observability.Field{Key: "count", Value: 42},
-			key:   "count",
+			field: observability.Field{Key: testFieldCount, Value: 42},
+			key:   testFieldCount,
 			value: 42,
 		},
 		{
 			name:  "nil value",
-			field: observability.Field{Key: "null", Value: nil},
-			key:   "null",
+			field: observability.Field{Key: testFieldNull, Value: nil},
+			key:   testFieldNull,
 			value: nil,
 		},
 	}
@@ -89,7 +99,7 @@ func BenchmarkNoopLogger(b *testing.B) {
 
 	b.Run("With", func(b *testing.B) {
 		for range b.N {
-			logger.With(observability.Field{Key: "key", Value: "value"})
+			logger.With(observability.Field{Key: testFieldKey, Value: testValue})
 		}
 	})
 }

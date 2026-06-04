@@ -8,11 +8,11 @@ import (
 // BenchmarkNormalizePathCached benchmarks normalizePath with cache hits.
 func BenchmarkNormalizePathCached(b *testing.B) {
 	testPaths := []string{
-		"/api/site/default/dns/record/507f1f77bcf86cd799439011",
-		"/api/site/my-site/device/12345678",
-		"/proxy/network/v2/api/site/default/setting/wan",
-		"/api/v1/host/a1b2c3d4-e5f6-7890-abcd-ef1234567890/stats",
-		"/api/site/production/client/100000",
+		pathDNSRecordObjectID,
+		pathDeviceNumericID,
+		pathSettingWAN,
+		pathHostStats,
+		pathClientNumericID,
 	}
 
 	// Pre-warm the cache
@@ -49,10 +49,10 @@ func BenchmarkNormalizePathUncached(b *testing.B) {
 // Simulates 80% cache hits (common endpoints) + 20% cache misses (unique IDs).
 func BenchmarkNormalizePathMixed(b *testing.B) {
 	commonPaths := []string{
-		"/api/site/default/dns/record/507f1f77bcf86cd799439011",
-		"/api/site/my-site/device/12345678",
-		"/proxy/network/v2/api/site/default/setting/wan",
-		"/api/v1/host/a1b2c3d4-e5f6-7890-abcd-ef1234567890/stats",
+		pathDNSRecordObjectID,
+		pathDeviceNumericID,
+		pathSettingWAN,
+		pathHostStats,
 	}
 
 	// Pre-warm cache with common paths
@@ -81,11 +81,11 @@ func BenchmarkNormalizePathMixed(b *testing.B) {
 // Tests the performance of sync.Map in concurrent scenarios.
 func BenchmarkNormalizePathConcurrent(b *testing.B) {
 	paths := []string{
-		"/api/site/default/dns/record/507f1f77bcf86cd799439011",
-		"/api/site/my-site/device/12345678",
-		"/proxy/network/v2/api/site/default/setting/wan",
-		"/api/v1/host/a1b2c3d4-e5f6-7890-abcd-ef1234567890/stats",
-		"/api/site/production/client/100000",
+		pathDNSRecordObjectID,
+		pathDeviceNumericID,
+		pathSettingWAN,
+		pathHostStats,
+		pathClientNumericID,
 	}
 
 	// Pre-warm cache

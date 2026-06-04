@@ -98,7 +98,7 @@ func (t *rateLimitTransport) waitWithObservability(
 		t.logger.Debug("rate limit delay",
 			observability.Field{Key: "endpoint", Value: endpoint},
 			observability.Field{Key: "delay", Value: delay},
-			observability.Field{Key: "path", Value: path},
+			observability.Field{Key: fieldKeyPath, Value: path},
 		)
 
 		t.metrics.RecordRateLimit(path, delay)

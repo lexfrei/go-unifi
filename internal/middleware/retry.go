@@ -124,10 +124,10 @@ func (t *retryTransport) RoundTrip(req *http.Request) (*http.Response, error) {
 
 		// Log retry
 		t.logger.Warn("retrying request",
-			observability.Field{Key: "attempt", Value: attempt + 1},
+			observability.Field{Key: fieldKeyAttempt, Value: attempt + 1},
 			observability.Field{Key: "max_retries", Value: t.maxRetries},
-			observability.Field{Key: "url", Value: req.URL.String()},
-			observability.Field{Key: "method", Value: req.Method},
+			observability.Field{Key: fieldKeyURL, Value: req.URL.String()},
+			observability.Field{Key: fieldKeyMethod, Value: req.Method},
 		)
 
 		t.metrics.RecordRetry(attempt+1, req.URL.Path)
@@ -188,7 +188,7 @@ func (t *retryTransport) calculateWait(attempt int, resp *http.Response) time.Du
 			if wait := retry.ParseRetryAfter(retryAfter); wait > 0 {
 				t.logger.Debug("using Retry-After header",
 					observability.Field{Key: "retry_after", Value: retryAfter},
-					observability.Field{Key: "wait", Value: wait},
+					observability.Field{Key: fieldKeyWait, Value: wait},
 				)
 				return wait
 			}
@@ -199,8 +199,8 @@ func (t *retryTransport) calculateWait(attempt int, resp *http.Response) time.Du
 	wait := t.initialWait * time.Duration(1<<attempt)
 
 	t.logger.Debug("calculated exponential backoff",
-		observability.Field{Key: "attempt", Value: attempt},
-		observability.Field{Key: "wait", Value: wait},
+		observability.Field{Key: fieldKeyAttempt, Value: attempt},
+		observability.Field{Key: fieldKeyWait, Value: wait},
 	)
 
 	return wait

@@ -5,7 +5,7 @@ go 1.26.0
 require (
 	github.com/cockroachdb/errors v1.13.0
 	github.com/getkin/kin-openapi v0.137.0
-	github.com/oapi-codegen/runtime v1.4.0
+	github.com/oapi-codegen/runtime v1.4.1
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/time v0.15.0
 )

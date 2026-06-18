@@ -3,7 +3,7 @@ module github.com/lexfrei/go-unifi
 go 1.26.4
 
 require (
-	github.com/cockroachdb/errors v1.13.0
+	github.com/cockroachdb/errors v1.14.0
 	github.com/getkin/kin-openapi v0.140.0
 	github.com/oapi-codegen/runtime v1.4.1
 	github.com/stretchr/testify v1.11.1

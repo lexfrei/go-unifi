@@ -4,7 +4,7 @@ go 1.26.5
 
 require (
 	github.com/cockroachdb/errors v1.14.0
-	github.com/getkin/kin-openapi v0.142.0
+	github.com/getkin/kin-openapi v0.143.0
 	github.com/oapi-codegen/runtime v1.6.0
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/time v0.15.0

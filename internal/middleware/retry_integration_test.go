@@ -81,6 +81,8 @@ func TestRetryResourceCleanupOnCancellation(t *testing.T) {
 // TestRetryNoGoroutineLeaks verifies that retry middleware doesn't leak goroutines.
 // Not parallel: runtime.NumGoroutine is process-wide, so a sibling parallel test's
 // goroutines land in the delta and read as a leak here.
+//
+//nolint:paralleltest // see above
 func TestRetryNoGoroutineLeaks(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping integration test in short mode")
@@ -132,6 +134,8 @@ func TestRetryNoGoroutineLeaks(t *testing.T) {
 // TestRetryStressTestConcurrentCancellations stress tests the retry middleware
 // with many concurrent requests that get canceled, verifying no resource leaks.
 // Not parallel, for the same reason as TestRetryNoGoroutineLeaks.
+//
+//nolint:paralleltest // see above
 func TestRetryStressTestConcurrentCancellations(t *testing.T) {
 	if testing.Short() {
 		t.Skip("skipping stress test in short mode")

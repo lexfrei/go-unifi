@@ -1,0 +1,230 @@
+---
+ports:
+  https: 443
+  grpc: 11051
+  ipc: 11081
+  stackable: 11082
+  consoleGroup: 11083
+services:
+  users:
+    serviceName: 'ulp-go'
+    supportPaths:
+      - '/data/ulp-go/log'
+    packageName: 'ulp-go'
+    ports:
+      http:
+        api: 9080
+        directProxy: 9081
+        directoryService: 13080
+        ucsService: 9580
+    displayName: 'Users'
+  uid-agent:
+    packageName: 'uid-agent'
+    serviceName: 'uid-agent'
+    ports:
+      http:
+        api: 6080
+    supportPaths:
+      - '/data/uid/log'
+    displayName: 'UID'
+controllers:
+  network:
+    packageName: 'unifi'
+    serviceName: 'unifi'
+    ports:
+      http:
+        api: 8081
+        inform: 8080
+    supportPaths:
+      - '/data/unifi/logs'
+    displayName: 'Network'
+  protect:
+    packageName: 'unifi-protect'
+    serviceName: 'unifi-protect'
+    supportPaths:
+      - '/srv/unifi-protect/logs'
+    displayName: 'Protect'
+    ports:
+      http:
+        api: 7080
+        autoLink: 7449
+        edgeDevices: 7442
+        emsFlvStreaming: 7550
+        emsWs: 7445
+        emsWss: 7446
+        stackable: 7600
+        mspWs: 7702
+        mspHttp: 7703
+      tcp:
+        emsTcpStreaming: 7451
+  access:
+    packageName: 'unifi-access'
+    serviceName: 'unifi-access'
+    supportPaths:
+      - '/data/unifi-access/log'
+    ports:
+      http:
+        api: 12080
+        mspWs: 7702
+        mspHttp: 7703
+    displayName: 'Access'
+  talk:
+    packageName: 'unifi-talk'
+    serviceName: 'unifi-talk'
+    ports:
+      http:
+        api: 30080
+    supportPaths:
+      - '/var/log/unifi-talk/'
+      - '/var/log/freeswitch/freeswitch.log'
+    displayName: 'Talk'
+  talk-relay:
+    packageName: 'unifi-talk-relay'
+    serviceName: 'unifi-talk-relay'
+    ports:
+      http:
+        api: 31080
+    supportPaths:
+      - '/var/log/unifi-talk-relay/'
+    displayName: 'Talk Relay'
+  connect:
+    packageName: 'unifi-connect'
+    serviceName: 'unifi-connect'
+    ports:
+      http:
+        api: 18080
+    supportPaths:
+      - '/data/unifi-connect/log'
+      - '/srv/unifi-connect/log'
+    displayName: 'Connect'
+  drive:
+    packageName: 'unifi-drive'
+    serviceName: 'unifi-drive'
+    ports:
+      http:
+        api: 16080
+    supportPaths:
+      - '/data/unifi-drive/logs'
+    displayName: 'Drive'
+    portal:
+      location: 'unifi-drive'
+      path: '/usr/share/unifi-drive/ui'
+      index: 'index.html'
+  innerspace:
+    packageName: 'unifi-innerspace'
+    serviceName: 'unifi-innerspace'
+    ports:
+      http:
+        api: 17080
+    logDir: '/data/unifi-innerspace/log'
+    displayName: 'InnerSpace'
+  apollo:
+    packageName: 'apollo'
+    serviceName: 'apollo'
+    ports:
+      http:
+        api: 19880
+    supportPaths:
+      - '/data/apollo/logs'
+    displayName: 'Apollo'
+    disableBackups: true
+    installOnDeviceDiscovery: true
+srcPath: '/usr/share/unifi-core/app'
+configPath: '/data/unifi-core/config'
+supportFile:
+  internalDir: '/data/unifi-core/supportFile'
+  externalDir: '/srv/unifi-core/supportFile'
+ssl:
+  crt: '/data/unifi-core/config/unifi-core.crt'
+  key: '/data/unifi-core/config/unifi-core.key'
+  directCrt: '/data/unifi-core/config/unifi-core-direct.crt'
+  directKey: '/data/unifi-core/config/unifi-core-direct.key'
+webrtc:
+  logLevel: 3
+  iceServers:
+    - urls:
+        - stun:stun.cloudflare.com:3478
+        - stun:stun.l.google.com:19302
+        - stun:global.stun.twilio.com:3478
+  maxDataChannelMessageSize: 4096
+logs:
+  enableErrorsAnalytics: true
+  enableConsole: false
+  dir: '/data/unifi-core/logs'
+  defaultLevel: 'info'
+  maxFiles: 2
+  maxFileSize: 5_242_880
+  debugModeAutoReset: true
+  debugModeResetPeriod: 3_600_000 # 1 hour
+cloudEnv: 'prd'
+cloud:
+  dev:
+    ssoCookieName: 'STG_UBIC_AUTH'
+    ssoUrl: 'https://sso.stg.ui.com/api/sso/v1'
+    configUrl: 'https://dev-config.ubnt.com/cloudAccessConfig.json'
+    fwUpdateUrl: 'https://dev-fw-update.ubnt.com'
+    traceUrl: 'https://trace.dev.svc.ui.com/traces'
+    ztpUrl: 'https://setup.dev.svc.ui.com/api/v1'
+    unifiApisUrl: 'https://developer.dev.svc.ui.com/v1/local-keys'
+    orgUrl: 'https://enterprise.dev.svc.ui.com/api/v1'
+    blueprintUrl: 'https://design.dev.svc.ui.com/api/project/blueprint'
+  stg:
+    ssoCookieName: 'STG_UBIC_AUTH'
+    ssoUrl: 'https://sso.stg.ui.com/api/sso/v1'
+    configUrl: 'https://stg-config.ubnt.com/cloudAccessConfig.json'
+    fwUpdateUrl: 'https://stg-fw-update.ubnt.com'
+    traceUrl: 'https://trace.dev.svc.ui.com/traces'
+    ztpUrl: 'https://setup.stg.svc.ui.com/api/v1'
+    unifiApisUrl: 'https://developer.stg.svc.ui.com/v1/local-keys'
+    orgUrl: 'https://enterprise.stg.svc.ui.com/api/v1'
+    blueprintUrl: 'https://design.stg.svc.ui.com/api/project/blueprint'
+  prd:
+    ssoCookieName: 'UBIC_AUTH'
+    ssoUrl: 'https://sso.ui.com/api/sso/v1'
+    configUrl: 'https://config.ubnt.com/cloudAccessConfig.json'
+    fwUpdateUrl: 'https://fw-update.ubnt.com'
+    traceUrl: 'https://trace.svc.ui.com/traces'
+    ztpUrl: 'https://setup.svc.ui.com/api/v1'
+    unifiApisUrl: 'https://developer.svc.ui.com/v1/local-keys'
+    orgUrl: 'https://enterprise.svc.ui.com/api/v1'
+    blueprintUrl: 'https://design.svc.ui.com/api/project/blueprint'
+messageBox:
+  maxSubscriptionBacklog: 1000
+  subscriptionReaperInterval: 30000
+  longPollTimeout: 60000
+  keepAliveTimeout: 60000
+firmware:
+  internalDir: '/data/unifi-core/firmware'
+  externalDir: '/srv/unifi-core/firmware'
+  channel: 'release'
+  port: 11052
+udapi:
+  port: 1080
+discovery:
+  discoveryInterval: 10000 # 10 seconds
+  uidbUrl: https://static.ui.com/fingerprint/ui/public.json
+  guidDiscoveryBaseUrl: https://static.ui.com/fingerprint/ui/guids/
+  iconBaseUrl: https://static.ui.com/fingerprint/ui/icons/
+  uidbLocalPath: /data/unifi-core/uidb.json
+health:
+  interval: 600000 # 10 mins
+  storageInterval: 30000 # 30s
+postgres:
+  host: '127.0.0.1'
+  port: 5432
+  database: 'unifi-core'
+  user: 'unifi-core'
+  password: null
+  pool:
+    max: 10
+    min: 2
+notifications:
+  retentionPeriodDays: 90
+sharedTokens:
+  retentionPeriodDays: 30
+staticFileMaxAgeMs: 31_536_000_000 # 1 year
+uploadedFileMaxAgeMs: 2_592_000_000 # 1 month
+timezoneDataFilePath: /data/unifi-core/timezones.txt
+uosAgent:
+  ipcHttpPort: 11010
+  apiHttpPort: 11011

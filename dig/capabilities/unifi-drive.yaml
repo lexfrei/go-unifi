@@ -1,0 +1,5 @@
+capability_type: UniFi-Drive
+capability_groups:
+  - version: 1.12.5
+    capabilities:
+      - identity_standard

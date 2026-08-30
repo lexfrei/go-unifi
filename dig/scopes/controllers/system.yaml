@@ -1,0 +1,205 @@
+unique_id: ""
+name: system
+# system, network, protect, access, talk,
+# led, connect, drive, calculus, olympus, innerspace
+order: 1
+revision: 62
+permissions:
+  system.management.location:
+    name: Location management
+    grant_method: ""
+    choice: ""
+    policy_tag: ""
+    groups:
+      admin:
+        name: Full Management
+        scopes:
+          - edit:door_group
+          - edit:holiday
+          - edit:holiday_timezone
+          - edit:location
+          - edit:location_activity
+          - edit:location_device
+          - edit:location_policy
+          - edit:user_timezone
+          - notify:location
+          - systemlog:location
+          - view:app:locations
+          - view:door_group
+          - view:holiday
+          - view:holiday_timezone
+          - view:location
+          - view:location_activity
+          - view:location_device
+          - view:location_policy
+          - view:user_timezone
+          - edit:identity:organization_info
+      readonly:
+        name: View Only
+        scopes:
+          - notify:location
+          - systemlog:location
+          - view:app:locations
+          - view:door_group
+          - view:holiday
+          - view:holiday_timezone
+          - view:location
+          - view:location_activity
+          - view:location_device
+          - view:location_policy
+          - view:user_timezone
+          - view:identity:organization_info
+  system.management.user:
+    name: User management
+    grant_method: ""
+    choice: ""
+    policy_tag: ""
+    groups:
+      admin:
+        name: Full Management
+        scopes:
+          - assign:role
+          - edit:role
+          - edit:user
+          - view:unifi-os:user
+          - edit:unifi-os:user_group
+          - edit:settings
+          - notify:user
+          - systemlog:user
+          - view:app:users
+          - view:group
+          - view:role
+          - view:user
+          - view:permission
+          - view:settings
+          - view:app:settings
+          - view:os-menu:devices
+          - view:os-menu:user
+          - view:os-menu:settings
+          - view:os-menu:notify-settings
+          - view:os-menu:map
+          - view:os-menu:system-log
+          - view:os-menu:storage
+          - view:os-menu:about
+          - edit:os-settings:notify
+          - edit:os-settings:update_install
+          - edit:os-settings:auto_update
+          - edit:os-settings:restart
+          - edit:os-settings:poweroff
+          - edit:os-settings:support_file
+          - edit:os-settings:general
+          - edit:os-settings:ssh
+          - edit:os-settings:client_network
+          - edit:os-settings:raid
+          - edit:os-settings:hotspare
+          - edit:os-settings:send_diagnostics
+          - view:group
+          - edit:group
+          - view:systemlog
+          - systemlog:access
+          - systemlog:location
+          - systemlog:system
+          - systemlog:user
+          - systemlog:network
+          - systemlog:connect
+          - view:access.dashboard
+          - view:access.policy
+          - edit:access.policy
+          - view:access.device
+          - view:access.nfc_card
+          - edit:access.nfc_card
+          - view:access.settings
+          - edit:access.license_plate
+          - view:access.license_plate
+          - view:access.pin_code
+          - edit:access.pin_code
+          - view:access.face
+          - edit:access.face
+          - view:access.wallet_nfc
+          - edit:access.wallet_nfc
+          - send:identity:email
+          - assign:identity:wifi
+          - assign:identity:vpn
+          - assign:identity:evstation
+          - assign:identity:talk
+          - assign:identity:camera
+          - view:identity:assignment_wifi
+          - view:identity:assignment_vpn
+          - view:identity:assignment_access
+          - view:identity:assignment_evs
+          - view:identity:assignment_light
+          - view:identity:assignment_shade
+          - view:identity:assignment_talk
+          - view:identity:assignment_camera
+          - edit:identity:organization_info
+          - view:identity:organization_info
+          - view:identity:settings
+          - edit:identity:settings
+          - revoke:identity:credential
+          - view:identity:services
+          - edit:identity:services
+          - edit:directory:ldap-config
+          - view:directory:ldap-config
+          - edit:directory:ldap-import
+          - view:directory:ldap-import
+          - edit:directory:ldap-import-setting
+          - view:directory:ldap-import-setting
+          - edit:directory:oauth-import
+          - view:directory:oauth-import
+          - edit:directory:oauth-config
+          - view:directory:oauth-config
+          - view:admin
+          - view:notification
+          - view:os-settings:general
+      readonly:
+        name: View Only
+        scopes:
+          - notify:user
+          - systemlog:user
+          - view:app:users
+          - view:role
+          - view:user
+          - view:systemlog
+          - systemlog:access
+          - systemlog:location
+          - systemlog:system
+          - systemlog:user
+          - systemlog:network
+          - systemlog:connect
+          - view:unifi-os:user
+          - view:access.dashboard
+          - view:permission
+          - view:settings
+          - view:app:settings
+          - view:os-menu:devices
+          - view:os-menu:user
+          - view:os-menu:map
+          - view:os-menu:storage
+          - view:os-menu:system-log
+          - view:os-menu:about
+          - view:access.policy
+          - view:access.pin_code
+          - view:access.nfc_card
+          - view:access.license_plate
+          - view:access.face
+          - view:access.wallet_nfc
+          - view:group
+          - view:identity:organization_info
+          - view:identity:settings
+          - view:identity:services
+          - view:directory:ldap-config
+          - view:directory:ldap-import
+          - view:directory:ldap-import-setting
+          - view:directory:oauth-import
+          - view:directory:oauth-config
+          - view:admin
+          - view:identity:assignment_wifi
+          - view:identity:assignment_vpn
+          - view:identity:assignment_access
+          - view:identity:assignment_evs
+          - view:identity:assignment_light
+          - view:identity:assignment_shade
+          - view:identity:assignment_talk
+          - view:identity:assignment_camera
+          - view:notification
+          - view:os-settings:general

@@ -1,0 +1,23 @@
+unique_id: ""
+name: network
+# system, network, protect, access, talk,
+# led, connect, drive, calculus, olympus, innerspace
+order: 2
+revision: 3
+permissions:
+  network.management:
+    name: Network management
+    grant_method: ""
+    choice: ""
+    policy_tag: ""
+    groups:
+      admin:
+        name: Full Management
+        scopes:
+        - manage:controller:network
+        - view:controller:network
+      readonly:
+        name: View Only
+        scopes:
+        - view:controller:network
+        - read:network-site:all

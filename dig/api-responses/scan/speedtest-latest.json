@@ -1,0 +1,1 @@
+{"cron_schedule":"0 5 * * *","latest":{"download_mbps":884,"id":"69251ba66fcfc41f6da5aefd","interface_name":"ppp0","latency_ms":5,"network_conf_id":"66c784195302e23512334eb3","time":1764039581000,"upload_mbps":847,"wan_networkgroup":"WAN","wan_provider_capabilities":{"download_kilobits_per_second":1000000,"upload_kilobits_per_second":1000000}}}

@@ -1,0 +1,131 @@
+unique_id: ""
+name: protect
+# system, network, protect, access, talk,
+# led, connect, drive, calculus, olympus, innerspace
+order: 3
+revision: 15
+permissions:
+  protect.management:
+    name: Protect management
+    choice: multi
+    groups:
+      admin:
+        name: Full Management
+        scopes:
+          - write:protect.viewer
+          - write:protect.user:$
+          - write:protect.user
+          - write:protect.sensor
+          - write:protect.schedule
+          - write:protect.nvr
+          - write:protect.light
+          - write:protect.legacyUFV
+          - write:protect.group
+          - write:protect.doorlock
+          - write:protect.deviceGroup
+          - write:protect.chime
+          - write:protect.camera
+          - write:protect.bridge
+          - view:controller:protect
+          - readmedia:protect.camera
+          - readlive:protect.camera
+          - read:protect.viewer
+          - read:protect.user:$
+          - read:protect.user
+          - read:protect.sensor
+          - read:protect.schedule
+          - read:protect.nvr
+          - read:protect.light
+          - read:protect.legacyUFV
+          - read:protect.group
+          - read:protect.doorlock
+          - read:protect.deviceGroup
+          - read:protect.chime
+          - read:protect.camera
+          - read:protect.bridge
+          - manage:controller:protect
+          - deletemedia:protect.camera
+          - delete:protect.viewer
+          - delete:protect.user:$
+          - delete:protect.user
+          - delete:protect.sensor
+          - delete:protect.schedule
+          - delete:protect.nvr
+          - delete:protect.light
+          - delete:protect.legacyUFV
+          - delete:protect.group
+          - delete:protect.doorlock
+          - delete:protect.deviceGroup
+          - delete:protect.chime
+          - delete:protect.camera
+          - delete:protect.bridge
+          - create:protect.viewer
+          - create:protect.user
+          - create:protect.sensor
+          - create:protect.schedule
+          - create:protect.liveview
+          - create:protect.light
+          - create:protect.group
+          - create:protect.doorlock
+          - create:protect.deviceGroup
+          - create:protect.chime
+          - create:protect.camera
+          - create:protect.bridge
+      live-only:
+        name: Live Only
+        scopes:
+          - view:controller:protect
+          - readlive:protect.camera
+          - read:protect.user:$
+          - read:protect.schedule
+          - read:protect.nvr
+          - read:protect.deviceGroup
+          - read:protect.camera
+      readonly:
+        name: View Only
+        scopes:
+          - write:protect.user:$
+          - view:controller:protect
+          - readmedia:protect.camera
+          - readlive:protect.camera
+          - read:protect.viewer
+          - read:protect.user:$
+          - read:protect.sensor
+          - read:protect.nvr
+          - read:protect.light
+          - read:protect.doorlock
+          - read:protect.deviceGroup
+          - read:protect.chime
+          - read:protect.camera
+          - read:protect.bridge
+          - delete:protect.user:$
+          - create:protect.liveview
+      spec-device:
+        name: "Custom"
+        type: "custom"
+        tag: "spec"
+        scopes:
+          - write:protect.schedule
+          - view:controller:protect
+          - read:protect.user:$
+          - read:protect.schedule
+          - read:protect.nvr
+          - read:protect.deviceGroup
+          - delete:protect.schedule
+          - create:protect.schedule
+          - create:protect.liveview
+        extension:
+          # or Application use API POST http://127.0.0.1:9080/api/v2/controller_manifest/$application/spec-site/resources
+          # to proactively create resources in ULP
+          # this is only used to be compatible with the old Protect application and should be removed in the future
+          resource_url: "$ulp-host/api/v2/controller_manifests/wrap_protect_spec_device_resources"
+          resource_perms:
+            edit:
+              name: "Full Management"
+              scopes:
+                - edit:$resource-type:write:$resource-id
+                - view:$resource-type:read:$resource-id
+            view:
+              name: "Read Only"
+              scopes:
+                - view:$resource-type:read:$resource-id

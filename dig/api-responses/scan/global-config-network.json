@@ -1,0 +1,1 @@
+{"default_security_posture":"ALLOW_ALL","flood_unknown_multicast_for_network_ids":[],"igmp_fastleave_for_network_ids":[],"igmp_querier_switches":[],"igmp_snooping_for":"none","igmp_snooping_for_network_ids":[],"ipv6_pd_interfaces":[],"mdns_enabled_for":"none","mdns_enabled_for_network_ids":[]}

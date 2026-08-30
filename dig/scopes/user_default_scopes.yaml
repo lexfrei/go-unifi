@@ -1,0 +1,7 @@
+# this configuration defines the scopes for every user
+# https://ubiquiti.atlassian.net/browse/ULP-4448
+- name: identity permission for every user
+  scopes:
+    - identity:view:app:users
+    - identity:view:controller:access
+

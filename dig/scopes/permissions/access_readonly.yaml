@@ -1,0 +1,14 @@
+# extra scopes when admin has permission: access.management#admin
+
+# this is for identity management
+permission: "access.management#readonly"
+# only apply permissions when the unifi-os console support identity
+only_if_support_identity: true
+scopes:
+  # allow access viewer to view users
+  - view:app:users
+  - view:user
+  - view:group
+  - view:identity:settings
+  - view:settings
+  - view:identity:assignment_access

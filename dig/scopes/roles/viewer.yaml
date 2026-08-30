@@ -1,0 +1,4 @@
+tag: builtin.scopes.viewer
+subjects:
+  - role_by_system_key:viewer
+scopes: []

@@ -1,0 +1,1 @@
+{"wan_interfaces":[{"name":"Internet 1","state":"ACTIVE","wan_networkgroup":"WAN"},{"name":"Internet 2","state":"BACKUP","wan_networkgroup":"WAN2"}]}

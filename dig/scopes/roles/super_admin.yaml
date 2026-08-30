@@ -1,0 +1,62 @@
+tag: builtin.scopes.super_admin
+subjects:
+  - role_by_system_key:super_administrator
+  # Org Admins | refine the scopes query logic of org admins 
+  # https://ubiquiti.atlassian.net/browse/ULP-5617 
+  - org_role:org_administrator # org admin has the same scopes as super admin 
+scopes:
+  - edit:feedback
+  - edit:notification
+  - edit:permission:admin
+  - edit:permission:viewer
+  - edit:api_key
+  - edit:settings
+  - edit:controller:uid-agent
+  - edit:os-settings:update_channel
+  - systemlog:system
+  - view:app:settings
+  - view:cloud_access
+  - view:notification
+  - view:permission
+  - view:permission:admin
+  - view:permission:viewer
+  - view:api_key
+  - view:settings
+  - view:systemlog
+  - view:permission
+  - view:controller:uid-agent
+  - view:app:uid-agent
+  - send:identity:email
+  - assign:identity:wifi
+  - assign:identity:vpn
+  - assign:identity:evstation
+  - view:identity:organization_info
+  - edit:identity:organization_info
+  - edit:identity:update
+  - view:identity:update
+  - assign:identity:talk
+  - edit:identity:status
+  - view:identity:settings
+  - edit:identity:settings
+  - revoke:identity:credential
+  - view:identity:services
+  - edit:identity:services
+  - assign:identity:camera
+  - view:directory:ldap-config
+  - edit:directory:ldap-import
+  - view:directory:ldap-import
+  - edit:directory:ldap-import-setting
+  - view:directory:ldap-import-setting
+  - edit:directory:oauth-import
+  - view:directory:oauth-import
+  - edit:directory:oauth-config
+  - view:directory:oauth-config
+  - edit:identity:credentials_settings
+  - view:identity:assignment_wifi
+  - view:identity:assignment_vpn
+  - view:identity:assignment_access
+  - view:identity:assignment_evs
+  - view:identity:assignment_light
+  - view:identity:assignment_shade
+  - view:identity:assignment_talk
+  - view:identity:assignment_camera

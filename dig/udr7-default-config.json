@@ -1,0 +1,672 @@
+{
+    "version": 48,
+    "interfaces": [
+        {
+            "identification": {
+                "id": "eth0",
+                "type": "ethernet"
+            },
+            "status": {
+                "enabled": true
+            }
+        },
+        {
+            "identification": {
+                "id": "eth1",
+                "type": "ethernet"
+            },
+            "status": {
+                "enabled": true
+            }
+        },
+        {
+            "identification": {
+                "id": "eth2",
+                "type": "ethernet"
+            },
+            "status": {
+                "enabled": true
+            }
+        },
+        {
+            "identification": {
+                "id": "eth3",
+                "type": "ethernet"
+            },
+            "status": {
+                "enabled": true,
+                "comment": "WAN"
+            },
+            "addresses": [
+                {
+                    "type": "dynamic",
+                    "cidr": null,
+                    "origin": "dhcp",
+                    "version": "v4"
+                }
+            ]
+        },
+        {
+            "ethernet": {
+                "sfp": {
+                    "fec": "none"
+                }
+            },
+            "identification": {
+                "id": "eth4",
+                "type": "ethernet"
+            },
+            "status": {
+                "enabled": true,
+                "comment": "WAN2"
+            },
+            "addresses": [
+                {
+                    "type": "dynamic",
+                    "cidr": null,
+                    "origin": "dhcp",
+                    "version": "v4"
+                }
+            ]
+        },
+        {
+            "identification": {
+                "id": "br0",
+                "type": "bridge"
+            },
+            "status": {
+                "enabled": true,
+                "comment": "LAN"
+            },
+            "bridge": {
+                "id": 0,
+                "interfaces": [
+                    {
+                        "id": "switch0.1"
+                    },
+                    {
+                        "id": "ath0"
+                    },
+                    {
+                        "id": "ath1"
+                    },
+                    {
+                        "id": "ath2"
+                    }
+                ]
+            },
+            "addresses": [
+                {
+                    "cidr": "192.168.1.1/24",
+                    "type": "static",
+                    "version": "v4"
+                }
+            ]
+        },
+        {
+            "identification": {
+                "id": "switch0",
+                "type": "switch"
+            },
+            "status": {
+                "enabled": true
+            },
+            "switch": {
+                "vlanEnabled": true,
+                "ports": [
+                    {
+                        "interface": {
+                            "id": "eth0"
+                        },
+                        "pvid": 1,
+                        "enabled": true
+                    },
+                    {
+                        "interface": {
+                            "id": "eth1"
+                        },
+                        "pvid": 1,
+                        "enabled": true
+                    },
+                    {
+                        "interface": {
+                            "id": "eth2"
+                        },
+                        "pvid": 1,
+                        "enabled": true
+                    },
+                    {
+                        "interface": {
+                            "id": "eth3"
+                        },
+                        "pvid": null,
+                        "enabled": false
+                    }
+                ]
+            }
+        },
+        {
+            "identification": {
+                "id": "switch0.1",
+                "type": "vlan"
+            },
+            "status": {
+                "enabled": true
+            },
+            "vlan": {
+                "id": 1,
+                "interface": {
+                    "id": "switch0"
+                }
+            }
+        }
+    ],
+    "services": {
+        "ntpClient": {
+            "enabled": true,
+            "ntpServers": [
+                "0.ubnt.pool.ntp.org",
+                "1.ubnt.pool.ntp.org",
+                "2.ubnt.pool.ntp.org"
+            ]
+        },
+        "dhcpServers": [
+            {
+                "enabled": true,
+                "ipVersion": "v4",
+                "interfaces": [
+                    {
+                        "id": "br0"
+                    }
+                ],
+                "name": "LAN DHCP Server",
+                "leaseTime": 60,
+                "rangeStart": "192.168.1.2",
+                "rangeStop": "192.168.1.254",
+                "gatewayAddress": "192.168.1.1",
+                "ipv4Netmask": 24
+            }
+        ],
+        "dnsForwarder": {
+            "enabled": true,
+            "forwardBehavior": "allServers",
+            "hostRecords": [
+                {
+                    "hostName": "unifi.localdomain",
+                    "address": null,
+                    "registerNonQualified": true
+                },
+                {
+                    "hostName": "setup.ui.com",
+                    "address": null,
+                    "registerNonQualified": false
+                }
+            ],
+            "listenInterfaces": [
+                {
+                    "id": "br0"
+                }
+            ],
+            "portalAddress": {
+                "address": "192.168.1.1",
+                "version": "v4"
+            }
+        },
+        "bleHTTPTransport": {
+            "enabled": true,
+            "serviceUUID": "b1d99fca-9a07-45bb-8aba-c09685b10e8b",
+            "advertiseName": null,
+            "advertiseMAC": null,
+            "advertiseIPv4": null,
+            "httpHostAddress": "http://127.0.0.1:80"
+        },
+        "unifiNetwork": {
+            "enabled": false
+        },
+        "arpInspection": {
+            "enabled": true,
+            "interfaces": [
+                {
+                    "id": "br0"
+                }
+            ]
+        },
+        "wanFailover": {
+            "enabled": true,
+            "failoverGroups": [
+                {
+                    "algorithm": "single",
+                    "connectionResetTriggers": [
+                        "onActivation",
+                        "onConfiguration",
+                        "onWanHealthBad"
+                    ],
+                    "id": 1,
+                    "interfaces": [
+                        "eth3"
+                    ],
+                    "metric": 1
+                },
+                {
+                    "algorithm": "single",
+                    "connectionResetTriggers": [
+                        "onActivation",
+                        "onConfiguration",
+                        "onWanHealthBad"
+                    ],
+                    "id": 2,
+                    "interfaces": [
+                        "eth4"
+                    ],
+                    "metric": 2
+                }
+            ],
+            "wanInterfaces": [
+                {
+                    "interface": "eth3",
+                    "metric": 1,
+                    "monitors": [
+                        {
+                            "interval": 3,
+                            "timePeriod": 60,
+                            "alert": {
+                                "latencyThreshold": 1500,
+                                "lossThreshold": 20
+                            },
+                            "id": null,
+                            "type": "icmp"
+                        }
+                    ],
+                    "routingTable": 201,
+                    "weight": 10
+                },
+                {
+                    "interface": "eth4",
+                    "metric": 2,
+                    "monitors": [
+                        {
+                            "interval": 3,
+                            "timePeriod": 60,
+                            "alert": {
+                                "latencyThreshold": 1500,
+                                "lossThreshold": 20
+                            },
+                            "id": null,
+                            "type": "icmp"
+                        }
+                    ],
+                    "routingTable": 202,
+                    "weight": 10
+                }
+            ]
+        }
+    },
+    "system": {
+        "hostname": "UDR7",
+        "arp": {
+            "arpCacheSize": 262144
+        }
+    },
+    "firewall/filter": [
+        {
+            "config": {
+                "logDefault": false,
+                "name": "INPUT",
+                "policy": "ACCEPT"
+            },
+            "rules": [
+                {
+                    "target": "ACCEPT",
+                    "inInterface": {
+                        "id": "br0"
+                    }
+                },
+                {
+                    "target": "ACCEPT",
+                    "connectionState": [
+                        "established",
+                        "related"
+                    ],
+                    "description": "[WAN_LOCAL]allow established/related sessions",
+                    "inInterface": {
+                        "id": "eth4"
+                    }
+                },
+                {
+                    "target": "ACCEPT",
+                    "connectionState": [
+                        "established",
+                        "related"
+                    ],
+                    "description": "[WAN_LOCAL]allow established/related sessions",
+                    "inInterface": {
+                        "id": "eth3"
+                    }
+                },
+                {
+                    "target": "ACCEPT",
+                    "description": "[WANv6_LOCAL]Allow neighbor solicitation",
+                    "icmpv6Type": "neighbor-advertisement",
+                    "inInterface": {
+                        "id": "eth4"
+                    },
+                    "protocol": "ipv6-icmp",
+                    "ipVersion": "v6only"
+                },
+                {
+                    "target": "ACCEPT",
+                    "description": "[WANv6_LOCAL]Allow neighbor solicitation",
+                    "icmpv6Type": "neighbor-advertisement",
+                    "inInterface": {
+                        "id": "eth3"
+                    },
+                    "protocol": "ipv6-icmp",
+                    "ipVersion": "v6only"
+                },
+                {
+                    "target": "DROP",
+                    "connectionState": [
+                        "invalid"
+                    ],
+                    "description": "[WAN_LOCAL]drop invalid state",
+                    "inInterface": {
+                        "id": "eth4"
+                    }
+                },
+                {
+                    "target": "DROP",
+                    "connectionState": [
+                        "invalid"
+                    ],
+                    "description": "[WAN_LOCAL]drop invalid state",
+                    "inInterface": {
+                        "id": "eth3"
+                    }
+                },
+                {
+                    "target": "ACCEPT",
+                    "description": "[WANv6_LOCAL]Allow neighbor advertisements",
+                    "inInterface": {
+                        "id": "eth4"
+                    },
+                    "protocol": "ipv6-icmp"
+                },
+                {
+                    "target": "ACCEPT",
+                    "description": "[WANv6_LOCAL]Allow neighbor advertisements",
+                    "inInterface": {
+                        "id": "eth3"
+                    },
+                    "protocol": "ipv6-icmp"
+                },
+                {
+                    "target": "DROP",
+                    "inInterface": {
+                        "id": "eth4"
+                    }
+                },
+                {
+                    "target": "DROP",
+                    "inInterface": {
+                        "id": "eth3"
+                    }
+                }
+            ]
+        },
+        {
+            "config": {
+                "logDefault": false,
+                "name": "FORWARD",
+                "policy": "ACCEPT"
+            },
+            "rules": [
+                {
+                    "target": "ACCEPT",
+                    "description": "[LAN_OUT]accounting defined network 192.168.1.0/24",
+                    "destination": {
+                        "address": "192.168.1.0/24"
+                    },
+                    "outInterface": {
+                        "id": "br0"
+                    },
+                    "ipVersion": "v4only"
+                },
+                {
+                    "target": "ACCEPT",
+                    "outInterface": {
+                        "id": "br0"
+                    }
+                },
+                {
+                    "target": "REJECT",
+                    "protocol": "tcp",
+                    "rejectWith": "tcp_reset",
+                    "outInterface": {
+                        "id": "eth4"
+                    }
+                },
+                {
+                    "target": "REJECT",
+                    "protocol": "tcp",
+                    "rejectWith": "tcp_reset",
+                    "outInterface": {
+                        "id": "eth3"
+                    }
+                },
+                {
+                    "target": "REJECT",
+                    "outInterface": {
+                        "id": "eth4"
+                    }
+                },
+                {
+                    "target": "REJECT",
+                    "outInterface": {
+                        "id": "eth3"
+                    }
+                },
+                {
+                    "target": "ACCEPT",
+                    "connectionState": [
+                        "established",
+                        "related"
+                    ],
+                    "description": "[WAN_IN]allow established/related sessions",
+                    "inInterface": {
+                        "id": "eth4"
+                    }
+                },
+                {
+                    "target": "ACCEPT",
+                    "connectionState": [
+                        "established",
+                        "related"
+                    ],
+                    "description": "[WAN_IN]allow established/related sessions",
+                    "inInterface": {
+                        "id": "eth3"
+                    }
+                },
+                {
+                    "target": "DROP",
+                    "connectionState": [
+                        "invalid"
+                    ],
+                    "description": "[WAN_IN]drop invalid state",
+                    "inInterface": {
+                        "id": "eth4"
+                    }
+                },
+                {
+                    "target": "DROP",
+                    "connectionState": [
+                        "invalid"
+                    ],
+                    "description": "[WAN_IN]drop invalid state",
+                    "inInterface": {
+                        "id": "eth3"
+                    }
+                },
+                {
+                    "target": "DROP",
+                    "inInterface": {
+                        "id": "eth4"
+                    }
+                },
+                {
+                    "target": "DROP",
+                    "inInterface": {
+                        "id": "eth3"
+                    }
+                }
+            ]
+        },
+        {
+            "config": {
+                "logDefault": false,
+                "name": "OUTPUT",
+                "policy": "ACCEPT"
+            }
+        }
+    ],
+    "firewall/nat": [
+        {
+            "target": "MASQUERADE",
+            "chain": "POSTROUTING",
+            "outInterface": {
+                "id": "eth3"
+            }
+        },
+        {
+            "target": "MASQUERADE",
+            "chain": "POSTROUTING",
+            "outInterface": {
+                "id": "eth4"
+            }
+        },
+        {
+            "target": "DNAT",
+            "chain": "PREROUTING",
+            "destination": {
+                "port": "53"
+            },
+            "enabled": true,
+            "inInterface": {
+                "id": "br0"
+            },
+            "protocol": "tcp_udp",
+            "source": {
+                "address": "192.168.1.0/24"
+            },
+            "translation": {
+                "address": "192.168.1.1",
+                "port": "53"
+            },
+            "ipVersion": "v4only"
+        },
+        {
+            "target": "DNAT",
+            "chain": "PREROUTING",
+            "destination": {
+                "port": "80"
+            },
+            "enabled": true,
+            "inInterface": {
+                "id": "br0"
+            },
+            "protocol": "tcp",
+            "source": {
+                "address": "192.168.1.0/24"
+            },
+            "translation": {
+                "address": "192.168.1.1",
+                "port": "80"
+            },
+            "ipVersion": "v4only"
+        }
+    ],
+    "firewall/settings": {
+        "conntrackModules": {
+            "ftp": true,
+            "gre": true,
+            "h323": true,
+            "pptp": true,
+            "sip": false,
+            "tftp": true
+        }
+    },
+    "versionFormat": "v2",
+    "versionDetail": {
+        "bridge-firewall": 2,
+        "firewall/filter": 7,
+        "firewall/mangle": 8,
+        "firewall/nat": 10,
+        "firewall/pbr": 8,
+        "firewall/sets": 2,
+        "firewall/settings": 1,
+        "interfaces": 33,
+        "peripherals": 1,
+        "qos/ip": 2,
+        "routes/ospf": 6,
+        "routes/ospf/areas": 4,
+        "routes/ospf/interfaces": 4,
+        "routes/static": 3,
+        "services/arpInspection": 1,
+        "services/bleHTTPTransport": 1,
+        "services/clientIsolation": 1,
+        "services/ddns": 3,
+        "services/dhcpServers": 7,
+        "services/discoveryResponder": 2,
+        "services/dnsForwarder": 7,
+        "services/dpi": 1,
+        "services/geoipFiltering": 2,
+        "services/idsIps": 7,
+        "services/igmpProxy": 1,
+        "services/igmpSnooping": 2,
+        "services/ipAccounting": 1,
+        "services/l2tpServer": 3,
+        "services/latencyMonitor": 1,
+        "services/lldp": 1,
+        "services/loopProtection": 1,
+        "services/mdns": 2,
+        "services/ntpClient": 1,
+        "services/radius-profiles": 3,
+        "services/radiusServer": 8,
+        "services/snmpAgent": 2,
+        "services/sshServer": 3,
+        "services/suspend": 1,
+        "services/systemLog": 2,
+        "services/telnetServer": 1,
+        "services/uid": 1,
+        "services/unifiNetwork": 2,
+        "services/unms": 1,
+        "services/upnp": 2,
+        "services/utm": 5,
+        "services/wanFailover": 13,
+        "services/webServer": 1,
+        "services/wifiman": 2,
+        "services/sslInspection": 2,
+        "services/wanMagic": 1,
+        "system": 7,
+        "system/users": 1,
+        "vlans": 1,
+        "vpn/ipsec": 1,
+        "vpn/ipsec/site-to-site": 5,
+        "vpn/openvpn/peers": 6,
+        "vpn/teleport": 1,
+        "qos": 2,
+        "vpn/openvpn/raws": 6,
+        "services/vrrp": 7,
+        "vpn/wireguard/clients": 6,
+        "vpn/wireguard/site-to-sites": 6,
+        "vpn/wireguard/servers": 5,
+        "services/dohProxy": 8,
+        "services/stunnel": 1,
+        "routes/access-lists": 1,
+        "services/redirector": 1,
+        "services/dhcpRogueDetector": 1,
+        "routes/bgp/raw": 1,
+        "services/flowAccounting": 2,
+        "services/messageBroker": 3
+    }
+}

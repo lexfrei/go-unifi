@@ -1,0 +1,24 @@
+policies:
+  - tag: access.open_door
+    description: open door policy
+    owner: controller.access
+    effect: allow
+    is_system: false
+    is_visible: true
+    resources:
+      - door
+      - doors_in_group
+      - doors_in_building
+      - doors_in_floor
+      - elevator
+      - elevator_floor
+      - elevators_in_building
+      - access_group
+    subjects:
+      - user
+      - role
+      - users_in_group
+      - role_by_system_key
+      - users_in_direct_group
+    actions:
+      - access.open_door

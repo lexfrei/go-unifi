@@ -1,0 +1,40 @@
+# UniFi Network Integration API v1 (Official)
+# Source: dig/network-integration-api-9.5.21.json
+# Path pattern: /integration/v1/...
+# Site param: UUID (siteId)
+# Auth: X-API-KEY header
+
+# ==============================================================================
+# Application Info
+# ==============================================================================
+GET /integration/v1/info
+
+# ==============================================================================
+# Sites
+# ==============================================================================
+GET /integration/v1/sites
+
+# ==============================================================================
+# Devices
+# ==============================================================================
+GET /integration/v1/sites/{siteId}/devices
+GET /integration/v1/sites/{siteId}/devices/{deviceId}
+GET /integration/v1/sites/{siteId}/devices/{deviceId}/statistics/latest
+POST /integration/v1/sites/{siteId}/devices/{deviceId}/actions
+POST /integration/v1/sites/{siteId}/devices/{deviceId}/interfaces/ports/{portIdx}/actions
+
+# ==============================================================================
+# Clients
+# ==============================================================================
+GET /integration/v1/sites/{siteId}/clients
+GET /integration/v1/sites/{siteId}/clients/{clientId}
+POST /integration/v1/sites/{siteId}/clients/{clientId}/actions
+
+# ==============================================================================
+# Hotspot Vouchers
+# ==============================================================================
+GET /integration/v1/sites/{siteId}/hotspot/vouchers
+POST /integration/v1/sites/{siteId}/hotspot/vouchers
+DELETE /integration/v1/sites/{siteId}/hotspot/vouchers
+GET /integration/v1/sites/{siteId}/hotspot/vouchers/{voucherId}
+DELETE /integration/v1/sites/{siteId}/hotspot/vouchers/{voucherId}

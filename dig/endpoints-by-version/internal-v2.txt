@@ -1,0 +1,554 @@
+# UniFi Network Internal API v2
+# Source: dig/all-api-site-endpoints.txt (349 endpoints)
+# Path pattern: /api/site/{siteName}/... (equivalent to /v2/api/site/{site}/...)
+# Site param: string (e.g., "default", NOT UUID)
+# Auth: X-API-KEY header
+#
+# NOTE: These are INTERNAL endpoints discovered via reverse engineering.
+# They are NOT officially documented by Ubiquiti.
+
+# ==============================================================================
+# ALREADY IMPLEMENTED (marked with [x])
+# ==============================================================================
+
+# [x] Static DNS - CRUD
+/api/site/{siteName}/static-dns
+/api/site/{siteName}/static-dns/devices
+/api/site/{siteName}/static-dns/{id}
+
+# [x] Firewall Policies - CRUD
+/api/site/{siteName}/firewall-policies
+/api/site/{siteName}/firewall-policies/batch
+/api/site/{siteName}/firewall-policies/batch-delete
+/api/site/{siteName}/firewall-policies/batch-reorder
+/api/site/{siteName}/firewall-policies/defaults
+/api/site/{siteName}/firewall-policies/predefined/{id}
+/api/site/{siteName}/firewall-policies/{id}
+
+# [x] Traffic Rules - CRUD
+/api/site/{siteName}/trafficrules
+/api/site/{siteName}/trafficrule/{ruleId}
+/api/site/{siteName}/trafficrules/{ruleId}
+
+# [x] Dashboard - GET
+/api/site/{siteName}/aggregated-dashboard
+/api/site/{siteName}/dashboard
+
+# [x] Topology - GET
+/api/site/{siteName}/topology
+
+# [x] Devices - GET
+/api/site/{siteName}/device
+
+# [x] Active Clients - GET
+/api/site/{siteName}/clients/active
+
+# ==============================================================================
+# PRIORITY 1: Core Networking
+# ==============================================================================
+
+# NAT Rules
+/api/site/{siteName}/nat
+/api/site/{siteName}/nat/{id}
+
+# LAN Configuration
+/api/site/{siteName}/lan/defaults
+/api/site/{siteName}/lan/enable-lte-failover
+/api/site/{siteName}/lan/enriched-configuration
+/api/site/{siteName}/lan/mdns
+/api/site/{siteName}/lan/migrate-to-layer3/{networkConfId}
+
+# WAN Configuration
+/api/site/{siteName}/wan/ddns
+/api/site/{siteName}/wan/defaults
+/api/site/{siteName}/wan/enriched-configuration
+/api/site/{siteName}/wan/load-balancing/configuration
+/api/site/{siteName}/wan/load-balancing/status
+/api/site/{siteName}/wan/magic/configuration
+/api/site/{siteName}/wan/magic/pause
+/api/site/{siteName}/wan/magic/resume
+/api/site/{siteName}/wan/magic/speedtest
+/api/site/{siteName}/wan/magic/subscription
+/api/site/{siteName}/wan/networkgroups
+/api/site/{siteName}/wan/provider-capabilities
+/api/site/{siteName}/wan/provider-capabilities/legacy
+/api/site/{siteName}/wan/{wanNetworkGroup}/isp-status
+/api/site/{siteName}/wan-slas
+/api/site/{siteName}/wan-slas/batch-delete
+/api/site/{siteName}/wan-slas/{id}
+
+# WLAN Configuration
+/api/site/{siteName}/wlan-capabilities
+/api/site/{siteName}/wlan/defaults
+/api/site/{siteName}/wlan/enriched-configuration
+/api/site/{siteName}/wlan/{wlanId}/statistics/hourly
+
+# Port Forwarding (related)
+/api/site/{siteName}/port-forward/batch-delete
+/api/site/{siteName}/port-profiles/defaults
+
+# ==============================================================================
+# PRIORITY 2: Firewall & Security
+# ==============================================================================
+
+# Firewall Zones
+/api/site/{siteName}/firewall/migrate
+/api/site/{siteName}/firewall/zone
+/api/site/{siteName}/firewall/zone-matrix
+/api/site/{siteName}/firewall/zone/batch-delete
+/api/site/{siteName}/firewall/zone/defaults
+/api/site/{siteName}/firewall/zone/{zoneId}
+
+# Firewall Rules (additional)
+/api/site/{siteName}/firewall-rules/batch-delete
+/api/site/{siteName}/firewall-rules/combined-traffic-firewall-rules
+/api/site/{siteName}/firewall-rules/defaults
+
+# Firewall App Blocks
+/api/site/{siteName}/firewall-app-blocks
+/api/site/{siteName}/firewall-app-blocks/create
+/api/site/{siteName}/firewall-app-blocks/{id}
+
+# ACL Rules
+/api/site/{siteName}/acl-rules
+/api/site/{siteName}/acl-rules/batch-delete
+/api/site/{siteName}/acl-rules/{ruleId}
+/api/site/{siteName}/{mac}/acl-entry-count
+
+# IPS Alerts
+/api/site/{siteName}/ips_alerts
+
+# Content Filtering
+/api/site/{siteName}/content-filtering
+/api/site/{siteName}/content-filtering/bulk
+/api/site/{siteName}/content-filtering/categories
+/api/site/{siteName}/content-filtering/create
+/api/site/{siteName}/content-filtering/{id}
+
+# SSL Inspection
+/api/site/{siteName}/ssl-inspection/applications
+/api/site/{siteName}/ssl-inspection/categories
+/api/site/{siteName}/ssl-inspection/certificates
+/api/site/{siteName}/ssl-inspection/certificates/active
+/api/site/{siteName}/ssl-inspection/certificates/generate
+/api/site/{siteName}/ssl-inspection/certificates/validate
+/api/site/{siteName}/ssl-inspection/certificates/{certificateId}
+/api/site/{siteName}/ssl-inspection/certificates/{certificateId}/activate
+/api/site/{siteName}/ssl-inspection/file-extensions
+/api/site/{siteName}/ssl-inspection/profiles
+/api/site/{siteName}/ssl-inspection/profiles/defaults
+/api/site/{siteName}/ssl-inspection/profiles/{profileId}
+/api/site/{siteName}/ssl-inspection/search-engines
+/api/site/{siteName}/ssl-inspection/setting
+/api/site/{siteName}/ssl-inspection/setting/defaults
+
+# ==============================================================================
+# PRIORITY 3: VPN
+# ==============================================================================
+
+# WireGuard
+/api/site/{siteName}/wireguard/users
+/api/site/{siteName}/wireguard/users/existing-subnets
+/api/site/{siteName}/wireguard/{networkId}/users
+/api/site/{siteName}/wireguard/{networkId}/users/batch
+/api/site/{siteName}/wireguard/{networkId}/users/batch_delete
+
+# OpenVPN
+/api/site/{siteName}/vpn/openvpn/certificates
+/api/site/{siteName}/vpn/openvpn/configuration
+/api/site/{siteName}/vpn/openvpn/{networkId}/configuration
+
+# VPN General
+/api/site/{siteName}/vpn/client-connections
+/api/site/{siteName}/vpn/connections
+/api/site/{siteName}/vpn/l2tp/defaults
+/api/site/{siteName}/vpn/{networkId}/restart
+
+# Teleport
+/api/site/{siteName}/teleport/access-request
+/api/site/{siteName}/teleport/client/{clientId}
+/api/site/{siteName}/teleport/disconnect-client/{clientId}
+/api/site/{siteName}/teleport/invitation-history
+/api/site/{siteName}/teleport/token
+/api/site/{siteName}/teleport/token/{tokenId}
+
+# UID VPN
+/api/site/{siteName}/uid/vpn-server
+/api/site/{siteName}/uid/vpn-server/kick/{username}
+
+# ==============================================================================
+# PRIORITY 4: Monitoring & Stats
+# ==============================================================================
+
+# ISP/WAN Status
+/api/site/{siteName}/isp/health
+/api/site/{siteName}/isp/health/compact
+/api/site/{siteName}/isp/status
+/api/site/{siteName}/downtime
+/api/site/{siteName}/downtime/{wanNetworkGroup}
+
+# Speedtest
+/api/site/{siteName}/speedtest
+/api/site/{siteName}/speedtest/csv
+/api/site/{siteName}/speedtest/latest
+/api/site/{siteName}/speedtest/latest-per-wan
+
+# Traffic
+/api/site/{siteName}/traffic
+/api/site/{siteName}/traffic-rate
+/api/site/{siteName}/traffic/{mac}
+/api/site/{siteName}/app-traffic-rate
+/api/site/{siteName}/country-traffic
+/api/site/{siteName}/traffic-flow-latest-statistics
+/api/site/{siteName}/traffic-flows
+/api/site/{siteName}/traffic-flows/alarm/{alarmId}
+/api/site/{siteName}/traffic-flows/export
+/api/site/{siteName}/traffic-flows/filter-data
+/api/site/{siteName}/traffic-flows/{id}
+
+# Traffic Routes
+/api/site/{siteName}/trafficroutes
+/api/site/{siteName}/trafficroutes/{routeId}
+/api/site/{siteName}/trafficroutes/{routeId}/disable
+/api/site/{siteName}/trafficroutes/{routeId}/enable
+
+# Client Stats
+/api/site/{siteName}/client/{clientIp}/wifi_experience
+/api/site/{siteName}/client/{clientIp}/wifi_experience/incorrect
+/api/site/{siteName}/client/{clientMac}/24hr-activity
+/api/site/{siteName}/client/{clientMac}/24hr-satisfaction
+/api/site/{siteName}/client/{clientMac}/ap-stats
+/api/site/{siteName}/client/{clientMac}/experience
+/api/site/{siteName}/client/{clientMac}/experience/incorrect
+/api/site/{siteName}/client/{clientMac}/traffic-insights
+/api/site/{siteName}/clients/active/{clientMac}
+/api/site/{siteName}/clients/history
+/api/site/{siteName}/clients/local/{clientMac}
+/api/site/{siteName}/clients/metadata
+/api/site/{siteName}/clients/traffic-control
+/api/site/{siteName}/clients/{clientMac}/power
+
+# Device Stats
+/api/site/{siteName}/device/wireless-links
+/api/site/{siteName}/device/{deviceMac}/24hr-satisfaction
+/api/site/{siteName}/device/{deviceMac}/24hr-tx-retries
+/api/site/{siteName}/device/{deviceMac}/battery/action
+/api/site/{siteName}/device/{deviceMac}/battery/update
+/api/site/{siteName}/device/{deviceMac}/clone-candidates
+/api/site/{siteName}/device/{deviceMac}/replace
+/api/site/{siteName}/device/{deviceMac}/replacement-candidates
+/api/site/{siteName}/device/{mac}/ble
+/api/site/{siteName}/device/{mac}/gateway/adopt-as-secondary
+/api/site/{siteName}/device/{mac}/wifi_experience/incorrect
+/api/site/{siteName}/device/{mac}/wireless-links
+
+# DPI
+/api/site/{siteName}/dpi
+/api/site/{siteName}/dpi/latest-client-stats
+
+# Score
+/api/site/{siteName}/score
+/api/site/{siteName}/score/details/{scoreId}
+
+# Utilization
+/api/site/{siteName}/utilization/last_days
+/api/site/{siteName}/utilization/time_range
+
+# ==============================================================================
+# PRIORITY 5: WiFi Management
+# ==============================================================================
+
+# AP Groups
+/api/site/{siteName}/apgroups
+/api/site/{siteName}/apgroups/{id}
+
+# Access Points
+/api/site/{siteName}/access-points/{apMac}/wifi-activity
+/api/site/{siteName}/access-points/{apMac}/wifi-stats
+/api/site/{siteName}/ap/{apMac}/last-scans
+/api/site/{siteName}/ap/{apMac}/neighbors
+
+# Radio AI
+/api/site/{siteName}/radio-ai/isolation-matrix
+/api/site/{siteName}/radio-ai/optimize/apply-last
+/api/site/{siteName}/radio-ai/optimize/apply/{calculationId}
+/api/site/{siteName}/radio-ai/optimize/preview
+/api/site/{siteName}/radio-ai/optimize/preview-last
+/api/site/{siteName}/radio-ai/optimize/status
+
+# WiFi Stats
+/api/site/{siteName}/wifi-connectivity
+/api/site/{siteName}/wifi-stats/aps
+/api/site/{siteName}/wifi-stats/channelization
+/api/site/{siteName}/wifi-stats/details
+/api/site/{siteName}/wifi-stats/radios
+
+# UID WLAN
+/api/site/{siteName}/uid/wlan
+/api/site/{siteName}/uid/wlan/{wlanId}
+
+# ==============================================================================
+# PRIORITY 6: Advanced Routing
+# ==============================================================================
+
+# BGP
+/api/site/{siteName}/bgp/config
+/api/site/{siteName}/bgp/config/all
+/api/site/{siteName}/bgp/config/{deviceMac}
+
+# OSPF
+/api/site/{siteName}/ospf/neighbors
+/api/site/{siteName}/ospf/router
+/api/site/{siteName}/ospf/router/{id}
+
+# QoS Rules
+/api/site/{siteName}/qos-rules
+/api/site/{siteName}/qos-rules/batch
+/api/site/{siteName}/qos-rules/batch-delete
+/api/site/{siteName}/qos-rules/batch-reorder
+/api/site/{siteName}/qos-rules/{id}
+
+# ==============================================================================
+# PRIORITY 7: System & Logs
+# ==============================================================================
+
+# System Logs
+/api/site/{siteName}/system-log/admin-access
+/api/site/{siteName}/system-log/admin-activity
+/api/site/{siteName}/system-log/admin-activity/{id}
+/api/site/{siteName}/system-log/alarm/{alarmId}
+/api/site/{siteName}/system-log/all
+/api/site/{siteName}/system-log/ap-logs
+/api/site/{siteName}/system-log/ap-logs/display-options/aps
+/api/site/{siteName}/system-log/client-alert
+/api/site/{siteName}/system-log/client-connection/{clientMac}
+/api/site/{siteName}/system-log/count
+/api/site/{siteName}/system-log/critical
+/api/site/{siteName}/system-log/critical/mark-all-as-read
+/api/site/{siteName}/system-log/critical/{alertId}/mark-as-read
+/api/site/{siteName}/system-log/device-alert
+/api/site/{siteName}/system-log/device/{deviceMac}
+/api/site/{siteName}/system-log/display-options/admins
+/api/site/{siteName}/system-log/ips_alert/{alertId}
+/api/site/{siteName}/system-log/network-ai/clear-all
+/api/site/{siteName}/system-log/network-ai/logs
+/api/site/{siteName}/system-log/next-ai-alert
+/api/site/{siteName}/system-log/remote-settings
+/api/site/{siteName}/system-log/setting
+/api/site/{siteName}/system-log/setting/defaults
+/api/site/{siteName}/system-log/system-critical-alert
+/api/site/{siteName}/system-log/threat-alert
+/api/site/{siteName}/system-log/threat/display-options/clients
+/api/site/{siteName}/system-log/threats
+/api/site/{siteName}/system-log/triggers
+/api/site/{siteName}/system-log/triggers/display-options/hosts
+/api/site/{siteName}/system-log/update-alert
+/api/site/{siteName}/system-log/vpn-alert
+/api/site/{siteName}/system-log/{id}/cef
+
+# Settings
+/api/site/{siteName}/settings/connectivity/defaults
+/api/site/{siteName}/settings/doh/available-server-names
+/api/site/{siteName}/settings/doh/defaults
+/api/site/{siteName}/settings/element_adopt/defaults
+/api/site/{siteName}/settings/global_nat/defaults
+/api/site/{siteName}/settings/global_switch/defaults
+/api/site/{siteName}/settings/guest-access/reset
+/api/site/{siteName}/settings/ips/advanced-filtering-auto-values
+/api/site/{siteName}/settings/ips/advanced-filtering-defaults
+/api/site/{siteName}/settings/ips/available-categories
+/api/site/{siteName}/settings/mgmt
+/api/site/{siteName}/settings/mgmt/device_upgrade/disable
+/api/site/{siteName}/settings/mgmt/device_upgrade/enable
+/api/site/{siteName}/settings/mgmt/direct_connect/disable
+/api/site/{siteName}/settings/mgmt/direct_connect/enable
+/api/site/{siteName}/settings/netflow/defaults
+/api/site/{siteName}/settings/ntp/defaults
+/api/site/{siteName}/settings/roaming_assistant/defaults
+/api/site/{siteName}/settings/shortcuts
+/api/site/{siteName}/settings/teleport/defaults
+/api/site/{siteName}/settings/traffic_flow/defaults
+/api/site/{siteName}/settings/usg/defaults
+/api/site/{siteName}/settings/wifiai/defaults
+
+# Alerts & Warnings
+/api/site/{siteName}/alert
+/api/site/{siteName}/warnings
+/api/site/{siteName}/notifications
+
+# ==============================================================================
+# PRIORITY 8: Specialized Features
+# ==============================================================================
+
+# DHCP
+/api/site/{siteName}/active-leases
+/api/site/{siteName}/active-leases/{networkId}
+/api/site/{siteName}/dhcp-import
+/api/site/{siteName}/dhcp/resolve-wan-subnet-conflict
+/api/site/{siteName}/excluded-ips
+/api/site/{siteName}/excluded-ips/{networkId}
+
+# PoE
+/api/site/{siteName}/poe-info
+
+# Ports
+/api/site/{siteName}/ports/mac-tables
+/api/site/{siteName}/ports/port-anomalies
+/api/site/{siteName}/ports/port-anomalies/{deviceMac}/port/{portIdx}
+/api/site/{siteName}/ports/system-logs
+
+# RADIUS
+/api/site/{siteName}/radius/profiles
+/api/site/{siteName}/radius/profiles/{profileId}
+/api/site/{siteName}/radius/users
+/api/site/{siteName}/radius/users/batch_add
+/api/site/{siteName}/radius/users/batch_delete
+/api/site/{siteName}/radius/users/batch_update
+/api/site/{siteName}/uid/radius-server
+
+# Diagnostics
+/api/site/{siteName}/pcap-get/{mac}
+/api/site/{siteName}/pcap-start
+/api/site/{siteName}/pcap-status/{mac}
+/api/site/{siteName}/pcap-stop/{mac}
+/api/site/{siteName}/pcap-upload/{mac}
+/api/site/{siteName}/ping-start/{mac}
+/api/site/{siteName}/ping-stop/{mac}
+/api/site/{siteName}/ping/{mac}
+
+# Loop Detection
+/api/site/{siteName}/loop-detection/info
+/api/site/{siteName}/loop-detection/recover-all-ports
+
+# Stacking
+/api/site/{siteName}/stacking
+/api/site/{siteName}/stacking/{stackingGroupId}
+
+# MCLAG
+/api/site/{siteName}/mclag-groups
+/api/site/{siteName}/mclag-groups/batch-delete
+/api/site/{siteName}/mclag-groups/{mclagGroupId}
+
+# Network Members Groups
+/api/site/{siteName}/network-members-group
+/api/site/{siteName}/network-members-group/{id}
+/api/site/{siteName}/network-members-groups
+
+# Network Suggestions
+/api/site/{siteName}/network/generate-vlans
+/api/site/{siteName}/network/port-suggest
+/api/site/{siteName}/network/suggest
+/api/site/{siteName}/network_status
+/api/site/{siteName}/smart-subnet
+
+# ==============================================================================
+# LOW PRIORITY: Specialized / Rarely Used
+# ==============================================================================
+
+# Floorplan
+/api/site/{siteName}/floorplan
+/api/site/{siteName}/floorplan/shape
+/api/site/{siteName}/floorplan/shape/batch
+/api/site/{siteName}/floorplan/shape/{shapeId}
+/api/site/{siteName}/floorplan/{planId}
+
+# Shadow Mode (adoption)
+/api/site/{siteName}/shadowmode/info
+/api/site/{siteName}/shadowmode/managed/begin-adoption
+/api/site/{siteName}/shadowmode/managed/check-vrrp
+/api/site/{siteName}/shadowmode/managed/complete-adoption
+/api/site/{siteName}/shadowmode/managed/group
+/api/site/{siteName}/shadowmode/managed/rollback
+/api/site/{siteName}/shadowmode/override
+/api/site/{siteName}/shadowmode/rollback
+/api/site/{siteName}/shadowmode/status
+
+# WiFiMan
+/api/site/{siteName}/wifiman
+/api/site/{siteName}/wifiman/{clientIp}
+/api/site/{siteName}/wifiman/{clientIp}/devices
+/api/site/{siteName}/wifiman/{clientIp}/feedback
+/api/site/{siteName}/wifiman/{clientIp}/feedback/{feedbackId}/wifi_experience
+
+# AI Fingerprinting
+/api/site/{siteName}/ai-fingerprint/fingerprint_overrides
+/api/site/{siteName}/fingerprint/assets
+/api/site/{siteName}/fingerprint_override
+/api/site/{siteName}/missing_fingerprint
+/api/site/{siteName}/station/{mac}/fingerprint_override
+/api/site/{siteName}/station/{mac}/missing_fingerprint
+/api/site/{siteName}/station/{mac}/wifi_experience/incorrect
+
+# Next AI
+/api/site/{siteName}/next-ai/logs
+/api/site/{siteName}/next-ai/mark-all-as-read
+/api/site/{siteName}/next-ai/{alertId}/mark-as-read
+/api/site/{siteName}/next-ai/{category}/mark-all-as-read
+
+# Visual Programming
+/api/site/{siteName}/visual-programming/virtual-network
+/api/site/{siteName}/visual-programming/virtual-network/{networkId}
+
+# Magic Site-to-Site VPN
+/api/site/{siteName}/magicsitetositevpn/configs
+
+# Insights
+/api/site/{siteName}/insights/filtering/overview
+/api/site/{siteName}/insights/filtering/watchlist
+
+# Identity Connectivity
+/api/site/{siteName}/identity-connectivity/report-issue
+
+# ==============================================================================
+# MISCELLANEOUS
+# ==============================================================================
+
+# Hotspot
+/api/site/{siteName}/hotspot/clients
+/api/site/{siteName}/hotspot/info
+
+# ULP
+/api/site/{siteName}/ulp/users_groups
+
+# Search
+/api/site/{siteName}/search
+
+# Alias
+/api/site/{siteName}/alias
+
+# Features
+/api/site/{siteName}/features
+/api/site/{siteName}/features/{featureName}/exists
+/api/site/{siteName}/described-features
+
+# Gateway Engine
+/api/site/{siteName}/gateway/engine/features
+/api/site/{siteName}/gateway/engine/logs
+/api/site/{siteName}/gateway/engine/most-active-networks
+/api/site/{siteName}/gateway/engine/utilization
+
+# Global Config
+/api/site/{siteName}/global/config/network
+
+# Object-Oriented Network Config
+/api/site/{siteName}/object-oriented-network-config
+/api/site/{siteName}/object-oriented-network-config/{id}
+/api/site/{siteName}/object-oriented-network-configs
+
+# Models
+/api/site/{siteName}/models/{modelName}
+
+# Vendor IDs
+/api/site/{siteName}/vendor-ids
+
+# Site Feature Migration
+/api/site/{siteName}/site-feature-migration
+
+# Adopt Info
+/api/site/{siteName}/adopt-info/{deviceMac}
+
+# UID Client Info
+/api/site/{siteName}/uid/client-info/{clientMac}
+
+# LCM
+/api/site/{siteName}/lcm/wakeup

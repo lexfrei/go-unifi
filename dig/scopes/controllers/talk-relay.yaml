@@ -1,0 +1,24 @@
+unique_id: ""
+name: talk-relay
+# system, network, protect, access, talk,
+# led, connect, drive, calculus, olympus, innerspace, talk-relay
+# https://ubiquiti.atlassian.net/browse/ULP-5328
+# Admins | Support new Talk Relay application
+order: 12
+revision: 2
+permissions:
+  talk-relay.management:
+    name: Talk Relay management
+    grant_method: ""
+    choice: ""
+    policy_tag: ""
+    groups:
+      admin:
+        name: Full Management
+        scopes:
+        - manage:controller:talk-relay
+        - view:controller:talk-relay
+      readonly:
+        name: View Only
+        scopes:
+        - view:controller:talk-relay

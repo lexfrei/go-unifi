@@ -1,0 +1,18 @@
+# extra scopes when admin has permission: talk.management#admin
+
+# this is for identity management
+permission: "talk.management#admin"
+# only apply permissions when the unifi-os console support identity
+only_if_support_identity: true
+scopes:
+  - send:identity:email
+  - revoke:identity:credential
+  - assign:identity:talk
+  - view:app:users
+  - view:user
+  - edit:user
+  - view:group
+  - edit:group
+  - view:identity:settings
+  - view:settings
+  - view:identity:assignment_talk

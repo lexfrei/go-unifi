@@ -1,0 +1,13 @@
+owners:
+  -
+    owner: system
+    description: UniFi Local Management Portal
+  -
+    owner: controller.access
+    description: Access Controller
+  -
+    owner: controller.network
+    description: Network Controller
+  -
+    owner: controller.protect
+    description: Protect Controller

@@ -1,0 +1,46 @@
+resources:
+  -
+    resource_type: location
+    description: locations, building/floor/door, have door bound to
+  -
+    resource_type: door_group
+    description: user custom door group, a group of doors.
+  -
+    resource_type: user
+    description: users management
+  -
+    resource_type: role
+    description: role management
+  -
+    resource_type: group
+    description: user group management
+  -
+    resource_type: policy
+    description: policy management
+  -
+    resource_type: device
+    description: device management 
+  -
+    resource_type: sso
+    description: sso management
+  -
+    resource_type: controller
+    description: controller resource
+  -
+    resource_type: door
+    description: door resource
+  -
+    resource_type: building
+    description: building resource
+  -
+    resource_type: elevator
+    description: elevator resource
+  -
+    resource_type: elevator_floor
+    description: elevator floor resource
+  -
+    resource_type: elevators_in_building
+    description: elevators in building
+  -
+    resource_type: access_group
+    description: access group

@@ -1,0 +1,9 @@
+capability_type: UniFi-Access
+capability_groups:
+  - version: 1.9.1
+    capabilities:
+      - identity_standard
+      - show_user_multi_card
+  - version: 1.22.10
+    capabilities:
+      - batch_enable_open_door_mode

@@ -1,0 +1,5 @@
+# this configuration defines the scopes for every admin
+- name: apollo permissions for every admin
+  scopes:
+    - view:controller:apollo
+

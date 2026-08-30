@@ -1,0 +1,22 @@
+subjects:
+  -
+    subject_type: user
+    description: assign policy by user
+  -
+    subject_type: role
+    description:  assign policy by role
+  -
+    subject_type: role_by_system_key
+    description: assign policy by system key of role
+  -
+    subject_type: group
+    description:  assign policy by
+  -
+    subject_type: controller
+    description: assign policy by
+  -
+    subject_type: workers_of_department
+    description: workers of department
+  -
+    subject_type: worker
+    description: assign policy by worker, will remove

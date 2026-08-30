@@ -1,0 +1,22 @@
+unique_id: ""
+name: led
+# system, network, protect, access, talk,
+# led, connect, drive, calculus, olympus, innerspace
+order: 6
+revision: 1
+permissions:
+  led.management:
+    name: LED management
+    grant_method: ""
+    choice: ""
+    policy_tag: ""
+    groups:
+      admin:
+        name: Full Management
+        scopes:
+        - manage:controller:led
+        - view:controller:led
+      readonly:
+        name: View Only
+        scopes:
+        - view:controller:led

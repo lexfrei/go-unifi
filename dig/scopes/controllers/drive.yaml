@@ -1,0 +1,18 @@
+unique_id: ""
+name: drive
+# system, network, protect, access, talk,
+# led, connect, drive, calculus, olympus, innerspace
+order: 8
+revision: 1
+permissions:
+  drive.management:
+    name: Drive management
+    grant_method: ""
+    choice: ""
+    policy_tag: ""
+    groups:
+      admin:
+        name: Full Management
+        scopes:
+        - manage:controller:drive
+        - view:controller:drive

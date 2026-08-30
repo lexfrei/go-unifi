@@ -1,0 +1,4 @@
+tag: builtin.scopes.admin
+subjects:
+  - role_by_system_key:administrator
+scopes: []

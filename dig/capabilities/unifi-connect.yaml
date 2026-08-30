@@ -1,0 +1,11 @@
+capability_type: UniFi-Connect
+capability_groups:
+  - version: 2.5.5
+    capabilities:
+      - identity_standard
+  - version: 3.17.0
+    capabilities:
+      - light_service
+  - version: 3.17.2
+    capabilities:
+      - shade_service

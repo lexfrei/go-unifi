@@ -1,0 +1,18 @@
+root        3571  0.0  0.2 627792  7620 ?        Ssl  Nov17   0:12 /usr/bin/uos-agent
+unifi       3945  0.0  0.0   3676  1236 ?        Ss   Nov17   0:00 /bin/bash -c if [ "false" = "true" ]; then DIR_PER_DB="--directoryperdb"; else DIR_PER_DB=""; fi; /usr/bin/mongod      --dbpath /data/unifi/data/db      $DIR_PER_DB      --bind_ip 127.0.0.1      --port 27117      --unixSocketPrefix /data/unifi/run      --logRotate reopen --logappend --logpath /data/unifi/logs/mongod.log      --pidfilepath /data/unifi/run/mongod.pid      --wiredTigerEngineConfigString=cache_size=128M      || /usr/sbin/unifi-mongo-service-helper handle-exit $?
+unifi       3950  1.2  6.0 1261948 177324 ?      Sl   Nov17 128:28 /usr/bin/mongod --dbpath /data/unifi/data/db --bind_ip 127.0.0.1 --port 27117 --unixSocketPrefix /data/unifi/run --logRotate reopen --logappend --logpath /data/unifi/logs/mongod.log --pidfilepath /data/unifi/run/mongod.pid --wiredTigerEngineConfigString=cache_size=128M
+unifi       3959  0.0  0.0   3940  1696 ?        S    Nov17   0:09 /bin/bash /usr/sbin/unifi-mongo-service-helper watchdog
+ucs-upd+    5360  0.0  0.2 724084  8468 ?        Sl   Nov17   0:56 /usr/sbin/unifi-identity-update-app --prop /usr/lib/unifi-identity-update/config.props
+root        6084  3.7  5.1 15250568 152232 ?     Ssl  Nov17 387:49 /usr/bin/node22 --expose-gc --max-old-space-size=300 --openssl-legacy-provider --no-network-family-autoselection --dns-result-order=ipv4first /usr/share/unifi-core/app/service.js
+ulp-go     23007  0.3  1.7 765812 52200 ?        Sl   Nov17  33:10 /usr/sbin/ulp-go-app --prop /usr/lib/ulp-go/config.props
+postgres   23019  0.0  0.4 214400 13120 ?        Ss   Nov17   0:00 postgres: 14/main: ulp-go ulp-go [local] idle
+postgres   23020  0.0  0.4 214036 13296 ?        Ss   Nov17   0:00 postgres: 14/main: ulp-go ulp-go-syslog [local] idle
+postgres   23021  0.0  0.6 214936 18984 ?        Ss   Nov17   3:09 postgres: 14/main: ulp-go ulp-go [local] idle
+postgres   23022  0.0  0.6 214648 18272 ?        Ss   Nov17   3:41 postgres: 14/main: ulp-go ulp-go [local] idle
+unifi      26060  3.8 10.7 2776388 317024 ?      Ssl  Nov17 397:22 /usr/lib/unifi/lib/unifi -Dunifi.core.enabled=true -Dunifi.mongodb.service.enabled=true -Dunifi.rmq.enabled=false -Dunifi.external_disk.inserted= -Xms64M -Xmx384M -Dorg.xerial.snappy.tempdir=/usr/lib/unifi/run -XX:StackSize=512K -XX:MaxHeapFree=0 -XX:+ExitOnOutOfMemoryError -XX:+PrintGC
+postgres   62517  0.0  0.4 212440 11796 ?        Ss   Nov17   0:00 postgres: 14/main: ulp-go ulp-go-syslog [local] idle
+postgres  426032  0.0  0.4 212320 14068 ?        Ss   00:14   0:00 postgres: 14/main: unifi-core unifi-core 127.0.0.1(47784) idle
+postgres  910515  0.0  0.5 212356 15360 ?        Ss   04:14   0:00 postgres: 14/main: ulp-go ulp-go [local] idle
+postgres  973095  0.0  0.5 212440 15356 ?        Ss   04:44   0:00 postgres: 14/main: ulp-go ulp-go [local] idle
+unifi    1040444  0.0  1.1 740492 33408 ?        Sl   05:10   0:00 mongo --eval db.runCommand("ping").ok localhost:27117 --quiet
+postgres 4020036  0.0  0.4 212620 11988 ?        Ss   Nov22   0:00 postgres: 14/main: unifi-core unifi-core 127.0.0.1(59158) idle

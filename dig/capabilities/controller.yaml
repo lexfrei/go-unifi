@@ -1,0 +1,12 @@
+capability_type: Controller
+capability_groups:
+  - version: v1.7.0
+    capabilities:
+      - identity_standard
+  - version: v1.7.21
+    capabilities:
+      - credential_for_driver
+  - version: v1.8.20
+    capabilities:
+      - identity_mdm
+      - identity_directory

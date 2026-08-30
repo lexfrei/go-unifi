@@ -1,0 +1,47 @@
+tcp6       0      0 ::1:20201               :::*                    LISTEN      1008570/dnsmasq     
+tcp6       0      0 ::1:53                  :::*                    LISTEN      1008566/dnsmasq     
+tcp6       0      0 ::1:5432                :::*                    LISTEN      4146/postgres       
+tcp6       0      0 :::22                   :::*                    LISTEN      3612/sshd: /usr/sbi 
+tcp6       0      0 :::40331                :::*                    LISTEN      4468/miniupnpd      
+tcp6       0      0 :::443                  :::*                    LISTEN      3583/nginx: master  
+tcp6       0      0 :::6789                 :::*                    LISTEN      26060/unifi         
+tcp6       0      0 :::80                   :::*                    LISTEN      3583/nginx: master  
+tcp6       0      0 :::8080                 :::*                    LISTEN      26060/unifi         
+tcp6       0      0 :::8443                 :::*                    LISTEN      26060/unifi         
+tcp6       0      0 :::8444                 :::*                    LISTEN      3583/nginx: master  
+tcp6       0      0 :::8843                 :::*                    LISTEN      26060/unifi         
+tcp6       0      0 :::8880                 :::*                    LISTEN      26060/unifi         
+tcp6       0      0 :::8900                 :::*                    LISTEN      1008256/wifiman-pro 
+tcp6       0      0 :::9443                 :::*                    LISTEN      23007/ulp-go-app    
+tcp6       0      0 fe80::962a:6fff:f:20201 :::*                    LISTEN      1008570/dnsmasq     
+tcp6       0      0 fe80::962a:6fff:fece:53 :::*                    LISTEN      1008566/dnsmasq     
+tcp        0      0 172.16.0.2:21           0.0.0.0:*               LISTEN      1008249/utmdaemon   
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      3612/sshd: /usr/sbi 
+tcp        0      0 172.16.0.2:23           0.0.0.0:*               LISTEN      1008249/utmdaemon   
+tcp        0      0 172.16.0.2:25           0.0.0.0:*               LISTEN      1008249/utmdaemon   
+tcp        0      0 127.0.0.1:53            0.0.0.0:*               LISTEN      1008566/dnsmasq     
+tcp        0      0 172.16.0.1:53           0.0.0.0:*               LISTEN      1008566/dnsmasq     
+tcp        0      0 0.0.0.0:80              0.0.0.0:*               LISTEN      3583/nginx: master  
+tcp        0      0 172.16.0.2:110          0.0.0.0:*               LISTEN      1008249/utmdaemon   
+tcp        0      0 0.0.0.0:443             0.0.0.0:*               LISTEN      3583/nginx: master  
+tcp        0      0 172.16.0.2:445          0.0.0.0:*               LISTEN      1008249/utmdaemon   
+tcp6       0      0 127.0.0.1:1080          :::*                    LISTEN      3759/udapi-bridge   
+tcp        0      0 172.16.0.2:1433         0.0.0.0:*               LISTEN      1008249/utmdaemon   
+tcp        0      0 172.16.0.2:2222         0.0.0.0:*               LISTEN      1008249/utmdaemon   
+tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN      4146/postgres       
+tcp        0      0 172.16.0.2:8000         0.0.0.0:*               LISTEN      1008249/utmdaemon   
+tcp        2      0 127.0.0.1:8000          0.0.0.0:*               LISTEN      3550/teleportd      
+tcp6       0      0 127.0.0.1:8081          :::*                    LISTEN      26060/unifi         
+tcp        0      0 0.0.0.0:8444            0.0.0.0:*               LISTEN      3583/nginx: master  
+tcp        0      0 0.0.0.0:8901            0.0.0.0:*               LISTEN      1008258/wifiman-spe 
+tcp        0      0 127.0.0.1:9080          0.0.0.0:*               LISTEN      23007/ulp-go-app    
+tcp        0      0 127.0.0.1:9081          0.0.0.0:*               LISTEN      5360/unifi-identity 
+tcp6       0      0 127.0.0.1:10055         :::*                    LISTEN      500/usd             
+tcp        0      0 127.0.0.1:11010         0.0.0.0:*               LISTEN      3571/uos-agent      
+tcp        0      0 127.0.0.1:11011         0.0.0.0:*               LISTEN      3571/uos-agent      
+tcp        0      0 127.0.0.1:11051         0.0.0.0:*               LISTEN      6084/node22         
+tcp        0      0 127.0.0.1:11052         0.0.0.0:*               LISTEN      573/ustated         
+tcp        0      0 127.0.0.1:11081         0.0.0.0:*               LISTEN      6084/node22         
+tcp        0      0 127.0.0.1:20201         0.0.0.0:*               LISTEN      1008570/dnsmasq     
+tcp        0      0 172.16.0.1:20201        0.0.0.0:*               LISTEN      1008570/dnsmasq     
+tcp        0      0 127.0.0.1:27117         0.0.0.0:*               LISTEN      3950/mongod         

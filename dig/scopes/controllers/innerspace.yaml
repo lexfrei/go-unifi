@@ -1,0 +1,19 @@
+unique_id: ""
+name: innerspace
+# system, network, protect, access, talk,
+# led, connect, drive, calculus, olympus, innerspace
+order: 11
+
+revision: 2
+permissions:
+  innerspace.management:
+    name: InnerSpace management
+    grant_method: ""
+    choice: ""
+    policy_tag: ""
+    groups:
+      admin:
+        name: Full Management
+        scopes:
+        - manage:controller:innerspace
+        - view:controller:innerspace

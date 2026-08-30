@@ -1,0 +1,16 @@
+tag: builtin.scopes.door_guard
+subjects:
+  - role_by_access:door_guard
+scopes:
+  - view:controller:access
+  - view:access.device
+  - view:access.settings
+  - view:location
+  - view:systemlog
+  - view:notification
+  - systemlog:system
+  - systemlog:user
+  - systemlog:location
+  - systemlog:access
+  - open:door
+  - notify:access

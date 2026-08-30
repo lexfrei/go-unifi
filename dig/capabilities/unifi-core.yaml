@@ -1,0 +1,8 @@
+capability_type: UniFi-Core
+capability_groups:
+  - version: 3.2.144
+    capabilities:
+      - cache_busting
+  - version: 4.1.0
+    capabilities:
+      - api_key

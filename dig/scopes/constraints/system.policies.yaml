@@ -1,0 +1,41 @@
+policies:
+  -
+    tag: system.api
+    description: ULP(System) API policy
+    owner: system
+    effect: allow
+    is_system: true
+    is_visible: false
+    resources:
+      - location
+      - door_group
+      - user
+      - group
+      - role
+      - policy
+      - device
+      - sso
+      - controller
+    subjects:
+      - controller
+      - role
+      - role_by_system_key
+    actions:
+      - view
+      - edit
+      - manage
+
+  -
+    tag: system.admin.user
+    description: ULP user management policy
+    owner: system
+    effect: allow
+    is_system: true
+    is_visible: false
+    resources:
+      - user
+    subjects:
+      - worker
+    actions:
+      - view
+      - edit

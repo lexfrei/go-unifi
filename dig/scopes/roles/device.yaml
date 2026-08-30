@@ -1,0 +1,5 @@
+tag: builtin.scopes.device
+subjects:
+  - device:<.*>
+scopes:
+  - view:user_avatar

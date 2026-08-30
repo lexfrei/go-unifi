@@ -1,0 +1,26 @@
+unique_id: ""
+name: olympus
+revision: 1
+# system, network, protect, access, talk,
+# led, connect, drive, calculus, olympus, innerspace
+order: 10
+permissions:
+  olympus.management:
+    name: Olympus management
+    grant_method: ""
+    choice: multi
+    policy_tag: ""
+    groups:
+      admin:
+        name: Full Management
+        scopes:
+        - manage:controller:olympus
+        - view:controller:olympus
+      example:
+        name: Example
+        scopes:
+        - view:controller:olympus
+      readonly:
+        name: View Only
+        scopes:
+        - view:controller:olympus

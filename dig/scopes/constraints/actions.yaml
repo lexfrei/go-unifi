@@ -1,0 +1,19 @@
+actions:
+  -
+    action: access.open_door
+    description: policy action, Open door
+  -
+    action: view
+    description: view action
+  -
+    action: edit
+    description: edit action
+  -
+    action: manage
+    description: manage network/led/access
+  -
+    action: adopt
+    description: adopt devices
+  -
+    action: assign
+    description: assign devices

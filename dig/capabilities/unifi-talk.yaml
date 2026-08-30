@@ -1,0 +1,8 @@
+capability_type: UniFi-Talk
+capability_groups:
+  - version: 3.0.0
+    capabilities:
+      - identity_standard
+  - version: 3.4.0
+    capabilities:
+      - user_consolidation

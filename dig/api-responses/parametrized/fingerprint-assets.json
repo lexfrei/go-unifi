@@ -1,0 +1,1 @@
+{"errorCode":400,"message":"JSON parse error: Cannot construct instance of `com.ubnt.model.api.fingerprint.ImmutableFingerprintAssetRequest`, problem: Cannot build FingerprintAssetRequest, some of required attributes are not set [fileName]"}

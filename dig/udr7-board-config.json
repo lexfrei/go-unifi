@@ -1,0 +1,358 @@
+{
+    "identification": {
+        "id": "udr7",
+        "arch": "ipq5322",
+        "board-id": "a67a",
+        "family-short": "UDM",
+        "family-full": "UniFi Dream Router",
+        "model-short": "UDR7",
+        "model-full": "UniFi Dream Router 7"
+    },
+    "capabilities": {
+        "hardware-offload-mode": "ecm",
+        "interfaces": [
+            {
+                "id": "^(eth|switch|br|ppp)[0-9]+\\.[0-9]+$",
+                "udapi-type": "vlan",
+                "udapi-capability-flag": [ "get", "add", "remove", "update" ]
+            },
+            {
+                "id": "^eth[0-9]+$",
+                "udapi-type": "ethernet",
+                "udapi-capability-flag": [ "get", "update" ]
+            },
+            {
+                "id": "^(ath|vwire)i?[0-9]+$",
+                "udapi-type": "wireless",
+                "udapi-fallback-type": "wireless",
+                "udapi-capability-flag": [ "get" ]
+            },
+            {
+                "id": "^(ath|vwire)i?[0-9]+\\.[0-9]+$",
+                "udapi-type": "vlan",
+                "udapi-capability-flag": [ "get" ]
+            },
+            {
+                "id": "^(wifi[0-9]ap[0-9]+|vwire(ap|sta)[0-9]+)$",
+                "udapi-type": "wireless",
+                "udapi-fallback-type": "wireless",
+                "udapi-capability-flag": [ "get" ]
+            },
+            {
+                "id": "^(wifi[0-9]ap[0-9]+|vwire(ap|sta)[0-9]+)\\.[0-9]+$",
+                "udapi-type": "vlan",
+                "udapi-capability-flag": [ "get" ]
+            },
+            {
+                "id": "^mld[0-9]+\\.[0-9]+$",
+                "udapi-type": "vlan",
+                "udapi-capability-flag": [ "get" ]
+            },
+            {
+                "id": "^mld[0-9]+$",
+                "udapi-type": "wireless",
+                "udapi-capability-flag": [ "get" ]
+            },
+            {
+                "id": "^br[0-9]+$",
+                "udapi-type": "bridge",
+                "udapi-capability-flag": [ "get", "add", "remove", "update" ]
+            },
+            {
+                "id": "^lo$",
+                "udapi-type": "loopback",
+                "udapi-capability-flag": [ "get", "update" ]
+            },
+            {
+                "id": "^(gre|ip6tnl)0$",
+                "udapi-type": "tunnel",
+                "udapi-capability-flag": [ "get" ]
+            },
+            {
+                "id": "^(gre[1-9][0-9]*|vti[0-9]+|ip6tnl[1-9][0-9]*)$",
+                "udapi-type": "tunnel",
+                "udapi-capability-flag": [ "get", "add", "remove", "update" ]
+            },
+            {
+                "id": "^tunovpnc[0-9]+$",
+                "udapi-type": "tunnel",
+                "udapi-capability-flag": [ "get" ]
+            },
+            {
+                "id": "^wgclt[0-9]+$",
+                "udapi-type": "tunnel",
+                "udapi-capability-flag": [ "get" ]
+            },
+            {
+                "id": "^wgsts[0-9]+$",
+                "udapi-type": "tunnel",
+                "udapi-capability-flag": [ "get" ]
+            },
+            {
+                "id": "^wgsrv[0-9]+$",
+                "udapi-type": "tunnel",
+                "udapi-capability-flag": [ "get" ]
+            },
+            {
+                "id": "^tun[0-9]+$",
+                "udapi-type": "tunnel",
+                "udapi-capability-flag": [ "get" ]
+            },
+            {
+                "id": "^tlprt[0-9]+$",
+                "udapi-type": "tunnel",
+                "udapi-capability-flag": [ "get" ]
+            },
+            {
+                "id": "^ppp[0-9]+$",
+                "udapi-type": "pppoe",
+                "udapi-capability-flag": [ "get", "add", "remove", "update" ]
+            },
+            {
+                "id": "^switch[0-9]+$",
+                "udapi-type": "switch",
+                "udapi-capability-flag": [ "get", "update" ]
+            },
+            {
+                "id": "^ifb[0-9]+$",
+                "udapi-type": "ethernet",
+                "udapi-capability-flag": [ "get" ]
+            },
+            {
+                "id": "^ifb[a-z]+[0-9]+\\.*[0-9]*$",
+                "udapi-type": "ethernet",
+                "udapi-capability-flag": [ "get" ]
+            },
+            {
+                "id": "^wanmagic_bond[0-9]+$",
+                "udapi-type": "tunnel",
+                "udapi-capability-flag": [ "get" ]
+            },
+            {
+                "id": "[^0-9]+$",
+                "udapi-capability-flag": [ "not_supported" ]
+            },
+            {
+                "id": "^dnsfilter.*$",
+                "udapi-capability-flag": [ "not_supported" ]
+            },
+            {
+                "id": "^honeypot.*$",
+                "udapi-capability-flag": [ "not_supported" ]
+            },
+            {
+                "id": "^docker0$",
+                "udapi-capability-flag": [ "not_supported" ]
+            },
+            {
+                "id": "^ip_vti0$",
+                "udapi-capability-flag": [ "not_supported" ]
+            },
+            {
+                "id": "^ppp1[0-9]{5}$",
+                "udapi-capability-flag": [ "not_supported" ]
+            },
+            {
+                "id": "^l2tp.*$",
+                "udapi-capability-flag": [ "not_supported" ]
+            }
+        ]
+    },
+    "sysctl-conf" : [],
+    "bluetooth":{
+        "service-uuid-factory-default": "b1d99fca-9a07-45bb-8aba-c09685b10e8b",
+        "service-uuid-user-configured": "ed363c4b-f06e-4579-a977-90f31f590bfb",
+        "ble-startup-trigger-script": "grep -qwx managed /run/system.inform"
+    },
+    "wan_ports": [
+        {
+            "id": "wan0",
+            "interface": "eth4"
+        }
+    ],
+    "switches": [
+        {
+            "id": "switch0",
+            "builtin-vlan": 0,
+            "max-vlan": 4094,
+            "max-remap-wan": 4,
+            "driver": "RTL8372",
+            "cpu-ports": [
+                {
+                    "interface": { "id": "switch0" },
+                    "cpu-port": 5
+                }
+            ],
+            "edge-ports": [
+                {
+                    "interface": { "id": "eth3" },
+                    "edge-port": 0,
+                    "cpu-port":  5
+                },
+                {
+                    "interface": { "id": "eth2" },
+                    "edge-port": 1,
+                    "cpu-port":  5
+                },
+                {
+                    "interface": { "id": "eth1" },
+                    "edge-port": 2,
+                    "cpu-port":  5
+                },
+                {
+                    "interface": { "id": "eth0" },
+                    "edge-port": 3,
+                    "cpu-port":  5
+                }
+            ]
+        }
+    ],
+    "interfaces": [
+        {
+            "identification": {
+                "init-type": "ethernet",
+                "udapi-type": "loopback",
+                "id": "lo"
+            }
+        },
+        {
+            "identification": {
+                "init-type": "ethernet",
+                "udapi-type": "ethernet",
+                "id": "eth4",
+                "media": "SFP-plus",
+                "settings" : {
+                    "tx-queue-length" : "10000"
+                }
+            }
+        },       
+        {
+            "identification": {
+                "init-type": "ethernet",
+                "udapi-type": "switch",
+                "id": "switch0",
+                "media": "GE"
+            }
+        },
+        {
+            "identification": {
+                "init-type": "svlan",
+                "udapi-type": "ethernet",
+                "svlan": 4094,
+                "svlan-fid" : 0,
+                "id": "eth0",
+                "media": "2.5GE",
+                "support-mirroring": { }
+            },
+            "parent": {
+                "interface": { "id": "switch0" }
+            }
+        },
+        {
+            "identification": {
+                "init-type": "svlan",
+                "udapi-type": "ethernet",
+                "svlan": 4093,
+                "svlan-fid" : 1,
+                "id": "eth1",
+                "media": "2.5GE",
+                "support-mirroring": { }
+            },
+            "parent": {
+                "interface": { "id": "switch0" }
+            }
+        },
+        {
+            "identification": {
+                "init-type": "svlan",
+                "udapi-type": "ethernet",
+                "svlan": 4092,
+                "svlan-fid" : 2,
+                "id": "eth2",
+                "media": "2.5GE",
+                "support-mirroring": { }
+            },
+            "parent": {
+                "interface": { "id": "switch0" }
+            }
+        },
+        {
+            "identification": {
+                "init-type": "svlan",
+                "udapi-type": "ethernet",
+                "svlan": 4091,
+                "svlan-fid" : 3,
+                "id": "eth3",
+                "media": "2.5GE",
+                "support-mirroring": { }
+            },
+            "parent": {
+                "interface": { "id": "switch0" }
+            }
+        }
+     ],
+     "poes": [
+        {
+            "interface" : {"id" : "eth0"},
+            "poe-port" : 0
+        }
+    ],
+     "descriptors": {
+         "temperatures": [
+             {
+                 "name": "CPU",
+                 "path": "/sys/class/thermal/thermal_zone3/temp",
+                 "factor": 0.001,
+                 "type": "cpu"
+             }
+         ],
+         "storage": [
+             {
+                 "name": "Temporary",
+                 "path": "/tmp",
+                 "factor": 1024,
+                 "type": "other"
+             },
+             {
+                 "name": "eMMC",
+                 "path": "/data",
+                 "factor": 1024,
+                 "type": "eMMC"
+             },
+             {
+                 "name": "Backup",
+                 "path": "/persistent",
+                 "factor": 1024,
+                 "type": "eMMC"
+             }
+         ],
+         "cpu": [
+             {
+                 "id": "cpu",
+                 "path": "/sys/class/thermal/thermal_zone3/temp",
+                 "factor": 0.001
+             }
+         ],
+         "sfp-outlets": [
+            {
+                "id": "eth4",
+                "type": "rx-los",
+                "gpio": "443",
+                "path": "/sys/class/gpio/gpio443/value"
+            },
+            {
+                "id": "eth4",
+                "type": "tx-fault",
+                "gpio": "444",
+                "path": "/sys/class/gpio/gpio444/value"
+            },
+            {
+                "id": "eth4",
+                "type": "mod-def0",
+                "gpio": "445",
+                "path": "/sys/class/gpio/gpio445/value"
+            }
+        ]
+
+     }
+}

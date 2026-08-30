@@ -1,0 +1,141 @@
+unique_id: ""
+name: access
+# system, network, protect, access, talk, led, connect, drive, calculus, olympus, innerspace
+order: 4
+revision: 28
+permissions:
+  access.management:
+    name: Access management
+    grant_method: ""
+    choice: ""
+    policy_tag: ""
+    groups:
+      admin:
+        name: Full Management
+        scopes:
+          - adopt:access.device
+          - delete:access.device
+          - edit:access.device
+          - edit:access.nfc_card
+          - edit:access.face
+          - edit:access.pin_code
+          - edit:access.license_plate
+          - edit:access.policy
+          - edit:access.schedule
+          - edit:access.visitor
+          - edit:door_group
+          - edit:feedback
+          - edit:holiday
+          - edit:preview
+          - edit:holiday_timezone
+          - edit:notification
+          - edit:settings
+          - edit:systemlog
+          - edit:user_timezone
+          - edit:group
+          - edit:location
+          - edit:location_activity
+          - edit:location_device
+          - edit:location_policy
+          - edit:export_log
+          - manage:controller:access
+          - notify:access
+          - notify:location
+          - notify:user
+          - edit:user
+          - edit:access:user
+          - systemlog:access
+          - systemlog:location
+          - systemlog:system
+          - systemlog:user
+          - update:access.device
+          - view:access.dashboard
+          - view:access.device
+          - view:access.nfc_card
+          - view:access.face
+          - view:access.pin_code
+          - view:access.license_plate
+          - view:access.policy
+          - view:access.schedule
+          - view:access.systemlog
+          - view:access.visitor
+          - view:cloud_access
+          - view:controller:access
+          - view:door_group
+          - view:group
+          - view:holiday
+          - view:holiday_timezone
+          - view:location
+          - view:location_activity
+          - view:location_device
+          - view:location_policy
+          - view:notification
+          - view:settings
+          - view:systemlog
+          - view:user
+          - view:user_timezone
+          - edit:access.settings
+          - view:access.settings
+          - view:access:user
+          - open:door
+          - edit:access.open_api
+          - view:access.open_api
+          - send:identity:email
+          - revoke:identity:credential
+      readonly:
+        name: View Only
+        scopes:
+          - notify:access
+          - notify:location
+          - notify:user
+          - systemlog:access
+          - systemlog:location
+          - systemlog:system
+          - systemlog:user
+          - view:access.dashboard
+          - view:access.device
+          - view:access.nfc_card
+          - view:access.face
+          - view:access.pin_code
+          - view:access.license_plate
+          - view:access.policy
+          - view:access.schedule
+          - view:access.systemlog
+          - view:access.visitor
+          - view:cloud_access
+          - view:controller:access
+          - view:door_group
+          - view:group
+          - view:holiday
+          - view:holiday_timezone
+          - view:location
+          - view:location_activity
+          - view:location_device
+          - view:location_policy
+          - view:notification
+          - view:settings
+          - view:systemlog
+          - view:user
+          - view:user_timezone
+          - view:access.settings
+          - edit:feedback
+          - view:access:user
+          - view:access.open_api
+      door_guard:
+        name: Door Attendant
+        scopes:
+          - view:controller:access
+          - view:access.device
+          - view:access.settings
+          - view:location
+          - edit:preview
+          - view:notification
+          - view:door_group
+          - open:door
+          - notify:access
+  access.open_door:
+    name: Access Policies
+    grant_method: add_to_exist_policy_by_tag
+    choice: ""
+    policy_tag: access.open_door
+    groups: {}

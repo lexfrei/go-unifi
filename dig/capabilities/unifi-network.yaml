@@ -1,0 +1,5 @@
+capability_type: UniFi-Network
+capability_groups:
+  - version: 7.4.0
+    capabilities:
+      - identity_standard

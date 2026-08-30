@@ -1,0 +1,1 @@
+[{"id":"66c784195302e23512334eb4","name":"Default","number_of_active_clients":16,"subnet":"172.16.0.0/16","type":"NETWORK"},{"id":"67fa8412685dab5d5415fc5d","name":"WireGuardVPN Server","number_of_active_clients":0,"subnet":"192.168.6.0/24","type":"NETWORK"},{"id":null,"name":"Teleport","number_of_active_clients":0,"subnet":"192.168.1.1/24","type":"TELEPORT"}]

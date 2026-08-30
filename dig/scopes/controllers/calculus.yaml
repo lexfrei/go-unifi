@@ -1,0 +1,26 @@
+unique_id: ""
+name: calculus
+# system, network, protect, access, talk,
+# led, connect, drive, calculus, olympus, innerspace
+order: 9
+revision: 1
+permissions:
+  calculus.management:
+    name: Calculus management
+    grant_method: ""
+    choice: multi
+    policy_tag: ""
+    groups:
+      admin:
+        name: Full Management
+        scopes:
+        - manage:controller:calculus
+        - view:controller:calculus
+      example:
+        name: Example
+        scopes:
+        - view:controller:calculus
+      readonly:
+        name: View Only
+        scopes:
+        - view:controller:calculus

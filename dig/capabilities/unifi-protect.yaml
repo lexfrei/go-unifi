@@ -1,0 +1,5 @@
+capability_type: UniFi-Protect
+capability_groups:
+  - version: 3.0.0
+    capabilities:
+      - identity_standard

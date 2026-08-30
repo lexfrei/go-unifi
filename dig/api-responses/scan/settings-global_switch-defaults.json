@@ -1,0 +1,1 @@
+{"acl_device_isolation":[],"acl_l3_isolation":[],"dhcp_snoop":true,"dot1x_fallback_networkconf_id":"","dot1x_portctrl_enabled":false,"flood_known_protocols":true,"flowctrl_enabled":false,"forward_unknown_mcast_router_ports":true,"jumboframe_enabled":false,"radiusprofile_id":"","stp_version":"rstp","switch_exclusions":[]}

@@ -1,0 +1,56 @@
+  # Org Admins | refine the scopes query logic of org admins 
+  # https://ubiquiti.atlassian.net/browse/ULP-5617 
+tag: builtin.scopes.super_admin
+subjects:
+  - org_role:org_administrator # org admin
+scopes:
+  # here is the list of scopes that owner has but super-admin does not have 
+  # list them here to make sure org admin has the same scopes as owner except the ones that commented out
+  
+  
+  # those scopes are not granted to org admin 
+  # - edit:os-settings:backup
+  # - edit:os-settings:remote_access
+  # - edit:os-settings:reset
+  # - edit:os-settings:transfer_owner
+  # - edit:transfer_ownership
+
+  # these scopes are legacy scopes, we should not include them in the org admin scope
+  - access.open_door:building
+  - access.open_door:door
+  - access.open_door:door_group
+  - access.open_door:floor
+  - access.open_door:location
+  
+  # those scopes should be checked if it still needed
+  - assign:role:admin
+  - assign:role:viewer
+  - assign:role_super_admin
+  - cloud_access:controller
+  - cloud_access:system
+  - edit:backup
+  - edit:cloud_access
+
+  - edit:permission
+  - edit:permission:owner
+  - edit:permission:super_admin
+  - edit:role:admin
+  - edit:role:viewer
+  - edit:sso
+  - edit:system_info
+
+  - edit:user_credential
+  - manage:controller
+  - notify:led
+  - notify:network
+  - notify:protect
+  - notify:talk
+  - view:backup
+  - view:controller
+  - view:permission:owner
+  - view:permission:super_admin
+  - view:role:admin
+  - view:role:viewer
+  - view:sso
+  - view:system_info
+  

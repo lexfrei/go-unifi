@@ -1,0 +1,120 @@
+name: access
+revision: 1
+permissions:
+  access.user_and_group:
+    name: User & Group
+    order: 1
+    groups:
+      view:
+        name: View
+        scopes:
+          - view:open_api.user
+      edit:
+        name: Edit
+        scopes:
+          - view:open_api.user
+          - edit:open_api.user
+  access.visitor:
+    name: Visitor
+    order: 2
+    groups:
+      view:
+        name: View
+        scopes:
+          - view:open_api.visitor
+      edit:
+        name: Edit
+        scopes:
+          - view:open_api.visitor
+          - edit:open_api.visitor
+  access.policy:
+    name: Access Policy
+    order: 3
+    groups:
+      view:
+        name: View
+        scopes:
+          - view:open_api.policy
+      edit:
+        name: Edit
+        scopes:
+          - view:open_api.policy
+          - edit:open_api.policy
+  access.credential:
+    name: Credentials
+    order: 4
+    groups:
+      view:
+        name: View
+        scopes:
+          - view:open_api.credential
+      edit:
+        name: Edit
+        scopes:
+          - view:open_api.credential
+          - edit:open_api.credential
+  access.space:
+    name: Locations
+    order: 5
+    groups:
+      view:
+        name: View
+        scopes:
+          - view:open_api.space
+      edit:
+        name: Edit
+        scopes:
+          - view:open_api.space
+          - edit:open_api.space
+  access.device:
+    name: Device
+    order: 6
+    groups:
+      view:
+        name: View
+        scopes:
+          - view:open_api.device
+      edit:
+        name: Edit
+        scopes:
+          - view:open_api.device
+          - edit:open_api.device
+  access.system_log:
+    name: System Log
+    order: 7
+    groups:
+      view:
+        name: View
+        scopes:
+          - view:open_api.system_log
+      edit:
+        name: Edit
+        scopes:
+          - view:open_api.system_log
+          - edit:open_api.system_log
+  access.webhook:
+    name: Webhooks
+    order: 8
+    groups:
+      view:
+        name: View
+        scopes:
+          - view:open_api.webhook
+      edit:
+        name: Edit
+        scopes:
+          - view:open_api.webhook
+          - edit:open_api.webhook
+  access.api_server:
+    name: API Server
+    order: 9
+    groups:
+      view:
+        name: View
+        scopes:
+          - view:open_api.api_server
+      edit:
+        name: Edit
+        scopes:
+          - view:open_api.api_server
+          - edit:open_api.api_server

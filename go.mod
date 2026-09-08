@@ -7,7 +7,7 @@ require (
 	github.com/getkin/kin-openapi v0.149.0
 	github.com/oapi-codegen/runtime v1.7.0
 	github.com/stretchr/testify v1.12.1
-	golang.org/x/time v0.15.0
+	golang.org/x/time v0.16.0
 )
 
 require (

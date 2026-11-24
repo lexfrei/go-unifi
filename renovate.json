@@ -4,5 +4,16 @@
     "github>lexfrei/renovate-config",
     ":enablePreCommit"
   ],
-  "enabledManagers": ["gomod", "github-actions"]
+  "enabledManagers": ["gomod", "github-actions"],
+  "ignorePaths": [
+    "**/node_modules/**",
+    "**/bower_components/**",
+    "**/vendor/**",
+    "**/__tests__/**",
+    "**/test/**",
+    "**/tests/**",
+    "**/__fixtures__/**",
+    "**/.mise/locks/**",
+    "**/.config/mise/locks/**"
+  ]
 }

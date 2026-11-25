@@ -3,7 +3,7 @@ module github.com/lexfrei/go-unifi/examples/testing/network_api
 go 1.27.4
 
 require (
-	github.com/lexfrei/go-unifi v0.0.0
+	github.com/lexfrei/go-unifi v0.3.1
 	github.com/oapi-codegen/runtime v1.9.1
 	github.com/stretchr/testify v1.12.1
 )
